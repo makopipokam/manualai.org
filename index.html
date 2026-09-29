@@ -3,116 +3,177 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>manualAI</title>
-<meta name="description" content="manualAI shows you how to find answers yourself.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#FFCF4A">
+<title>manualAI: Learn how to find answers</title>
+<meta name="description" content="manualAI is a learning companion that shows you how to find answers yourself.">
 <style>
 :root{
-  --paper:#F3F5F2;
-  --ink:#14262B;
-  --muted:#4B6165;
-  --deep:#0E5560;
-  --mist:#DCE7E5;
-  --line:#B8C9C6;
-  --float:#F0A202;
-  --float-tint:#FFF3D6;
+  --sun:#FFCF4A;
+  --sun-soft:#FFF0B8;
+  --plum:#2B1B3D;
+  --plum-2:#5A4A6B;
+  --paper:#FFFCF6;
+  --line:#E6DDEA;
   --white:#fff;
-  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
-  --body:"Figtree","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --display:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{background:var(--paper);color:var(--ink);font:16px/1.5 var(--body);-webkit-text-size-adjust:100%}
+body{background:var(--sun-soft);color:var(--plum);font:16px/1.5 var(--body);-webkit-text-size-adjust:100%}
 button,select,textarea,input{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:3px solid var(--deep);outline-offset:2px}
+:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
 [hidden]{display:none !important}
 
-.app{height:100dvh;max-width:760px;margin:0 auto;display:flex;flex-direction:column}
+.app{height:100dvh;max-width:640px;margin:0 auto;display:flex;flex-direction:column;background:var(--paper)}
+@media (min-width:680px){.app{border-inline:1px solid var(--line)}}
 
-/* header */
-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.wordmark{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em;margin:0}
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--sun);transition:border-radius .2s}
+.app.chatting .top{border-radius:0 0 22px 22px}
+.brand{display:flex;align-items:center;gap:9px}
+.brand svg{width:34px;height:34px;flex:none}
+.wordmark{font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:0}
 .tools{display:flex;gap:8px;align-items:center}
-.tools select,.tools button{min-height:40px;border:1px solid var(--line);background:var(--white);border-radius:10px;padding:0 10px}
+.tools select{min-height:40px;border:0;background:var(--white);border-radius:999px;padding:0 12px;font-weight:600}
+.iconbtn{width:40px;height:40px;border:0;border-radius:50%;background:var(--white);display:grid;place-items:center}
+.iconbtn svg{width:20px;height:20px}
 
 /* scroll area */
-main{flex:1;overflow-y:auto;padding:20px 16px 8px;scroll-behavior:smooth}
-h1{font-family:var(--display);font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-.02em;margin:8px 0 8px}
-.sub{color:var(--muted);margin:0;max-width:44ch}
+main{flex:1;overflow-y:auto;scroll-behavior:smooth}
+
+/* hero */
+.hero{background:var(--sun);border-radius:0 0 34px 34px;padding:6px 18px 28px}
+.hero-row{display:flex;gap:10px;align-items:flex-end}
+h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,9vw,42px);line-height:1.06;letter-spacing:-.01em;margin:0;flex:1}
+.fish{width:92px;flex:none;margin-bottom:-2px}
+.sub{margin:12px 0 0;max-width:36ch;font-size:17px}
+
+.wbody{padding:22px 16px 12px}
+h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0 0 4px}
+.hint{color:var(--plum-2);font-size:14px;margin:0 0 12px}
 
 /* setup */
-.setup{margin-top:24px}
-fieldset{border:0;margin:0 0 18px;padding:0;min-width:0}
-legend{font-family:var(--display);font-weight:600;font-size:17px;padding:0;margin-bottom:6px}
-.rail{position:relative}
-.rail::before{content:"";position:absolute;left:8px;top:22px;bottom:22px;width:2px;background:var(--line)}
-.lv{position:relative;display:grid;grid-template-columns:18px 1fr;gap:12px;padding:10px 0;cursor:pointer}
-.lv input{position:absolute;opacity:0;width:1px;height:1px}
-.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--deep);background:var(--paper);margin-top:3px;position:relative;z-index:1;transition:background .15s}
-.lv input:checked + .dot{background:var(--float);border-color:var(--ink)}
-.lv input:focus-visible + .dot{outline:3px solid var(--deep);outline-offset:2px}
-.txt{display:flex;flex-direction:column}
-.txt strong{font-weight:600}
-.txt span{color:var(--muted);font-size:15px}
-.lv input:checked ~ .txt span{color:var(--ink)}
-.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--deep);border-radius:12px;overflow:hidden;background:var(--white)}
-.seg label{position:relative;text-align:center;padding:10px 6px;cursor:pointer;font-weight:500}
-.seg label + label{border-left:1px solid var(--deep)}
-.seg input{position:absolute;opacity:0;width:1px;height:1px}
-.seg label:has(input:checked){background:var(--deep);color:var(--white)}
-.seg label:has(input:focus-visible){outline:3px solid var(--float);outline-offset:-3px}
-.done{display:none;width:100%;min-height:44px;border:0;border-radius:12px;background:var(--deep);color:var(--white);font-weight:600}
-.setup.sheet{margin:0 0 10px;max-height:52dvh;overflow:auto;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+fieldset{border:0;margin:0 0 22px;padding:0;min-width:0}
+legend{font-family:var(--display);font-weight:600;font-size:19px;padding:0;margin-bottom:2px}
+.opt{position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px;margin-bottom:10px;border:2px solid var(--line);border-radius:20px;background:var(--white);cursor:pointer}
+.opt input{position:absolute;opacity:0;pointer-events:none}
+.opt:has(input:checked){border-color:var(--plum);background:var(--sun-soft)}
+.opt:has(input:focus-visible){outline:3px solid var(--plum);outline-offset:2px}
+.ic{width:44px;height:44px;border-radius:14px;background:var(--sun);display:grid;place-items:center;color:var(--plum)}
+.ic svg{width:24px;height:24px}
+.opt:has(input:checked) .ic{background:var(--plum);color:var(--sun)}
+.txt{display:flex;flex-direction:column;min-width:0}
+.txt strong{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2}
+.txt .d{color:var(--plum-2);font-size:14.5px;line-height:1.35;margin-top:2px}
+.opt:has(input:checked) .txt .d{color:var(--plum)}
+.meter{display:flex;gap:4px}
+.meter i{width:9px;height:9px;border-radius:50%;border:2px solid var(--plum)}
+.meter i.on{background:var(--plum)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.seg label{text-align:center;padding:10px 4px;border:2px solid var(--line);border-radius:999px;background:var(--white);font-weight:600;cursor:pointer;position:relative}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--plum);border-color:var(--plum);color:var(--white)}
+.seg label:has(input:focus-visible){outline:3px solid var(--plum);outline-offset:2px}
+.done{display:none;width:100%;min-height:46px;border:0;border-radius:999px;background:var(--plum);color:var(--white);font-weight:600}
+.setup.sheet{background:var(--white);border:1px solid var(--line);border-radius:24px;padding:14px 14px 12px;margin-bottom:10px;max-height:56dvh;overflow:auto}
 .setup.sheet .done{display:block}
-.setup.sheet fieldset:nth-of-type(2){margin-bottom:12px}
+.setup.sheet fieldset{margin-bottom:14px}
 
 /* examples */
-.examples{display:grid;gap:8px;margin-top:4px}
-.ex{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:44px}
-.ex:hover{border-color:var(--deep)}
+.ex{display:block;width:100%;text-align:left;background:var(--white);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:46px;margin-bottom:8px;font-weight:600}
+.ex:hover{border-color:var(--plum)}
+.contact{margin:0;padding:22px 16px 28px;text-align:center;color:var(--plum-2);font-size:14px}
+.contact a{display:inline-block;padding:8px 2px;color:var(--plum);font-weight:600}
+.clear{border:0;background:none;color:var(--plum-2);text-decoration:underline;font-size:14px;padding:8px 2px;min-height:40px}
 
 /* messages */
-#messages{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
-.msg{max-width:88%;padding:10px 14px;border-radius:16px;overflow-wrap:anywhere}
-.msg.user{align-self:flex-end;background:var(--deep);color:var(--white);border-bottom-right-radius:4px;white-space:pre-wrap}
-.msg.bot{align-self:flex-start;background:var(--white);border:1px solid var(--line);border-bottom-left-radius:4px}
+#messages{display:flex;flex-direction:column;gap:12px;padding:16px}
+#messages:empty{padding:0}
+.brow{display:flex;gap:8px;align-items:flex-end;max-width:94%;align-self:flex-start}
+.av{width:28px;height:28px;flex:none}
+.msg{padding:10px 14px;border-radius:20px;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;max-width:88%;background:var(--plum);color:var(--white);border-bottom-right-radius:6px;white-space:pre-wrap}
+.msg.bot{background:var(--sun-soft);border-bottom-left-radius:6px;min-width:0}
 .msg.bot p{margin:0 0 .6em}
 .msg.bot p:last-child,.msg.bot ul:last-child,.msg.bot ol:last-child{margin-bottom:0}
 .msg.bot ul,.msg.bot ol{margin:0 0 .6em;padding-left:1.3em}
-.msg.bot code{background:var(--mist);padding:1px 5px;border-radius:5px;font-size:.92em}
-.msg.bot pre{background:var(--mist);padding:10px 12px;border-radius:10px;overflow-x:auto;margin:0 0 .6em}
+.msg.bot code{background:var(--white);padding:1px 5px;border-radius:6px;font-size:.92em}
+.msg.bot pre{background:var(--white);padding:10px 12px;border-radius:12px;overflow-x:auto;margin:0 0 .6em}
 .msg.bot pre code{padding:0;background:none}
-.msg.bot a{color:var(--deep)}
-.note{align-self:center;color:var(--muted);font-size:14px;text-align:center}
-.note.err{color:#8A1F11;font-weight:500}
-.thinking{display:flex;align-items:center;gap:10px;color:var(--muted)}
-.float{width:12px;height:12px;border-radius:50%;background:var(--float);border:2px solid var(--ink);animation:bob 1.1s ease-in-out infinite alternate}
-@keyframes bob{from{transform:translateY(2px)}to{transform:translateY(-5px)}}
+.msg.bot a{color:var(--plum);font-weight:600}
+.note{align-self:center;color:var(--plum-2);font-size:14px;text-align:center}
+.note.err{color:#8A1F11;font-weight:600}
+.thinking .msg{display:flex;align-items:center;color:var(--plum-2)}
+.thinking .av{animation:bob 1s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(2px)}to{transform:translateY(-4px)}}
 
 /* dock */
-.dock{padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--paper)}
-.banner{background:var(--float-tint);border-left:4px solid var(--float);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.dock{padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--paper)}
+.banner{background:var(--sun-soft);border:2px solid var(--sun);border-radius:18px;padding:10px 12px;margin-bottom:10px}
 .banner p{margin:0 0 8px}
 .banner .acts{display:flex;gap:8px;flex-wrap:wrap}
-.banner button{min-height:40px;border-radius:10px;padding:0 14px;border:1px solid var(--ink);background:transparent}
-.banner button.primary{background:var(--ink);color:var(--white)}
-.mode{display:inline-flex;gap:8px;align-items:baseline;border:0;background:none;padding:2px 0 8px;font-weight:600}
-.mode .chg{font-weight:400;color:var(--muted);text-decoration:underline}
+.banner button{min-height:40px;border-radius:999px;padding:0 16px;border:2px solid var(--plum);background:transparent;font-weight:600}
+.banner button.primary{background:var(--plum);color:var(--white)}
+.mode{display:inline-flex;gap:8px;align-items:baseline;border:2px solid var(--line);background:var(--white);border-radius:999px;padding:4px 12px;margin-bottom:8px;min-height:36px;font-size:14px;font-weight:600}
+.mode .chg{font-weight:500;color:var(--plum-2);text-decoration:underline}
 .row{display:flex;gap:8px;align-items:flex-end}
-textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;background:var(--white);padding:11px 14px;min-height:46px;max-height:160px;line-height:1.4}
-.send{min-height:46px;padding:0 18px;border:0;border-radius:14px;background:var(--deep);color:var(--white);font-weight:600}
-.send:disabled{opacity:.5;cursor:default}
+textarea{flex:1;resize:none;border:2px solid var(--line);border-radius:24px;background:var(--white);padding:10px 16px;min-height:48px;max-height:160px;line-height:1.4}
+.send{width:48px;height:48px;flex:none;border:0;border-radius:50%;background:var(--plum);color:var(--sun);display:grid;place-items:center}
+.send svg{width:22px;height:22px}
+.send:disabled{opacity:.45;cursor:default}
 
-@media (prefers-reduced-motion:reduce){.float{animation:none}main{scroll-behavior:auto}}
+/* overlay */
+.overlay{position:fixed;inset:0;z-index:50;background:rgba(43,27,61,.55);display:flex;align-items:flex-end;justify-content:center}
+.panel{width:100%;max-width:640px;max-height:92dvh;overflow:auto;background:var(--paper);border-radius:28px 28px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));outline:none}
+.panel h2{font-size:24px;margin:0 0 10px}
+.panel h3{font-family:var(--display);font-weight:600;font-size:17px;margin:18px 0 4px}
+.panel h4{font-size:15px;margin:12px 0 2px}
+.panel p{margin:0 0 10px}
+.panel ul{margin:0 0 10px;padding-left:1.2em}
+.panel .hint{margin:0 0 6px}
+.bigbtn{display:block;width:100%;text-align:left;padding:16px;margin-bottom:10px;border:2px solid var(--line);border-radius:20px;background:var(--white);font-size:17px}
+.bigbtn:hover{border-color:var(--plum)}
+.bigbtn strong{font-family:var(--display);font-weight:600}
+.btn{display:block;width:100%;min-height:48px;margin:10px 0 0;border:0;border-radius:999px;background:var(--plum);color:var(--white);font-weight:600}
+.btn.ghost{background:transparent;color:var(--plum);border:2px solid var(--plum)}
+.fl{display:block;font-weight:600;margin:12px 0 4px}
+.pin{width:100%;min-height:48px;border:2px solid var(--line);border-radius:16px;background:var(--white);padding:0 14px;font-size:20px;letter-spacing:.3em}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:16px 0 4px}
+.chk input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--plum)}
+.oerr{color:#8A1F11;font-weight:600;min-height:1.4em;margin:8px 0 0}
+.ovlang{min-height:40px;border:2px solid var(--line);border-radius:999px;background:var(--white);padding:0 12px;font-weight:600;margin-bottom:14px}
+.profline{margin:0 0 6px}
+.links{margin:0;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.lnk{border:0;background:none;color:var(--plum);text-decoration:underline;font-weight:600;padding:8px 2px;min-height:40px}
+.panel .links{justify-content:flex-start;margin-top:8px}
+mark.ph{background:#FFD1D1;color:#5C0F0F;padding:0 3px;border-radius:4px}
+.legal{font-size:15px;line-height:1.55}
+.fine{margin:8px 2px 0;font-size:12.5px;color:var(--plum-2);text-align:center}
+.botcol{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
+.report{border:0;background:none;color:var(--plum-2);font-size:13px;text-decoration:underline;padding:6px 4px;min-height:32px}
+@media (max-width:420px){
+  .top{padding:10px}
+  .brand{gap:7px}
+  .brand svg{width:30px;height:30px}
+  .wordmark{font-size:20px}
+  .tools{gap:6px}
+  .tools select{padding:0 6px 0 10px;font-size:14px}
+  .iconbtn{width:38px;height:38px}
+}
+@media (max-width:340px){.wordmark{display:none}}
+
+@media (prefers-reduced-motion:reduce){.thinking .av{animation:none}main{scroll-behavior:auto}.top{transition:none}}
 </style>
 </head>
 <body>
-<div class="app">
-  <header>
-    <p class="wordmark">manualAI</p>
+<div class="app" id="app">
+  <header class="top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="11" fill="#2B1B3D"/><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z" fill="#FFCF4A"/><circle cx="11" cy="14.5" r="1.4" fill="#2B1B3D"/></svg>
+      <p class="wordmark">manualAI</p>
+    </div>
     <div class="tools">
       <select id="lang" aria-label="Language">
         <option value="de">Deutsch</option>
@@ -120,20 +181,33 @@ textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;back
         <option value="es">Español</option>
         <option value="fr">Français</option>
       </select>
-      <button id="newChat" type="button"></button>
+      <button id="menuBtn" type="button" class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></button>
+      <button id="newChat" type="button" class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
     </div>
   </header>
 
   <main id="scroll">
     <div id="welcome">
-      <div id="welcomeTop">
-        <h1 id="h1"></h1>
+      <section class="hero">
+        <div class="hero-row">
+          <h1 id="h1"></h1>
+          <svg class="fish" viewBox="0 0 96 64" aria-hidden="true">
+            <circle cx="6" cy="14" r="3" fill="none" stroke="#2B1B3D" stroke-width="2"/>
+            <circle cx="13" cy="6" r="2" fill="none" stroke="#2B1B3D" stroke-width="2"/>
+            <path d="M8 34C22 12 52 10 70 28L90 14l-4 20 4 20-20-14C52 58 22 56 8 34z" fill="#2B1B3D"/>
+            <path d="M38 38c8 10 18 10 24 4" fill="none" stroke="#FFCF4A" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="26" cy="30" r="4.5" fill="#FFCF4A"/><circle cx="26" cy="30" r="1.8" fill="#2B1B3D"/>
+          </svg>
+        </div>
         <p class="sub" id="sub"></p>
+      </section>
+      <div class="wbody" id="recent" hidden>
+        <h2 id="tryTitle"></h2>
+        <div id="examples"></div>
+        <button type="button" class="clear" id="clearHist"></button>
       </div>
-      <div id="onboardSlot">
-        <section class="setup" id="setup"></section>
-      </div>
-      <div class="examples" id="examples"></div>
+      <p class="contact"><span id="contactLabel"></span> <a href="mailto:info@manualai.org">info@manualai.org</a></p>
+      <p class="links"><button type="button" class="lnk" id="lnkPrivacy"></button><button type="button" class="lnk" id="lnkLegal"></button></p>
     </div>
     <div id="messages" aria-live="polite"></div>
   </main>
@@ -146,94 +220,264 @@ textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;back
         <button type="button" id="bannerNo"></button>
       </div>
     </div>
-    <div id="sheetSlot"></div>
-    <button class="mode" id="modeBtn" type="button" hidden aria-expanded="false"></button>
+    <div id="sheetSlot"><section class="setup sheet" id="setup" hidden></section></div>
+    <button class="mode" id="modeBtn" type="button" aria-expanded="false"></button>
     <div class="row">
       <textarea id="input" rows="1"></textarea>
-      <button class="send" id="sendBtn" type="button"></button>
+      <button class="send" id="sendBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
     </div>
+    <p class="fine" id="fine"></p>
   </div>
 </div>
+
+<div class="overlay" id="overlay" hidden><div class="panel" id="panel" role="dialog" aria-modal="true" tabindex="-1"></div></div>
 
 <script>
 const I18N = {
   de:{
+    who:"Wer nutzt manualAI?",
+    under18:"Ich bin unter 18",
+    adult18:"Ich bin 18 oder älter",
+    parentTitle:"Bitte eine erwachsene Person",
+    parentText:"Für Nutzer unter 18 richtet ein Elternteil, eine erziehungsberechtigte Person oder eine Lehrkraft das Kinderprofil ein. Es ist mit einem PIN geschützt und lässt sich nur damit wieder verlassen. Kinder unter 13 nutzen manualAI bitte nur gemeinsam mit einer erwachsenen Person.",
+    pinLabel:"PIN festlegen (4 Ziffern)",
+    pinRepeat:"PIN wiederholen",
+    consent:"Ich bin Elternteil, erziehungsberechtigt oder Lehrkraft, erlaube die Nutzung und habe die Datenschutzerklärung gelesen.",
+    startKids:"Kinderprofil starten",
+    errPinLen:"Bitte genau 4 Ziffern eingeben.",
+    errPinMismatch:"Die PINs stimmen nicht überein.",
+    errConsent:"Bitte bestätige die Erlaubnis.",
+    menu:"Menü",
+    profileNow:"Aktives Profil",
+    profKids:"Kinderprofil",
+    profAdult:"Erwachsenenprofil",
+    toAdult:"Zum Erwachsenenprofil wechseln",
+    toKids:"Kinderprofil einrichten",
+    pinEnter:"PIN eingeben",
+    pinWrong:"Falscher PIN.",
+    pinLocked:"Zu viele Versuche. Bitte versuche es in 5 Minuten noch einmal.",
+    confirm:"Bestätigen",
+    cancel:"Abbrechen",
+    close:"Schließen",
+    back:"Zurück",
+    privacy:"Datenschutz",
+    legal:"Impressum",
+    germanOnly:"Dieser Text ist nur auf Deutsch verfügbar.",
+    aiNote:"manualAI ist eine KI und kann sich irren.",
+    kidsNote:"Du sprichst mit einer KI. Schreib keine persönlichen Daten wie Name, Adresse oder Schule.",
+    report:"Melden",
+    reportSubject:"Meldung zu einer Antwort von manualAI",
+    reportBody:"Diese Antwort möchte ich melden:\n\n{a}\n\nWas ist das Problem?\n",
+    blockedCare:"Das klingt, als wäre etwas schwer für dich. Sprich bitte mit einer Person, der du vertraust, zum Beispiel mit deinen Eltern oder einer Lehrkraft. Kostenlose Hilfe für Kinder und Jugendliche in Deutschland: Nummer gegen Kummer, 116 111. Wenn du in Gefahr bist, ruf sofort den Notruf 112 an.",
+    blockedUnsafe:"Dabei kann ich dir nicht helfen. Frag mich gern etwas anderes zum Lernen, oder sprich mit einer Person, der du vertraust.",
     newChat:"Neuer Chat", h1:"Finde es selbst heraus.",
-    sub:"manualAI zeigt dir den Weg, statt nur die Antwort zu liefern.",
-    levelTitle:"Wie viel Hilfe willst du?",
+    sub:"manualAI zeigt dir, wie du Antworten selbst findest, statt sie fertig zu bekommen.",
+    levelTitle:"Wie viel Unterstützung möchtest du?",
+    meterHint:"Die Punkte zeigen, wie stark du geführt wirst.",
     levels:{
-      pathfinder:{name:"Wegweiser",desc:"Ich sage dir, wo und womit du suchst. Die Antwort findest du selbst."},
-      coach:{name:"Coach",desc:"Ich stelle Fragen und gebe Hinweise. Du gehst die Schritte."},
-      safety_net:{name:"Sicherheitsnetz",desc:"Du löst es allein, ich prüfe dein Ergebnis."}
+      pathfinder:{name:"Wegweiser",desc:"Ich zeige dir, wo und wie du suchen kannst. Die Antwort findest du selbst."},
+      coach:{name:"Coach",desc:"Ich stelle Fragen und gebe Tipps. Die Schritte gehst du selbst."},
+      safety_net:{name:"Sicherheitsnetz",desc:"Du löst es allein, ich sehe mir dein Ergebnis an."}
     },
-    dialTitle:"Wie viel Lust hast du gerade?",
-    dials:{compact:"Kompakt",normal:"Normal",thorough:"Gründlich"},
-    placeholder:"Was willst du herausfinden?", send:"Senden", done:"Fertig", change:"Ändern",
-    thinking:"Denkt nach…", now:"Jetzt aktiv:", notNow:"Nicht jetzt", switchTo:"Zu {x} wechseln",
-    error:"Das hat nicht geklappt. Prüfe deine Verbindung und sende es noch mal.",
-    examples:["Woran erkenne ich, ob eine Quelle vertrauenswürdig ist?","Wie finde ich heraus, ob ein Foto gefälscht ist?","Wie finde ich den Fehler in meinem Code?"]
+    dialTitle:"Wie viel Zeit und Energie hast du gerade?",
+    dials:{compact:"Kurz",normal:"Normal",thorough:"Ausführlich"},
+    styleTitle:"Wie soll ich erklären?",
+    styles:{simple:"Einfach",standard:"Standard",expert:"Fachlich"},
+    placeholder:"Was möchtest du herausfinden?", send:"Senden", done:"Fertig", change:"Ändern",
+    thinking:"Ich überlege…", now:"Eingestellt:", notNow:"Nicht jetzt", switchTo:"Wechseln zu {x}",
+    contact:"Fragen oder Feedback?", metaDesc:"manualAI ist dein Lernbegleiter: Er zeigt dir, wie du Antworten selbst findest, statt sie fertig zu liefern.", limitUser:"Du hast das Tageslimit erreicht. Morgen kannst du weiterfragen.", limitGlobal:"manualAI ist heute ausgelastet. Bitte versuche es morgen noch einmal.", recentTitle:"Zuletzt gefragt", forYou:"Für dich", clear:"Verlauf löschen",
+    error:"Das hat leider nicht geklappt. Prüfe deine Verbindung und sende die Nachricht noch einmal.",
   },
   en:{
+    who:"Who is using manualAI?",
+    under18:"I'm under 18",
+    adult18:"I'm 18 or older",
+    parentTitle:"Please get an adult",
+    parentText:"For users under 18, a parent, guardian or teacher sets up the child profile. It is protected with a PIN and can only be left with it. Children under 13 should use manualAI only together with an adult.",
+    pinLabel:"Set a PIN (4 digits)",
+    pinRepeat:"Repeat PIN",
+    consent:"I am a parent, guardian or teacher, I allow this use and I have read the privacy policy.",
+    startKids:"Start child profile",
+    errPinLen:"Please enter exactly 4 digits.",
+    errPinMismatch:"The PINs don't match.",
+    errConsent:"Please confirm the permission.",
+    menu:"Menu",
+    profileNow:"Active profile",
+    profKids:"Child profile",
+    profAdult:"Adult profile",
+    toAdult:"Switch to adult profile",
+    toKids:"Set up child profile",
+    pinEnter:"Enter PIN",
+    pinWrong:"Wrong PIN.",
+    pinLocked:"Too many attempts. Please try again in 5 minutes.",
+    confirm:"Confirm",
+    cancel:"Cancel",
+    close:"Close",
+    back:"Back",
+    privacy:"Privacy",
+    legal:"Legal notice",
+    germanOnly:"This text is only available in German.",
+    aiNote:"manualAI is an AI and can make mistakes.",
+    kidsNote:"You are talking to an AI. Don't write personal details like your name, address or school.",
+    report:"Report",
+    reportSubject:"Report about a manualAI answer",
+    reportBody:"I would like to report this answer:\n\n{a}\n\nWhat is the problem?\n",
+    blockedCare:"That sounds like something is hard for you right now. Please talk to someone you trust, such as your parents or a teacher. If you are in danger, call your local emergency number right away.",
+    blockedUnsafe:"I can't help with that. Feel free to ask me something else about learning, or talk to someone you trust.",
     newChat:"New chat", h1:"Find it out yourself.",
     sub:"manualAI shows you how to find answers instead of handing them over.",
     levelTitle:"How much help do you want?",
+    meterHint:"Dots show how much guidance you get.",
     levels:{
       pathfinder:{name:"Pathfinder",desc:"I tell you where and how to look. You find the answer."},
       coach:{name:"Coach",desc:"I ask questions and give hints. You take the steps."},
       safety_net:{name:"Safety net",desc:"You solve it alone, I check your result."}
     },
-    dialTitle:"How much energy do you have right now?",
-    dials:{compact:"Compact",normal:"Normal",thorough:"Thorough"},
+    dialTitle:"How much time and energy do you have right now?",
+    dials:{compact:"Short",normal:"Normal",thorough:"Detailed"},
+    styleTitle:"How should I explain?",
+    styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
     placeholder:"What do you want to find out?", send:"Send", done:"Done", change:"Change",
-    thinking:"Thinking…", now:"Now:", notNow:"Not now", switchTo:"Switch to {x}",
+    thinking:"Thinking…", now:"Set to:", notNow:"Not now", switchTo:"Switch to {x}",
+    contact:"Questions or feedback?", metaDesc:"manualAI is a learning companion that shows you how to find answers yourself instead of handing them over.", limitUser:"You've reached today's limit. You can keep asking tomorrow.", limitGlobal:"manualAI is at capacity today. Please try again tomorrow.", recentTitle:"Recently asked", forYou:"For you", clear:"Clear history",
     error:"That didn't work. Check your connection and send it again.",
-    examples:["How can I tell if a source is trustworthy?","How do I find out whether a photo is fake?","How do I track down a bug in my code?"]
   },
   es:{
+    who:"¿Quién usa manualAI?",
+    under18:"Soy menor de 18",
+    adult18:"Tengo 18 años o más",
+    parentTitle:"Necesitamos a una persona adulta",
+    parentText:"Para menores de 18 años, un padre, madre, tutor o docente configura el perfil infantil. Está protegido con un PIN y solo se puede salir con él. Los menores de 13 años deben usar manualAI solo junto a una persona adulta.",
+    pinLabel:"Crea un PIN (4 dígitos)",
+    pinRepeat:"Repite el PIN",
+    consent:"Soy padre, madre, tutor o docente, permito el uso y he leído la política de privacidad.",
+    startKids:"Iniciar perfil infantil",
+    errPinLen:"Introduce exactamente 4 dígitos.",
+    errPinMismatch:"Los PIN no coinciden.",
+    errConsent:"Confirma el permiso.",
+    menu:"Menú",
+    profileNow:"Perfil activo",
+    profKids:"Perfil infantil",
+    profAdult:"Perfil adulto",
+    toAdult:"Cambiar al perfil adulto",
+    toKids:"Configurar perfil infantil",
+    pinEnter:"Introduce el PIN",
+    pinWrong:"PIN incorrecto.",
+    pinLocked:"Demasiados intentos. Inténtalo de nuevo en 5 minutos.",
+    confirm:"Confirmar",
+    cancel:"Cancelar",
+    close:"Cerrar",
+    back:"Atrás",
+    privacy:"Privacidad",
+    legal:"Aviso legal",
+    germanOnly:"Este texto solo está disponible en alemán.",
+    aiNote:"manualAI es una IA y puede equivocarse.",
+    kidsNote:"Hablas con una IA. No escribas datos personales como tu nombre, dirección o colegio.",
+    report:"Reportar",
+    reportSubject:"Aviso sobre una respuesta de manualAI",
+    reportBody:"Quiero avisar de esta respuesta:\n\n{a}\n\n¿Cuál es el problema?\n",
+    blockedCare:"Parece que algo es difícil para ti ahora. Habla, por favor, con alguien de confianza, como tus padres o un profesor. Si estás en peligro, llama ya al número de emergencias de tu país.",
+    blockedUnsafe:"Con eso no puedo ayudarte. Pregúntame otra cosa sobre aprender, o habla con alguien de confianza.",
     newChat:"Nuevo chat", h1:"Descúbrelo tú mismo.",
     sub:"manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
     levelTitle:"¿Cuánta ayuda quieres?",
+    meterHint:"Los puntos muestran cuánta guía recibes.",
     levels:{
       pathfinder:{name:"Guía",desc:"Te digo dónde y cómo buscar. La respuesta la encuentras tú."},
       coach:{name:"Coach",desc:"Te hago preguntas y te doy pistas. Los pasos los das tú."},
       safety_net:{name:"Red de seguridad",desc:"Lo resuelves por tu cuenta, yo reviso tu resultado."}
     },
-    dialTitle:"¿Cuántas ganas tienes ahora?",
-    dials:{compact:"Compacto",normal:"Normal",thorough:"A fondo"},
+    dialTitle:"¿Cuánto tiempo y energía tienes ahora?",
+    dials:{compact:"Breve",normal:"Normal",thorough:"Detallado"},
+    styleTitle:"¿Cómo debo explicar?",
+    styles:{simple:"Sencillo",standard:"Estándar",expert:"Experto"},
     placeholder:"¿Qué quieres averiguar?", send:"Enviar", done:"Listo", change:"Cambiar",
-    thinking:"Pensando…", now:"Ahora:", notNow:"Ahora no", switchTo:"Cambiar a {x}",
+    thinking:"Pensando…", now:"Ajustado a:", notNow:"Ahora no", switchTo:"Cambiar a {x}",
+    contact:"¿Preguntas o comentarios?", metaDesc:"manualAI es tu compañero de aprendizaje: te enseña a encontrar las respuestas tú mismo.", limitUser:"Has alcanzado el límite de hoy. Mañana puedes seguir preguntando.", limitGlobal:"manualAI está al máximo hoy. Inténtalo de nuevo mañana.", recentTitle:"Preguntado recientemente", forYou:"Para ti", clear:"Borrar historial",
     error:"No ha funcionado. Revisa tu conexión y vuelve a enviarlo.",
-    examples:["¿Cómo sé si una fuente es fiable?","¿Cómo averiguo si una foto es falsa?","¿Cómo encuentro un error en mi código?"]
   },
   fr:{
+    who:"Qui utilise manualAI ?",
+    under18:"J'ai moins de 18 ans",
+    adult18:"J'ai 18 ans ou plus",
+    parentTitle:"Un adulte est nécessaire",
+    parentText:"Pour les moins de 18 ans, un parent, un tuteur ou un enseignant configure le profil enfant. Il est protégé par un code PIN et on ne peut le quitter qu'avec lui. Les enfants de moins de 13 ans utilisent manualAI uniquement avec un adulte.",
+    pinLabel:"Choisir un code PIN (4 chiffres)",
+    pinRepeat:"Répéter le code PIN",
+    consent:"Je suis parent, tuteur ou enseignant, j'autorise cet usage et j'ai lu la politique de confidentialité.",
+    startKids:"Démarrer le profil enfant",
+    errPinLen:"Saisis exactement 4 chiffres.",
+    errPinMismatch:"Les codes PIN ne correspondent pas.",
+    errConsent:"Confirme l'autorisation.",
+    menu:"Menu",
+    profileNow:"Profil actif",
+    profKids:"Profil enfant",
+    profAdult:"Profil adulte",
+    toAdult:"Passer au profil adulte",
+    toKids:"Configurer le profil enfant",
+    pinEnter:"Saisir le code PIN",
+    pinWrong:"Code PIN incorrect.",
+    pinLocked:"Trop de tentatives. Réessaie dans 5 minutes.",
+    confirm:"Confirmer",
+    cancel:"Annuler",
+    close:"Fermer",
+    back:"Retour",
+    privacy:"Confidentialité",
+    legal:"Mentions légales",
+    germanOnly:"Ce texte n'est disponible qu'en allemand.",
+    aiNote:"manualAI est une IA et peut se tromper.",
+    kidsNote:"Tu parles à une IA. N'écris pas de données personnelles comme ton nom, ton adresse ou ton école.",
+    report:"Signaler",
+    reportSubject:"Signalement d'une réponse de manualAI",
+    reportBody:"Je voudrais signaler cette réponse :\n\n{a}\n\nQuel est le problème ?\n",
+    blockedCare:"On dirait que quelque chose est difficile pour toi en ce moment. Parle-en à une personne de confiance, comme tes parents ou un enseignant. Si tu es en danger, appelle tout de suite le numéro d'urgence de ton pays.",
+    blockedUnsafe:"Je ne peux pas t'aider pour ça. Pose-moi une autre question pour apprendre, ou parle à une personne de confiance.",
     newChat:"Nouveau chat", h1:"Trouve-le par toi-même.",
     sub:"manualAI t'apprend à trouver les réponses au lieu de te les donner.",
     levelTitle:"Combien d'aide veux-tu ?",
+    meterHint:"Les points indiquent le niveau d'accompagnement.",
     levels:{
       pathfinder:{name:"Éclaireur",desc:"Je t'indique où et comment chercher. Tu trouves la réponse."},
       coach:{name:"Coach",desc:"Je pose des questions et donne des pistes. Tu fais les étapes."},
       safety_net:{name:"Filet de sécurité",desc:"Tu le résous par toi-même, je vérifie ton résultat."}
     },
-    dialTitle:"Quelle énergie as-tu en ce moment ?",
-    dials:{compact:"Concis",normal:"Normal",thorough:"Approfondi"},
+    dialTitle:"Combien de temps et d'énergie as-tu en ce moment ?",
+    dials:{compact:"Court",normal:"Normal",thorough:"Détaillé"},
+    styleTitle:"Comment dois-je expliquer ?",
+    styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
     placeholder:"Que veux-tu découvrir ?", send:"Envoyer", done:"Terminé", change:"Modifier",
-    thinking:"Réflexion…", now:"Maintenant :", notNow:"Pas maintenant", switchTo:"Passer à {x}",
+    thinking:"Réflexion…", now:"Réglé sur :", notNow:"Pas maintenant", switchTo:"Passer à {x}",
+    contact:"Une question ou un avis ?", metaDesc:"manualAI est ton compagnon d'apprentissage : il t'apprend à trouver les réponses par toi-même.", limitUser:"Tu as atteint la limite du jour. Tu pourras continuer demain.", limitGlobal:"manualAI est complet aujourd'hui. Réessaie demain.", recentTitle:"Demandé récemment", forYou:"Pour toi", clear:"Effacer l'historique",
     error:"Ça n'a pas marché. Vérifie ta connexion et renvoie ton message.",
-    examples:["Comment savoir si une source est fiable ?","Comment vérifier si une photo est truquée ?","Comment trouver une erreur dans mon code ?"]
   }
 };
 
 const LEVELS = ["pathfinder","coach","safety_net"];
 const DIALS = ["compact","normal","thorough"];
+const STYLES = ["simple","standard","expert"];
+const GUIDANCE = { pathfinder:3, coach:2, safety_net:1 };
+const SVG = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
+const ICONS = {
+  pathfinder: SVG('<path d="M12 3v18"/><path d="M5 5h10l3 3-3 3H5z"/><path d="M19 13H9l-3 3 3 3h10z"/>'),
+  coach: SVG('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/><path d="M9 12.5l2 2 4-4.5"/>'),
+  safety_net: SVG('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"/>')
+};
+const AVATAR = '<svg class="av" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="11" fill="#2B1B3D"/><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z" fill="#FFCF4A"/><circle cx="11" cy="14.5" r="1.4" fill="#2B1B3D"/></svg>';
+
 const store = {
   get(k){ try{ return localStorage.getItem(k); }catch{ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); }catch{} }
 };
 
+// Set to true to re-enable the child profile (needs legal review first).
+const KIDS_ENABLED = false;
+
 const state = {
   lang: I18N[store.get("lang")] ? store.get("lang") : (I18N[(navigator.language||"en").slice(0,2)] ? navigator.language.slice(0,2) : "en"),
   level: LEVELS.includes(store.get("level")) ? store.get("level") : "coach",
   dial: DIALS.includes(store.get("dial")) ? store.get("dial") : "normal",
+  style: STYLES.includes(store.get("style")) ? store.get("style") : "standard",
+  profile: KIDS_ENABLED ? (["kids","adult"].includes(store.get("profile")) ? store.get("profile") : null) : "adult",
   messages: [],
   busy: false,
   sheetOpen: false,
@@ -241,13 +485,80 @@ const state = {
   suggestion: null
 };
 const T = () => I18N[state.lang];
+const isKids = () => state.profile === "kids";
 const $ = (id) => document.getElementById(id);
 const els = {
-  scroll:$("scroll"), welcome:$("welcome"), onboardSlot:$("onboardSlot"), setup:$("setup"),
+  app:$("app"), scroll:$("scroll"), welcome:$("welcome"), recent:$("recent"), setup:$("setup"),
   sheetSlot:$("sheetSlot"), messages:$("messages"), input:$("input"), sendBtn:$("sendBtn"),
-  modeBtn:$("modeBtn"), banner:$("banner"), lang:$("lang"), examples:$("examples")
+  modeBtn:$("modeBtn"), banner:$("banner"), lang:$("lang"), examples:$("examples"), clearHist:$("clearHist")
 };
-const started = () => state.messages.length > 0;
+const started = () => state.messages.length > 0 || els.messages.childElementCount > 0;
+
+/* ---------- history (stored on this device only) ---------- */
+const HKEY = "history";
+function getHistory(){
+  try{ const a = JSON.parse(store.get(HKEY) || "[]"); return Array.isArray(a) ? a.filter(x => typeof x === "string") : []; }
+  catch{ return []; }
+}
+function saveHistory(text){
+  text = text.trim();
+  if(text.length < 8 || text.length > 160) return;
+  const h = getHistory().filter(x => x !== text);
+  h.unshift(text);
+  store.set(HKEY, JSON.stringify(h.slice(0, 20)));
+}
+const SKEY = "sugg";
+let suggInFlight = false, suggFailedKey = null;
+const histKey = (top) => state.lang + "|" + top.join("\n");
+function getCachedSugg(top){
+  try{
+    const c = JSON.parse(store.get(SKEY) || "null");
+    return c && c.key === histKey(top) && Array.isArray(c.items) && c.items.length ? c.items : null;
+  }catch{ return null; }
+}
+async function fetchSugg(top){
+  if(suggInFlight) return;
+  suggInFlight = true;
+  const key = histKey(top);
+  try{
+    const r = await fetch("/api/suggest", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ history: top, lang: state.lang })
+    });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const d = await r.json();
+    if(!Array.isArray(d.items) || !d.items.length) throw new Error("empty");
+    store.set(SKEY, JSON.stringify({ key, items: d.items.filter(x => typeof x === "string").slice(0, 3) }));
+  }catch(err){
+    console.error(err);
+    suggFailedKey = key;
+  }finally{
+    suggInFlight = false;
+    if(!started()) renderRecent();
+  }
+}
+function renderRecent(){
+  if(isKids()){ els.examples.innerHTML = ""; els.recent.hidden = true; return; }
+  const all = getHistory();
+  const top = all.slice(0, 5);
+  const cached = top.length ? getCachedSugg(top) : null;
+  let items, title;
+  if(cached){ items = cached; title = T().forYou; }
+  else{
+    items = all.slice(0, 3); title = T().recentTitle;
+    if(top.length && !started() && histKey(top) !== suggFailedKey) fetchSugg(top);
+  }
+  $("tryTitle").textContent = title;
+  els.examples.innerHTML = "";
+  items.forEach(text => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ex"; b.textContent = text;
+    b.addEventListener("click", () => { els.input.value = text; autosize(); els.input.focus(); });
+    els.examples.appendChild(b);
+  });
+  els.recent.hidden = items.length === 0 || started();
+}
 
 /* ---------- rendering helpers ---------- */
 const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -288,12 +599,21 @@ function md(src){
 function scrollDown(){ els.scroll.scrollTop = els.scroll.scrollHeight; }
 
 function addMsg(kind, text){
-  const d = document.createElement("div");
-  d.className = "msg " + kind;
-  if(kind === "bot") d.innerHTML = md(text); else d.textContent = text;
-  els.messages.appendChild(d);
+  if(kind === "user"){
+    const d = document.createElement("div");
+    d.className = "msg user";
+    d.textContent = text;
+    els.messages.appendChild(d);
+    scrollDown();
+    return d;
+  }
+  const row = document.createElement("div");
+  row.className = "brow";
+  row.innerHTML = AVATAR + '<div class="botcol"><div class="msg bot">' + md(text) + '</div><button type="button" class="report">' + esc(T().report) + '</button></div>';
+  row.querySelector(".report").addEventListener("click", () => reportAnswer(text));
+  els.messages.appendChild(row);
   scrollDown();
-  return d;
+  return row;
 }
 function addNote(text, isErr){
   const d = document.createElement("div");
@@ -305,56 +625,66 @@ function addNote(text, isErr){
   return d;
 }
 function addThinking(){
-  const d = document.createElement("div");
-  d.className = "msg bot thinking";
-  d.setAttribute("role","status");
-  d.innerHTML = '<span class="float" aria-hidden="true"></span><span>'+T().thinking+'</span>';
-  els.messages.appendChild(d);
+  const row = document.createElement("div");
+  row.className = "brow thinking";
+  row.setAttribute("role","status");
+  row.innerHTML = AVATAR + '<div class="msg bot">'+T().thinking+'</div>';
+  els.messages.appendChild(row);
   scrollDown();
-  return d;
+  return row;
 }
 
 /* ---------- setup (levels + dial) ---------- */
+function meter(k){
+  let s = '<span class="meter" aria-hidden="true">';
+  for(let i=1;i<=3;i++) s += '<i'+(i<=GUIDANCE[k]?' class="on"':'')+'></i>';
+  return s + '</span>';
+}
 function buildSetup(){
   const t = T();
   els.setup.innerHTML =
-    '<fieldset><legend>'+t.levelTitle+'</legend><div class="rail">' +
+    '<fieldset><legend>'+t.levelTitle+'</legend><p class="hint">'+t.meterHint+'</p>' +
     LEVELS.map(k =>
-      '<label class="lv"><input type="radio" name="level" value="'+k+'"'+(state.level===k?" checked":"")+'>' +
-      '<span class="dot" aria-hidden="true"></span>' +
-      '<span class="txt"><strong>'+t.levels[k].name+'</strong><span>'+t.levels[k].desc+'</span></span></label>'
-    ).join("") + '</div></fieldset>' +
+      '<label class="opt"><input type="radio" name="level" value="'+k+'"'+(state.level===k?" checked":"")+'>' +
+      '<span class="ic">'+ICONS[k]+'</span>' +
+      '<span class="txt"><strong>'+t.levels[k].name+'</strong><span class="d">'+t.levels[k].desc+'</span></span>' +
+      meter(k)+'</label>'
+    ).join("") + '</fieldset>' +
     '<fieldset><legend>'+t.dialTitle+'</legend><div class="seg">' +
     DIALS.map(k =>
       '<label><input type="radio" name="dial" value="'+k+'"'+(state.dial===k?" checked":"")+'>'+t.dials[k]+'</label>'
     ).join("") + '</div></fieldset>' +
+    (isKids() ? '' : '<fieldset><legend>'+t.styleTitle+'</legend><div class="seg">' +
+    STYLES.map(k =>
+      '<label><input type="radio" name="style" value="'+k+'"'+(state.style===k?" checked":"")+'>'+t.styles[k]+'</label>'
+    ).join("") + '</div></fieldset>') +
     '<button type="button" class="done" id="doneBtn">'+t.done+'</button>';
 }
 
-function modeLabel(level, dial){
+function modeLabel(level, dial, style = (isKids() ? "standard" : state.style)){
   const t = T();
-  return t.levels[level].name + ", " + t.dials[dial].toLowerCase();
+  let s = t.levels[level].name + ", " + t.dials[dial].toLowerCase();
+  if(style !== "standard") s += ", " + t.styles[style].toLowerCase();
+  return s;
 }
 function updateMode(){
   const t = T();
   els.modeBtn.innerHTML = '<span>'+modeLabel(state.level,state.dial)+'</span><span class="chg">'+t.change+'</span>';
-  els.modeBtn.hidden = !started();
   els.modeBtn.setAttribute("aria-expanded", String(state.sheetOpen));
+  els.app.classList.toggle("chatting", started());
 }
 
 function openSheet(){
   state.sheetOpen = true;
-  state.snapshot = state.level + "|" + state.dial;
-  els.setup.classList.add("sheet");
+  state.snapshot = state.level + "|" + state.dial + "|" + state.style;
   els.setup.hidden = false;
-  els.sheetSlot.appendChild(els.setup);
   updateMode();
 }
 function closeSheet(){
   if(!state.sheetOpen) return;
   state.sheetOpen = false;
   els.setup.hidden = true;
-  if(state.snapshot !== state.level + "|" + state.dial){
+  if(started() && state.snapshot !== state.level + "|" + state.dial + "|" + state.style){
     addNote(T().now + " " + modeLabel(state.level,state.dial));
   }
   updateMode();
@@ -365,20 +695,24 @@ function applyLang(){
   const t = T();
   document.documentElement.lang = state.lang;
   els.lang.value = state.lang;
-  $("newChat").textContent = t.newChat;
+  $("newChat").setAttribute("aria-label", t.newChat);
+  $("newChat").title = t.newChat;
+  $("menuBtn").setAttribute("aria-label", t.menu);
+  $("menuBtn").title = t.menu;
+  $("lnkPrivacy").textContent = t.privacy;
+  $("lnkLegal").textContent = t.legal;
+  updateFine();
   $("h1").textContent = t.h1;
+  document.querySelector('meta[name="description"]').setAttribute("content", t.metaDesc);
   $("sub").textContent = t.sub;
+  $("tryTitle").textContent = t.recentTitle;
+  els.clearHist.textContent = t.clear;
+  $("contactLabel").textContent = t.contact;
   els.input.placeholder = t.placeholder;
   els.input.setAttribute("aria-label", t.placeholder);
-  els.sendBtn.textContent = t.send;
+  els.sendBtn.setAttribute("aria-label", t.send);
   $("bannerNo").textContent = t.notNow;
-  els.examples.innerHTML = "";
-  t.examples.forEach(text => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "ex"; b.textContent = text;
-    b.addEventListener("click", () => send(text));
-    els.examples.appendChild(b);
-  });
+  renderRecent();
   buildSetup();
   updateMode();
   if(state.suggestion) renderBanner();
@@ -386,10 +720,12 @@ function applyLang(){
 
 /* ---------- suggestion banner ---------- */
 function suggestionName(s){
-  const lv = s.level, dl = s.dial;
-  if(lv && dl) return modeLabel(lv, dl);
-  if(lv) return T().levels[lv].name;
-  return T().dials[dl];
+  const t = T(), parts = [];
+  if(s.level) parts.push(t.levels[s.level].name);
+  if(s.dial) parts.push(t.dials[s.dial].toLowerCase());
+  if(s.style) parts.push(t.styles[s.style].toLowerCase());
+  const out = parts.join(", ");
+  return out.charAt(0).toUpperCase() + out.slice(1);
 }
 function renderBanner(){
   const s = state.suggestion;
@@ -400,8 +736,9 @@ function renderBanner(){
 function showBanner(s){
   const level = LEVELS.includes(s.level) ? s.level : null;
   const dial = DIALS.includes(s.dial) ? s.dial : null;
-  if(!level && !dial) return;
-  state.suggestion = { level, dial, reason: String(s.reason || "") };
+  const style = !isKids() && STYLES.includes(s.style) ? s.style : null;
+  if(!level && !dial && !style) return;
+  state.suggestion = { level, dial, style, reason: String(s.reason || "") };
   renderBanner();
 }
 function hideBanner(){ state.suggestion = null; els.banner.hidden = true; }
@@ -410,6 +747,7 @@ $("bannerYes").addEventListener("click", () => {
   const s = state.suggestion; if(!s) return;
   if(s.level){ state.level = s.level; store.set("level", s.level); }
   if(s.dial){ state.dial = s.dial; store.set("dial", s.dial); }
+  if(s.style){ state.style = s.style; store.set("style", s.style); }
   hideBanner();
   buildSetup();
   addNote(T().now + " " + modeLabel(state.level,state.dial));
@@ -426,18 +764,18 @@ function autosize(){
 function startConversation(){
   if(started()) return;
   els.setup.hidden = true;
-  els.setup.classList.add("sheet");
-  els.sheetSlot.appendChild(els.setup);
   state.sheetOpen = false;
+  els.recent.hidden = true;
   els.welcome.hidden = true;
 }
 
 async function send(text){
   text = (text || "").trim();
-  if(!text || state.busy) return;
+  if(!text || state.busy || !state.profile) return;
   hideBanner();
   els.messages.querySelectorAll(".err").forEach(n => n.remove());
   if(state.sheetOpen) closeSheet();
+  if(!started() && !isKids()) saveHistory(text);
   startConversation();
 
   state.messages.push({ role:"user", content:text });
@@ -451,14 +789,24 @@ async function send(text){
     const r = await fetch("/api/chat", {
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ messages: state.messages, level: state.level, dial: state.dial })
+      body: JSON.stringify({ messages: state.messages, level: state.level, dial: state.dial, style: isKids() ? "simple" : state.style, profile: state.profile })
     });
+    if(r.status === 429){
+      let scope = "user";
+      try{ scope = (await r.json()).scope || "user"; }catch{}
+      const e = new Error("limit"); e.limit = scope; throw e;
+    }
     if(!r.ok) throw new Error("HTTP " + r.status);
     const data = await r.json();
     pending.remove();
-    state.messages.push({ role:"assistant", content:data.reply });
-    addMsg("bot", data.reply);
-    if(data.suggestion) showBanner(data.suggestion);
+    if(data.blocked){
+      state.messages.pop();
+      addMsg("bot", data.blocked === "care" ? T().blockedCare : T().blockedUnsafe);
+    }else{
+      state.messages.push({ role:"assistant", content:data.reply });
+      addMsg("bot", data.reply);
+      if(data.suggestion) showBanner(data.suggestion);
+    }
   }catch(err){
     console.error(err);
     pending.remove();
@@ -466,7 +814,7 @@ async function send(text){
     userEl.remove();
     els.input.value = text; autosize();
     if(!started()){ resetToWelcome(); }
-    addNote(T().error, true);
+    addNote(err && err.limit ? (err.limit === "global" ? T().limitGlobal : T().limitUser) : T().error, true);
   }finally{
     state.busy = false; els.sendBtn.disabled = false;
     if(matchMedia("(pointer:fine)").matches) els.input.focus();
@@ -475,10 +823,9 @@ async function send(text){
 
 function resetToWelcome(){
   state.sheetOpen = false;
-  els.setup.classList.remove("sheet");
-  els.setup.hidden = false;
-  els.onboardSlot.appendChild(els.setup);
+  els.setup.hidden = true;
   els.welcome.hidden = false;
+  renderRecent();
   updateMode();
 }
 
@@ -496,6 +843,7 @@ els.setup.addEventListener("change", (e) => {
   const el = e.target;
   if(el.name === "level"){ state.level = el.value; store.set("level", el.value); }
   if(el.name === "dial"){ state.dial = el.value; store.set("dial", el.value); }
+  if(el.name === "style"){ state.style = el.value; store.set("style", el.value); }
   updateMode();
 });
 els.setup.addEventListener("click", (e) => { if(e.target.id === "doneBtn") closeSheet(); });
@@ -504,6 +852,7 @@ els.lang.addEventListener("change", () => {
   state.lang = els.lang.value; store.set("lang", state.lang); applyLang();
 });
 $("newChat").addEventListener("click", newChat);
+els.clearHist.addEventListener("click", () => { store.set(HKEY, "[]"); renderRecent(); });
 els.sendBtn.addEventListener("click", () => send(els.input.value));
 els.input.addEventListener("input", autosize);
 els.input.addEventListener("keydown", (e) => {
@@ -512,7 +861,221 @@ els.input.addEventListener("keydown", (e) => {
   }
 });
 
+/* ---------- report, fine print ---------- */
+function reportAnswer(text){
+  const t = T();
+  const body = t.reportBody.replace("{a}", text.slice(0, 600));
+  location.href = "mailto:info@manualai.org?subject=" + encodeURIComponent(t.reportSubject) + "&body=" + encodeURIComponent(body);
+}
+function updateFine(){ $("fine").textContent = isKids() ? T().kidsNote : T().aiNote; }
+
+/* ---------- overlay ---------- */
+const overlay = $("overlay"), panel = $("panel");
+let ovDismissible = true, ovReturn = null, currentView = null, legalBack = null;
+
+function render(html, dismissible = true){
+  ovDismissible = dismissible;
+  if(overlay.hidden) ovReturn = document.activeElement;
+  panel.innerHTML = html;
+  overlay.hidden = false;
+  panel.scrollTop = 0;
+  const f = panel.querySelector("input:not([type=hidden]), select, button");
+  (f || panel).focus();
+}
+function hideOverlay(){
+  overlay.hidden = true;
+  panel.innerHTML = "";
+  if(ovReturn && ovReturn.focus) ovReturn.focus();
+  ovReturn = null;
+}
+overlay.addEventListener("keydown", (e) => {
+  if(e.key === "Escape" && ovDismissible){ hideOverlay(); return; }
+  if(e.key === "Tab"){
+    const f = [...panel.querySelectorAll("button, input, select, a[href]")].filter(x => !x.disabled);
+    if(!f.length) return;
+    const first = f[0], last = f[f.length - 1];
+    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+});
+overlay.addEventListener("click", (e) => { if(e.target === overlay && ovDismissible) hideOverlay(); });
+
+const errBox = () => '<p class="oerr" id="oerr" role="alert"></p>';
+const setErr = (m) => { const e = $("oerr"); if(e) e.textContent = m; };
+const legalLinks = () => '<p class="links"><button type="button" class="lnk" data-act="privacy">' + T().privacy + '</button><button type="button" class="lnk" data-act="legal">' + T().legal + '</button></p>';
+const pinInput = (id, ac) => '<input id="' + id + '" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="' + ac + '">';
+
+function viewOnboard(){
+  currentView = viewOnboard;
+  const t = T();
+  const opts = [["de","Deutsch"],["en","English"],["es","Español"],["fr","Français"]]
+    .map(([v,n]) => '<option value="'+v+'"'+(state.lang===v?" selected":"")+'>'+n+'</option>').join("");
+  render('<select id="ovLang" class="ovlang" aria-label="Language">' + opts + '</select>' +
+    '<h2>' + t.who + '</h2>' +
+    '<button type="button" class="bigbtn" data-act="minor"><strong>' + t.under18 + '</strong></button>' +
+    '<button type="button" class="bigbtn" data-act="adult"><strong>' + t.adult18 + '</strong></button>' +
+    legalLinks(), false);
+}
+function viewParent(dismissible){
+  currentView = () => viewParent(dismissible);
+  const t = T();
+  render('<h2>' + t.parentTitle + '</h2><p>' + t.parentText + '</p>' +
+    '<label class="fl" for="pin1">' + t.pinLabel + '</label>' + pinInput("pin1","new-password") +
+    '<label class="fl" for="pin2">' + t.pinRepeat + '</label>' + pinInput("pin2","new-password") +
+    '<label class="chk"><input type="checkbox" id="consent"><span>' + t.consent + '</span></label>' +
+    errBox() +
+    '<button type="button" class="btn" data-act="startKids">' + t.startKids + '</button>' +
+    '<button type="button" class="btn ghost" data-act="' + (dismissible ? "close" : "toOnboard") + '">' + (dismissible ? t.cancel : t.back) + '</button>' +
+    legalLinks(), dismissible);
+}
+function viewMenu(){
+  currentView = viewMenu;
+  const t = T();
+  render('<h2>' + t.menu + '</h2>' +
+    (KIDS_ENABLED ? '<p class="profline">' + t.profileNow + ': <strong>' + (isKids() ? t.profKids : t.profAdult) + '</strong></p>' +
+    '<button type="button" class="btn" data-act="' + (isKids() ? "toAdult" : "toKids") + '">' + (isKids() ? t.toAdult : t.toKids) + '</button>' : '') +
+    legalLinks() +
+    '<button type="button" class="btn ghost" data-act="close">' + t.close + '</button>', true);
+}
+function viewPin(){
+  currentView = viewPin;
+  const t = T();
+  render('<h2>' + t.toAdult + '</h2>' +
+    '<label class="fl" for="pinIn">' + t.pinEnter + '</label>' + pinInput("pinIn","off") +
+    errBox() +
+    '<button type="button" class="btn" data-act="pinOk">' + t.confirm + '</button>' +
+    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>', true);
+}
+function viewLegal(kind){
+  legalBack = overlay.hidden ? null : currentView;
+  const dis = overlay.hidden ? true : ovDismissible;
+  const t = T();
+  render('<button type="button" class="lnk" data-act="legalBack">' + t.back + '</button>' +
+    (state.lang !== "de" ? '<p class="hint">' + t.germanOnly + '</p>' : '') +
+    '<div class="legal">' + (kind === "legal" ? LEGAL_IMPRESSUM : LEGAL_PRIVACY) + '</div>' +
+    '<button type="button" class="btn ghost" data-act="legalBack">' + t.close + '</button>', dis);
+}
+
+panel.addEventListener("click", async (e) => {
+  const b = e.target.closest("[data-act]");
+  if(!b) return;
+  const act = b.dataset.act;
+  if(act === "close") hideOverlay();
+  else if(act === "adult"){ setProfile("adult"); hideOverlay(); }
+  else if(act === "minor") viewParent(false);
+  else if(act === "toOnboard") viewOnboard();
+  else if(act === "toKids") viewParent(true);
+  else if(act === "toAdult") viewPin();
+  else if(act === "menu") viewMenu();
+  else if(act === "privacy" || act === "legal") viewLegal(act);
+  else if(act === "legalBack"){ legalBack ? legalBack() : hideOverlay(); }
+  else if(act === "startKids") await startKids();
+  else if(act === "pinOk") await checkPin();
+});
+panel.addEventListener("change", (e) => {
+  if(e.target.id === "ovLang"){
+    state.lang = e.target.value; store.set("lang", state.lang); applyLang(); viewOnboard();
+  }
+});
+
+/* ---------- profiles and PIN ---------- */
+async function hashPin(pin, salt){
+  const buf = new TextEncoder().encode(salt + ":" + pin);
+  const d = await crypto.subtle.digest("SHA-256", buf);
+  return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function randomSalt(){
+  const a = new Uint8Array(16); crypto.getRandomValues(a);
+  return [...a].map(b => b.toString(16).padStart(2, "0")).join("");
+}
+function setProfile(p){
+  state.profile = p; store.set("profile", p);
+  if(p === "kids"){ store.set(HKEY, "[]"); store.set(SKEY, "null"); }
+  else{ store.set("pinHash", ""); store.set("pinSalt", ""); }
+  hideBanner();
+  buildSetup();
+  updateFine();
+  newChat();
+}
+async function startKids(){
+  const t = T();
+  const p1 = $("pin1").value.trim(), p2 = $("pin2").value.trim();
+  if(!/^\d{4}$/.test(p1)) return setErr(t.errPinLen);
+  if(p1 !== p2) return setErr(t.errPinMismatch);
+  if(!$("consent").checked) return setErr(t.errConsent);
+  const salt = randomSalt();
+  store.set("pinSalt", salt);
+  store.set("pinHash", await hashPin(p1, salt));
+  setProfile("kids");
+  hideOverlay();
+}
+async function checkPin(){
+  const t = T();
+  if(Date.now() < Number(store.get("pinLock") || 0)) return setErr(t.pinLocked);
+  const pin = $("pinIn").value.trim();
+  const stored = store.get("pinHash");
+  const ok = !stored || (/^\d{4}$/.test(pin) && (await hashPin(pin, store.get("pinSalt") || "")) === stored);
+  if(ok){ store.set("pinFails", "0"); setProfile("adult"); hideOverlay(); return; }
+  const fails = Number(store.get("pinFails") || 0) + 1;
+  if(fails >= 5){ store.set("pinFails", "0"); store.set("pinLock", String(Date.now() + 300000)); setErr(t.pinLocked); }
+  else{ store.set("pinFails", String(fails)); setErr(t.pinWrong); }
+}
+
+$("menuBtn").addEventListener("click", viewMenu);
+$("lnkPrivacy").addEventListener("click", () => viewLegal("privacy"));
+$("lnkLegal").addEventListener("click", () => viewLegal("legal"));
+
+/* ---------- legal texts (German) ---------- */
+const PH = (x) => '<mark class="ph">[' + x + ']</mark>';
+const LEGAL_IMPRESSUM = `
+<h2>Impressum</h2>
+<h3>Angaben gemäß § 5 DDG</h3>
+<p>Manuel Picard<br>Freiherr-vom-Stein-Straße 4<br>63179 Obertshausen</p>
+<h3>Kontakt</h3>
+<p>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
+<h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+<p>Name und Anschrift wie oben.</p>
+<h3>Hinweis zu KI-Antworten</h3>
+<p>Die Antworten in manualAI werden von einem KI-System (Claude von Anthropic) erzeugt. Sie können Fehler enthalten und ersetzen keine rechtliche, medizinische oder andere fachliche Beratung. Bitte prüfe wichtige Angaben in verlässlichen Quellen.</p>`;
+
+const LEGAL_PRIVACY = `
+<h2>Datenschutzerklärung</h2>
+<p class="hint">Stand: 29. September 2026</p>
+<h3>Kurz erklärt</h3>
+<p>manualAI hat keine Benutzerkonten. Was du in den Chat schreibst, wird zur Beantwortung an eine KI geschickt und von uns nicht dauerhaft gespeichert. Einstellungen und deine letzten Fragen bleiben nur auf deinem Gerät. Bitte schreib keine persönlichen Daten wie Name, Adresse oder Schule in den Chat.</p>
+<h3>1. Verantwortlich</h3>
+<p>Manuel Picard<br>Freiherr-vom-Stein-Straße 4<br>63179 Obertshausen<br>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
+<h3>2. Welche Daten wir verarbeiten</h3>
+<h4>a) Aufruf der Website (Hosting)</h4>
+<p>Beim Aufruf verarbeitet unser Hosting-Anbieter Vercel Inc. (USA) technisch notwendige Daten, insbesondere deine IP-Adresse, Datum und Uhrzeit, die aufgerufene Adresse und Angaben zu deinem Browser (Server-Logfiles). Zweck: Bereitstellung, Stabilität und Sicherheit. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+<h4>b) Chat mit der KI</h4>
+<p>Deine Nachrichten, die gewählte Stufe, Tiefe und der Erklärstil${KIDS_ENABLED ? ", dein Profil (Kinder- oder Erwachsenenprofil)," : ""} und die Sprache werden an unseren Server und von dort an Anthropic PBC (USA) übermittelt, um Antworten zu erzeugen. Zusätzlich wertet die KI den Gesprächsverlauf aus, um dir passende Einstellungen vorzuschlagen. ${KIDS_ENABLED ? "Im Kinderprofil wird jede Nachricht vorab automatisch auf Sicherheit geprüft." : ""} Wir speichern Gesprächsinhalte nicht in einer eigenen Datenbank. Wie Anthropic Daten verarbeitet, steht in deren Datenschutzhinweisen (anthropic.com/legal/privacy).</p>
+<p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO. ${KIDS_ENABLED ? "Bei Kindern unter 16 Jahren beruht die Verarbeitung zusätzlich auf der Einwilligung der Erziehungsberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO)." : ""} Bitte gib keine sensiblen Daten (zum Beispiel Gesundheitsdaten) in den Chat ein.</p>
+<h4>c) Nutzungsbegrenzung</h4>
+<p>Um Missbrauch und übermäßige Kosten zu verhindern, zählen wir die Anfragen pro Tag. Dafür bilden wir aus deiner IP-Adresse einen gekürzten Hashwert (die IP-Adresse selbst speichern wir nicht) und speichern den Zähler für etwa 25 Stunden bei unserem Datenbank-Dienstleister Upstash. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+<h4>d) Speicher auf deinem Gerät</h4>
+<p>Wir nutzen den lokalen Speicher deines Browsers (kein Tracking, keine Werbe-Cookies), um Sprache, Einstellungen und dein Profil zu merken. ${KIDS_ENABLED ? "Im Kinderprofil wird zusätzlich ein geschützter PIN-Wert (Hash) gespeichert. Im Erwachsenenprofil merkt sich die App deine letzten Fragen," : "Die App merkt sich deine letzten Fragen,"} um Vorschläge anzuzeigen; für die Vorschläge werden diese Fragen an die KI gesendet. Diese Speicherung ist für den von dir genutzten Dienst erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst alles löschen, in der App über "Verlauf löschen" oder in den Einstellungen deines Browsers.</p>
+<h4>e) Kontakt und Meldungen</h4>
+<p>Wenn du uns schreibst oder eine Antwort meldest, öffnet sich dein E-Mail-Programm, und die Nachricht geht an unser Postfach (E-Mail-Dienst: Spaceship). Wir verarbeiten deine Angaben, um dein Anliegen zu bearbeiten (Art. 6 Abs. 1 lit. b bzw. f DSGVO).</p>
+<h4>f) Schriftarten</h4>
+<p>manualAI nutzt die Schriftarten deines Geräts. Es werden keine Schriften von fremden Servern geladen.</p>
+<h3>3. Empfänger und Übermittlung in Drittländer</h3>
+<p>Empfänger sind unsere Dienstleister Vercel Inc., Anthropic PBC, Upstash und Spaceship (E-Mail). Mehrere sitzen in den USA. Die Übermittlung erfolgt auf Grundlage der EU-Standardvertragsklauseln oder eines Angemessenheitsbeschlusses (EU-US Data Privacy Framework), soweit der jeweilige Anbieter zertifiziert ist.</p>
+<h3>4. Speicherdauer</h3>
+<p>Server-Logfiles werden nach den Einstellungen des Hosting-Anbieters nur kurz gespeichert. Die Zähler zur Nutzungsbegrenzung laufen nach etwa 25 Stunden ab. E-Mails speichern wir so lange, wie es für die Bearbeitung nötig ist. Daten im lokalen Speicher bleiben, bis du sie löschst.</p>
+${KIDS_ENABLED ? `<h3>5. Kinder und Jugendliche</h3>
+<p>manualAI richtet sich auch an Schülerinnen und Schüler. Für Nutzer unter 18 gibt es das Kinderprofil, das ein Elternteil, eine erziehungsberechtigte Person oder eine Lehrkraft einrichtet und mit einem PIN schützt. Kinder unter 13 sollen manualAI nur gemeinsam mit einer erwachsenen Person nutzen. Im Kinderprofil speichern wir keine Liste der letzten Fragen. Die Erlaubnis wird bei der Einrichtung bestätigt und nur auf dem Gerät vermerkt. Eltern können sich jederzeit mit Fragen zu Auskunft, Löschung oder Widerruf an info@manualai.org wenden.</p>
+<h3>6. Automatisierte Prüfung</h3>
+<p>Die Sicherheitsprüfung im Kinderprofil erfolgt automatisiert und kann Nachrichten ablehnen. Sie ist keine Entscheidung mit rechtlicher Wirkung im Sinne von Art. 22 DSGVO.</p>
+` : `<h3>5. Altersgrenze</h3>
+<p>manualAI richtet sich an Personen ab 18 Jahren. Wenn du unter 18 bist, nutze manualAI bitte nicht ohne Wissen und Erlaubnis deiner Erziehungsberechtigten. Solltest du davon erfahren, dass ein Kind manualAI genutzt hat, schreib uns an info@manualai.org, dann löschen wir, was wir löschen können.</p>
+`}
+<h3>${KIDS_ENABLED ? "7" : "6"}. Deine Rechte</h3>
+<p>Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3). Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77), zum Beispiel bei der Behörde deines Bundeslandes. Schreib uns dazu an info@manualai.org.</p>`;
+
+
 applyLang();
+if(!state.profile) viewOnboard();
 </script>
 </body>
 </html>
