@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#FFCF4A">
 <title>manualAI: Learn how to find answers</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='11' fill='%232B1B3D'/%3E%3Cpath d='M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z' fill='%23FFCF4A'/%3E%3Ccircle cx='11' cy='14.5' r='1.4' fill='%232B1B3D'/%3E%3C/svg%3E">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="apple-mobile-web-app-title" content="manualAI">
 <meta name="description" content="manualAI is a learning companion that shows you how to find answers yourself.">
 <style>
 :root{
@@ -124,6 +129,17 @@ textarea{flex:1;resize:none;border:2px solid var(--line);border-radius:24px;back
 .send svg{width:22px;height:22px}
 .send:disabled{opacity:.45;cursor:default}
 
+.iconbtn.signed{position:relative}
+.iconbtn.signed::after{content:"";position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#2E9E5B;border:2px solid var(--white)}
+.txtin{width:100%;min-height:48px;border:2px solid var(--line);border-radius:16px;background:var(--white);padding:0 14px;font-size:16px}
+.txtin.code{font-size:22px;letter-spacing:.25em}
+.chatrow{display:flex;gap:8px;margin-bottom:8px}
+.chatopen{flex:1;min-width:0;text-align:left;padding:12px 14px;border:2px solid var(--line);border-radius:16px;background:var(--white)}
+.chatopen strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chatopen span{font-size:13px;color:var(--plum-2)}
+.chatdel{flex:none;width:48px;border:2px solid var(--line);border-radius:16px;background:var(--white);display:grid;place-items:center;color:var(--plum)}
+.chatdel svg{width:20px;height:20px}
+.dangerlnk{color:#8A1F11}
 /* overlay */
 .overlay{position:fixed;inset:0;z-index:50;background:rgba(43,27,61,.55);display:flex;align-items:flex-end;justify-content:center}
 .panel{width:100%;max-width:640px;max-height:92dvh;overflow:auto;background:var(--paper);border-radius:28px 28px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));outline:none}
@@ -148,6 +164,7 @@ textarea{flex:1;resize:none;border:2px solid var(--line);border-radius:24px;back
 .links{margin:0;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
 .lnk{border:0;background:none;color:var(--plum);text-decoration:underline;font-weight:600;padding:8px 2px;min-height:40px}
 .panel .links{justify-content:flex-start;margin-top:8px}
+.panel .contact{text-align:left;padding:10px 0 4px;font-size:15px}
 mark.ph{background:#FFD1D1;color:#5C0F0F;padding:0 3px;border-radius:4px}
 .legal{font-size:15px;line-height:1.55}
 .fine{margin:8px 2px 0;font-size:12.5px;color:var(--plum-2);text-align:center}
@@ -206,8 +223,6 @@ mark.ph{background:#FFD1D1;color:#5C0F0F;padding:0 3px;border-radius:4px}
         <div id="examples"></div>
         <button type="button" class="clear" id="clearHist"></button>
       </div>
-      <p class="contact"><span id="contactLabel"></span> <a href="mailto:info@manualai.org">info@manualai.org</a></p>
-      <p class="links"><button type="button" class="lnk" id="lnkPrivacy"></button><button type="button" class="lnk" id="lnkLegal"></button></p>
     </div>
     <div id="messages" aria-live="polite"></div>
   </main>
@@ -270,8 +285,34 @@ const I18N = {
     reportBody:"Diese Antwort möchte ich melden:\n\n{a}\n\nWas ist das Problem?\n",
     blockedCare:"Das klingt, als wäre etwas schwer für dich. Sprich bitte mit einer Person, der du vertraust, zum Beispiel mit deinen Eltern oder einer Lehrkraft. Kostenlose Hilfe für Kinder und Jugendliche in Deutschland: Nummer gegen Kummer, 116 111. Wenn du in Gefahr bist, ruf sofort den Notruf 112 an.",
     blockedUnsafe:"Dabei kann ich dir nicht helfen. Frag mich gern etwas anderes zum Lernen, oder sprich mit einer Person, der du vertraust.",
+    examplesTitle:"Probier zum Beispiel",
+    modeLead:"Hilfe:",
+    examplesList:["Woran erkenne ich, ob eine Quelle vertrauenswürdig ist?", "Wie finde ich heraus, ob ein Foto gefälscht ist?", "Wie finde ich den Fehler in meinem Code?"],
+    account:"Konto",
+    signIn:"Anmelden",
+    signInHint:"Mit einem Konto werden deine Chats gespeichert. Dafür schicken wir dir einen Code per E-Mail, ein Passwort brauchst du nicht.",
+    emailLabel:"E-Mail-Adresse",
+    adultCheck:"Ich bin 18 oder älter und habe die Datenschutzerklärung gelesen.",
+    sendCode:"Code senden",
+    codeSent:"Wir haben einen Code an {e} geschickt. Schau auch im Spam-Ordner nach.",
+    codeLabel:"Code aus der E-Mail",
+    verify:"Bestätigen",
+    errEmail:"Bitte gib eine gültige E-Mail-Adresse ein.",
+    errAdult:"Bitte bestätige, dass du 18 oder älter bist.",
+    errSend:"Der Code konnte nicht gesendet werden. Bitte versuche es später noch einmal.",
+    errCode:"Der Code ist falsch oder abgelaufen.",
+    signedInAs:"Angemeldet als",
+    myChats:"Meine Chats",
+    noChats:"Noch keine gespeicherten Chats.",
+    signOut:"Abmelden",
+    exportData:"Meine Daten exportieren",
+    deleteAccount:"Konto löschen",
+    deleteWarn:"Dein Konto und alle gespeicherten Chats werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.",
+    deleteGo:"Endgültig löschen",
+    delChatLabel:"Chat löschen",
+    loadErr:"Das hat nicht geklappt. Bitte versuche es noch einmal.",
     newChat:"Neuer Chat", h1:"Finde es selbst heraus.",
-    sub:"manualAI zeigt dir, wie du Antworten selbst findest, statt sie fertig zu bekommen.",
+    sub:"Dein KI-Lernbegleiter: manualAI zeigt dir, wie du Antworten selbst findest, statt sie fertig zu bekommen.",
     levelTitle:"Wie viel Unterstützung möchtest du?",
     meterHint:"Die Punkte zeigen, wie stark du geführt wirst.",
     levels:{
@@ -283,7 +324,7 @@ const I18N = {
     dials:{compact:"Kurz",normal:"Normal",thorough:"Ausführlich"},
     styleTitle:"Wie soll ich erklären?",
     styles:{simple:"Einfach",standard:"Standard",expert:"Fachlich"},
-    placeholder:"Was möchtest du herausfinden?", send:"Senden", done:"Fertig", change:"Ändern",
+    placeholder:"Stell deine Frage…", send:"Senden", done:"Fertig", change:"Ändern",
     thinking:"Ich überlege…", now:"Eingestellt:", notNow:"Nicht jetzt", switchTo:"Wechseln zu {x}",
     contact:"Fragen oder Feedback?", metaDesc:"manualAI ist dein Lernbegleiter: Er zeigt dir, wie du Antworten selbst findest, statt sie fertig zu liefern.", limitUser:"Du hast das Tageslimit erreicht. Morgen kannst du weiterfragen.", limitGlobal:"manualAI ist heute ausgelastet. Bitte versuche es morgen noch einmal.", recentTitle:"Zuletzt gefragt", forYou:"Für dich", clear:"Verlauf löschen",
     error:"Das hat leider nicht geklappt. Prüfe deine Verbindung und sende die Nachricht noch einmal.",
@@ -324,8 +365,34 @@ const I18N = {
     reportBody:"I would like to report this answer:\n\n{a}\n\nWhat is the problem?\n",
     blockedCare:"That sounds like something is hard for you right now. Please talk to someone you trust, such as your parents or a teacher. If you are in danger, call your local emergency number right away.",
     blockedUnsafe:"I can't help with that. Feel free to ask me something else about learning, or talk to someone you trust.",
+    examplesTitle:"Try asking",
+    modeLead:"Help:",
+    examplesList:["How can I tell if a source is trustworthy?", "How do I find out whether a photo is fake?", "How do I track down a bug in my code?"],
+    account:"Account",
+    signIn:"Sign in",
+    signInHint:"With an account your chats are saved. We email you a code, no password needed.",
+    emailLabel:"Email address",
+    adultCheck:"I am 18 or older and have read the privacy policy.",
+    sendCode:"Send code",
+    codeSent:"We sent a code to {e}. Check your spam folder too.",
+    codeLabel:"Code from the email",
+    verify:"Confirm",
+    errEmail:"Please enter a valid email address.",
+    errAdult:"Please confirm that you are 18 or older.",
+    errSend:"The code could not be sent. Please try again later.",
+    errCode:"The code is wrong or has expired.",
+    signedInAs:"Signed in as",
+    myChats:"My chats",
+    noChats:"No saved chats yet.",
+    signOut:"Sign out",
+    exportData:"Export my data",
+    deleteAccount:"Delete account",
+    deleteWarn:"Your account and all saved chats will be deleted permanently. This cannot be undone.",
+    deleteGo:"Delete permanently",
+    delChatLabel:"Delete chat",
+    loadErr:"That didn't work. Please try again.",
     newChat:"New chat", h1:"Find it out yourself.",
-    sub:"manualAI shows you how to find answers instead of handing them over.",
+    sub:"Your AI learning companion: manualAI shows you how to find answers instead of handing them over.",
     levelTitle:"How much help do you want?",
     meterHint:"Dots show how much guidance you get.",
     levels:{
@@ -337,7 +404,7 @@ const I18N = {
     dials:{compact:"Short",normal:"Normal",thorough:"Detailed"},
     styleTitle:"How should I explain?",
     styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
-    placeholder:"What do you want to find out?", send:"Send", done:"Done", change:"Change",
+    placeholder:"Ask your question…", send:"Send", done:"Done", change:"Change",
     thinking:"Thinking…", now:"Set to:", notNow:"Not now", switchTo:"Switch to {x}",
     contact:"Questions or feedback?", metaDesc:"manualAI is a learning companion that shows you how to find answers yourself instead of handing them over.", limitUser:"You've reached today's limit. You can keep asking tomorrow.", limitGlobal:"manualAI is at capacity today. Please try again tomorrow.", recentTitle:"Recently asked", forYou:"For you", clear:"Clear history",
     error:"That didn't work. Check your connection and send it again.",
@@ -378,8 +445,34 @@ const I18N = {
     reportBody:"Quiero avisar de esta respuesta:\n\n{a}\n\n¿Cuál es el problema?\n",
     blockedCare:"Parece que algo es difícil para ti ahora. Habla, por favor, con alguien de confianza, como tus padres o un profesor. Si estás en peligro, llama ya al número de emergencias de tu país.",
     blockedUnsafe:"Con eso no puedo ayudarte. Pregúntame otra cosa sobre aprender, o habla con alguien de confianza.",
+    examplesTitle:"Prueba con",
+    modeLead:"Ayuda:",
+    examplesList:["¿Cómo sé si una fuente es fiable?", "¿Cómo averiguo si una foto es falsa?", "¿Cómo encuentro un error en mi código?"],
+    account:"Cuenta",
+    signIn:"Iniciar sesión",
+    signInHint:"Con una cuenta se guardan tus chats. Te enviamos un código por correo, no necesitas contraseña.",
+    emailLabel:"Correo electrónico",
+    adultCheck:"Tengo 18 años o más y he leído la política de privacidad.",
+    sendCode:"Enviar código",
+    codeSent:"Hemos enviado un código a {e}. Revisa también la carpeta de spam.",
+    codeLabel:"Código del correo",
+    verify:"Confirmar",
+    errEmail:"Introduce un correo electrónico válido.",
+    errAdult:"Confirma que tienes 18 años o más.",
+    errSend:"No se pudo enviar el código. Inténtalo de nuevo más tarde.",
+    errCode:"El código es incorrecto o ha caducado.",
+    signedInAs:"Sesión iniciada como",
+    myChats:"Mis chats",
+    noChats:"Aún no hay chats guardados.",
+    signOut:"Cerrar sesión",
+    exportData:"Exportar mis datos",
+    deleteAccount:"Eliminar cuenta",
+    deleteWarn:"Tu cuenta y todos los chats guardados se eliminarán para siempre. No se puede deshacer.",
+    deleteGo:"Eliminar para siempre",
+    delChatLabel:"Eliminar chat",
+    loadErr:"No ha funcionado. Inténtalo de nuevo.",
     newChat:"Nuevo chat", h1:"Descúbrelo tú mismo.",
-    sub:"manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
+    sub:"Tu compañero de aprendizaje con IA: manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
     levelTitle:"¿Cuánta ayuda quieres?",
     meterHint:"Los puntos muestran cuánta guía recibes.",
     levels:{
@@ -391,7 +484,7 @@ const I18N = {
     dials:{compact:"Breve",normal:"Normal",thorough:"Detallado"},
     styleTitle:"¿Cómo debo explicar?",
     styles:{simple:"Sencillo",standard:"Estándar",expert:"Experto"},
-    placeholder:"¿Qué quieres averiguar?", send:"Enviar", done:"Listo", change:"Cambiar",
+    placeholder:"Haz tu pregunta…", send:"Enviar", done:"Listo", change:"Cambiar",
     thinking:"Pensando…", now:"Ajustado a:", notNow:"Ahora no", switchTo:"Cambiar a {x}",
     contact:"¿Preguntas o comentarios?", metaDesc:"manualAI es tu compañero de aprendizaje: te enseña a encontrar las respuestas tú mismo.", limitUser:"Has alcanzado el límite de hoy. Mañana puedes seguir preguntando.", limitGlobal:"manualAI está al máximo hoy. Inténtalo de nuevo mañana.", recentTitle:"Preguntado recientemente", forYou:"Para ti", clear:"Borrar historial",
     error:"No ha funcionado. Revisa tu conexión y vuelve a enviarlo.",
@@ -432,8 +525,34 @@ const I18N = {
     reportBody:"Je voudrais signaler cette réponse :\n\n{a}\n\nQuel est le problème ?\n",
     blockedCare:"On dirait que quelque chose est difficile pour toi en ce moment. Parle-en à une personne de confiance, comme tes parents ou un enseignant. Si tu es en danger, appelle tout de suite le numéro d'urgence de ton pays.",
     blockedUnsafe:"Je ne peux pas t'aider pour ça. Pose-moi une autre question pour apprendre, ou parle à une personne de confiance.",
+    examplesTitle:"Essaie par exemple",
+    modeLead:"Aide :",
+    examplesList:["Comment savoir si une source est fiable ?", "Comment vérifier si une photo est truquée ?", "Comment trouver une erreur dans mon code ?"],
+    account:"Compte",
+    signIn:"Se connecter",
+    signInHint:"Avec un compte, tes discussions sont enregistrées. Nous t'envoyons un code par e-mail, pas besoin de mot de passe.",
+    emailLabel:"Adresse e-mail",
+    adultCheck:"J'ai 18 ans ou plus et j'ai lu la politique de confidentialité.",
+    sendCode:"Envoyer le code",
+    codeSent:"Nous avons envoyé un code à {e}. Regarde aussi dans les spams.",
+    codeLabel:"Code reçu par e-mail",
+    verify:"Confirmer",
+    errEmail:"Saisis une adresse e-mail valide.",
+    errAdult:"Confirme que tu as 18 ans ou plus.",
+    errSend:"Le code n'a pas pu être envoyé. Réessaie plus tard.",
+    errCode:"Le code est incorrect ou a expiré.",
+    signedInAs:"Connecté en tant que",
+    myChats:"Mes discussions",
+    noChats:"Aucune discussion enregistrée.",
+    signOut:"Se déconnecter",
+    exportData:"Exporter mes données",
+    deleteAccount:"Supprimer le compte",
+    deleteWarn:"Ton compte et toutes les discussions enregistrées seront supprimés définitivement. Cette action est irréversible.",
+    deleteGo:"Supprimer définitivement",
+    delChatLabel:"Supprimer la discussion",
+    loadErr:"Ça n'a pas marché. Réessaie.",
     newChat:"Nouveau chat", h1:"Trouve-le par toi-même.",
-    sub:"manualAI t'apprend à trouver les réponses au lieu de te les donner.",
+    sub:"Ton compagnon d'apprentissage IA : manualAI t'apprend à trouver les réponses au lieu de te les donner.",
     levelTitle:"Combien d'aide veux-tu ?",
     meterHint:"Les points indiquent le niveau d'accompagnement.",
     levels:{
@@ -445,7 +564,7 @@ const I18N = {
     dials:{compact:"Court",normal:"Normal",thorough:"Détaillé"},
     styleTitle:"Comment dois-je expliquer ?",
     styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
-    placeholder:"Que veux-tu découvrir ?", send:"Envoyer", done:"Terminé", change:"Modifier",
+    placeholder:"Pose ta question…", send:"Envoyer", done:"Terminé", change:"Modifier",
     thinking:"Réflexion…", now:"Réglé sur :", notNow:"Pas maintenant", switchTo:"Passer à {x}",
     contact:"Une question ou un avis ?", metaDesc:"manualAI est ton compagnon d'apprentissage : il t'apprend à trouver les réponses par toi-même.", limitUser:"Tu as atteint la limite du jour. Tu pourras continuer demain.", limitGlobal:"manualAI est complet aujourd'hui. Réessaie demain.", recentTitle:"Demandé récemment", forYou:"Pour toi", clear:"Effacer l'historique",
     error:"Ça n'a pas marché. Vérifie ta connexion et renvoie ton message.",
@@ -472,12 +591,23 @@ const store = {
 // Set to true to re-enable the child profile (needs legal review first).
 const KIDS_ENABLED = false;
 
+// Supabase (both values are public by design; data is protected by row level security).
+const SB_URL = "https://raqoawgvthttcjoihqii.supabase.co";
+const SB_KEY = "sb_publishable_6KjHprkZSX2zRMisxubJfQ_M3S6uqBv";
+function loadSession(){
+  try{ const x = JSON.parse(store.get("sb_session") || "null"); return x && x.access_token && x.refresh_token ? x : null; }
+  catch{ return null; }
+}
+
 const state = {
   lang: I18N[store.get("lang")] ? store.get("lang") : (I18N[(navigator.language||"en").slice(0,2)] ? navigator.language.slice(0,2) : "en"),
   level: LEVELS.includes(store.get("level")) ? store.get("level") : "coach",
   dial: DIALS.includes(store.get("dial")) ? store.get("dial") : "normal",
   style: STYLES.includes(store.get("style")) ? store.get("style") : "standard",
   profile: KIDS_ENABLED ? (["kids","adult"].includes(store.get("profile")) ? store.get("profile") : null) : "adult",
+  session: loadSession(),
+  chatId: null,
+  saveChain: Promise.resolve(),
   messages: [],
   busy: false,
   sheetOpen: false,
@@ -549,12 +679,15 @@ function renderRecent(){
     items = all.slice(0, 3); title = T().recentTitle;
     if(top.length && !started() && histKey(top) !== suggFailedKey) fetchSugg(top);
   }
+  let direct = false;
+  if(!items.length){ items = T().examplesList; title = T().examplesTitle; direct = true; }
   $("tryTitle").textContent = title;
+  els.clearHist.hidden = direct;
   els.examples.innerHTML = "";
   items.forEach(text => {
     const b = document.createElement("button");
     b.type = "button"; b.className = "ex"; b.textContent = text;
-    b.addEventListener("click", () => { els.input.value = text; autosize(); els.input.focus(); });
+    b.addEventListener("click", () => { if(direct){ send(text); } else { els.input.value = text; autosize(); els.input.focus(); } });
     els.examples.appendChild(b);
   });
   els.recent.hidden = items.length === 0 || started();
@@ -669,7 +802,7 @@ function modeLabel(level, dial, style = (isKids() ? "standard" : state.style)){
 }
 function updateMode(){
   const t = T();
-  els.modeBtn.innerHTML = '<span>'+modeLabel(state.level,state.dial)+'</span><span class="chg">'+t.change+'</span>';
+  els.modeBtn.innerHTML = '<span>'+t.modeLead+' '+modeLabel(state.level,state.dial)+'</span><span class="chg">'+t.change+'</span>';
   els.modeBtn.setAttribute("aria-expanded", String(state.sheetOpen));
   els.app.classList.toggle("chatting", started());
 }
@@ -699,15 +832,13 @@ function applyLang(){
   $("newChat").title = t.newChat;
   $("menuBtn").setAttribute("aria-label", t.menu);
   $("menuBtn").title = t.menu;
-  $("lnkPrivacy").textContent = t.privacy;
-  $("lnkLegal").textContent = t.legal;
   updateFine();
   $("h1").textContent = t.h1;
   document.querySelector('meta[name="description"]').setAttribute("content", t.metaDesc);
   $("sub").textContent = t.sub;
   $("tryTitle").textContent = t.recentTitle;
   els.clearHist.textContent = t.clear;
-  $("contactLabel").textContent = t.contact;
+
   els.input.placeholder = t.placeholder;
   els.input.setAttribute("aria-label", t.placeholder);
   els.sendBtn.setAttribute("aria-label", t.send);
@@ -788,7 +919,7 @@ async function send(text){
   try{
     const r = await fetch("/api/chat", {
       method:"POST",
-      headers:{ "Content-Type":"application/json" },
+      headers: await authHeaders(),
       body: JSON.stringify({ messages: state.messages, level: state.level, dial: state.dial, style: isKids() ? "simple" : state.style, profile: state.profile })
     });
     if(r.status === 429){
@@ -805,6 +936,8 @@ async function send(text){
     }else{
       state.messages.push({ role:"assistant", content:data.reply });
       addMsg("bot", data.reply);
+      persist("user", text);
+      persist("assistant", data.reply);
       if(data.suggestion) showBanner(data.suggestion);
     }
   }catch(err){
@@ -831,6 +964,8 @@ function resetToWelcome(){
 
 function newChat(){
   state.messages = [];
+  state.chatId = null;
+  state.saveChain = Promise.resolve();
   hideBanner();
   els.messages.innerHTML = "";
   resetToWelcome();
@@ -931,10 +1066,19 @@ function viewParent(dismissible){
 function viewMenu(){
   currentView = viewMenu;
   const t = T();
-  render('<h2>' + t.menu + '</h2>' +
+  const acct = state.session
+    ? '<p class="profline">' + t.signedInAs + ': <strong>' + esc(state.session.user.email || "") + '</strong></p>' +
+      '<button type="button" class="btn" data-act="myChats">' + t.myChats + '</button>' +
+      '<button type="button" class="btn ghost" data-act="export">' + t.exportData + '</button>' +
+      '<button type="button" class="btn ghost" data-act="signOut">' + t.signOut + '</button>' +
+      errBox() +
+      '<p class="links"><button type="button" class="lnk dangerlnk" data-act="deleteAccount">' + t.deleteAccount + '</button></p>'
+    : '<p class="hint">' + t.signInHint + '</p><button type="button" class="btn" data-act="signIn">' + t.signIn + '</button>';
+  render('<h2>' + t.menu + '</h2>' + acct +
     (KIDS_ENABLED ? '<p class="profline">' + t.profileNow + ': <strong>' + (isKids() ? t.profKids : t.profAdult) + '</strong></p>' +
     '<button type="button" class="btn" data-act="' + (isKids() ? "toAdult" : "toKids") + '">' + (isKids() ? t.toAdult : t.toKids) + '</button>' : '') +
     legalLinks() +
+    '<p class="contact">' + t.contact + ' <a href="mailto:info@manualai.org">info@manualai.org</a></p>' +
     '<button type="button" class="btn ghost" data-act="close">' + t.close + '</button>', true);
 }
 function viewPin(){
@@ -969,6 +1113,16 @@ panel.addEventListener("click", async (e) => {
   else if(act === "menu") viewMenu();
   else if(act === "privacy" || act === "legal") viewLegal(act);
   else if(act === "legalBack"){ legalBack ? legalBack() : hideOverlay(); }
+  else if(act === "signIn") viewSignIn();
+  else if(act === "sendCode") await sendCode();
+  else if(act === "verifyCode") await verifyCode();
+  else if(act === "myChats") await viewChats();
+  else if(act === "openChat") await openChat(b.dataset.id);
+  else if(act === "delChat") await removeChat(b.dataset.id);
+  else if(act === "export") await exportData();
+  else if(act === "signOut") await doSignOut();
+  else if(act === "deleteAccount") viewDeleteAccount();
+  else if(act === "deleteAccountGo") await doDeleteAccount();
   else if(act === "startKids") await startKids();
   else if(act === "pinOk") await checkPin();
 });
@@ -1021,16 +1175,254 @@ async function checkPin(){
   else{ store.set("pinFails", String(fails)); setErr(t.pinWrong); }
 }
 
+
+/* ---------- accounts (Supabase over plain REST, no external library) ---------- */
+const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
+const isUuid = (x) => /^[0-9a-f-]{36}$/i.test(String(x || ""));
+let pendingEmail = "", refreshing = null;
+
+function updateAccountUI(){ $("menuBtn").classList.toggle("signed", !!state.session); }
+function saveSession(x){
+  if(x && x.access_token){
+    state.session = {
+      access_token: x.access_token,
+      refresh_token: x.refresh_token,
+      expires_at: x.expires_at || Math.floor(Date.now() / 1000) + (x.expires_in || 3600),
+      user: { id: x.user && x.user.id, email: x.user && x.user.email }
+    };
+    store.set("sb_session", JSON.stringify(state.session));
+  }else{
+    state.session = null;
+    store.set("sb_session", "");
+  }
+  updateAccountUI();
+}
+async function getToken(){
+  const x = state.session;
+  if(!x) return null;
+  if(x.expires_at - 60 > Date.now() / 1000) return x.access_token;
+  if(!refreshing){
+    refreshing = (async () => {
+      try{
+        const r = await fetch(SB_URL + "/auth/v1/token?grant_type=refresh_token", {
+          method:"POST",
+          headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
+          body: JSON.stringify({ refresh_token: x.refresh_token })
+        });
+        if(r.status === 400 || r.status === 401 || r.status === 403){ saveSession(null); return null; }
+        if(!r.ok) throw new Error("refresh " + r.status);
+        saveSession(await r.json());
+        return state.session ? state.session.access_token : null;
+      }catch(e){ console.error(e); return null; }
+      finally{ refreshing = null; }
+    })();
+  }
+  return refreshing;
+}
+async function authHeaders(){
+  const h = { "Content-Type":"application/json" };
+  const tok = await getToken();
+  if(tok) h.Authorization = "Bearer " + tok;
+  return h;
+}
+async function sbRest(method, path, body, prefer){
+  const tok = await getToken();
+  if(!tok) throw new Error("not signed in");
+  const headers = { apikey: SB_KEY, Authorization: "Bearer " + tok, "Content-Type":"application/json" };
+  if(prefer) headers.Prefer = prefer;
+  const r = await fetch(SB_URL + "/rest/v1" + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+  if(!r.ok) throw new Error("REST " + r.status);
+  if(r.status === 204) return null;
+  return r.json().catch(() => null);
+}
+async function fetchAll(path){
+  const out = [], page = 1000;
+  for(let off = 0; ; off += page){
+    const rows = await sbRest("GET", path + (path.includes("?") ? "&" : "?") + "limit=" + page + "&offset=" + off);
+    out.push(...(rows || []));
+    if(!rows || rows.length < page) break;
+  }
+  return out;
+}
+
+/* save chats for signed-in users (failures never block the chat) */
+function persist(role, content){
+  if(!state.session) return;
+  state.saveChain = state.saveChain.then(async () => {
+    try{
+      if(!state.chatId){
+        const rows = await sbRest("POST", "/chats", { title: content.slice(0, 60) }, "return=representation");
+        state.chatId = rows && rows[0] && rows[0].id;
+      }
+      if(state.chatId) await sbRest("POST", "/messages", { chat_id: state.chatId, role, content: content.slice(0, 12000) }, "return=minimal");
+    }catch(e){ console.error("save failed", e); }
+  });
+}
+
+/* sign in with an emailed code */
+function viewSignIn(){
+  currentView = viewSignIn;
+  const t = T();
+  render('<h2>' + t.signIn + '</h2><p class="hint">' + t.signInHint + '</p>' +
+    '<label class="fl" for="emailIn">' + t.emailLabel + '</label>' +
+    '<input id="emailIn" class="txtin" type="email" inputmode="email" autocomplete="email" autocapitalize="off">' +
+    '<label class="chk"><input type="checkbox" id="adultChk"><span>' + t.adultCheck + '</span></label>' +
+    errBox() +
+    '<button type="button" class="btn" data-act="sendCode">' + t.sendCode + '</button>' +
+    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>' +
+    legalLinks(), true);
+}
+function viewCode(email){
+  pendingEmail = email;
+  currentView = () => viewCode(email);
+  const t = T();
+  render('<h2>' + t.signIn + '</h2><p>' + esc(t.codeSent.replace("{e}", email)) + '</p>' +
+    '<label class="fl" for="codeIn">' + t.codeLabel + '</label>' +
+    '<input id="codeIn" class="txtin code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10">' +
+    errBox() +
+    '<button type="button" class="btn" data-act="verifyCode">' + t.verify + '</button>' +
+    '<button type="button" class="btn ghost" data-act="signIn">' + t.back + '</button>', true);
+}
+async function sendCode(){
+  const t = T();
+  const email = ($("emailIn").value || "").trim();
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr(t.errEmail);
+  if(!$("adultChk").checked) return setErr(t.errAdult);
+  setErr("");
+  try{
+    const r = await fetch(SB_URL + "/auth/v1/otp", {
+      method:"POST",
+      headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
+      body: JSON.stringify({ email, create_user: true, data: { adult_confirmed: true } })
+    });
+    if(!r.ok) throw new Error("otp " + r.status);
+    viewCode(email);
+  }catch(e){ console.error(e); setErr(t.errSend); }
+}
+async function verifyCode(){
+  const t = T();
+  const token = ($("codeIn").value || "").replace(/\s/g, "");
+  if(!/^\d{6,10}$/.test(token)) return setErr(t.errCode);
+  try{
+    const r = await fetch(SB_URL + "/auth/v1/verify", {
+      method:"POST",
+      headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
+      body: JSON.stringify({ email: pendingEmail, token, type: "email" })
+    });
+    if(!r.ok) throw new Error("verify " + r.status);
+    const x = await r.json();
+    if(!x.access_token) throw new Error("no session");
+    saveSession(x);
+    hideOverlay();
+  }catch(e){ console.error(e); setErr(t.errCode); }
+}
+async function doSignOut(){
+  try{
+    const tok = state.session && state.session.access_token;
+    if(tok) await fetch(SB_URL + "/auth/v1/logout", { method:"POST", headers:{ apikey: SB_KEY, Authorization: "Bearer " + tok } });
+  }catch{}
+  saveSession(null);
+  newChat();
+  hideOverlay();
+}
+
+/* saved chats */
+async function viewChats(){
+  currentView = viewChats;
+  const t = T();
+  render('<h2>' + t.myChats + '</h2><div id="chatList" aria-live="polite">…</div>' +
+    '<button type="button" class="btn ghost" data-act="menu">' + t.back + '</button>', true);
+  try{
+    const rows = await sbRest("GET", "/chats?select=id,title,updated_at&order=updated_at.desc&limit=30");
+    const box = $("chatList");
+    if(!box) return;
+    box.innerHTML = rows && rows.length
+      ? rows.map(c =>
+          '<div class="chatrow"><button type="button" class="chatopen" data-act="openChat" data-id="' + esc(c.id) + '"><strong>' + esc(c.title || t.newChat) + '</strong><span>' + esc(new Date(c.updated_at).toLocaleDateString(state.lang)) + '</span></button>' +
+          '<button type="button" class="chatdel" data-act="delChat" data-id="' + esc(c.id) + '" aria-label="' + esc(t.delChatLabel) + '" title="' + esc(t.delChatLabel) + '">' + TRASH + '</button></div>'
+        ).join("")
+      : '<p class="hint">' + t.noChats + '</p>';
+  }catch(e){
+    console.error(e);
+    const box = $("chatList");
+    if(box) box.innerHTML = '<p class="oerr">' + t.loadErr + '</p>';
+  }
+}
+async function openChat(id){
+  if(!isUuid(id)) return;
+  try{
+    const rows = await sbRest("GET", "/messages?chat_id=eq." + id + "&select=role,content&order=id.asc&limit=500");
+    els.messages.innerHTML = "";
+    state.messages = [];
+    hideBanner();
+    startConversation();
+    state.messages = (rows || []).map(m => ({ role: m.role, content: m.content }));
+    state.chatId = id;
+    state.saveChain = Promise.resolve();
+    state.messages.forEach(m => addMsg(m.role === "user" ? "user" : "bot", m.content));
+    updateMode();
+    hideOverlay();
+    scrollDown();
+  }catch(e){
+    console.error(e);
+    const box = $("chatList");
+    if(box) box.innerHTML = '<p class="oerr">' + T().loadErr + '</p>';
+  }
+}
+async function removeChat(id){
+  if(!isUuid(id)) return;
+  try{
+    await sbRest("DELETE", "/chats?id=eq." + id);
+    if(state.chatId === id) newChat();
+    await viewChats();
+  }catch(e){ console.error(e); const box = $("chatList"); if(box) box.innerHTML = '<p class="oerr">' + T().loadErr + '</p>'; }
+}
+
+/* data export and account deletion */
+async function exportData(){
+  try{
+    const profile = await sbRest("GET", "/profiles?select=created_at,adult_confirmed_at,settings");
+    const chats = await fetchAll("/chats?select=id,title,created_at,updated_at&order=created_at.asc");
+    const messages = await fetchAll("/messages?select=chat_id,role,content,created_at&order=id.asc");
+    const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), email: state.session.user.email, profile, chats, messages }, null, 2)], { type:"application/json" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "manualai-export.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  }catch(e){ console.error(e); setErr(T().loadErr); }
+}
+function viewDeleteAccount(){
+  currentView = viewDeleteAccount;
+  const t = T();
+  render('<h2>' + t.deleteAccount + '</h2><p>' + t.deleteWarn + '</p>' + errBox() +
+    '<button type="button" class="btn" data-act="deleteAccountGo">' + t.deleteGo + '</button>' +
+    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>', true);
+}
+async function doDeleteAccount(){
+  try{
+    await sbRest("POST", "/rpc/delete_my_account", {});
+    saveSession(null);
+    newChat();
+    hideOverlay();
+  }catch(e){ console.error(e); setErr(T().loadErr); }
+}
+
+panel.addEventListener("keydown", (e) => {
+  if(e.key !== "Enter") return;
+  if(e.target.id === "emailIn"){ e.preventDefault(); sendCode(); }
+  else if(e.target.id === "codeIn"){ e.preventDefault(); verifyCode(); }
+});
+updateAccountUI();
+
 $("menuBtn").addEventListener("click", viewMenu);
-$("lnkPrivacy").addEventListener("click", () => viewLegal("privacy"));
-$("lnkLegal").addEventListener("click", () => viewLegal("legal"));
 
 /* ---------- legal texts (German) ---------- */
 const PH = (x) => '<mark class="ph">[' + x + ']</mark>';
 const LEGAL_IMPRESSUM = `
 <h2>Impressum</h2>
 <h3>Angaben gemäß § 5 DDG</h3>
-<p>Manuel Picard<br>Freiherr-vom-Stein-Straße 4<br>63179 Obertshausen</p>
+<p>Manuel Picard<br>c/o PICARD Lederwaren GmbH &amp; Co. KG<br>Friedensstraße 22<br>63179 Obertshausen</p>
 <h3>Kontakt</h3>
 <p>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
 <h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
@@ -1042,36 +1434,38 @@ const LEGAL_PRIVACY = `
 <h2>Datenschutzerklärung</h2>
 <p class="hint">Stand: 29. September 2026</p>
 <h3>Kurz erklärt</h3>
-<p>manualAI hat keine Benutzerkonten. Was du in den Chat schreibst, wird zur Beantwortung an eine KI geschickt und von uns nicht dauerhaft gespeichert. Einstellungen und deine letzten Fragen bleiben nur auf deinem Gerät. Bitte schreib keine persönlichen Daten wie Name, Adresse oder Schule in den Chat.</p>
+<p>Du kannst manualAI ohne Konto nutzen. Dann wird das, was du in den Chat schreibst, zur Beantwortung an eine KI geschickt und von uns nicht gespeichert; Einstellungen und deine letzten Fragen bleiben nur auf deinem Gerät. Wenn du ein Konto anlegst, speichern wir zusätzlich deine E-Mail-Adresse und deine Chats, bis du sie löschst. Bitte schreib keine persönlichen Daten wie Name, Adresse oder Schule in den Chat.</p>
 <h3>1. Verantwortlich</h3>
-<p>Manuel Picard<br>Freiherr-vom-Stein-Straße 4<br>63179 Obertshausen<br>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
+<p>Manuel Picard<br>c/o PICARD Lederwaren GmbH &amp; Co. KG<br>Friedensstraße 22<br>63179 Obertshausen<br>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
 <h3>2. Welche Daten wir verarbeiten</h3>
 <h4>a) Aufruf der Website (Hosting)</h4>
 <p>Beim Aufruf verarbeitet unser Hosting-Anbieter Vercel Inc. (USA) technisch notwendige Daten, insbesondere deine IP-Adresse, Datum und Uhrzeit, die aufgerufene Adresse und Angaben zu deinem Browser (Server-Logfiles). Zweck: Bereitstellung, Stabilität und Sicherheit. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
 <h4>b) Chat mit der KI</h4>
-<p>Deine Nachrichten, die gewählte Stufe, Tiefe und der Erklärstil${KIDS_ENABLED ? ", dein Profil (Kinder- oder Erwachsenenprofil)," : ""} und die Sprache werden an unseren Server und von dort an Anthropic PBC (USA) übermittelt, um Antworten zu erzeugen. Zusätzlich wertet die KI den Gesprächsverlauf aus, um dir passende Einstellungen vorzuschlagen. ${KIDS_ENABLED ? "Im Kinderprofil wird jede Nachricht vorab automatisch auf Sicherheit geprüft." : ""} Wir speichern Gesprächsinhalte nicht in einer eigenen Datenbank. Wie Anthropic Daten verarbeitet, steht in deren Datenschutzhinweisen (anthropic.com/legal/privacy).</p>
+<p>Deine Nachrichten, die gewählte Stufe, Tiefe und der Erklärstil${KIDS_ENABLED ? ", dein Profil (Kinder- oder Erwachsenenprofil)," : ""} und die Sprache werden an unseren Server und von dort an Anthropic PBC (USA) übermittelt, um Antworten zu erzeugen. Zusätzlich wertet die KI den Gesprächsverlauf aus, um dir passende Einstellungen vorzuschlagen. ${KIDS_ENABLED ? "Im Kinderprofil wird jede Nachricht vorab automatisch auf Sicherheit geprüft." : ""} Ohne Konto speichern wir Gesprächsinhalte nicht in einer eigenen Datenbank; mit Konto siehe Abschnitt g). Wie Anthropic Daten verarbeitet, steht in deren Datenschutzhinweisen (anthropic.com/legal/privacy).</p>
 <p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO. ${KIDS_ENABLED ? "Bei Kindern unter 16 Jahren beruht die Verarbeitung zusätzlich auf der Einwilligung der Erziehungsberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO)." : ""} Bitte gib keine sensiblen Daten (zum Beispiel Gesundheitsdaten) in den Chat ein.</p>
 <h4>c) Nutzungsbegrenzung</h4>
-<p>Um Missbrauch und übermäßige Kosten zu verhindern, zählen wir die Anfragen pro Tag. Dafür bilden wir aus deiner IP-Adresse einen gekürzten Hashwert (die IP-Adresse selbst speichern wir nicht) und speichern den Zähler für etwa 25 Stunden bei unserem Datenbank-Dienstleister Upstash. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+<p>Um Missbrauch und übermäßige Kosten zu verhindern, zählen wir die Anfragen pro Tag. Dafür bilden wir aus deiner IP-Adresse (bei angemeldeten Nutzern aus der Konto-ID) einen gekürzten Hashwert (die IP-Adresse selbst speichern wir nicht) und speichern den Zähler für etwa 25 Stunden bei unserem Datenbank-Dienstleister Upstash. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
 <h4>d) Speicher auf deinem Gerät</h4>
 <p>Wir nutzen den lokalen Speicher deines Browsers (kein Tracking, keine Werbe-Cookies), um Sprache, Einstellungen und dein Profil zu merken. ${KIDS_ENABLED ? "Im Kinderprofil wird zusätzlich ein geschützter PIN-Wert (Hash) gespeichert. Im Erwachsenenprofil merkt sich die App deine letzten Fragen," : "Die App merkt sich deine letzten Fragen,"} um Vorschläge anzuzeigen; für die Vorschläge werden diese Fragen an die KI gesendet. Diese Speicherung ist für den von dir genutzten Dienst erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst alles löschen, in der App über "Verlauf löschen" oder in den Einstellungen deines Browsers.</p>
 <h4>e) Kontakt und Meldungen</h4>
 <p>Wenn du uns schreibst oder eine Antwort meldest, öffnet sich dein E-Mail-Programm, und die Nachricht geht an unser Postfach (E-Mail-Dienst: Spaceship). Wir verarbeiten deine Angaben, um dein Anliegen zu bearbeiten (Art. 6 Abs. 1 lit. b bzw. f DSGVO).</p>
 <h4>f) Schriftarten</h4>
 <p>manualAI nutzt die Schriftarten deines Geräts. Es werden keine Schriften von fremden Servern geladen.</p>
+<h4>g) Konto und gespeicherte Chats</h4>
+<p>Wenn du ein Konto anlegst, speichern wir deine E-Mail-Adresse, den Zeitpunkt der Registrierung, deine Bestätigung, dass du mindestens 18 Jahre alt bist, deine Chats (deine Nachrichten und die Antworten der KI) und deine Einstellungen. Die Daten liegen bei unserem Dienstleister Supabase (Datenbank-Standort: Frankfurt am Main, Deutschland). Zur Anmeldung schicken wir dir einen Code per E-Mail, ein Passwort gibt es nicht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des Kontos und der Speicherfunktion). Du kannst Chats einzeln löschen, deine Daten als Datei exportieren und dein Konto samt aller Daten jederzeit im Menü löschen.</p>
 <h3>3. Empfänger und Übermittlung in Drittländer</h3>
-<p>Empfänger sind unsere Dienstleister Vercel Inc., Anthropic PBC, Upstash und Spaceship (E-Mail). Mehrere sitzen in den USA. Die Übermittlung erfolgt auf Grundlage der EU-Standardvertragsklauseln oder eines Angemessenheitsbeschlusses (EU-US Data Privacy Framework), soweit der jeweilige Anbieter zertifiziert ist.</p>
+<p>Empfänger sind unsere Dienstleister Vercel Inc., Anthropic PBC, Upstash, Supabase und Spaceship (E-Mail). Mehrere sitzen in den USA. Die Übermittlung erfolgt auf Grundlage der EU-Standardvertragsklauseln oder eines Angemessenheitsbeschlusses (EU-US Data Privacy Framework), soweit der jeweilige Anbieter zertifiziert ist.</p>
 <h3>4. Speicherdauer</h3>
-<p>Server-Logfiles werden nach den Einstellungen des Hosting-Anbieters nur kurz gespeichert. Die Zähler zur Nutzungsbegrenzung laufen nach etwa 25 Stunden ab. E-Mails speichern wir so lange, wie es für die Bearbeitung nötig ist. Daten im lokalen Speicher bleiben, bis du sie löschst.</p>
+<p>Server-Logfiles werden nach den Einstellungen des Hosting-Anbieters nur kurz gespeichert. Die Zähler zur Nutzungsbegrenzung laufen nach etwa 25 Stunden ab. E-Mails speichern wir so lange, wie es für die Bearbeitung nötig ist. Kontodaten und gespeicherte Chats bleiben, bis du sie oder dein Konto löschst. Daten im lokalen Speicher bleiben, bis du sie löschst.</p>
 ${KIDS_ENABLED ? `<h3>5. Kinder und Jugendliche</h3>
 <p>manualAI richtet sich auch an Schülerinnen und Schüler. Für Nutzer unter 18 gibt es das Kinderprofil, das ein Elternteil, eine erziehungsberechtigte Person oder eine Lehrkraft einrichtet und mit einem PIN schützt. Kinder unter 13 sollen manualAI nur gemeinsam mit einer erwachsenen Person nutzen. Im Kinderprofil speichern wir keine Liste der letzten Fragen. Die Erlaubnis wird bei der Einrichtung bestätigt und nur auf dem Gerät vermerkt. Eltern können sich jederzeit mit Fragen zu Auskunft, Löschung oder Widerruf an info@manualai.org wenden.</p>
 <h3>6. Automatisierte Prüfung</h3>
 <p>Die Sicherheitsprüfung im Kinderprofil erfolgt automatisiert und kann Nachrichten ablehnen. Sie ist keine Entscheidung mit rechtlicher Wirkung im Sinne von Art. 22 DSGVO.</p>
 ` : `<h3>5. Altersgrenze</h3>
-<p>manualAI richtet sich an Personen ab 18 Jahren. Wenn du unter 18 bist, nutze manualAI bitte nicht ohne Wissen und Erlaubnis deiner Erziehungsberechtigten. Solltest du davon erfahren, dass ein Kind manualAI genutzt hat, schreib uns an info@manualai.org, dann löschen wir, was wir löschen können.</p>
+<p>manualAI richtet sich an Personen ab 18 Jahren. Für die Registrierung bestätigst du, dass du mindestens 18 Jahre alt bist. Wenn du unter 18 bist, nutze manualAI bitte nicht ohne Wissen und Erlaubnis deiner Erziehungsberechtigten. Solltest du davon erfahren, dass ein Kind manualAI genutzt hat, schreib uns an info@manualai.org, dann löschen wir, was wir löschen können.</p>
 `}
 <h3>${KIDS_ENABLED ? "7" : "6"}. Deine Rechte</h3>
-<p>Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3). Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77), zum Beispiel bei der Behörde deines Bundeslandes. Schreib uns dazu an info@manualai.org.</p>`;
+<p>Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3). Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77), zum Beispiel bei der Behörde deines Bundeslandes. Export und Löschung deiner Kontodaten kannst du direkt im Menü auslösen. Für alles andere schreib uns an info@manualai.org.</p>`;
 
 
 applyLang();
