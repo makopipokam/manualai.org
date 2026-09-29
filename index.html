@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>manualAI</title>
+<meta name="description" content="manualAI shows you how to find answers yourself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F2;
+  --ink:#14262B;
+  --muted:#4B6165;
+  --deep:#0E5560;
+  --mist:#DCE7E5;
+  --line:#B8C9C6;
+  --float:#F0A202;
+  --float-tint:#FFF3D6;
+  --white:#fff;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,sans-serif;
+  --body:"Figtree","Avenir Next","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--paper);color:var(--ink);font:16px/1.5 var(--body);-webkit-text-size-adjust:100%}
+button,select,textarea,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--deep);outline-offset:2px}
+[hidden]{display:none !important}
+
+.app{height:100dvh;max-width:760px;margin:0 auto;display:flex;flex-direction:column}
+
+/* header */
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.wordmark{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.02em;margin:0}
+.tools{display:flex;gap:8px;align-items:center}
+.tools select,.tools button{min-height:40px;border:1px solid var(--line);background:var(--white);border-radius:10px;padding:0 10px}
+
+/* scroll area */
+main{flex:1;overflow-y:auto;padding:20px 16px 8px;scroll-behavior:smooth}
+h1{font-family:var(--display);font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-.02em;margin:8px 0 8px}
+.sub{color:var(--muted);margin:0;max-width:44ch}
+
+/* setup */
+.setup{margin-top:24px}
+fieldset{border:0;margin:0 0 18px;padding:0;min-width:0}
+legend{font-family:var(--display);font-weight:600;font-size:17px;padding:0;margin-bottom:6px}
+.rail{position:relative}
+.rail::before{content:"";position:absolute;left:8px;top:22px;bottom:22px;width:2px;background:var(--line)}
+.lv{position:relative;display:grid;grid-template-columns:18px 1fr;gap:12px;padding:10px 0;cursor:pointer}
+.lv input{position:absolute;opacity:0;width:1px;height:1px}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--deep);background:var(--paper);margin-top:3px;position:relative;z-index:1;transition:background .15s}
+.lv input:checked + .dot{background:var(--float);border-color:var(--ink)}
+.lv input:focus-visible + .dot{outline:3px solid var(--deep);outline-offset:2px}
+.txt{display:flex;flex-direction:column}
+.txt strong{font-weight:600}
+.txt span{color:var(--muted);font-size:15px}
+.lv input:checked ~ .txt span{color:var(--ink)}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border:1px solid var(--deep);border-radius:12px;overflow:hidden;background:var(--white)}
+.seg label{position:relative;text-align:center;padding:10px 6px;cursor:pointer;font-weight:500}
+.seg label + label{border-left:1px solid var(--deep)}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.seg label:has(input:checked){background:var(--deep);color:var(--white)}
+.seg label:has(input:focus-visible){outline:3px solid var(--float);outline-offset:-3px}
+.done{display:none;width:100%;min-height:44px;border:0;border-radius:12px;background:var(--deep);color:var(--white);font-weight:600}
+.setup.sheet{margin:0 0 10px;max-height:52dvh;overflow:auto;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px}
+.setup.sheet .done{display:block}
+.setup.sheet fieldset:nth-of-type(2){margin-bottom:12px}
+
+/* examples */
+.examples{display:grid;gap:8px;margin-top:4px}
+.ex{text-align:left;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:12px 14px;min-height:44px}
+.ex:hover{border-color:var(--deep)}
+
+/* messages */
+#messages{display:flex;flex-direction:column;gap:12px;padding-bottom:8px}
+.msg{max-width:88%;padding:10px 14px;border-radius:16px;overflow-wrap:anywhere}
+.msg.user{align-self:flex-end;background:var(--deep);color:var(--white);border-bottom-right-radius:4px;white-space:pre-wrap}
+.msg.bot{align-self:flex-start;background:var(--white);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg.bot p{margin:0 0 .6em}
+.msg.bot p:last-child,.msg.bot ul:last-child,.msg.bot ol:last-child{margin-bottom:0}
+.msg.bot ul,.msg.bot ol{margin:0 0 .6em;padding-left:1.3em}
+.msg.bot code{background:var(--mist);padding:1px 5px;border-radius:5px;font-size:.92em}
+.msg.bot pre{background:var(--mist);padding:10px 12px;border-radius:10px;overflow-x:auto;margin:0 0 .6em}
+.msg.bot pre code{padding:0;background:none}
+.msg.bot a{color:var(--deep)}
+.note{align-self:center;color:var(--muted);font-size:14px;text-align:center}
+.note.err{color:#8A1F11;font-weight:500}
+.thinking{display:flex;align-items:center;gap:10px;color:var(--muted)}
+.float{width:12px;height:12px;border-radius:50%;background:var(--float);border:2px solid var(--ink);animation:bob 1.1s ease-in-out infinite alternate}
+@keyframes bob{from{transform:translateY(2px)}to{transform:translateY(-5px)}}
+
+/* dock */
+.dock{padding:10px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--paper)}
+.banner{background:var(--float-tint);border-left:4px solid var(--float);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.banner p{margin:0 0 8px}
+.banner .acts{display:flex;gap:8px;flex-wrap:wrap}
+.banner button{min-height:40px;border-radius:10px;padding:0 14px;border:1px solid var(--ink);background:transparent}
+.banner button.primary{background:var(--ink);color:var(--white)}
+.mode{display:inline-flex;gap:8px;align-items:baseline;border:0;background:none;padding:2px 0 8px;font-weight:600}
+.mode .chg{font-weight:400;color:var(--muted);text-decoration:underline}
+.row{display:flex;gap:8px;align-items:flex-end}
+textarea{flex:1;resize:none;border:1px solid var(--line);border-radius:14px;background:var(--white);padding:11px 14px;min-height:46px;max-height:160px;line-height:1.4}
+.send{min-height:46px;padding:0 18px;border:0;border-radius:14px;background:var(--deep);color:var(--white);font-weight:600}
+.send:disabled{opacity:.5;cursor:default}
+
+@media (prefers-reduced-motion:reduce){.float{animation:none}main{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <p class="wordmark">manualAI</p>
+    <div class="tools">
+      <select id="lang" aria-label="Language">
+        <option value="de">Deutsch</option>
+        <option value="en">English</option>
+        <option value="es">Español</option>
+        <option value="fr">Français</option>
+      </select>
+      <button id="newChat" type="button"></button>
+    </div>
+  </header>
+
+  <main id="scroll">
+    <div id="welcome">
+      <div id="welcomeTop">
+        <h1 id="h1"></h1>
+        <p class="sub" id="sub"></p>
+      </div>
+      <div id="onboardSlot">
+        <section class="setup" id="setup"></section>
+      </div>
+      <div class="examples" id="examples"></div>
+    </div>
+    <div id="messages" aria-live="polite"></div>
+  </main>
+
+  <div class="dock">
+    <div class="banner" id="banner" hidden>
+      <p id="bannerText"></p>
+      <div class="acts">
+        <button type="button" class="primary" id="bannerYes"></button>
+        <button type="button" id="bannerNo"></button>
+      </div>
+    </div>
+    <div id="sheetSlot"></div>
+    <button class="mode" id="modeBtn" type="button" hidden aria-expanded="false"></button>
+    <div class="row">
+      <textarea id="input" rows="1"></textarea>
+      <button class="send" id="sendBtn" type="button"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  de:{
+    newChat:"Neuer Chat", h1:"Finde es selbst heraus.",
+    sub:"manualAI zeigt dir den Weg, statt nur die Antwort zu liefern.",
+    levelTitle:"Wie viel Hilfe willst du?",
+    levels:{
+      pathfinder:{name:"Wegweiser",desc:"Ich sage dir, wo und womit du suchst. Die Antwort findest du selbst."},
+      coach:{name:"Coach",desc:"Ich stelle Fragen und gebe Hinweise. Du gehst die Schritte."},
+      safety_net:{name:"Sicherheitsnetz",desc:"Du löst es allein, ich prüfe dein Ergebnis."}
+    },
+    dialTitle:"Wie viel Lust hast du gerade?",
+    dials:{compact:"Kompakt",normal:"Normal",thorough:"Gründlich"},
+    placeholder:"Was willst du herausfinden?", send:"Senden", done:"Fertig", change:"Ändern",
+    thinking:"Denkt nach…", now:"Jetzt aktiv:", notNow:"Nicht jetzt", switchTo:"Zu {x} wechseln",
+    error:"Das hat nicht geklappt. Prüfe deine Verbindung und sende es noch mal.",
+    examples:["Woran erkenne ich, ob eine Quelle vertrauenswürdig ist?","Wie finde ich heraus, ob ein Foto gefälscht ist?","Wie finde ich den Fehler in meinem Code?"]
+  },
+  en:{
+    newChat:"New chat", h1:"Find it out yourself.",
+    sub:"manualAI shows you how to find answers instead of handing them over.",
+    levelTitle:"How much help do you want?",
+    levels:{
+      pathfinder:{name:"Pathfinder",desc:"I tell you where and how to look. You find the answer."},
+      coach:{name:"Coach",desc:"I ask questions and give hints. You take the steps."},
+      safety_net:{name:"Safety net",desc:"You solve it alone, I check your result."}
+    },
+    dialTitle:"How much energy do you have right now?",
+    dials:{compact:"Compact",normal:"Normal",thorough:"Thorough"},
+    placeholder:"What do you want to find out?", send:"Send", done:"Done", change:"Change",
+    thinking:"Thinking…", now:"Now:", notNow:"Not now", switchTo:"Switch to {x}",
+    error:"That didn't work. Check your connection and send it again.",
+    examples:["How can I tell if a source is trustworthy?","How do I find out whether a photo is fake?","How do I track down a bug in my code?"]
+  },
+  es:{
+    newChat:"Nuevo chat", h1:"Descúbrelo tú mismo.",
+    sub:"manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
+    levelTitle:"¿Cuánta ayuda quieres?",
+    levels:{
+      pathfinder:{name:"Guía",desc:"Te digo dónde y cómo buscar. La respuesta la encuentras tú."},
+      coach:{name:"Coach",desc:"Te hago preguntas y te doy pistas. Los pasos los das tú."},
+      safety_net:{name:"Red de seguridad",desc:"Lo resuelves por tu cuenta, yo reviso tu resultado."}
+    },
+    dialTitle:"¿Cuántas ganas tienes ahora?",
+    dials:{compact:"Compacto",normal:"Normal",thorough:"A fondo"},
+    placeholder:"¿Qué quieres averiguar?", send:"Enviar", done:"Listo", change:"Cambiar",
+    thinking:"Pensando…", now:"Ahora:", notNow:"Ahora no", switchTo:"Cambiar a {x}",
+    error:"No ha funcionado. Revisa tu conexión y vuelve a enviarlo.",
+    examples:["¿Cómo sé si una fuente es fiable?","¿Cómo averiguo si una foto es falsa?","¿Cómo encuentro un error en mi código?"]
+  },
+  fr:{
+    newChat:"Nouveau chat", h1:"Trouve-le par toi-même.",
+    sub:"manualAI t'apprend à trouver les réponses au lieu de te les donner.",
+    levelTitle:"Combien d'aide veux-tu ?",
+    levels:{
+      pathfinder:{name:"Éclaireur",desc:"Je t'indique où et comment chercher. Tu trouves la réponse."},
+      coach:{name:"Coach",desc:"Je pose des questions et donne des pistes. Tu fais les étapes."},
+      safety_net:{name:"Filet de sécurité",desc:"Tu le résous par toi-même, je vérifie ton résultat."}
+    },
+    dialTitle:"Quelle énergie as-tu en ce moment ?",
+    dials:{compact:"Concis",normal:"Normal",thorough:"Approfondi"},
+    placeholder:"Que veux-tu découvrir ?", send:"Envoyer", done:"Terminé", change:"Modifier",
+    thinking:"Réflexion…", now:"Maintenant :", notNow:"Pas maintenant", switchTo:"Passer à {x}",
+    error:"Ça n'a pas marché. Vérifie ta connexion et renvoie ton message.",
+    examples:["Comment savoir si une source est fiable ?","Comment vérifier si une photo est truquée ?","Comment trouver une erreur dans mon code ?"]
+  }
+};
+
+const LEVELS = ["pathfinder","coach","safety_net"];
+const DIALS = ["compact","normal","thorough"];
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch{ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch{} }
+};
+
+const state = {
+  lang: I18N[store.get("lang")] ? store.get("lang") : (I18N[(navigator.language||"en").slice(0,2)] ? navigator.language.slice(0,2) : "en"),
+  level: LEVELS.includes(store.get("level")) ? store.get("level") : "coach",
+  dial: DIALS.includes(store.get("dial")) ? store.get("dial") : "normal",
+  messages: [],
+  busy: false,
+  sheetOpen: false,
+  snapshot: null,
+  suggestion: null
+};
+const T = () => I18N[state.lang];
+const $ = (id) => document.getElementById(id);
+const els = {
+  scroll:$("scroll"), welcome:$("welcome"), onboardSlot:$("onboardSlot"), setup:$("setup"),
+  sheetSlot:$("sheetSlot"), messages:$("messages"), input:$("input"), sendBtn:$("sendBtn"),
+  modeBtn:$("modeBtn"), banner:$("banner"), lang:$("lang"), examples:$("examples")
+};
+const started = () => state.messages.length > 0;
+
+/* ---------- rendering helpers ---------- */
+const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function inline(s){
+  return s
+    .replace(/`([^`]+)`/g,"<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")
+    .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g,"$1<em>$2</em>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
+}
+
+function md(src){
+  const lines = esc(src).split("\n");
+  let html = "", para = [], list = null;
+  const flushPara = () => { if(para.length){ html += "<p>"+inline(para.join("<br>"))+"</p>"; para = []; } };
+  const flushList = () => { if(list){ html += "<"+list.t+">"+list.items.map(x=>"<li>"+inline(x)+"</li>").join("")+"</"+list.t+">"; list = null; } };
+  for(let i=0;i<lines.length;i++){
+    const l = lines[i];
+    if(l.trim().startsWith("```")){
+      flushPara(); flushList();
+      const code = []; i++;
+      while(i<lines.length && !lines[i].trim().startsWith("```")){ code.push(lines[i]); i++; }
+      html += "<pre><code>"+code.join("\n")+"</code></pre>";
+      continue;
+    }
+    let m;
+    if((m = l.match(/^#{1,6}\s+(.*)/))){ flushPara(); flushList(); html += "<p><strong>"+inline(m[1])+"</strong></p>"; continue; }
+    if((m = l.match(/^\s*[-*]\s+(.*)/))){ flushPara(); if(!list || list.t!=="ul"){ flushList(); list={t:"ul",items:[]}; } list.items.push(m[1]); continue; }
+    if((m = l.match(/^\s*\d+[.)]\s+(.*)/))){ flushPara(); if(!list || list.t!=="ol"){ flushList(); list={t:"ol",items:[]}; } list.items.push(m[1]); continue; }
+    if(!l.trim()){ flushPara(); flushList(); continue; }
+    flushList(); para.push(l);
+  }
+  flushPara(); flushList();
+  return html;
+}
+
+function scrollDown(){ els.scroll.scrollTop = els.scroll.scrollHeight; }
+
+function addMsg(kind, text){
+  const d = document.createElement("div");
+  d.className = "msg " + kind;
+  if(kind === "bot") d.innerHTML = md(text); else d.textContent = text;
+  els.messages.appendChild(d);
+  scrollDown();
+  return d;
+}
+function addNote(text, isErr){
+  const d = document.createElement("div");
+  d.className = "note" + (isErr ? " err" : "");
+  if(isErr) d.setAttribute("role","alert");
+  d.textContent = text;
+  els.messages.appendChild(d);
+  scrollDown();
+  return d;
+}
+function addThinking(){
+  const d = document.createElement("div");
+  d.className = "msg bot thinking";
+  d.setAttribute("role","status");
+  d.innerHTML = '<span class="float" aria-hidden="true"></span><span>'+T().thinking+'</span>';
+  els.messages.appendChild(d);
+  scrollDown();
+  return d;
+}
+
+/* ---------- setup (levels + dial) ---------- */
+function buildSetup(){
+  const t = T();
+  els.setup.innerHTML =
+    '<fieldset><legend>'+t.levelTitle+'</legend><div class="rail">' +
+    LEVELS.map(k =>
+      '<label class="lv"><input type="radio" name="level" value="'+k+'"'+(state.level===k?" checked":"")+'>' +
+      '<span class="dot" aria-hidden="true"></span>' +
+      '<span class="txt"><strong>'+t.levels[k].name+'</strong><span>'+t.levels[k].desc+'</span></span></label>'
+    ).join("") + '</div></fieldset>' +
+    '<fieldset><legend>'+t.dialTitle+'</legend><div class="seg">' +
+    DIALS.map(k =>
+      '<label><input type="radio" name="dial" value="'+k+'"'+(state.dial===k?" checked":"")+'>'+t.dials[k]+'</label>'
+    ).join("") + '</div></fieldset>' +
+    '<button type="button" class="done" id="doneBtn">'+t.done+'</button>';
+}
+
+function modeLabel(level, dial){
+  const t = T();
+  return t.levels[level].name + ", " + t.dials[dial].toLowerCase();
+}
+function updateMode(){
+  const t = T();
+  els.modeBtn.innerHTML = '<span>'+modeLabel(state.level,state.dial)+'</span><span class="chg">'+t.change+'</span>';
+  els.modeBtn.hidden = !started();
+  els.modeBtn.setAttribute("aria-expanded", String(state.sheetOpen));
+}
+
+function openSheet(){
+  state.sheetOpen = true;
+  state.snapshot = state.level + "|" + state.dial;
+  els.setup.classList.add("sheet");
+  els.setup.hidden = false;
+  els.sheetSlot.appendChild(els.setup);
+  updateMode();
+}
+function closeSheet(){
+  if(!state.sheetOpen) return;
+  state.sheetOpen = false;
+  els.setup.hidden = true;
+  if(state.snapshot !== state.level + "|" + state.dial){
+    addNote(T().now + " " + modeLabel(state.level,state.dial));
+  }
+  updateMode();
+}
+
+/* ---------- language ---------- */
+function applyLang(){
+  const t = T();
+  document.documentElement.lang = state.lang;
+  els.lang.value = state.lang;
+  $("newChat").textContent = t.newChat;
+  $("h1").textContent = t.h1;
+  $("sub").textContent = t.sub;
+  els.input.placeholder = t.placeholder;
+  els.input.setAttribute("aria-label", t.placeholder);
+  els.sendBtn.textContent = t.send;
+  $("bannerNo").textContent = t.notNow;
+  els.examples.innerHTML = "";
+  t.examples.forEach(text => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ex"; b.textContent = text;
+    b.addEventListener("click", () => send(text));
+    els.examples.appendChild(b);
+  });
+  buildSetup();
+  updateMode();
+  if(state.suggestion) renderBanner();
+}
+
+/* ---------- suggestion banner ---------- */
+function suggestionName(s){
+  const lv = s.level, dl = s.dial;
+  if(lv && dl) return modeLabel(lv, dl);
+  if(lv) return T().levels[lv].name;
+  return T().dials[dl];
+}
+function renderBanner(){
+  const s = state.suggestion;
+  $("bannerText").textContent = s.reason;
+  $("bannerYes").textContent = T().switchTo.replace("{x}", suggestionName(s));
+  els.banner.hidden = false;
+}
+function showBanner(s){
+  const level = LEVELS.includes(s.level) ? s.level : null;
+  const dial = DIALS.includes(s.dial) ? s.dial : null;
+  if(!level && !dial) return;
+  state.suggestion = { level, dial, reason: String(s.reason || "") };
+  renderBanner();
+}
+function hideBanner(){ state.suggestion = null; els.banner.hidden = true; }
+
+$("bannerYes").addEventListener("click", () => {
+  const s = state.suggestion; if(!s) return;
+  if(s.level){ state.level = s.level; store.set("level", s.level); }
+  if(s.dial){ state.dial = s.dial; store.set("dial", s.dial); }
+  hideBanner();
+  buildSetup();
+  addNote(T().now + " " + modeLabel(state.level,state.dial));
+  updateMode();
+});
+$("bannerNo").addEventListener("click", hideBanner);
+
+/* ---------- chat ---------- */
+function autosize(){
+  els.input.style.height = "auto";
+  els.input.style.height = Math.min(els.input.scrollHeight,160) + "px";
+}
+
+function startConversation(){
+  if(started()) return;
+  els.setup.hidden = true;
+  els.setup.classList.add("sheet");
+  els.sheetSlot.appendChild(els.setup);
+  state.sheetOpen = false;
+  els.welcome.hidden = true;
+}
+
+async function send(text){
+  text = (text || "").trim();
+  if(!text || state.busy) return;
+  hideBanner();
+  els.messages.querySelectorAll(".err").forEach(n => n.remove());
+  if(state.sheetOpen) closeSheet();
+  startConversation();
+
+  state.messages.push({ role:"user", content:text });
+  const userEl = addMsg("user", text);
+  els.input.value = ""; autosize();
+  state.busy = true; els.sendBtn.disabled = true;
+  updateMode();
+  const pending = addThinking();
+
+  try{
+    const r = await fetch("/api/chat", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ messages: state.messages, level: state.level, dial: state.dial })
+    });
+    if(!r.ok) throw new Error("HTTP " + r.status);
+    const data = await r.json();
+    pending.remove();
+    state.messages.push({ role:"assistant", content:data.reply });
+    addMsg("bot", data.reply);
+    if(data.suggestion) showBanner(data.suggestion);
+  }catch(err){
+    console.error(err);
+    pending.remove();
+    state.messages.pop();
+    userEl.remove();
+    els.input.value = text; autosize();
+    if(!started()){ resetToWelcome(); }
+    addNote(T().error, true);
+  }finally{
+    state.busy = false; els.sendBtn.disabled = false;
+    if(matchMedia("(pointer:fine)").matches) els.input.focus();
+  }
+}
+
+function resetToWelcome(){
+  state.sheetOpen = false;
+  els.setup.classList.remove("sheet");
+  els.setup.hidden = false;
+  els.onboardSlot.appendChild(els.setup);
+  els.welcome.hidden = false;
+  updateMode();
+}
+
+function newChat(){
+  state.messages = [];
+  hideBanner();
+  els.messages.innerHTML = "";
+  resetToWelcome();
+  els.input.value = ""; autosize();
+  els.scroll.scrollTop = 0;
+}
+
+/* ---------- events ---------- */
+els.setup.addEventListener("change", (e) => {
+  const el = e.target;
+  if(el.name === "level"){ state.level = el.value; store.set("level", el.value); }
+  if(el.name === "dial"){ state.dial = el.value; store.set("dial", el.value); }
+  updateMode();
+});
+els.setup.addEventListener("click", (e) => { if(e.target.id === "doneBtn") closeSheet(); });
+els.modeBtn.addEventListener("click", () => { state.sheetOpen ? closeSheet() : openSheet(); });
+els.lang.addEventListener("change", () => {
+  state.lang = els.lang.value; store.set("lang", state.lang); applyLang();
+});
+$("newChat").addEventListener("click", newChat);
+els.sendBtn.addEventListener("click", () => send(els.input.value));
+els.input.addEventListener("input", autosize);
+els.input.addEventListener("keydown", (e) => {
+  if(e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer:fine)").matches){
+    e.preventDefault(); send(els.input.value);
+  }
+});
+
+applyLang();
+</script>
+</body>
+</html>
