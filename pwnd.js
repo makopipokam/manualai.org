@@ -14,6 +14,14 @@ const UPGRADES = [
   { id: 'calm', name: 'RUHIGE BUCHT', text: 'Eine falsche Antwort pro Match verliert nur einen Combo-Punkt.', apply: s => { s.mods.calm = true; } },
   { id: 'scanner', name: 'LIBELLENBLICK', text: 'Einmal pro Match eine Antwortoption entfernen.', apply: s => { s.mods.scanner = true; } },
 ];
+const POND_UNLOCKS = [
+  { id:'frog', name:'Froschbucht', gold:1000, elixir:250, copy:'Ein erster Bewohner wartet am Ufer.', symbol:'🐸' },
+  { id:'reeds', name:'Schilfgürtel', gold:1040, elixir:320, copy:'Mehr Ufer schafft Schutz und Ruhe.', symbol:'♒' },
+  { id:'dragonfly', name:'Libellen', gold:1120, elixir:420, copy:'Kleine Besucher zeigen klares Wasser an.', symbol:'✦' },
+  { id:'fish', name:'Karpfenkolk', gold:1260, elixir:560, copy:'Ein tiefer Bereich für größere Bewohner.', symbol:'◉' },
+  { id:'lily', name:'Seerosenfeld', gold:1440, elixir:760, copy:'Blüten machen den Teich zu deinem Ort.', symbol:'✿' },
+  { id:'stream', name:'Quellzulauf', gold:1700, elixir:1000, copy:'Eine neue Quelle erweitert deinen Wasserlauf.', symbol:'⌁' },
+];
 const QUESTIONS = [
   { id:'r1', type:'recall', skill:'recall', difficulty:.25, time:10000, prompt:'Welcher Planet ist der Sonne am nächsten?', options:['Venus','Mars','Merkur','Jupiter'], answer:2, explanation:'Merkur ist der sonnennächste Planet.' },
   { id:'r2', type:'recall', skill:'recall', difficulty:.45, time:11000, prompt:'Wie viele Seiten hat ein Hexagon?', options:['5','6','7','8'], answer:1, explanation:'Ein Hexagon ist ein Sechseck.' },
@@ -35,9 +43,9 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
-const state = { ip: saved?.ip ?? 1000, elixir: saved?.elixir ?? 250, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], opponentId: 'mirror', mode: 'duel', mods: {}, match: null, timerId: null };
+const state = { ip: saved?.ip ?? 1000, elixir: saved?.elixir ?? 250, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], unlocked: saved?.unlocked ?? ['frog'], opponentId: 'mirror', mode: 'duel', mods: {}, match: null, timerId: null };
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){ localStorage.setItem('pwnd-profile', JSON.stringify({ ip: Math.round(state.ip), elixir: Math.round(state.elixir), calibration: state.calibration, upgrades: state.upgrades })); }
+function save(){ localStorage.setItem('pwnd-profile', JSON.stringify({ ip: Math.round(state.ip), elixir: Math.round(state.elixir), calibration: state.calibration, upgrades: state.upgrades, unlocked: state.unlocked })); }
 function show(id){ screens.forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo(0,0); }
 function formatTime(ms){ return `${String(Math.ceil(ms/1000)).padStart(2,'0')}`; }
 function weightedQuestion(){
@@ -79,8 +87,12 @@ function finishMatch(){
   const correctAnswers=m.history.filter(x=>x.correct).length; const elixirReward=PwndEngine.calculateElixirReward({mode:m.mode,correctAnswers,totalRounds:m.total,outcome}); state.ip=rating.ip; state.elixir+=elixirReward; state.calibration=Math.min(1,state.calibration+1); save(); const skillValues=m.skills; const strongest=Object.entries(skillValues).sort((a,b)=>b[1]-a[1])[0][0], weak=Object.entries(skillValues).sort((a,b)=>a[1]-b[1])[0][0]; $('endResult').textContent=outcome?'GEWONNEN':'AUS DEM FLUSS'; $('endResult').style.color=outcome?'var(--leaf)':'var(--clay)'; $('goldChange').textContent=`${rating.delta>=0?'+':''}${rating.delta} GOLD`; $('endTitle').textContent=outcome?'Dein Teich ist gewachsen.':'Die AI hat deinen Wasserlauf gelesen.'; $('endCopy').textContent=`${correctAnswers}/${m.total} Antworten korrekt gegen ${opponent.name}. ${m.mode==='free'?'Freies Quizzen bringt Gold und Elixier in deinen Vorrat.':'Dein Duell hat Gold und Elixier in deinen Teich gebracht.'}`; $('ipValue').textContent=state.ip; $('elixirValue').textContent=state.elixir; $('pondGold').textContent=state.ip; $('pondElixir').textContent=state.elixir; $('ipBeforeAfter').textContent=`${Math.round(before)} → ${Math.round(state.ip)}`; $('elixirChange').textContent=`+${elixirReward} → Teich`; $('strengthValue').textContent=SKILL_NAMES[strongest]; $('weaknessValue').textContent=SKILL_NAMES[weak]; renderPondUnlocks(); renderUpgrades(); show('screenEnd'); }
 function renderPondUnlocks(){
   const gold=state.ip, elixir=state.elixir;
-  const unlocks=[['frog','Froschbucht',1000,250,'Ein erster Bewohner wartet am Ufer.'],['reeds','Schilfgürtel',1040,320,'Mehr Ufer schafft Schutz und Ruhe.'],['dragonfly','Libellen',1120,420,'Kleine Besucher zeigen klares Wasser an.'],['fish','Karpfenkolk',1260,560,'Ein tiefer Bereich für größere Bewohner.'],['lily','Seerosenfeld',1440,760,'Blüten machen den Teich zu deinem Ort.'],['stream','Quellzulauf',1700,1000,'Eine neue Quelle erweitert deinen Wasserlauf.']];
-  const grid=$('unlockGrid'); if(!grid)return; grid.innerHTML=unlocks.map(([id,name,goldCost,elixirCost,copy],index)=>{const open=gold>=goldCost&&elixir>=elixirCost; return `<div class="unlock-item ${open?'open':'locked'}"><span class="unlock-symbol">${open?['🐸','♒','✦','◉','✿','⌁'][index]:'·'}</span><div><b>${name}</b><small>${open?copy:`${goldCost} Gold + ${elixirCost} Elixier`}</small></div><strong>${open?'offen':`${goldCost} / ${elixirCost}`}</strong></div>`;}).join('');
+  const grid=$('unlockGrid'); if(!grid)return; grid.innerHTML=POND_UNLOCKS.map(item=>{const open=state.unlocked.includes(item.id); const canAfford=gold>=item.gold&&elixir>=item.elixir; return `<div class="unlock-item ${open?'open':'locked'}"><span class="unlock-symbol">${open?item.symbol:'·'}</span><div><b>${item.name}</b><small>${open?item.copy:`${item.gold} Gold + ${item.elixir} Elixier`}</small></div>${open?'<strong>offen</strong>':`<button class="unlock-action" type="button" data-unlock="${item.id}" ${canAfford?'':'disabled'}>${canAfford?'freischalten':'gesperrt'}</button>`}</div>`;}).join('');
+  grid.querySelectorAll('[data-unlock]').forEach(button=>button.addEventListener('click',()=>unlockPond(button.dataset.unlock)));
+}
+function unlockPond(id){
+  const item=POND_UNLOCKS.find(unlock=>unlock.id===id); if(!item||state.unlocked.includes(id)||state.ip<item.gold||state.elixir<item.elixir)return;
+  state.ip-=item.gold; state.elixir-=item.elixir; state.unlocked=[...state.unlocked,id]; save(); $('pondGold').textContent=Math.round(state.ip); $('pondElixir').textContent=Math.round(state.elixir); renderPondUnlocks();
 }
 function renderUpgrades(){ const choices=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3); $('upgrades').innerHTML=choices.map(u=>`<label class="upgrade"><input type="radio" name="upgrade" value="${u.id}"><strong>${u.name}</strong><small>${u.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('.upgrade').forEach(y=>y.classList.remove('selected'));x.classList.add('selected'); const id=x.querySelector('input').value;if(!state.upgrades.includes(id))state.upgrades=[...state.upgrades.slice(-2),id];save();})); }
 document.querySelectorAll('.opponent-option').forEach(button=>button.addEventListener('click',()=>{state.opponentId=button.dataset.opponent;document.querySelectorAll('.opponent-option').forEach(other=>other.classList.toggle('selected',other===button));}));
