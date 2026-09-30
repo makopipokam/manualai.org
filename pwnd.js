@@ -3,6 +3,11 @@ const screens = [...document.querySelectorAll('.screen')];
 const TYPE_NAMES = { recall: 'RAPID RECALL', pattern: 'PATTERN RECOGNITION', causal: 'CAUSAL CHOICE', logic: 'LOGIC TRAP', source: 'SOURCE SENSE', risk: 'AGENT DECISION' };
 const SKILL_NAMES = { recall: 'Abruf', pattern: 'Muster', causal: 'Kausalität', logic: 'Logik', source: 'Quellengefühl', risk: 'Risiko' };
 const RANKS = [{ min: 0, name: 'UNAWAKENED' }, { min: 800, name: 'INITIATE' }, { min: 1000, name: 'THINKER' }, { min: 1200, name: 'STRATEGIST' }, { min: 1400, name: 'ARCHITECT' }, { min: 1600, name: 'INTELLIGENCE' }];
+const OPPONENTS = {
+  mirror: { name: 'MIRROR', rating: 1000, focus: 'adaptive', time: 1, intro: 'MIRROR beobachtet deine erste Entscheidung.' },
+  rush: { name: 'RUSH', rating: 1050, focus: 'pressure', time: .82, intro: 'RUSH wartet nicht auf Sicherheit. Die Uhr ist Teil des Angriffs.' },
+  oracle: { name: 'ORACLE', rating: 1150, focus: 'reasoning', time: 1.08, intro: 'ORACLE prüft nicht nur deine Antwort — sondern die Lücke in deiner Begründung.' },
+};
 const UPGRADES = [
   { id: 'memory', name: 'MEMORY BUFFER', text: '+2 Sekunden bei Rapid-Recall-Fragen.', apply: s => { s.mods.time = 2000; } },
   { id: 'causal', name: 'CAUSAL LENS', text: 'Kausalitätsfragen verursachen 15 % weniger Schaden bei Fehlern.', apply: s => { s.mods.causalShield = .15; } },
@@ -31,32 +36,33 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
-const state = { ip: saved?.ip ?? 1000, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], mods: {}, match: null, timerId: null, sound: false };
+const state = { ip: saved?.ip ?? 1000, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], opponentId: 'mirror', mods: {}, match: null, timerId: null, sound: false };
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const rank = ip => [...RANKS].reverse().find(r => ip >= r.min) || RANKS[0];
 function save(){ localStorage.setItem('pwnd-profile', JSON.stringify({ ip: Math.round(state.ip), calibration: state.calibration, upgrades: state.upgrades })); }
 function show(id){ screens.forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo(0,0); }
 function formatTime(ms){ return `${String(Math.ceil(ms/1000)).padStart(2,'0')}`; }
 function weightedQuestion(){
-  const m = state.match; const recent = m.history.slice(-2).map(x => x.question.id); const weak = Object.entries(m.skills).sort((a,b)=>a[1]-b[1])[0][0];
-  let candidates = QUESTIONS.filter(q => !recent.includes(q.id) && (m.round < 2 || q.skill === weak || q.type !== m.history.at(-1)?.question.type));
+  const m = state.match; const profile = OPPONENTS[m.opponentId]; const recent = m.history.slice(-2).map(x => x.question.id); const weak = Object.entries(m.skills).sort((a,b)=>a[1]-b[1])[0][0];
+  const focus = profile.focus === 'pressure' ? ['recall','risk'] : profile.focus === 'reasoning' ? ['causal','logic','source'] : [weak];
+  let candidates = QUESTIONS.filter(q => !recent.includes(q.id) && (m.round < 2 || focus.includes(q.skill) || q.type !== m.history.at(-1)?.question.type));
   if (!candidates.length) candidates = QUESTIONS.filter(q => !recent.includes(q.id));
-  const target = Math.min(.9, .25 + (m.round / 10) * .55 + (m.accuracy < .5 ? -.1 : 0));
+  const target = Math.min(.9, .25 + (m.round / 10) * .55 + (m.accuracy < .5 ? -.1 : 0) + (profile.focus === 'reasoning' ? .08 : 0));
   return candidates.sort((a,b)=>Math.abs(a.difficulty-target)-Math.abs(b.difficulty-target))[0];
 }
 function startMatch(){
   state.mods = {}; state.upgrades.forEach(id => UPGRADES.find(u=>u.id===id)?.apply(state));
-  state.match = { round:0, total:10, playerHp:100, aiHp:100, combo:0, history:[], skills:{recall:.5,pattern:.5,causal:.5,logic:.5,source:.5,risk:.5}, accuracy:0, opponent:'MIRROR', selected:null, current:null };
-  $('roundTotal').textContent = state.match.total; $('opponentLabel').textContent = 'MIRROR'; $('phaseLabel').textContent = state.calibration < 1 ? 'CALIBRATION' : 'RANKED DEMO'; show('screenBattle'); nextQuestion();
+  state.match = { round:0, total:10, playerHp:100, aiHp:100, combo:0, history:[], skills:{recall:.5,pattern:.5,causal:.5,logic:.5,source:.5,risk:.5}, accuracy:0, opponentId:state.opponentId, selected:null, current:null };
+  $('roundTotal').textContent = state.match.total; $('opponentLabel').textContent = OPPONENTS[state.opponentId].name; $('phaseLabel').textContent = state.calibration < 1 ? 'CALIBRATION' : 'RANKED DEMO'; show('screenBattle'); nextQuestion();
 }
 function nextQuestion(){
-  const m=state.match; if(m.round >= m.total) return finishMatch(); m.round++; m.current=weightedQuestion(); m.selected=null; m.submitted=false; renderBattle(); startTimer(m.current.time + (state.mods.time || 0));
+  const m=state.match; if(m.round >= m.total) return finishMatch(); m.round++; m.current=weightedQuestion(); m.selected=null; m.submitted=false; renderBattle(); startTimer(Math.round(m.current.time * OPPONENTS[m.opponentId].time) + (state.mods.time || 0));
 }
 function renderBattle(){
   const m=state.match, q=m.current; $('roundNo').textContent=m.round; $('questionType').textContent=TYPE_NAMES[q.type]; $('questionTitle').textContent=q.prompt; $('questionHint').textContent=q.type==='risk'?'Deine Entscheidung hat Konsequenzen.':'Wähle eine Antwort.'; $('comboText').textContent=`COMBO ${m.combo}`; $('skillProfile').textContent=`${SKILL_NAMES[weakest(m.skills)]} wird beobachtet`;
   $('playerHealth').style.width=`${Math.max(0,m.playerHp)}%`; $('aiHealth').style.width=`${Math.max(0,m.aiHp)}%`; $('playerHpText').textContent=Math.ceil(m.playerHp); $('aiHpText').textContent=Math.ceil(m.aiHp); $('lockBtn').disabled=true;
   $('answers').innerHTML=q.options.map((o,i)=>`<button class="answer" type="button" data-answer="${i}"><span class="answer-index">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></button>`).join('');
-  document.querySelectorAll('.answer').forEach(btn=>btn.addEventListener('click',()=>selectAnswer(Number(btn.dataset.answer)))); $('aiComment').textContent = m.round===1 ? 'MIRROR beobachtet deine erste Entscheidung.' : adaptiveComment(m);
+  document.querySelectorAll('.answer').forEach(btn=>btn.addEventListener('click',()=>selectAnswer(Number(btn.dataset.answer)))); $('aiComment').textContent = m.round===1 ? OPPONENTS[m.opponentId].intro : adaptiveComment(m);
 }
 function weakest(skills){ return Object.entries(skills).sort((a,b)=>a[1]-b[1])[0][0]; }
 function adaptiveComment(m){ const w=SKILL_NAMES[weakest(m.skills)]; if(m.combo>=2) return 'Interessant. Deine Sicherheit steigt — also wechsle ich die Perspektive.'; if(m.history.at(-1)?.correct===false) return `Deine ${w}-Lücke ist sichtbar. Ich stelle die nächste Frage nicht zufällig.`; return 'Noch kein klares Muster. Eine weitere Entscheidung genügt.'; }
@@ -68,6 +74,7 @@ function submitAnswer(index, forcedMs=null){
 }
 function showRoundResult(r){ $('resultOrbit').classList.toggle('miss',!r.correct); $('resultOrbit').textContent=r.correct?'+' :'×'; $('roundEyebrow').textContent=r.correct?'DIRECT HIT':'AI COUNTERATTACK'; $('roundTitle').textContent=r.correct?'Treffer bestätigt.':'Die AI hat gekontert.'; $('roundCopy').textContent=r.correct?`Du hast ${r.damage} Schaden verursacht${r.time<r.q.time*.45?' — schnell und präzise.':'.'}`:`Du hast die Frage verfehlt und ${r.selfDamage} Schaden genommen. Die Konsequenz bleibt bestehen.`; $('resultTime').textContent=`${(r.time/1000).toFixed(1)} s`; $('resultDamage').textContent=r.correct?`+${r.damage}`:`-${r.selfDamage}`; $('resultAccuracy').textContent=r.correct?'KORREKT':'FEHLER'; $('explanation').textContent=r.q.explanation; $('continueBtn').textContent=state.match.round>=state.match.total?'Match auswerten →':'Nächste Runde →'; show('screenRound'); }
 function finishMatch(){
-  const m=state.match, before=state.ip; const outcome=m.aiHp<=m.playerHp?1:0; const expected=1/(1+Math.pow(10,((1000-before)/400))); const score=.5*outcome+.25*m.accuracy+.15*(m.history.reduce((a,x)=>a+x.question.difficulty,0)/m.history.length)+.1*Math.min(1,m.history.filter(x=>x.correct&&x.time<x.question.time*.55).length/3); const k=state.calibration<1?48:24; const delta=Math.round(k*(score-expected)); state.ip=Math.max(0,Math.round(before+delta)); state.calibration=Math.min(1,state.calibration+1); save(); const skillValues=m.skills; const strongest=Object.entries(skillValues).sort((a,b)=>b[1]-a[1])[0][0], weak=Object.entries(skillValues).sort((a,b)=>a[1]-b[1])[0][0]; $('endResult').textContent=outcome?'WIN':'LOSS'; $('endResult').style.color=outcome?'var(--cyan)':'var(--pink)'; $('ipChange').textContent=`${delta>=0?'+':''}${delta} IP`; $('endTitle').textContent=outcome?'Die AI wurde gelesen.':'Die AI hat dein Muster gelesen.'; $('endCopy').textContent=`${m.history.filter(x=>x.correct).length}/${m.total} Antworten korrekt. IP misst hier deine Duellleistung — nicht die Anzahl deiner gespielten Runden.`; $('ipValue').textContent=state.ip; $('rankValue').textContent=rank(state.ip).name; $('strengthValue').textContent=SKILL_NAMES[strongest]; $('weaknessValue').textContent=SKILL_NAMES[weak]; renderUpgrades(); show('screenEnd'); }
+  const m=state.match, before=state.ip, opponent=OPPONENTS[m.opponentId]; const outcome=m.aiHp<=m.playerHp?1:0; const expected=1/(1+Math.pow(10,((opponent.rating-before)/400))); const score=.5*outcome+.25*m.accuracy+.15*(m.history.reduce((a,x)=>a+x.question.difficulty,0)/m.history.length)+.1*Math.min(1,m.history.filter(x=>x.correct&&x.time<x.question.time*.55).length/3); const k=state.calibration<1?48:24; const delta=Math.round(k*(score-expected)); state.ip=Math.max(0,Math.round(before+delta)); state.calibration=Math.min(1,state.calibration+1); save(); const skillValues=m.skills; const strongest=Object.entries(skillValues).sort((a,b)=>b[1]-a[1])[0][0], weak=Object.entries(skillValues).sort((a,b)=>a[1]-b[1])[0][0]; $('endResult').textContent=outcome?'WIN':'LOSS'; $('endResult').style.color=outcome?'var(--cyan)':'var(--pink)'; $('ipChange').textContent=`${delta>=0?'+':''}${delta} IP`; $('endTitle').textContent=outcome?'Die AI wurde gelesen.':'Die AI hat dein Muster gelesen.'; $('endCopy').textContent=`${m.history.filter(x=>x.correct).length}/${m.total} Antworten korrekt gegen ${opponent.name}. IP misst hier deine Duellleistung — nicht die Anzahl deiner gespielten Runden.`; $('ipValue').textContent=state.ip; $('rankValue').textContent=rank(state.ip).name; $('strengthValue').textContent=SKILL_NAMES[strongest]; $('weaknessValue').textContent=SKILL_NAMES[weak]; renderUpgrades(); show('screenEnd'); }
 function renderUpgrades(){ const choices=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3); $('upgrades').innerHTML=choices.map(u=>`<label class="upgrade"><input type="radio" name="upgrade" value="${u.id}"><strong>${u.name}</strong><small>${u.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('.upgrade').forEach(y=>y.classList.remove('selected'));x.classList.add('selected'); const id=x.querySelector('input').value;if(!state.upgrades.includes(id))state.upgrades=[...state.upgrades.slice(-2),id];save();})); }
+document.querySelectorAll('.opponent-option').forEach(button=>button.addEventListener('click',()=>{state.opponentId=button.dataset.opponent;document.querySelectorAll('.opponent-option').forEach(other=>other.classList.toggle('selected',other===button));}));
 $('startBtn').addEventListener('click',startMatch); $('lockBtn').addEventListener('click',()=>submitAnswer(state.match.selected)); $('continueBtn').addEventListener('click',()=>state.match.round>=state.match.total?finishMatch():(show('screenBattle'),nextQuestion())); $('againBtn').addEventListener('click',startMatch); $('soundToggle').addEventListener('click',()=>{state.sound=!state.sound;$('soundToggle').textContent=state.sound?'◉':'♪';});
