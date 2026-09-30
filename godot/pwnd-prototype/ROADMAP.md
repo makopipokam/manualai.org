@@ -39,7 +39,7 @@
 - [x] frog returns to the player after development
 - [x] fish reacts to boots and ripples
 - [x] reeds, lilies, and water receive simple animation
-- [ ] first sound pass
+- [x] first low-volume pond ambient loop
 
 ## M4 — Content foundation
 

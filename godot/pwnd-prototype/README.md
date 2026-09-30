@@ -21,7 +21,7 @@ Links befindet sich ein virtueller Joystick für die Bewegung. Eine Berührung u
 
 Die Desktop-Steuerung bleibt als Entwicklungsfallback erhalten: **WASD** bewegt, die Maus blickt, **E** baut, **F** entwickelt, **Q** öffnet das Quiz und **Esc** löst beziehungsweise fängt die Maus wieder ein.
 
-Auf Touch-Geräten gibt es bei Aktionen zusätzlich einen kurzen Vibrationsimpuls, sofern das Gerät und die Plattform haptisches Feedback unterstützen. Die Anwendung funktioniert auch vollständig ohne diese Funktion.
+Auf Touch-Geräten gibt es bei Aktionen zusätzlich einen kurzen Vibrationsimpuls, sofern das Gerät und die Plattform haptisches Feedback unterstützen. Die Anwendung funktioniert auch vollständig ohne diese Funktion. Der Teich hat außerdem einen sehr leisen, lokal mitgelieferten Ambient-Loop; er wird nach jedem Loop automatisch neu gestartet und belastet keine Netzwerkverbindung.
 
 ## Spielschleife
 

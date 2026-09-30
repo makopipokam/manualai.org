@@ -24,9 +24,11 @@ var ripples: Array[MeshInstance3D] = []
 var ripple_materials: Array[StandardMaterial3D] = []
 var ripple_times: Array[float] = []
 var world_time := 0.0
+var ambient_audio: AudioStreamPlayer
 
 func _ready() -> void:
 	_build_environment()
+	_build_ambient_audio()
 	_build_player()
 	_build_hud()
 	_spawn_animals()
@@ -66,6 +68,15 @@ func _build_environment() -> void:
 		_add_lily(position)
 	_add_box("shore_stone", Vector3(1.1, 0.6, 0.8), Vector3(-6.5, 0.3, 2.7), Color("#768276"))
 	_add_box("shore_stone", Vector3(0.8, 0.5, 0.7), Vector3(5.8, 0.25, 3.1), Color("#8c9280"))
+
+func _build_ambient_audio() -> void:
+	ambient_audio = AudioStreamPlayer.new()
+	ambient_audio.name = "PondAmbient"
+	ambient_audio.stream = load("res://audio/pond_ambient.wav")
+	ambient_audio.volume_db = -15.0
+	ambient_audio.finished.connect(ambient_audio.play)
+	add_child(ambient_audio)
+	ambient_audio.play()
 
 func _add_box(label_name: String, size: Vector3, position: Vector3, color: Color, transparency := 0.0) -> MeshInstance3D:
 	var item := MeshInstance3D.new()
