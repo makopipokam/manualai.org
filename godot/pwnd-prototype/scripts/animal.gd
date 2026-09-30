@@ -8,7 +8,8 @@ const SPECIES_DEFINITIONS := {
 		"shape": "sphere",
 		"body_y": 0.22,
 		"scale": Vector3.ONE,
-		"flee_speed": 1.4
+		"flee_speed": 1.4,
+		"required_structure": ""
 	},
 	"fish": {
 		"color": Color("#e7a05d"),
@@ -16,7 +17,8 @@ const SPECIES_DEFINITIONS := {
 		"shape": "fish",
 		"body_y": 0.12,
 		"scale": Vector3(1.5, 0.65, 0.8),
-		"flee_speed": 1.0
+		"flee_speed": 1.0,
+		"required_structure": ""
 	},
 	"duck": {
 		"color": Color("#e6cf86"),
@@ -24,7 +26,8 @@ const SPECIES_DEFINITIONS := {
 		"shape": "capsule",
 		"body_y": 0.4,
 		"scale": Vector3.ONE,
-		"flee_speed": 0.28
+		"flee_speed": 0.28,
+		"required_structure": "duck_dock"
 	}
 }
 
@@ -134,3 +137,6 @@ func _player_is_wading() -> bool:
 
 func _definition() -> Dictionary:
 	return SPECIES_DEFINITIONS.get(species, SPECIES_DEFINITIONS["frog"])
+
+func required_structure() -> String:
+	return str(_definition().get("required_structure", ""))

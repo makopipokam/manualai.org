@@ -498,7 +498,10 @@ func _update_interaction_hint() -> void:
 			nearest = animal
 			nearest_distance = distance
 	if nearest and nearest_distance <= 3.2:
-		if nearest.development < 2:
+		var required_structure: String = nearest.required_structure()
+		if required_structure == "duck_dock" and not dock_built:
+			interaction_hint.text = "HABITAT: Entensteg für die Ente bauen"
+		elif nearest.development < 2:
 			interaction_hint.text = "F / TIER: " + nearest.species.capitalize() + " mit Wasser entwickeln"
 		else:
 			interaction_hint.text = nearest.species.capitalize() + " · vollständig entwickelt"
