@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/pwnd",
+      "destination": "/pwnd.html"
+    }
+  ],
   "functions": {
     "api/*.js": {
       "maxDuration": 60

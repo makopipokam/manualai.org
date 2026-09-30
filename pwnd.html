@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#081018">
+  <meta name="description" content="pwnd — ein adaptives Quizduell gegen künstliche Intelligenz.">
+  <title>pwnd — Quizbattle gegen AI</title>
+  <link rel="stylesheet" href="/pwnd.css">
+</head>
+<body>
+  <main class="shell" id="app">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Zurück zu manualAI"><span class="brand-mark">π</span><span><b>pwnd</b></span></a>
+      <button class="icon-btn" id="soundToggle" type="button" aria-label="Sound umschalten">♪</button>
+    </header>
+
+    <section class="screen active" id="screenStart" aria-labelledby="startTitle">
+      <div class="hero-orbit" aria-hidden="true"><span>IA</span><i></i><strong>AI</strong></div>
+      <p class="eyebrow">CALIBRATION PROTOCOL 01</p>
+      <h1 id="startTitle">Du bist der Agent.<br><em>Die AI ist der Gegner.</em></h1>
+      <p class="lede">Beweise, wie du denkst. Die AI merkt sich nicht nur deine Antworten — sie lernt, wie sie dich herausfordern muss.</p>
+      <div class="feature-row"><span>10 Fragen</span><span>Adaptiver Gegner</span><span>IP-Rating</span></div>
+      <div class="opponent-picker" aria-label="Gegner auswählen">
+        <p class="picker-label">WÄHLE DEINEN ERSTEN GEGNER</p>
+        <div class="opponent-options">
+          <button class="opponent-option selected" type="button" data-opponent="mirror"><b>MIRROR</b><small>liest deine Schwächen</small></button>
+          <button class="opponent-option" type="button" data-opponent="rush"><b>RUSH</b><small>setzt dich unter Zeitdruck</small></button>
+          <button class="opponent-option" type="button" data-opponent="oracle"><b>ORACLE</b><small>prüft deine Begründungen</small></button>
+        </div>
+      </div>
+      <button class="primary-btn" id="startBtn" type="button">Kalibrierungsduell starten <span>→</span></button>
+      <p class="microcopy">Demo-Slice · offline spielbar · dein Fortschritt bleibt auf diesem Gerät</p>
+    </section>
+
+    <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
+      <div class="battle-head">
+        <div class="fighter"><span class="avatar player-avatar">IA</span><div><small>AGENT</small><strong>YOU</strong></div></div>
+        <div class="round-count"><span id="phaseLabel">CALIBRATION</span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
+        <div class="fighter ai-fighter"><div><small id="opponentLabel">MIRROR</small><strong>AI</strong></div><span class="avatar ai-avatar">AI</span></div>
+      </div>
+      <div class="health-row"><div class="health-track"><span id="playerHealth"></span></div><strong id="playerHpText">100</strong><div class="vs">VS</div><strong id="aiHpText">100</strong><div class="health-track ai-track"><span id="aiHealth"></span></div></div>
+      <div class="combo-line"><span id="comboText">COMBO 0</span><span id="skillProfile">ANALYZING YOUR PATTERN…</span></div>
+      <article class="question-card" id="questionCard">
+        <div class="question-meta"><span class="type-pill" id="questionType">LOGIC TRAP</span><span class="timer" id="timer">00:20</span></div>
+        <h2 id="questionTitle">Frage wird geladen …</h2>
+        <div class="answers" id="answers" role="group" aria-label="Antworten"></div>
+        <div class="question-foot"><span id="questionHint">Wähle eine Antwort.</span><button class="ghost-btn" id="lockBtn" type="button" disabled>Antwort sperren</button></div>
+      </article>
+      <p class="ai-comment" id="aiComment" aria-live="polite">MIRROR beobachtet deine erste Entscheidung.</p>
+    </section>
+
+    <section class="screen" id="screenRound" aria-labelledby="roundTitle">
+      <div class="result-orbit" id="resultOrbit"><span>+</span></div>
+      <p class="eyebrow" id="roundEyebrow">ROUND RESULT</p>
+      <h2 id="roundTitle">Treffer bestätigt.</h2>
+      <p class="result-copy" id="roundCopy"></p>
+      <div class="stat-grid"><div><small>REAKTIONSZEIT</small><strong id="resultTime">—</strong></div><div><small>SCHADEN</small><strong id="resultDamage">—</strong></div><div><small>GENAUIGKEIT</small><strong id="resultAccuracy">—</strong></div></div>
+      <div class="explanation" id="explanation"></div>
+      <button class="primary-btn" id="continueBtn" type="button">Nächste Runde <span>→</span></button>
+    </section>
+
+    <section class="screen" id="screenEnd" aria-labelledby="endTitle">
+      <p class="eyebrow">PROTOCOL COMPLETE</p>
+      <div class="end-score"><span id="endResult">WIN</span><strong id="ipChange">+0 IP</strong></div>
+      <h2 id="endTitle">Dein Agent ist kalibriert.</h2>
+      <p class="result-copy" id="endCopy"></p>
+      <div class="rank-card"><div><small>INTELLIGENCE POINTS</small><strong id="ipValue">1000</strong></div><span id="rankValue">THINKER</span></div>
+      <div class="profile-grid"><div><small>STÄRKE</small><strong id="strengthValue">—</strong></div><div><small>WACHSTUMSFELD</small><strong id="weaknessValue">—</strong></div></div>
+      <h3>Wähle dein nächstes Protokoll</h3>
+      <div class="upgrade-list" id="upgrades"></div>
+      <button class="secondary-btn" id="againBtn" type="button">Noch ein Duell</button>
+    </section>
+  </main>
+  <script src="/pwnd.js" defer></script>
+</body>
+</html>
