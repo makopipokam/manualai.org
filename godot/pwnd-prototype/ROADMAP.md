@@ -35,10 +35,10 @@
 
 ## M3 — Emotional slice (next)
 
-- [ ] duck uses the dock
+- [x] duck uses the dock
 - [ ] frog returns to the player after development
 - [ ] fish reacts to boots and ripples
-- [ ] reeds, lilies, and water receive simple animation
+- [x] reeds, lilies, and water receive simple animation
 - [ ] first sound pass
 
 ## M4 — Content foundation

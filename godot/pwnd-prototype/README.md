@@ -27,7 +27,7 @@ Auf Touch-Geräten gibt es bei Aktionen zusätzlich einen kurzen Vibrationsimpul
 
 Eine richtig beantwortete Frage gibt **28 Energie und 12 Wasser**. Eine falsche Antwort gibt **8 Energie** als kleine Lernbelohnung. Der Entensteg kostet 60 Energie, die Tierentwicklung kostet 20 Wasser pro Stufe. Nach jeder Aktion werden Ressourcen, Tierentwicklung und gebaute Strukturen automatisch in `user://pwnd_save.json` gespeichert und beim nächsten Start geladen.
 
-Wenn sich der Spieler einem Tier nähert, erscheint ein zentraler Interaktionshinweis. Frosch, Fisch und Ente verändern bei der Entwicklung sichtbar ihre Farbe und Größe; die drei Entwicklungsstufen bleiben dadurch auch ohne Textlabel erkennbar.
+Wenn sich der Spieler einem Tier nähert, erscheint ein zentraler Interaktionshinweis. Frosch, Fisch und Ente verändern bei der Entwicklung sichtbar ihre Farbe und Größe; die drei Entwicklungsstufen bleiben dadurch auch ohne Textlabel erkennbar. Wasser, Seerosen und Schilf bewegen sich leicht, damit der Teich nicht statisch wirkt. Nach dem Bau des Entenstegs bewegt sich die Ente sichtbar zu ihrem neuen Habitat.
 
 ## Aktueller Scope
 
@@ -43,4 +43,4 @@ Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing und einen Head
 
 ## Nächster Meilenstein
 
-Als Nächstes folgen animierte Wasser-/Touch-Rückmeldungen, ein erster Android-Testbuild und die Performance-Prüfung auf einem realen Telefon. Danach wird die Steuerung anhand des Playtests feinjustiert.
+Als Nächstes folgen animierte Touch-Rückmeldungen, ein erster Android-Testbuild und die Performance-Prüfung auf einem realen Telefon. Danach wird die Steuerung anhand des Playtests feinjustiert.

@@ -10,6 +10,8 @@ var body: MeshInstance3D
 var label: Label3D
 var velocity := Vector3.ZERO
 var reaction_cooldown := 0.0
+var dock_target := Vector3.ZERO
+var has_dock_target := false
 
 func setup(kind: String, player_node: Node3D, start_position: Vector3) -> void:
 	species = kind
@@ -69,6 +71,10 @@ func upgrade() -> void:
 		var colors: Array = stage_colors.get(species, [Color.WHITE, Color.WHITE, Color.WHITE])
 		(body.material_override as StandardMaterial3D).albedo_color = colors[development]
 
+func set_dock_target(target: Vector3) -> void:
+	dock_target = target
+	has_dock_target = true
+
 func _process(delta: float) -> void:
 	if not player:
 		return
@@ -87,6 +93,9 @@ func _process(delta: float) -> void:
 		else:
 			state = "neugierig" if development > 0 else "beobachtet"
 			velocity = (player.global_position - global_position).normalized() * (0.28 if development > 1 else -0.18)
+	elif species == "duck" and has_dock_target and distance_to_target() > 0.7:
+		state = "geht zum Steg"
+		velocity = (dock_target - global_position).normalized() * 0.3
 	else:
 		state = "ruhig"
 		velocity = velocity.move_toward(Vector3.ZERO, delta * 1.5)
@@ -95,3 +104,6 @@ func _process(delta: float) -> void:
 	global_position.z = clamp(global_position.z, -5.0, 5.0)
 	if label:
 		label.text = species.capitalize() + " · " + state
+
+func distance_to_target() -> float:
+	return global_position.distance_to(dock_target)

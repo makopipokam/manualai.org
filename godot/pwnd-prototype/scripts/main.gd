@@ -17,6 +17,10 @@ var interaction_hint: Label
 var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
+var water_surface: MeshInstance3D
+var lilies: Array[MeshInstance3D] = []
+var reeds: Array[MeshInstance3D] = []
+var world_time := 0.0
 
 func _ready() -> void:
 	_build_environment()
@@ -27,6 +31,7 @@ func _ready() -> void:
 	_update_hud("Willkommen in deinem kleinen Teich.")
 	if dock_built:
 		_place_dock()
+		_set_duck_dock_target()
 	for animal in animals:
 		var saved_development: int = int(_loaded_animal_development(animal.species))
 		for _step in range(saved_development):
@@ -49,7 +54,7 @@ func _build_environment() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 	_add_box("ground", Vector3(24, 0.35, 18), Vector3(0, -0.25, 0), Color("#6b8f59"))
-	_add_box("water", Vector3(11, 0.12, 7), Vector3(0, 0.12, -1.3), Color("#4f9eaa"), 0.72)
+	water_surface = _add_box("water", Vector3(11, 0.12, 7), Vector3(0, 0.12, -1.3), Color("#4f9eaa"), 0.72)
 	_add_box("bank", Vector3(5, 0.18, 10), Vector3(7.6, 0.05, 0), Color("#a9a06f"))
 	for x in [-6.0, -4.8, 5.8, 7.0]:
 		_add_reed(Vector3(x, 0, -2.8 + fmod(abs(x) * 1.7, 4.2)))
@@ -78,6 +83,7 @@ func _add_reed(position: Vector3) -> void:
 	for index in range(4):
 		var reed := _add_box("reed", Vector3(0.08, 1.1 + index * 0.1, 0.08), position + Vector3(index * 0.14, 0.55, sin(index) * 0.16), Color("#48754d"))
 		reed.rotation_degrees.z = -7 + index * 5
+		reeds.append(reed)
 
 func _add_lily(position: Vector3) -> void:
 	var lily := MeshInstance3D.new()
@@ -92,6 +98,7 @@ func _add_lily(position: Vector3) -> void:
 	lily.material_override = material
 	lily.position = position
 	add_child(lily)
+	lilies.append(lily)
 
 func _build_player() -> void:
 	player = PlayerScript.new()
@@ -160,7 +167,11 @@ func _label(parent: Node, position: Vector2, text: String, size: int, color: Col
 	return label
 
 func _process(_delta: float) -> void:
+	world_time += _delta
+	_animate_environment()
 	_update_interaction_hint()
+	if dock_built:
+		_set_duck_dock_target()
 	if Input.is_action_just_pressed("quiz_reward") and quiz_panel and not quiz_panel.visible:
 		_open_quiz()
 	if Input.is_action_just_pressed("interact") and not quiz_panel.visible:
@@ -214,6 +225,7 @@ func _build_dock() -> void:
 	energy -= 60
 	dock_built = true
 	_place_dock()
+	_set_duck_dock_target()
 	_update_hud("Entensteg gebaut. Die Ente hat jetzt einen eigenen Ort.")
 	_vibrate(90)
 	_save_game()
@@ -222,6 +234,23 @@ func _place_dock() -> void:
 	_add_box("duck_dock", Vector3(2.2, 0.16, 0.8), Vector3(5.0, 0.48, -1.6), Color("#a4774e"))
 	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(4.2, 0.15, -1.6), Color("#76533d"))
 	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(5.8, 0.15, -1.6), Color("#76533d"))
+
+func _set_duck_dock_target() -> void:
+	for animal in animals:
+		if animal.species == "duck":
+			animal.set_dock_target(Vector3(5.0, 0.35, -1.6))
+
+func _animate_environment() -> void:
+	if water_surface:
+		water_surface.position.y = 0.12 + sin(world_time * 1.4) * 0.018
+		water_surface.rotation.y = sin(world_time * 0.16) * 0.006
+	for index in range(lilies.size()):
+		var lily := lilies[index]
+		lily.position.y = 0.22 + sin(world_time * 1.2 + index) * 0.018
+		lily.rotation.y = sin(world_time * 0.6 + index) * 0.12
+	for index in range(reeds.size()):
+		var reed := reeds[index]
+		reed.rotation.z = deg_to_rad(sin(world_time * 0.8 + index * 0.35) * 5.0)
 
 func _upgrade_nearest_animal() -> void:
 	if animals.is_empty():
