@@ -1368,6 +1368,13 @@ function viewCode(email){
     '<button type="button" class="btn" data-act="verifyCode">' + t.verify + '</button>' +
     '<button type="button" class="btn ghost" data-act="signIn">' + t.back + '</button>', true);
 }
+async function errDetail(r){
+  let code = "";
+  try{ const j = await r.json(); code = j.error_code || j.code || j.error || j.msg || ""; }catch{}
+  return String(r.status) + (code ? " " + String(code).slice(0, 60) : "");
+}
+const withDetail = (msg, e) => msg + (e && (e.detail || e instanceof TypeError) ? " (" + (e.detail || "network") + ")" : "");
+
 async function sendCode(){
   const t = T();
   const email = ($("emailIn").value || "").trim();
@@ -1380,9 +1387,9 @@ async function sendCode(){
       headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
       body: JSON.stringify({ email, create_user: true, data: { adult_confirmed: true } })
     });
-    if(!r.ok) throw new Error("otp " + r.status);
+    if(!r.ok){ const e = new Error("otp " + r.status); e.detail = await errDetail(r); throw e; }
     viewCode(email);
-  }catch(e){ console.error(e); setErr(t.errSend); }
+  }catch(e){ console.error(e); setErr(withDetail(t.errSend, e)); }
 }
 async function verifyCode(){
   const t = T();
@@ -1394,12 +1401,12 @@ async function verifyCode(){
       headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
       body: JSON.stringify({ email: pendingEmail, token, type: "email" })
     });
-    if(!r.ok) throw new Error("verify " + r.status);
+    if(!r.ok){ const e = new Error("verify " + r.status); e.detail = await errDetail(r); throw e; }
     const x = await r.json();
     if(!x.access_token) throw new Error("no session");
     saveSession(x);
     hideOverlay();
-  }catch(e){ console.error(e); setErr(t.errCode); }
+  }catch(e){ console.error(e); setErr(withDetail(t.errCode, e)); }
 }
 async function doSignOut(){
   try{
