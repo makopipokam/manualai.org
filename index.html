@@ -311,6 +311,7 @@ const I18N = {
     deleteGo:"Endgültig löschen",
     delChatLabel:"Chat löschen",
     loadErr:"Das hat nicht geklappt. Bitte versuche es noch einmal.",
+    stop:"Stopp",
     newChat:"Neuer Chat", h1:"Finde es selbst heraus.",
     sub:"Dein KI-Lernbegleiter: manualAI zeigt dir, wie du Antworten selbst findest, statt sie fertig zu bekommen.",
     levelTitle:"Wie viel Unterstützung möchtest du?",
@@ -391,6 +392,7 @@ const I18N = {
     deleteGo:"Delete permanently",
     delChatLabel:"Delete chat",
     loadErr:"That didn't work. Please try again.",
+    stop:"Stop",
     newChat:"New chat", h1:"Find it out yourself.",
     sub:"Your AI learning companion: manualAI shows you how to find answers instead of handing them over.",
     levelTitle:"How much help do you want?",
@@ -471,6 +473,7 @@ const I18N = {
     deleteGo:"Eliminar para siempre",
     delChatLabel:"Eliminar chat",
     loadErr:"No ha funcionado. Inténtalo de nuevo.",
+    stop:"Detener",
     newChat:"Nuevo chat", h1:"Descúbrelo tú mismo.",
     sub:"Tu compañero de aprendizaje con IA: manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
     levelTitle:"¿Cuánta ayuda quieres?",
@@ -551,6 +554,7 @@ const I18N = {
     deleteGo:"Supprimer définitivement",
     delChatLabel:"Supprimer la discussion",
     loadErr:"Ça n'a pas marché. Réessaie.",
+    stop:"Arrêter",
     newChat:"Nouveau chat", h1:"Trouve-le par toi-même.",
     sub:"Ton compagnon d'apprentissage IA : manualAI t'apprend à trouver les réponses au lieu de te les donner.",
     levelTitle:"Combien d'aide veux-tu ?",
@@ -623,6 +627,9 @@ const els = {
   modeBtn:$("modeBtn"), banner:$("banner"), lang:$("lang"), examples:$("examples"), clearHist:$("clearHist")
 };
 const started = () => state.messages.length > 0 || els.messages.childElementCount > 0;
+const SEND_ICON = els.sendBtn.innerHTML;
+const STOP_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
+const countTurns = () => state.messages.filter(m => m.role === "user").length;
 
 /* ---------- history (stored on this device only) ---------- */
 const HKEY = "history";
@@ -694,7 +701,7 @@ function renderRecent(){
 }
 
 /* ---------- rendering helpers ---------- */
-const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 function inline(s){
   return s
@@ -731,22 +738,25 @@ function md(src){
 
 function scrollDown(){ els.scroll.scrollTop = els.scroll.scrollHeight; }
 
-function addMsg(kind, text){
-  if(kind === "user"){
-    const d = document.createElement("div");
-    d.className = "msg user";
-    d.textContent = text;
-    els.messages.appendChild(d);
-    scrollDown();
-    return d;
-  }
+function buildBotRow(text){
   const row = document.createElement("div");
   row.className = "brow";
   row.innerHTML = AVATAR + '<div class="botcol"><div class="msg bot">' + md(text) + '</div><button type="button" class="report">' + esc(T().report) + '</button></div>';
   row.querySelector(".report").addEventListener("click", () => reportAnswer(text));
-  els.messages.appendChild(row);
-  scrollDown();
   return row;
+}
+function addMsg(kind, text){
+  let el;
+  if(kind === "user"){
+    el = document.createElement("div");
+    el.className = "msg user";
+    el.textContent = text;
+  }else{
+    el = buildBotRow(text);
+  }
+  els.messages.appendChild(el);
+  scrollDown();
+  return el;
 }
 function addNote(text, isErr){
   const d = document.createElement("div");
@@ -841,7 +851,8 @@ function applyLang(){
 
   els.input.placeholder = t.placeholder;
   els.input.setAttribute("aria-label", t.placeholder);
-  els.sendBtn.setAttribute("aria-label", t.send);
+  updateSendLabel();
+  document.querySelectorAll(".report").forEach(b => { b.textContent = t.report; });
   $("bannerNo").textContent = t.notNow;
   renderRecent();
   buildSetup();
@@ -900,6 +911,53 @@ function startConversation(){
   els.welcome.hidden = true;
 }
 
+function updateSendLabel(){
+  els.sendBtn.setAttribute("aria-label", state.busy ? T().stop : T().send);
+  els.sendBtn.title = state.busy ? T().stop : "";
+}
+function setBusy(b){
+  state.busy = b;
+  els.sendBtn.innerHTML = b ? STOP_ICON : SEND_ICON;
+  els.messages.setAttribute("aria-busy", String(b));
+  updateSendLabel();
+}
+function stopGeneration(){ if(state.abort) state.abort.abort(); }
+
+/* reads the streamed answer (one JSON object per line) into the live bubble */
+async function readStream(r, live, st){
+  const bubble = live.querySelector(".msg");
+  const reader = r.body.getReader();
+  const dec = new TextDecoder();
+  let buf = "", raf = 0, done = false;
+  const paint = () => {
+    raf = 0;
+    const stick = els.scroll.scrollHeight - els.scroll.scrollTop - els.scroll.clientHeight < 140;
+    bubble.innerHTML = md(st.acc);
+    if(stick) scrollDown();
+  };
+  const handle = (line) => {
+    if(!line.trim()) return;
+    let o; try{ o = JSON.parse(line); }catch{ return; }
+    if(o.t === "delta" && typeof o.text === "string"){
+      if(!st.acc){ live.classList.remove("thinking"); live.removeAttribute("role"); }
+      st.acc += o.text;
+      if(!raf) raf = requestAnimationFrame(paint);
+    }else if(o.t === "done"){ done = true; st.suggestion = o.suggestion || null; }
+    else if(o.t === "error"){ throw new Error("stream error"); }
+  };
+  try{
+    for(;;){
+      const { value, done: end } = await reader.read();
+      if(end) break;
+      buf += dec.decode(value, { stream:true });
+      let i;
+      while((i = buf.indexOf("\n")) >= 0){ handle(buf.slice(0, i)); buf = buf.slice(i + 1); }
+    }
+    buf += dec.decode(); handle(buf);
+  }finally{ if(raf) cancelAnimationFrame(raf); }
+  if(!done) throw new Error("stream ended early");
+}
+
 async function send(text){
   text = (text || "").trim();
   if(!text || state.busy || !state.profile) return;
@@ -912,15 +970,31 @@ async function send(text){
   state.messages.push({ role:"user", content:text });
   const userEl = addMsg("user", text);
   els.input.value = ""; autosize();
-  state.busy = true; els.sendBtn.disabled = true;
+  setBusy(true);
   updateMode();
-  const pending = addThinking();
+  const live = addThinking();
+  const ctrl = new AbortController();
+  state.abort = ctrl;
+  const st = { acc:"", suggestion:null };
+
+  const finish = (reply, suggestion) => {
+    live.replaceWith(buildBotRow(reply));
+    state.messages.push({ role:"assistant", content:reply });
+    persist("user", text);
+    persist("assistant", reply);
+    if(suggestion) showBanner(suggestion);
+    scrollDown();
+  };
 
   try{
     const r = await fetch("/api/chat", {
       method:"POST",
       headers: await authHeaders(),
-      body: JSON.stringify({ messages: state.messages, level: state.level, dial: state.dial, style: isKids() ? "simple" : state.style, profile: state.profile })
+      signal: ctrl.signal,
+      body: JSON.stringify({
+        messages: state.messages.slice(-30), turn: countTurns(), stream: true,
+        level: state.level, dial: state.dial, style: isKids() ? "simple" : state.style, profile: state.profile
+      })
     });
     if(r.status === 429){
       let scope = "user";
@@ -928,28 +1002,39 @@ async function send(text){
       const e = new Error("limit"); e.limit = scope; throw e;
     }
     if(!r.ok) throw new Error("HTTP " + r.status);
-    const data = await r.json();
-    pending.remove();
-    if(data.blocked){
-      state.messages.pop();
-      addMsg("bot", data.blocked === "care" ? T().blockedCare : T().blockedUnsafe);
+
+    if((r.headers.get("content-type") || "").includes("ndjson")){
+      await readStream(r, live, st);
+      if(!st.acc.trim()) throw new Error("empty answer");
+      finish(st.acc, st.suggestion);
     }else{
-      state.messages.push({ role:"assistant", content:data.reply });
-      addMsg("bot", data.reply);
-      persist("user", text);
-      persist("assistant", data.reply);
-      if(data.suggestion) showBanner(data.suggestion);
+      const data = await r.json();
+      if(data.blocked){
+        live.remove();
+        state.messages.pop();
+        addMsg("bot", data.blocked === "care" ? T().blockedCare : T().blockedUnsafe);
+      }else{
+        const reply = String(data.reply ?? "");
+        if(!reply.trim()) throw new Error("empty answer");
+        finish(reply, data.suggestion);
+      }
     }
   }catch(err){
-    console.error(err);
-    pending.remove();
-    state.messages.pop();
-    userEl.remove();
-    els.input.value = text; autosize();
-    if(!started()){ resetToWelcome(); }
-    addNote(err && err.limit ? (err.limit === "global" ? T().limitGlobal : T().limitUser) : T().error, true);
+    const aborted = err && err.name === "AbortError";
+    if(aborted && st.acc.trim()){
+      finish(st.acc, null);            /* stopped by the user: keep what was written */
+    }else{
+      if(!aborted) console.error(err);
+      live.remove();
+      state.messages.pop();
+      userEl.remove();
+      els.input.value = text; autosize();
+      if(!started()){ resetToWelcome(); }
+      if(!aborted) addNote(err && err.limit ? (err.limit === "global" ? T().limitGlobal : T().limitUser) : T().error, true);
+    }
   }finally{
-    state.busy = false; els.sendBtn.disabled = false;
+    state.abort = null;
+    setBusy(false);
     if(matchMedia("(pointer:fine)").matches) els.input.focus();
   }
 }
@@ -988,7 +1073,7 @@ els.lang.addEventListener("change", () => {
 });
 $("newChat").addEventListener("click", newChat);
 els.clearHist.addEventListener("click", () => { store.set(HKEY, "[]"); renderRecent(); });
-els.sendBtn.addEventListener("click", () => send(els.input.value));
+els.sendBtn.addEventListener("click", () => { state.busy ? stopGeneration() : send(els.input.value); });
 els.input.addEventListener("input", autosize);
 els.input.addEventListener("keydown", (e) => {
   if(e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer:fine)").matches){
