@@ -1,48 +1,52 @@
-# pwnd — Design Brief
+# pwnd — Design Brief: Der lebendige Teich
+
+## Produktidee
+
+**pwnd wird wie „pond“ ausgesprochen.** Der Spieler baut und bevölkert seinen eigenen Teich. IP ist keine abstrakte Rangzahl, sondern eine spielbare Ressource: **Wasser**. Jede Aktivität kann Wasser in den Teich bringen; Quizduelle sind nur der erste spielbare Weg.
 
 ## Designrichtung
 
-**Biolumineszenter Digitalteich:** Ein dunkler, lebendiger Teich trifft auf eine präzise AI-Kampfarena. Die Welt ist nicht schwarz-weiß und nicht cartoonig-beliebig; sie wirkt wie ein intelligentes Ökosystem aus Wasser, Licht, Tieren und Daten.
+Eine natürliche, leicht magische Teichwelt: Wasseroberfläche, Schilf, Seerosen, Moos, Steine, Frösche, Libellen und Fische. Die Gestaltung darf hochwertig und spielerisch sein, aber nicht spacey, technisch-kalt oder wie eine Sci-Fi-Kampfarena.
 
-## Bewegungsprinzip
+## Welt und Fortschritt
 
-- Wasserbewegungen und Orbit-Ringe reagieren ruhig im Hintergrund.
-- Treffer fühlen sich kurz, hell und präzise an.
-- Fehler erzeugen eine kontrollierte Gegenreaktion statt visuellen Lärm.
-- Antworten erscheinen gestaffelt, damit der Blick geführt wird.
-- `prefers-reduced-motion` wird respektiert.
+- Der Startscreen ist der Teich-Hub, nicht ein Battle-Menü.
+- Wasser/IP ist die zentrale Ressource und wird groß, ruhig und verständlich angezeigt.
+- Bewohner und Teichbereiche werden mit gesammeltem Wasser freigeschaltet und verbessert.
+- Quizbattle ist die erste aktive Aktivität: ein Weg, Wasser zu verdienen.
+- Weitere Wege wie Sammeln, Pflegen, Erkunden oder spätere soziale Aktivitäten werden als natürliche Erweiterung vorbereitet.
+- Ränge gehören nicht in die primäre Spieleroberfläche. Wettbewerb kann später optional zurückkehren.
 
 ## Farbphilosophie
 
-- Tiefes Wasserblau als Grundraum.
-- Türkis/Cyan für Agent, Klarheit und erkannte Muster.
-- Magenta/Pink für AI-Druck und Gegenangriff.
-- Violett für methodische Oracle-Momente.
-- Warmes Gold für Zeitdruck, Risiko und wichtige Entscheidungen.
+- Wasserblau und klares Türkis für die Ressource und die Oberfläche.
+- Moosgrün, Schilfgrün und Blattgrün für Wachstum.
+- Sand, Lehm und warmes Steinbraun für Boden und Behaglichkeit.
+- Seerosenrosa und Blütenviolett als sparsame Akzente.
+- Warmes Sonnenlicht für Fortschritt und besondere Funde.
 
 ## Layout
 
-Mobile-first im Hochformat: Die Frage ist der Mittelpunkt, Energie und Gegner bleiben ständig lesbar. Die spätere Querformat-Strategieansicht wird als eigener Raum ergänzt und nicht in den Quizscreen gequetscht.
+Mobile-first im Hochformat. Der Teich-Hub zeigt zuerst:
+
+1. den aktuellen Teich und seine Bewohner,
+2. die Wasserressource,
+3. verfügbare Aktivitäten.
+
+Das Quizduell bleibt ein fokussierter eigener Screen. Die spätere Strategie-/Aufbauebene darf im Querformat wachsen, wird aber nicht in den Battle-Screen gedrängt.
 
 ## Signatur-Elemente
 
-- Wasserlinien und konzentrische Ringe.
-- AI-/Agent-Orbit als Duellsymbol.
-- Tierische Teichbewohner als klar erkennbare Figuren, nicht als abstrakte Icons.
-- Ein Treffer verändert Licht, Energie und Kommentar gleichzeitig.
-
-## Interaktion
-
-Jede Runde beantwortet drei Fragen sichtbar:
-
-1. Was muss ich entscheiden?
-2. Wie viel Zeit und Risiko habe ich?
-3. Was hat meine Entscheidung im Duell bewirkt?
+- ruhige Wasserwellen statt Orbit-Ringe,
+- Seerosen und Schilf statt Raumsonden und Scanlines,
+- erkennbare Teichbewohner,
+- kleine natürliche Bewegungen: Schilf im Wind, Blasen, Wasserkringel, Libellenflug,
+- Wasser fließt nach einer Aktivität sichtbar in den Teich.
 
 ## Brand Voice
 
-Knapp, intelligent, leicht provokant, aber fair. Die AI darf Druck machen, darf den Spieler jedoch nicht durch unprüfbare Fakten oder reine Willkür besiegen.
+Warm, neugierig, knapp und leicht verspielt. Die AI darf im Quizduell fordern, aber die übergeordnete Welt fühlt sich nicht feindlich an. Der Teich ist ein Ort, den man pflegt und in den man zurückkehren möchte.
 
 ## Technische Leitlinie
 
-Deterministische Spielregeln bleiben vom DOM und von Sprachmodellen getrennt. Die AI liefert Charakter und Formulierung; sie entscheidet nicht über Wahrheit, Schaden, IP oder Matchzustand.
+Die deterministische Engine bleibt vom DOM und von Sprachmodellen getrennt. IP bleibt intern als Rating-/Berechnungswert erhalten, wird im UI aber als Wasserressource dargestellt. Die Spielregeln entscheiden über Wassergewinn, Schaden und Matchzustand; AI-Kommentare liefern nur Charakter.
