@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#081018">
-  <meta name="description" content="pwnd — ein adaptives Quizduell gegen künstliche Intelligenz.">
-  <title>pwnd — Quizbattle gegen AI</title>
+  <meta name="theme-color" content="#123b38">
+  <meta name="description" content="pwnd — dein lebendiger Teich. Sammle Wasser, entdecke Bewohner und wachse durch Entscheidungen.">
+  <title>pwnd — dein Teich</title>
   <link rel="stylesheet" href="/pwnd.css">
 </head>
 <body>
@@ -16,28 +16,35 @@
     </header>
 
     <section class="screen active" id="screenStart" aria-labelledby="startTitle">
-      <div class="hero-orbit" aria-hidden="true"><span>IA</span><i></i><strong>AI</strong></div>
-      <p class="eyebrow">CALIBRATION PROTOCOL 01</p>
-      <h1 id="startTitle">Du bist der Agent.<br><em>Die AI ist der Gegner.</em></h1>
-      <p class="lede">Beweise, wie du denkst. Die AI merkt sich nicht nur deine Antworten — sie lernt, wie sie dich herausfordern muss.</p>
-      <div class="feature-row"><span>10 Fragen</span><span>Adaptiver Gegner</span><span>IP-Rating</span></div>
-      <div class="opponent-picker" aria-label="Gegner auswählen">
-        <p class="picker-label">WÄHLE DEINEN ERSTEN GEGNER</p>
+      <div class="pond-scene" aria-hidden="true"><span class="sun-glint"></span><span class="lily lily-one"></span><span class="lily lily-two"></span><span class="frog">●</span><span class="reed reed-one"></span><span class="reed reed-two"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span></div>
+      <p class="eyebrow">DEIN TEICH · SAISON 01</p>
+      <h1 id="startTitle">Baue einen Teich,<br><em>der mit dir wächst.</em></h1>
+      <p class="lede">pwnd — ausgesprochen „pond“ — ist dein lebendiger Teich. Sammle Wasser durch kluge Entscheidungen, entdecke Bewohner und gib deinem Teich Zeit, sich zu entfalten.</p>
+      <div class="water-card"><div><small>WASSER · IP-RESSOURCE</small><strong id="pondWater">1000</strong><span>Wasser in deinem Teich</span></div><div class="water-drop">≈</div></div>
+      <div class="pond-status"><div><small>BEWOHNER</small><strong>1 / 6</strong><span>Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
+      <div class="pond-residents" aria-label="Teichbewohner"><span class="resident frogling">🐸</span><span class="resident reedling">✦</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span></div>
+      <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season">WASSER FREISCHALTEN</span></div><div class="unlock-grid" id="unlockGrid"></div></div>
+      <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Wasser sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
+      <button class="activity-card activity-active" id="startBtn" type="button"><span class="activity-icon">◌</span><span><b>Quizduell</b><small>Stell dich der AI und bring Wasser nach Hause.</small></span><strong>→</strong></button>
+      <button class="activity-card activity-active free-quiz" id="freeQuizBtn" type="button"><span class="activity-icon">☼</span><span><b>Freies Quizzen</b><small>Frag die AI, entdecke Themen und sammle Wasser ohne Duellstress.</small></span><strong>→</strong></button>
+      <div class="activity-card activity-soon"><span class="activity-icon">⌁</span><span><b>Sammeln &amp; Erkunden</b><small>Entdecke Quellen, Steine und seltene Pflanzen.</small></span><em>bald</em></div>
+      <div class="activity-card activity-soon"><span class="activity-icon">♧</span><span><b>Teich pflegen</b><small>Verbessere Wasserqualität und schaffe Plätze für Bewohner.</small></span><em>bald</em></div>
+      <div class="opponent-picker" aria-label="Gegner für das Quizduell auswählen">
+        <p class="picker-label">WÄHLE DEN GEGNER FÜR DEIN QUIZDUELL</p>
         <div class="opponent-options">
-          <button class="opponent-option selected" type="button" data-opponent="mirror"><b>MIRROR</b><small>liest deine Schwächen</small><span>1000 IP · adaptiv</span></button>
-          <button class="opponent-option" type="button" data-opponent="rush"><b>RUSH</b><small>setzt dich unter Zeitdruck</small><span>1050 IP · aggressiv</span></button>
-          <button class="opponent-option" type="button" data-opponent="oracle"><b>ORACLE</b><small>prüft deine Begründungen</small><span>1150 IP · methodisch</span></button>
+          <button class="opponent-option selected" type="button" data-opponent="mirror"><b>MIRROR</b><small>liest deine Schwächen</small><span>ruhig · adaptiv</span></button>
+          <button class="opponent-option" type="button" data-opponent="rush"><b>RUSH</b><small>setzt dich unter Zeitdruck</small><span>schnell · aggressiv</span></button>
+          <button class="opponent-option" type="button" data-opponent="oracle"><b>ORACLE</b><small>prüft deine Begründungen</small><span>tief · methodisch</span></button>
         </div>
       </div>
-      <button class="primary-btn" id="startBtn" type="button">Kalibrierungsduell starten <span>→</span></button>
-      <p class="microcopy">Demo-Slice · offline spielbar · dein Fortschritt bleibt auf diesem Gerät</p>
+      <p class="microcopy">Demo-Slice · offline spielbar · dein Teich bleibt auf diesem Gerät</p>
     </section>
 
     <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
       <div class="battle-head">
-        <div class="fighter"><span class="avatar player-avatar">IA</span><div><small>AGENT · IP <span id="playerIp">1000</span></small><strong>YOU</strong></div></div>
-        <div class="round-count"><span id="phaseLabel">CALIBRATION</span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
-        <div class="fighter ai-fighter"><div><small><span id="opponentLabel">MIRROR</span> · <span id="opponentRating">1000 IP</span></small><strong>AI</strong></div><span class="avatar ai-avatar">AI</span></div>
+        <div class="fighter"><span class="avatar player-avatar">♧</span><div><small>DEIN WASSER · <span id="playerIp">1000</span></small><strong>TEICH</strong></div></div>
+        <div class="round-count"><span id="phaseLabel">QUIZDUELL</span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
+        <div class="fighter ai-fighter"><div><small><span id="opponentLabel">MIRROR</span> · AI-TEICH</small><strong>GEGNER</strong></div><span class="avatar ai-avatar">≈</span></div>
       </div>
       <div class="health-row"><div class="health-track"><span id="playerHealth"></span></div><strong id="playerHpText">100</strong><div class="vs">VS</div><strong id="aiHpText">100</strong><div class="health-track ai-track"><span id="aiHealth"></span></div></div>
       <div class="combo-line"><span id="comboText">COMBO 0</span><span id="skillProfile">ANALYZING YOUR PATTERN…</span></div>
@@ -61,14 +68,14 @@
     </section>
 
     <section class="screen" id="screenEnd" aria-labelledby="endTitle">
-      <p class="eyebrow">PROTOCOL COMPLETE</p>
-      <div class="end-score"><span id="endResult">WIN</span><strong id="ipChange">+0 IP</strong></div>
-      <h2 id="endTitle">Dein Agent ist kalibriert.</h2>
+      <p class="eyebrow">WASSER IST ANGEKOMMEN</p>
+      <div class="end-score"><span id="endResult">GEWONNEN</span><strong id="ipChange">+0 WASSER</strong></div>
+      <h2 id="endTitle">Dein Teich ist gewachsen.</h2>
       <p class="result-copy" id="endCopy"></p>
-      <div class="rank-card"><div><small>INTELLIGENCE POINTS</small><strong id="ipValue">1000</strong><span class="ip-delta" id="ipBeforeAfter">1000 → 1000</span></div><span id="rankValue">THINKER</span></div>
-      <div class="profile-grid"><div><small>STÄRKE</small><strong id="strengthValue">—</strong></div><div><small>WACHSTUMSFELD</small><strong id="weaknessValue">—</strong></div></div>
-      <h3>Wähle dein nächstes Protokoll</h3>
-      <p class="upgrade-note">Deine Wahl wirkt im nächsten Duell — nicht rückwirkend.</p>
+      <div class="water-result-card water-result-card"><div><small>WASSER IM TEICH · IP</small><strong id="ipValue">1000</strong><span class="ip-delta" id="ipBeforeAfter">1000 → 1000</span></div><span>TEICHRESSOURCE</span></div>
+      <div class="profile-grid"><div><small>DEINE STÄRKE</small><strong id="strengthValue">—</strong></div><div><small>NÄCHSTER SCHRITT</small><strong id="weaknessValue">—</strong></div></div>
+      <h3>Wie soll dein Teich weiterwachsen?</h3>
+      <p class="upgrade-note">Wähle eine Anpassung für dein nächstes Quizduell.</p>
       <div class="upgrade-list" id="upgrades"></div>
       <button class="secondary-btn" id="againBtn" type="button">Noch ein Duell</button>
     </section>

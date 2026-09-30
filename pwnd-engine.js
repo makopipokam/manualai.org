@@ -3,12 +3,6 @@
   if (typeof module === 'object' && module.exports) module.exports = api;
   root.PwndEngine = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this, function(){
-  const DEFAULT_RANKS = [
-    { min: 0, name: 'UNAWAKENED' }, { min: 800, name: 'INITIATE' },
-    { min: 1000, name: 'THINKER' }, { min: 1200, name: 'STRATEGIST' },
-    { min: 1400, name: 'ARCHITECT' }, { min: 1600, name: 'INTELLIGENCE' }
-  ];
-
   function clamp(value, min, max){ return Math.max(min, Math.min(max, value)); }
 
   function calculateDamage({ correct, question, responseTimeMs, combo = 0, mods = {} }){
@@ -71,9 +65,5 @@
     return { delta, ip: Math.max(0, Math.round(before + delta)) };
   }
 
-  function getRankForIP(ip, ranks = DEFAULT_RANKS){
-    return [...ranks].reverse().find(rank => ip >= rank.min) || ranks[0];
-  }
-
-  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewIP, getRankForIP, DEFAULT_RANKS };
+  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewIP };
 });

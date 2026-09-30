@@ -32,6 +32,6 @@ const score = engine.calculateMatchScore({ outcome: 1, accuracy: .8, averageDiff
 assert.ok(score > .5 && score < 1);
 const rating = engine.calculateNewIP({ before: 1000, opponentRating: 1000, score, calibration: 0 });
 assert.ok(rating.ip > 1000 && rating.delta > 0);
-assert.equal(engine.getRankForIP(1000).name, 'THINKER');
+assert.equal(rating.ip, 1000 + rating.delta, 'the water resource should move by the deterministic delta');
 
 console.log('pwnd-engine tests: ok');
