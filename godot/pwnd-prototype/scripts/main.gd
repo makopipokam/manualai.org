@@ -13,6 +13,7 @@ var dock_built := false
 var hud_energy: Label
 var hud_water: Label
 var message: Label
+var interaction_hint: Label
 var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
@@ -133,6 +134,11 @@ func _build_hud() -> void:
 	message = _label(layer, Vector2(34, 640), "", 18, Color("#f1edcf"))
 	message.size = Vector2(900, 40)
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	interaction_hint = _label(layer, Vector2(390, 548), "", 18, Color("#f2e6a4"))
+	interaction_hint.size = Vector2(500, 42)
+	interaction_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var crosshair := _label(layer, Vector2(637, 345), "+", 20, Color(0.95, 0.95, 0.82, 0.7))
+	crosshair.size = Vector2(20, 20)
 	save_hint = _label(layer, Vector2(1030, 28), "AUTOSAVE", 12, Color("#b9cbb5"))
 	mobile_controls = MobileControlsScript.new()
 	layer.add_child(mobile_controls)
@@ -154,6 +160,7 @@ func _label(parent: Node, position: Vector2, text: String, size: int, color: Col
 	return label
 
 func _process(_delta: float) -> void:
+	_update_interaction_hint()
 	if Input.is_action_just_pressed("quiz_reward") and quiz_panel and not quiz_panel.visible:
 		_open_quiz()
 	if Input.is_action_just_pressed("interact") and not quiz_panel.visible:
@@ -171,6 +178,7 @@ func _open_quiz() -> void:
 func _on_mobile_action(action: String) -> void:
 	if quiz_panel.visible:
 		return
+	_vibrate(35)
 	match action:
 		"quiz":
 			_open_quiz()
@@ -193,6 +201,7 @@ func _on_quiz_completed(correct: bool, _feedback: String) -> void:
 	else:
 		energy += 8
 	_update_hud("Quiz beendet. Die Belohnung wurde gespeichert.")
+	_vibrate(70 if correct else 25)
 	_save_game()
 
 func _build_dock() -> void:
@@ -206,6 +215,7 @@ func _build_dock() -> void:
 	dock_built = true
 	_place_dock()
 	_update_hud("Entensteg gebaut. Die Ente hat jetzt einen eigenen Ort.")
+	_vibrate(90)
 	_save_game()
 
 func _place_dock() -> void:
@@ -235,7 +245,32 @@ func _upgrade_nearest_animal() -> void:
 	water -= 20
 	nearest.upgrade()
 	_update_hud(nearest.species.capitalize() + " entwickelt sich mit Wasser weiter.")
+	_vibrate(80)
 	_save_game()
+
+func _update_interaction_hint() -> void:
+	if not interaction_hint or quiz_panel.visible:
+		return
+	var nearest: PwndAnimal
+	var nearest_distance := INF
+	for animal in animals:
+		var distance := player.global_position.distance_to(animal.global_position)
+		if distance < nearest_distance:
+			nearest = animal
+			nearest_distance = distance
+	if nearest and nearest_distance <= 3.2:
+		if nearest.development < 2:
+			interaction_hint.text = "F / TIER: " + nearest.species.capitalize() + " mit Wasser entwickeln"
+		else:
+			interaction_hint.text = nearest.species.capitalize() + " · vollständig entwickelt"
+	elif not dock_built and player.global_position.distance_to(Vector3(5.0, 0.5, -1.6)) < 3.0:
+		interaction_hint.text = "E / BAUEN: Entensteg für 60 Energie"
+	else:
+		interaction_hint.text = ""
+
+func _vibrate(duration_ms: int) -> void:
+	if DisplayServer.is_touchscreen_available():
+		Input.vibrate_handheld(duration_ms, 0.65)
 
 func _save_game() -> void:
 	var animal_data := {}

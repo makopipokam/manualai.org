@@ -61,6 +61,13 @@ func upgrade() -> void:
 	label.visible = true
 	if body:
 		body.scale *= 1.12
+		var stage_colors := {
+			"frog": [Color("#6eb66b"), Color("#8fd477"), Color("#c4e58b")],
+			"fish": [Color("#e7a05d"), Color("#f0bd70"), Color("#ffe29a")],
+			"duck": [Color("#e6cf86"), Color("#f2df9c"), Color("#fff2ba")]
+		}
+		var colors: Array = stage_colors.get(species, [Color.WHITE, Color.WHITE, Color.WHITE])
+		(body.material_override as StandardMaterial3D).albedo_color = colors[development]
 
 func _process(delta: float) -> void:
 	if not player:

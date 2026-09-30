@@ -17,17 +17,21 @@ godot --headless --path godot/pwnd-prototype --quit-after 120
 
 ## Mobile-Steuerung
 
-Links befindet sich ein virtueller Joystick für die Bewegung. Eine Berührung und Ziehbewegung auf der rechten Bildschirmhälfte steuert die First-Person-Kamera. Die drei großen Aktionsbuttons starten das Quiz, bauen den Entensteg und entwickeln das nächstgelegene Tier. Alle interaktiven Flächen sind absichtlich groß genug für Daumenbedienung und liegen innerhalb der Bildschirmränder.
+Links befindet sich ein virtueller Joystick für die Bewegung. Eine Berührung und Ziehbewegung auf der rechten Bildschirmhälfte steuert die First-Person-Kamera. Die drei großen Aktionsbuttons starten das Quiz, bauen den Entensteg und entwickeln das nächstgelegene Tier. Alle interaktiven Flächen sind absichtlich groß genug für Daumenbedienung.
 
 Die Desktop-Steuerung bleibt als Entwicklungsfallback erhalten: **WASD** bewegt, die Maus blickt, **E** baut, **F** entwickelt, **Q** öffnet das Quiz und **Esc** löst beziehungsweise fängt die Maus wieder ein.
+
+Auf Touch-Geräten gibt es bei Aktionen zusätzlich einen kurzen Vibrationsimpuls, sofern das Gerät und die Plattform haptisches Feedback unterstützen. Die Anwendung funktioniert auch vollständig ohne diese Funktion.
 
 ## Spielschleife
 
 Eine richtig beantwortete Frage gibt **28 Energie und 12 Wasser**. Eine falsche Antwort gibt **8 Energie** als kleine Lernbelohnung. Der Entensteg kostet 60 Energie, die Tierentwicklung kostet 20 Wasser pro Stufe. Nach jeder Aktion werden Ressourcen, Tierentwicklung und gebaute Strukturen automatisch in `user://pwnd_save.json` gespeichert und beim nächsten Start geladen.
 
+Wenn sich der Spieler einem Tier nähert, erscheint ein zentraler Interaktionshinweis. Frosch, Fisch und Ente verändern bei der Entwicklung sichtbar ihre Farbe und Größe; die drei Entwicklungsstufen bleiben dadurch auch ohne Textlabel erkennbar.
+
 ## Aktueller Scope
 
-Die Szene enthält einen kleinen Teich mit Ufer, Flachwasser, Schilf, Seerosen und Steinen, eine First-Person-Bewegung mit verlangsamtem Waten, Frosch, Fisch und Ente mit einfachen Reaktionen, den Entensteg als erste Energie-Struktur, Wasserentwicklung für Tiere und ein responsives Multiple-Choice-Quiz.
+Die Szene enthält einen kleinen Teich mit Ufer, Flachwasser, Schilf, Seerosen und Steinen, eine First-Person-Bewegung mit verlangsamtem Waten, drei Tiere mit Reaktionen, den Entensteg als erste Energie-Struktur, Wasserentwicklung, Interaktionshinweise und ein responsives Multiple-Choice-Quiz.
 
 Das Quiz ist lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein größerer Fragenkatalog folgen später. Die Szene nutzt weiterhin prozedural erzeugte Primitive statt finaler Assets.
 
@@ -39,4 +43,4 @@ Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing und einen Head
 
 ## Nächster Meilenstein
 
-Als Nächstes folgen sichtbare Interaktionsmarkierungen, die vollständige dreistufige Frosch-Entwicklung, Wasser-/Touch-Feedback sowie ein erster Android-Testbuild. Danach wird die Performance auf einem realen Telefon geprüft.
+Als Nächstes folgen animierte Wasser-/Touch-Rückmeldungen, ein erster Android-Testbuild und die Performance-Prüfung auf einem realen Telefon. Danach wird die Steuerung anhand des Playtests feinjustiert.

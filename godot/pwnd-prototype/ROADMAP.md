@@ -18,8 +18,8 @@
 - [x] save/load energy, water, built structures, and animal development
 - [x] automatic local save after meaningful actions
 - [x] clear feedback when energy or water is spent
-- [ ] interaction prompts in the world
-- [ ] one complete frog development chain
+- [x] interaction prompts near animals and construction sites
+- [x] visible three-stage color and scale feedback for animal development
 
 ## M2 — Mobile-first foundation (complete in sandbox)
 
@@ -28,18 +28,18 @@
 - [x] large thumb-friendly action buttons
 - [x] responsive quiz panel for phone aspect ratios
 - [x] desktop keyboard/mouse fallback
+- [x] optional haptic feedback on supported touch devices
 - [ ] Android/iOS device export and hands-on test
 - [ ] safe-area verification on a notched phone
 - [ ] performance profile on a real phone
 
 ## M3 — Emotional slice (next)
 
-- [ ] three visibly different animal behaviors
 - [ ] duck uses the dock
 - [ ] frog returns to the player after development
 - [ ] fish reacts to boots and ripples
 - [ ] reeds, lilies, and water receive simple animation
-- [ ] first sound and haptic feedback pass where the platform supports it
+- [ ] first sound pass
 
 ## M4 — Content foundation
 
