@@ -33,6 +33,7 @@
 - [x] local mobile sound toggle with persisted preference
 - [x] responsive HUD with viewport-safe margins
 - [x] pause-overlay FPS and object-count snapshot
+- [x] pause-overlay viewport, orientation, and input-mode diagnostics
 - [ ] Android/iOS device export and hands-on test
 - [ ] safe-area verification on a notched phone
 - [ ] performance profile on a real phone

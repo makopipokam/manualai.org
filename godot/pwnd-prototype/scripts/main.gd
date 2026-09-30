@@ -327,7 +327,10 @@ func _update_performance_label() -> void:
 		return
 	var fps: int = Engine.get_frames_per_second()
 	var object_count: int = int(Performance.get_monitor(Performance.OBJECT_COUNT))
-	performance_label.text = "Diagnose · FPS %d · Objekte %d" % [fps, object_count]
+	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
+	var orientation: String = "Portrait" if viewport_size.y > viewport_size.x else "Landscape"
+	var input_mode: String = "Touch" if DisplayServer.is_touchscreen_available() else "Mouse/Keyboard"
+	performance_label.text = "Diagnose · FPS %d · Objekte %d\n%s · %d×%d · %s" % [fps, object_count, orientation, int(viewport_size.x), int(viewport_size.y), input_mode]
 
 func _toggle_audio() -> void:
 	audio_enabled = not audio_enabled
