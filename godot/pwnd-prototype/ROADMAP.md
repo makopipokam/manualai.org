@@ -38,6 +38,7 @@
 - [x] duck uses the dock
 - [x] frog returns to the player after development
 - [x] fish reacts to boots and ripples
+- [x] visible rubber boots with walking and wading bob
 - [x] reeds, lilies, and water receive simple animation
 - [x] first low-volume pond ambient loop
 
