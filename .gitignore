@@ -1,6 +1,3 @@
 
 # Godot editor cache
 godot/pwnd-prototype/.godot/
-
-# Godot imported asset metadata
-*.import

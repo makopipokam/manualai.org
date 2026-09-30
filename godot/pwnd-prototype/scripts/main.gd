@@ -522,7 +522,7 @@ func _update_interaction_hint() -> void:
 		else:
 			interaction_hint.text = nearest.species.capitalize() + " · vollständig entwickelt"
 	elif not dock_built and player.global_position.distance_to(Vector3(5.0, 0.5, -1.6)) < 3.0:
-		interaction_hint.text = "E / BAUEN: Entensteg für 60 Energie"
+		interaction_hint.text = "E / BAUEN: Entensteg für %d Energie" % int(STRUCTURE_DEFINITIONS["duck_dock"]["energy_cost"])
 	else:
 		interaction_hint.text = ""
 
