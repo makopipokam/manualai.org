@@ -32,6 +32,7 @@
 - [x] large mobile pause button with deterministic resume
 - [x] local mobile sound toggle with persisted preference
 - [x] responsive HUD with viewport-safe margins
+- [x] pause-overlay FPS and object-count snapshot
 - [ ] Android/iOS device export and hands-on test
 - [ ] safe-area verification on a notched phone
 - [ ] performance profile on a real phone

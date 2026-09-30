@@ -23,6 +23,7 @@ var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
 var pause_overlay: Control
+var performance_label: Label
 var paused := false
 var water_surface: MeshInstance3D
 var lilies: Array[MeshInstance3D] = []
@@ -236,6 +237,11 @@ func _build_pause_overlay(layer: CanvasLayer) -> void:
 	hint.add_theme_font_size_override("font_size", 16)
 	hint.add_theme_color_override("font_color", Color("#f1edcf"))
 	column.add_child(hint)
+	performance_label = Label.new()
+	performance_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	performance_label.add_theme_font_size_override("font_size", 13)
+	performance_label.add_theme_color_override("font_color", Color("#a8c8b0"))
+	column.add_child(performance_label)
 	var resume := Button.new()
 	resume.text = "WEITER"
 	resume.custom_minimum_size = Vector2(0, 58)
@@ -309,11 +315,19 @@ func _toggle_pause() -> void:
 	get_tree().paused = paused
 	if paused:
 		mobile_controls.hide()
+		_update_performance_label()
 		pause_overlay.show()
 	else:
 		pause_overlay.hide()
 		mobile_controls.show()
 		_update_hud("Zurück im Teichgarten.")
+
+func _update_performance_label() -> void:
+	if not performance_label:
+		return
+	var fps: int = Engine.get_frames_per_second()
+	var object_count: int = int(Performance.get_monitor(Performance.OBJECT_COUNT))
+	performance_label.text = "Diagnose · FPS %d · Objekte %d" % [fps, object_count]
 
 func _toggle_audio() -> void:
 	audio_enabled = not audio_enabled
