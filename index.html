@@ -114,6 +114,11 @@ button{cursor:pointer}
 .brand{display:flex;align-items:center;gap:9px}
 .brand svg{width:34px;height:34px;flex:none}
 .wordmark{font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:0}
+.pwnd-launch{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:4px 10px 4px 7px;border:1px solid var(--line);border-radius:999px;background:linear-gradient(135deg,#123b48,#24213d);color:#ecfafa;text-decoration:none;box-shadow:0 0 18px #62e6e022;transition:transform .2s,box-shadow .2s,border-color .2s}
+.pwnd-launch:hover{transform:translateY(-1px);border-color:#62e6e0;box-shadow:0 0 22px #62e6e044}
+.pwnd-launch .pwnd-mark{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#62e6e0;color:#08202a;font-weight:800}
+.pwnd-launch strong{display:block;font:700 13px/1 var(--display);letter-spacing:.04em;text-transform:lowercase}
+.pwnd-launch small{display:block;margin-top:3px;color:#a8cbd0;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
 .tools{display:flex;gap:8px;align-items:center}
 .tools select{min-height:40px;border:0;background:var(--surface);border-radius:999px;padding:0 12px;font-weight:600}
 .iconbtn{width:40px;height:40px;border:0;border-radius:50%;background:var(--surface);display:grid;place-items:center}
@@ -299,6 +304,7 @@ textarea::placeholder{color:var(--muted);opacity:.9}
       <svg viewBox="0 0 32 32" aria-hidden="true"><rect class="lg-bg" width="32" height="32" rx="11"/><path class="lg-fg" d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="lg-bg" cx="11" cy="14.5" r="1.4"/></svg>
       <p class="wordmark">manualAI</p>
     </div>
+    <a class="pwnd-launch" href="/pwnd" aria-label="pwnd Quizbattle öffnen"><span class="pwnd-mark">π</span><span><strong>pwnd</strong><small>Quizbattle</small></span></a>
     <div class="tools">
       <select id="lang" aria-label="Language">
         <option value="de">Deutsch</option>
