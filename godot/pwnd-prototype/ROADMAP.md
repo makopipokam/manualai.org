@@ -1,6 +1,6 @@
 # pwnd Godot Prototype Roadmap
 
-## M0 — Proof of Fun (complete)
+## M0 — Proof-of-Fun-Grundgerüst (implementiert; Spielgefühl nicht verifiziert)
 
 - [x] Godot 4 project
 - [x] First-person movement
@@ -11,7 +11,7 @@
 - [x] energy-based duck dock construction
 - [x] headless editor and runtime smoke tests
 
-## M1 — Playable loop (complete)
+## M1 — Playable loop (implemented; regression fixes required)
 
 - [x] real multiple-choice quiz activity
 - [x] correct and incorrect answer rewards
@@ -21,12 +21,12 @@
 - [x] interaction prompts near animals and construction sites
 - [x] visible three-stage color and scale feedback for animal development
 
-## M2 — Mobile-first foundation (complete in sandbox)
+## M2 — Mobile-first foundation (implemented; device verification pending)
 
 - [x] virtual joystick for movement
 - [x] touch-drag camera look area
-- [x] large thumb-friendly action buttons
-- [x] responsive quiz panel for phone aspect ratios
+- [x] on-screen action buttons (thumb suitability on device not verified)
+- [ ] portrait quiz panel with readable text and adequate touch targets (simulated 720×1280 revealed small controls)
 - [x] desktop keyboard/mouse fallback
 - [x] optional haptic feedback on supported touch devices
 - [x] large mobile pause button with deterministic resume
@@ -38,7 +38,18 @@
 - [ ] safe-area verification on a notched phone
 - [ ] performance profile on a real phone
 
-## M3 — Emotional slice (next)
+## Stabilisierung vor weiterer Inhaltserweiterung — Priorität laut unabhängiger Zweitprüfung
+
+- [ ] **P0:** „Nächste Frage“ wechselt wirklich zur nächsten Frage; Regressionstest ergänzen
+- [ ] **P0:** Enten-Habitatregel entscheiden und Hinweis/Upgrade-Verhalten konsistent machen
+- [ ] **P1:** Touch-/Joystick-Zustand beim Verstecken, Pausieren und Quizstart zurücksetzen
+- [ ] **P1:** Weltkollision, Waten-Höhe und vertikale Tierbewegung korrigieren
+- [ ] **P1:** Portrait-Quiz, Safe Area und Touchziele vor Geräteexport prüfen
+- [ ] **P2:** Bau-Reichweite, Wasserbereich und Save-Validierung konsistent machen
+
+Siehe [REVIEW.md](REVIEW.md) für reproduzierte Befunde und Testgrenzen.
+
+## M3 — Emotional slice (initial pass)
 
 - [x] duck uses the dock
 - [x] frog returns to the player after development

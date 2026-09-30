@@ -2,6 +2,8 @@
 
 Der erste Proof-of-Fun für den begehbaren Teichgarten. Die Anwendung wird **mobile first** entwickelt und im Querformat als First-Person-Spiel gedacht.
 
+> **Stand der Zweitprüfung:** Dies ist eine technische Rohfassung, kein auf Smartphone getesteter Build. „Nächste Frage“ wechselt aktuell nicht zur nächsten Frage; die Habitat-Voraussetzung der Ente ist bislang nur ein Hinweis; Weltkollision und Touch-Reset sind offen. Das simulierte Hochformat zeigt zu kleine Quiz-Bedienelemente. Details und Reproduktionen: [REVIEW.md](REVIEW.md).
+
 ## Starten
 
 ```bash
@@ -43,4 +45,4 @@ Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing und einen Head
 
 ## Nächster Meilenstein
 
-Als Nächstes folgen animierte Touch-Rückmeldungen, ein erster Android-Testbuild und die Performance-Prüfung auf einem realen Telefon. Danach wird die Steuerung anhand des Playtests feinjustiert.
+Als Nächstes werden die in [REVIEW.md](REVIEW.md) reproduzierten Kernloop- und Mobile-Regressionsfehler behoben. Erst danach folgen Android-Testbuild, Safe-Area-Prüfung und Performance-Messung auf einem realen Telefon.
