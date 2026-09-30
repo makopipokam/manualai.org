@@ -1,0 +1,185 @@
+extends Node3D
+
+const PlayerScript = preload("res://scripts/player.gd")
+const AnimalScript = preload("res://scripts/animal.gd")
+var player: PwndPlayer
+var animals: Array[PwndAnimal] = []
+var energy := 180
+var water := 80
+var dock_built := false
+var hud_energy: Label
+var hud_water: Label
+var message: Label
+var pond_material: StandardMaterial3D
+
+func _ready() -> void:
+	_build_environment()
+	_build_player()
+	_build_hud()
+	_spawn_animals()
+	_update_hud("Willkommen in deinem kleinen Teich.")
+
+func _build_environment() -> void:
+	var world_env := WorldEnvironment.new()
+	var environment := Environment.new()
+	environment.background_mode = Environment.BG_COLOR
+	environment.background_color = Color("#8bb6a0")
+	environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	environment.ambient_light_color = Color("#d3e8c8")
+	environment.ambient_light_energy = 0.75
+	world_env.environment = environment
+	add_child(world_env)
+	var sun := DirectionalLight3D.new()
+	sun.rotation_degrees = Vector3(-48, -28, 0)
+	sun.light_color = Color("#fff0c4")
+	sun.light_energy = 1.1
+	sun.shadow_enabled = true
+	add_child(sun)
+	_add_box("ground", Vector3(24, 0.35, 18), Vector3(0, -0.25, 0), Color("#6b8f59"))
+	_add_box("water", Vector3(11, 0.12, 7), Vector3(0, 0.12, -1.3), Color("#4f9eaa"), 0.72)
+	_add_box("bank", Vector3(5, 0.18, 10), Vector3(7.6, 0.05, 0), Color("#a9a06f"))
+	for x in [-6.0, -4.8, 5.8, 7.0]:
+		_add_reed(Vector3(x, 0, -2.8 + fmod(abs(x) * 1.7, 4.2)))
+	for position in [Vector3(-3.0, 0.22, -1.0), Vector3(1.8, 0.22, -3.0), Vector3(3.2, 0.22, 0.0)]:
+		_add_lily(position)
+	_add_box("shore_stone", Vector3(1.1, 0.6, 0.8), Vector3(-6.5, 0.3, 2.7), Color("#768276"))
+	_add_box("shore_stone", Vector3(0.8, 0.5, 0.7), Vector3(5.8, 0.25, 3.1), Color("#8c9280"))
+
+func _add_box(label_name: String, size: Vector3, position: Vector3, color: Color, transparency := 0.0) -> MeshInstance3D:
+	var item := MeshInstance3D.new()
+	item.name = label_name
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	item.mesh = mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if transparency > 0 else BaseMaterial3D.TRANSPARENCY_DISABLED
+	material.albedo_color.a = 1.0 - transparency
+	material.roughness = 0.82
+	item.material_override = material
+	item.position = position
+	add_child(item)
+	return item
+
+func _add_reed(position: Vector3) -> void:
+	for index in range(4):
+		var reed := _add_box("reed", Vector3(0.08, 1.1 + index * 0.1, 0.08), position + Vector3(index * 0.14, 0.55, sin(index) * 0.16), Color("#48754d"))
+		reed.rotation_degrees.z = -7 + index * 5
+
+func _add_lily(position: Vector3) -> void:
+	var lily := MeshInstance3D.new()
+	lily.name = "lily"
+	var mesh := CylinderMesh.new()
+	mesh.top_radius = 0.36
+	mesh.bottom_radius = 0.36
+	mesh.height = 0.035
+	lily.mesh = mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color("#80ba78")
+	lily.material_override = material
+	lily.position = position
+	add_child(lily)
+
+func _build_player() -> void:
+	player = PlayerScript.new()
+	player.name = "Player"
+	player.position = Vector3(0, 0.65, 5.8)
+	var collision := CollisionShape3D.new()
+	var capsule := CapsuleShape3D.new()
+	capsule.radius = 0.35
+	capsule.height = 1.2
+	collision.shape = capsule
+	collision.position.y = 0.6
+	player.add_child(collision)
+	add_child(player)
+	player.setup(self)
+
+func _spawn_animals() -> void:
+	_spawn_animal("frog", Vector3(-2.5, 0, -0.8))
+	_spawn_animal("fish", Vector3(1.5, 0.16, -2.0))
+	_spawn_animal("duck", Vector3(3.0, 0.35, -1.1))
+
+func _spawn_animal(kind: String, position: Vector3) -> void:
+	var animal: PwndAnimal = AnimalScript.new()
+	animal.name = kind
+	add_child(animal)
+	animal.setup(kind, player, position)
+	animals.append(animal)
+
+func _build_hud() -> void:
+	var layer := CanvasLayer.new()
+	add_child(layer)
+	var panel := ColorRect.new()
+	panel.color = Color(0.04, 0.1, 0.09, 0.82)
+	panel.position = Vector2(22, 20)
+	panel.size = Vector2(310, 112)
+	layer.add_child(panel)
+	hud_energy = _label(layer, Vector2(42, 34), "ENERGIE  180", 22, Color("#f2c978"))
+	hud_water = _label(layer, Vector2(42, 65), "WASSER   80", 22, Color("#8cd6e1"))
+	_label(layer, Vector2(42, 98), "WASD bewegen · E bauen · F Tier entwickeln · Q Quiz", 12, Color("#c8d8c0"))
+	message = _label(layer, Vector2(34, 640), "", 18, Color("#f1edcf"))
+	message.size = Vector2(900, 40)
+	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+
+func _label(parent: Node, position: Vector2, text: String, size: int, color: Color) -> Label:
+	var label := Label.new()
+	label.position = position
+	label.text = text
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
+	parent.add_child(label)
+	return label
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("quiz_reward"):
+		energy += 28
+		water += 12
+		_update_hud("Quizrunde abgeschlossen: +28 Energie, +12 Wasser")
+	if Input.is_action_just_pressed("interact"):
+		_build_dock()
+	if Input.is_action_just_pressed("feed"):
+		_upgrade_nearest_animal()
+
+func _build_dock() -> void:
+	if dock_built:
+		_update_hud("Der Entensteg steht bereits.")
+		return
+	if energy < 60:
+		_update_hud("Nicht genug Energie für den Entensteg. Drücke Q für eine Quizbelohnung.")
+		return
+	energy -= 60
+	dock_built = true
+	_add_box("duck_dock", Vector3(2.2, 0.16, 0.8), Vector3(5.0, 0.48, -1.6), Color("#a4774e"))
+	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(4.2, 0.15, -1.6), Color("#76533d"))
+	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(5.8, 0.15, -1.6), Color("#76533d"))
+	_update_hud("Entensteg gebaut. Die Ente hat jetzt einen eigenen Ort.")
+
+func _upgrade_nearest_animal() -> void:
+	if animals.is_empty():
+		return
+	var nearest: PwndAnimal = animals[0]
+	var nearest_distance := player.global_position.distance_to(nearest.global_position)
+	for animal in animals:
+		var distance := player.global_position.distance_to(animal.global_position)
+		if distance < nearest_distance:
+			nearest = animal
+			nearest_distance = distance
+	if nearest_distance > 3.2:
+		_update_hud("Geh näher an ein Tier heran, um es mit Wasser zu entwickeln.")
+		return
+	if water < 20:
+		_update_hud("Nicht genug Wasser für die Tierentwicklung. Drücke Q für eine Quizbelohnung.")
+		return
+	if nearest.development >= 2:
+		_update_hud(nearest.species.capitalize() + " ist bereits vollständig entwickelt.")
+		return
+	water -= 20
+	nearest.upgrade()
+	_update_hud(nearest.species.capitalize() + " entwickelt sich mit Wasser weiter.")
+
+func _update_hud(status: String) -> void:
+	if hud_energy:
+		hud_energy.text = "ENERGIE  " + str(energy)
+		hud_water.text = "WASSER   " + str(water)
+	if message:
+		message.text = status
