@@ -52,6 +52,7 @@
 - [x] initial data-driven animal definitions for frog, fish, and duck
 - [x] initial data-driven structure definition for the duck dock
 - [x] initial habitat prerequisite metadata and interaction hint
+- [x] centralized deterministic economy rules with explicit reward feedback
 - [ ] deterministic reward engine shared with the web beta
 - [ ] first three quiz activity types
 

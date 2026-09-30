@@ -5,6 +5,13 @@ const AnimalScript = preload("res://scripts/animal.gd")
 const QuizPanelScript = preload("res://scripts/quiz_panel.gd")
 const MobileControlsScript = preload("res://scripts/mobile_controls.gd")
 const SAVE_PATH := "user://pwnd_save.json"
+const ECONOMY_RULES := {
+	"quiz_correct_energy": 28,
+	"quiz_correct_water": 12,
+	"quiz_wrong_energy": 8,
+	"animal_upgrade_water": 20,
+	"animal_max_stage": 2
+}
 const STRUCTURE_DEFINITIONS := {
 	"duck_dock": {
 		"energy_cost": 60,
@@ -365,12 +372,19 @@ func _on_quiz_closed() -> void:
 	_update_hud("Zurück im Teichgarten.")
 
 func _on_quiz_completed(correct: bool, _feedback: String) -> void:
+	var gained_energy := 0
+	var gained_water := 0
 	if correct:
-		energy += 28
-		water += 12
+		gained_energy = int(ECONOMY_RULES["quiz_correct_energy"])
+		gained_water = int(ECONOMY_RULES["quiz_correct_water"])
 	else:
-		energy += 8
-	_update_hud("Quiz beendet. Die Belohnung wurde gespeichert.")
+		gained_energy = int(ECONOMY_RULES["quiz_wrong_energy"])
+	energy += gained_energy
+	water += gained_water
+	if gained_water > 0:
+		_update_hud("Quiz beendet. +%d Energie und +%d Wasser gespeichert." % [gained_energy, gained_water])
+	else:
+		_update_hud("Quiz beendet. +%d Energie gespeichert." % gained_energy)
 	_vibrate(70 if correct else 25)
 	_save_game()
 
@@ -475,15 +489,17 @@ func _upgrade_nearest_animal() -> void:
 	if nearest_distance > 3.2:
 		_update_hud("Geh näher an ein Tier heran, um es mit Wasser zu entwickeln.")
 		return
-	if water < 20:
+	var water_cost: int = int(ECONOMY_RULES["animal_upgrade_water"])
+	var max_stage: int = int(ECONOMY_RULES["animal_max_stage"])
+	if water < water_cost:
 		_update_hud("Nicht genug Wasser. Drücke Q für eine Quizrunde.")
 		return
-	if nearest.development >= 2:
+	if nearest.development >= max_stage:
 		_update_hud(nearest.species.capitalize() + " ist bereits vollständig entwickelt.")
 		return
-	water -= 20
+	water -= water_cost
 	nearest.upgrade()
-	_update_hud(nearest.species.capitalize() + " entwickelt sich mit Wasser weiter.")
+	_update_hud("%s entwickelt sich weiter. −%d Wasser." % [nearest.species.capitalize(), water_cost])
 	_vibrate(80)
 	_save_game()
 
