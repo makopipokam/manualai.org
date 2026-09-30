@@ -24,6 +24,18 @@ func _notification(what: int) -> void:
 		queue_redraw()
 
 func _build_action_buttons() -> void:
+	var pause_button := Button.new()
+	pause_button.text = "Ⅱ"
+	pause_button.tooltip_text = "Pause"
+	pause_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	pause_button.position = Vector2(-96, 22)
+	pause_button.size = Vector2(70, 58)
+	pause_button.add_theme_font_size_override("font_size", 24)
+	pause_button.add_theme_color_override("font_color", Color("#10251f"))
+	pause_button.add_theme_stylebox_override("normal", _button_style(Color("#d9c477")))
+	pause_button.add_theme_stylebox_override("pressed", _button_style(Color("#9dbb83")))
+	pause_button.pressed.connect(action_pressed.emit.bind("pause"))
+	add_child(pause_button)
 	var column := VBoxContainer.new()
 	column.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	column.position = Vector2(-210, -224)

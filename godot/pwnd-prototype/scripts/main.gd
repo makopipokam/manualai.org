@@ -17,6 +17,8 @@ var interaction_hint: Label
 var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
+var pause_overlay: Control
+var paused := false
 var water_surface: MeshInstance3D
 var lilies: Array[MeshInstance3D] = []
 var reeds: Array[MeshInstance3D] = []
@@ -167,10 +169,66 @@ func _build_hud() -> void:
 	mobile_controls.move_changed.connect(player.set_mobile_move)
 	mobile_controls.look_changed.connect(player.apply_touch_look)
 	mobile_controls.action_pressed.connect(_on_mobile_action)
+	_build_pause_overlay(layer)
 	quiz_panel = QuizPanelScript.new()
 	layer.add_child(quiz_panel)
 	quiz_panel.completed.connect(_on_quiz_completed)
 	quiz_panel.closed.connect(_on_quiz_closed)
+
+func _build_pause_overlay(layer: CanvasLayer) -> void:
+	pause_overlay = Control.new()
+	pause_overlay.name = "PauseOverlay"
+	pause_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	pause_overlay.process_mode = Node.PROCESS_MODE_ALWAYS
+	pause_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	pause_overlay.hide()
+	layer.add_child(pause_overlay)
+	var shade := ColorRect.new()
+	shade.color = Color(0.015, 0.04, 0.035, 0.88)
+	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	pause_overlay.add_child(shade)
+	var panel := PanelContainer.new()
+	panel.anchor_left = 0.16
+	panel.anchor_top = 0.28
+	panel.anchor_right = 0.84
+	panel.anchor_bottom = 0.72
+	panel.add_theme_stylebox_override("panel", _pause_style())
+	pause_overlay.add_child(panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 16)
+	panel.add_child(column)
+	var title := Label.new()
+	title.text = "TEICH PAUSIERT"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 26)
+	title.add_theme_color_override("font_color", Color("#f2c978"))
+	column.add_child(title)
+	var hint := Label.new()
+	hint.text = "Bewegung, Audio und Touch-Eingaben sind angehalten."
+	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint.add_theme_font_size_override("font_size", 16)
+	hint.add_theme_color_override("font_color", Color("#f1edcf"))
+	column.add_child(hint)
+	var resume := Button.new()
+	resume.text = "WEITER"
+	resume.custom_minimum_size = Vector2(0, 58)
+	resume.add_theme_font_size_override("font_size", 20)
+	resume.add_theme_stylebox_override("normal", _pause_style(Color("#d9c477"), Color("#10251f")))
+	resume.pressed.connect(_toggle_pause)
+	column.add_child(resume)
+
+func _pause_style(background := Color("#10251f"), border := Color("#6b9c78")) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = background
+	style.border_color = border
+	style.set_border_width_all(2)
+	style.set_corner_radius_all(12)
+	style.content_margin_left = 22
+	style.content_margin_right = 22
+	style.content_margin_top = 18
+	style.content_margin_bottom = 18
+	return style
 
 func _label(parent: Node, position: Vector2, text: String, size: int, color: Color) -> Label:
 	var label := Label.new()
@@ -203,6 +261,9 @@ func _open_quiz() -> void:
 	_update_hud("Quiz geöffnet. Wähle eine Antwort.")
 
 func _on_mobile_action(action: String) -> void:
+	if action == "pause":
+		_toggle_pause()
+		return
 	if quiz_panel.visible:
 		return
 	_vibrate(35)
@@ -213,6 +274,17 @@ func _on_mobile_action(action: String) -> void:
 			_build_dock()
 		"develop":
 			_upgrade_nearest_animal()
+
+func _toggle_pause() -> void:
+	paused = not paused
+	get_tree().paused = paused
+	if paused:
+		mobile_controls.hide()
+		pause_overlay.show()
+	else:
+		pause_overlay.hide()
+		mobile_controls.show()
+		_update_hud("Zurück im Teichgarten.")
 
 func _on_quiz_closed() -> void:
 	player.set_physics_process(true)
