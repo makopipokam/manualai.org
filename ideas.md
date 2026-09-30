@@ -2,7 +2,12 @@
 
 ## Produktidee
 
-**pwnd wird wie „pond“ ausgesprochen.** Der Spieler baut und bevölkert seinen eigenen Teich. IP ist keine abstrakte Rangzahl, sondern eine spielbare Ressource: **Wasser**. Jede Aktivität kann Wasser in den Teich bringen; Quizduelle sind nur der erste spielbare Weg.
+**pwnd wird wie „pond“ ausgesprochen.** Der Spieler baut und bevölkert seinen eigenen Teich. Die Wirtschaft hat zwei klare Ressourcen wie bei einem klassischen Aufbauspiel:
+
+- **Gold = Intelligenzpunkte/IP:** misst die Qualität und Leistung des Spielers.
+- **Elixier = Wasser:** wird in Bewohner, Strukturen und Teichentwicklung investiert.
+
+Jede Aktivität kann beide Ressourcen in unterschiedlicher Mischung liefern; Quizduelle und freies Quizzen sind die ersten spielbaren Wege.
 
 ## Designrichtung
 
@@ -11,9 +16,10 @@ Eine natürliche, leicht magische Teichwelt: Wasseroberfläche, Schilf, Seerosen
 ## Welt und Fortschritt
 
 - Der Startscreen ist der Teich-Hub, nicht ein Battle-Menü.
-- Wasser/IP ist die zentrale Ressource und wird groß, ruhig und verständlich angezeigt.
-- Bewohner und Teichbereiche werden mit gesammeltem Wasser freigeschaltet und verbessert.
-- Quizbattle ist die erste aktive Aktivität: ein Weg, Wasser zu verdienen.
+- Gold/IP und Elixier/Wasser werden getrennt und gleichwertig sichtbar angezeigt.
+- Bewohner und Teichbereiche verlangen Kombinationen aus Gold und Elixier.
+- Quizduell ist der kompetitive Weg: stärkerer Goldgewinn plus Elixier bei guter Leistung.
+- Freies Quizzen gegen die AI ist der entspanntere Weg: verlässlicher Elixierfluss plus kleinerer Goldgewinn.
 - Weitere Wege wie Sammeln, Pflegen, Erkunden oder spätere soziale Aktivitäten werden als natürliche Erweiterung vorbereitet.
 - Ränge gehören nicht in die primäre Spieleroberfläche. Wettbewerb kann später optional zurückkehren.
 
@@ -30,8 +36,8 @@ Eine natürliche, leicht magische Teichwelt: Wasseroberfläche, Schilf, Seerosen
 Mobile-first im Hochformat. Der Teich-Hub zeigt zuerst:
 
 1. den aktuellen Teich und seine Bewohner,
-2. die Wasserressource,
-3. verfügbare Aktivitäten.
+2. Gold/IP und Elixier/Wasser,
+3. verfügbare Aktivitäten und deren Ressourcenprofil.
 
 Das Quizduell bleibt ein fokussierter eigener Screen. Die spätere Strategie-/Aufbauebene darf im Querformat wachsen, wird aber nicht in den Battle-Screen gedrängt.
 
@@ -41,7 +47,7 @@ Das Quizduell bleibt ein fokussierter eigener Screen. Die spätere Strategie-/Au
 - Seerosen und Schilf statt Raumsonden und Scanlines,
 - erkennbare Teichbewohner,
 - kleine natürliche Bewegungen: Schilf im Wind, Blasen, Wasserkringel, Libellenflug,
-- Wasser fließt nach einer Aktivität sichtbar in den Teich.
+- Gold und Elixier fließen nach einer Aktivität sichtbar in den Vorrat.
 
 ## Brand Voice
 
@@ -49,4 +55,4 @@ Warm, neugierig, knapp und leicht verspielt. Die AI darf im Quizduell fordern, a
 
 ## Technische Leitlinie
 
-Die deterministische Engine bleibt vom DOM und von Sprachmodellen getrennt. IP bleibt intern als Rating-/Berechnungswert erhalten, wird im UI aber als Wasserressource dargestellt. Die Spielregeln entscheiden über Wassergewinn, Schaden und Matchzustand; AI-Kommentare liefern nur Charakter.
+Die deterministische Engine bleibt vom DOM und von Sprachmodellen getrennt. Die Engine entscheidet über Gold/IP, Elixiergewinn, Kosten, Schaden und Matchzustand; AI-Kommentare liefern nur Charakter. Keine Ressource darf nur durch freie Sprachmodellentscheidung entstehen.
