@@ -6,16 +6,27 @@
 
 | Ressource | Bedeutung | Hauptquelle | Hauptverwendung |
 |---|---|---|---|
-| **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | fortgeschrittene Strukturen, dauerhafte Verbesserungen, seltene Bewohner |
-| **Wasser** | Wasserenergie des Teichs; macht Wachstum und Leben möglich | Aktivitäten, Pflege, Quellen, tägliche Teichereignisse | Bewohner, Pflanzen, Wasserflächen und Lebensraum |
+| **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | Tiere anlocken, Strukturen bauen, Pflanzen setzen, neue Bereiche erschließen |
+| **Wasser** | Lebensenergie des Teichs; macht Wachstum und Entwicklung möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Bewohner, Pflanzen und Strukturen verbessern, füttern, erweitern |
 
 ### Ökonomische Leitregel
 
 - **Energie zeigt, was der Spieler kann.**
 - **Wasser zeigt, was der Teich tragen kann.**
-- Eine Freischaltung braucht oft beides: Wissen allein baut keinen Lebensraum; Wasser allein schafft keine intelligente Ordnung.
-- Energie darf sinken, wenn es ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
+- Energie wird für die Handlung ausgegeben: anlocken, bauen, platzieren, erkunden.
+- Wasser wird für die Entwicklung ausgegeben: füttern, pflegen, erweitern, aufwerten.
+- Wissen allein baut keinen Lebensraum; Wasser allein erschafft keinen neuen Bewohner.
+- Energie darf sinken, wenn sie ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
 - Wasser darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
+
+### Erwerb und Verbesserung sind getrennte Schritte
+
+Die Kostenangaben im Katalog folgen diesem Muster:
+
+1. **Energie-Kosten:** Der Spieler lockt einen Bewohner an, baut eine Struktur oder setzt eine Pflanze.
+2. **Wasser-Kosten:** Der Spieler entwickelt das Objekt weiter und schaltet Wirkung, Animationen oder Synergien frei.
+
+Beispiel: Ein Frosch kann für Energie in den Teich gebracht werden. Erst mit Wasser wird aus der einfachen Froschbucht ein guter Lebensraum für Kaulquappen und Libellen.
 
 ## 2. Lebensräume des Teichs
 
@@ -34,6 +45,8 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 
 ## 3. Bewohner-Katalog
 
+**Kostenlogik für die folgenden Tabellen:** Der erste Wert ist die Energie, die nötig ist, um den Bewohner zu entdecken und in den Teich zu bringen. Der zweite Wert ist die erste Wasserinvestition, mit der sein Lebensraum aktiviert wird. Weitere Wasserstufen verbessern danach seine Wirkung.
+
 ### 3.1 Einstiegsbewohner
 
 | Bewohner | Lebensraum | Rolle im Spiel | Freischaltidee |
@@ -43,6 +56,8 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 | **Wasserläufer** | Oberfläche | markiert ruhiges Wasser und gibt kleine tägliche Wasserboni | 1.040 Energie + 300 Wasser |
 | **Kaulquappen** | Flachwasser | wachsen über mehrere Teichstufen zu Fröschen | 1.080 Energie + 340 Wasser |
 | **Libelle** | Flachwasser / Blütenufer | erhöht Reaktions- und Geschwindigkeitsbelohnungen im Quiz | 1.120 Energie + 420 Wasser |
+
+**Interaktionsbeispiel:** Der Spieler gibt Energie aus, um Kaulquappen an einer Laichmulde zu sichern. Danach investiert er Wasser in die Laichmulde. Erst dann beginnt die Entwicklung zu Fröschen und die Libelle kann den Bereich als Jagdrevier nutzen.
 
 ### 3.2 Wasserbewohner
 
@@ -105,6 +120,16 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 | **Kiesbett** | verbessert Klarheit des Wassers | Elritzen, Wasserläufer |
 
 ## 5. Strukturen und Gebäude
+
+Strukturen sind keine statischen Dekorationen. Tiere klicken sie sinngemäß an, nutzen sie und machen dadurch ihre Funktion sichtbar:
+
+- Enten nutzen den **Entensteg**.
+- Frösche sitzen an der **Froschbucht**.
+- Reiher landen auf der **Reiherplattform**.
+- Biber verändern die **Biberwerkstatt**.
+- Der Eisvogel beobachtet den **Beobachtungsturm**.
+
+Der Bau kostet Energie. Wasser verbessert danach Zustand, Kapazität, Animation und Ressourcenwirkung der Struktur.
 
 ### 5.1 Kernstrukturen
 
