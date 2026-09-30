@@ -136,14 +136,14 @@ Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die S
 
 | Struktur | Primäre Ressource | Funktion |
 |---|---|---|
-| **Froschbucht** | Wasser | erster Bewohnerplatz und Einstieg in die Teichbevölkerung |
-| **Wasserspeicher** | Wasser | erhöht die maximale Wasserkapazität |
+| **Froschbucht** | Energie | erster Bewohnerplatz und Einstieg in die Teichbevölkerung |
+| **Wasserspeicher** | Energie | erhöht die maximale Wasserkapazität |
 | **Energieenes Ufer** | Energie | erhöht die Energiekapazität und macht Energie sichtbar im Hub |
-| **Schilfgürtel** | Wasser | schafft Schutzplätze für Uferbewohner |
-| **Karpfenkolk** | Wasser | schaltet Tiefwasserbewohner frei |
-| **Quellzulauf** | Energie + Wasser | regelmäßiger Wasserzufluss, aber Pflegebedarf |
+| **Schilfgürtel** | Energie | schafft Schutzplätze für Uferbewohner |
+| **Karpfenkolk** | Energie | schaltet Tiefwasserbewohner frei |
+| **Quellzulauf** | Energie | regelmäßiger Wasserzufluss, aber Pflegebedarf |
 | **Ufersteg** | Energie | schaltet Sammel- und Beobachtungsaktivitäten frei |
-| **Pflegehütte** | Energie + Wasser | bündelt tägliche Pflege und Upgrade-Auswahl |
+| **Pflegehütte** | Energie | bündelt tägliche Tierpflege und Upgrade-Auswahl |
 
 ### 5.2 Wissens- und Aktivitätsstrukturen
 
@@ -151,7 +151,7 @@ Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die S
 |---|---|---|
 | **Fragefisch-Steg** | freies Quizzen mit Themenwahl | kleiner Energiegewinn, stabiler Wassergewinn |
 | **Duellplatz am Ufer** | Quizduell gegen AI-Gegner | hoher Energiegewinn, variabler Wassergewinn |
-| **Beobachtungsturm** | Muster- und Naturbeobachtung | hohe Energiechance, geringe Wasserkosten |
+| **Beobachtungsturm** | Muster- und Naturbeobachtung | hohe Energiechance, geringe Energiekosten |
 | **Quellenarchiv** | Quellen prüfen und Aussagen sortieren | Energie für Begründungsqualität |
 | **Kräutergarten** | Pflege- und Kausalitätsaufgaben | Wasserbonus bei konsistenten Entscheidungen |
 | **Nachtsteg** | zeitlich begrenzte Nachtquizze | seltene Ressourcen, höhere Risiken |
@@ -262,7 +262,7 @@ Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die S
 
 ### Später
 
-- aktive Pflege mit Wasserkosten,
+- aktive Tierpflege mit Wasserkosten,
 - Tages-/Nachtwechsel,
 - saisonale Bewohner,
 - seltene Quellereignisse,
