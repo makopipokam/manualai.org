@@ -3,6 +3,7 @@ extends Node3D
 const PlayerScript = preload("res://scripts/player.gd")
 const AnimalScript = preload("res://scripts/animal.gd")
 const QuizPanelScript = preload("res://scripts/quiz_panel.gd")
+const MobileControlsScript = preload("res://scripts/mobile_controls.gd")
 const SAVE_PATH := "user://pwnd_save.json"
 var player: PwndPlayer
 var animals: Array[PwndAnimal] = []
@@ -13,6 +14,7 @@ var hud_energy: Label
 var hud_water: Label
 var message: Label
 var quiz_panel: PwndQuizPanel
+var mobile_controls: PwndMobileControls
 var save_hint: Label
 
 func _ready() -> void:
@@ -132,9 +134,15 @@ func _build_hud() -> void:
 	message.size = Vector2(900, 40)
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	save_hint = _label(layer, Vector2(1030, 28), "AUTOSAVE", 12, Color("#b9cbb5"))
+	mobile_controls = MobileControlsScript.new()
+	layer.add_child(mobile_controls)
+	mobile_controls.move_changed.connect(player.set_mobile_move)
+	mobile_controls.look_changed.connect(player.apply_touch_look)
+	mobile_controls.action_pressed.connect(_on_mobile_action)
 	quiz_panel = QuizPanelScript.new()
 	layer.add_child(quiz_panel)
 	quiz_panel.completed.connect(_on_quiz_completed)
+	quiz_panel.closed.connect(_on_quiz_closed)
 
 func _label(parent: Node, position: Vector2, text: String, size: int, color: Color) -> Label:
 	var label := Label.new()
@@ -155,9 +163,28 @@ func _process(_delta: float) -> void:
 
 func _open_quiz() -> void:
 	quiz_panel.open_quiz()
+	mobile_controls.hide()
 	player.set_physics_process(false)
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	_update_hud("Quiz geöffnet. Wähle eine Antwort.")
+
+func _on_mobile_action(action: String) -> void:
+	if quiz_panel.visible:
+		return
+	match action:
+		"quiz":
+			_open_quiz()
+		"build":
+			_build_dock()
+		"develop":
+			_upgrade_nearest_animal()
+
+func _on_quiz_closed() -> void:
+	player.set_physics_process(true)
+	mobile_controls.show()
+	if not DisplayServer.is_touchscreen_available():
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	_update_hud("Zurück im Teichgarten.")
 
 func _on_quiz_completed(correct: bool, _feedback: String) -> void:
 	if correct:

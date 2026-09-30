@@ -21,22 +21,25 @@
 - [ ] interaction prompts in the world
 - [ ] one complete frog development chain
 
-## M2 — Emotional slice (next)
+## M2 — Mobile-first foundation (complete in sandbox)
+
+- [x] virtual joystick for movement
+- [x] touch-drag camera look area
+- [x] large thumb-friendly action buttons
+- [x] responsive quiz panel for phone aspect ratios
+- [x] desktop keyboard/mouse fallback
+- [ ] Android/iOS device export and hands-on test
+- [ ] safe-area verification on a notched phone
+- [ ] performance profile on a real phone
+
+## M3 — Emotional slice (next)
 
 - [ ] three visibly different animal behaviors
 - [ ] duck uses the dock
 - [ ] frog returns to the player after development
 - [ ] fish reacts to boots and ripples
 - [ ] reeds, lilies, and water receive simple animation
-- [ ] first sound pass
-
-## M3 — Mobile feasibility
-
-- [ ] touch movement and camera controls
-- [ ] performance profile on a real phone
-- [ ] low-poly mesh and draw-call pass
-- [ ] safe-area HUD layout
-- [ ] pause/resume behavior
+- [ ] first sound and haptic feedback pass where the platform supports it
 
 ## M4 — Content foundation
 
