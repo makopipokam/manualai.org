@@ -12,8 +12,12 @@ var water := 80
 var dock_built := false
 var hud_energy: Label
 var hud_water: Label
+var hud_panel: ColorRect
+var control_hint_a: Label
+var control_hint_b: Label
 var message: Label
 var interaction_hint: Label
+var crosshair: Label
 var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
@@ -146,23 +150,18 @@ func _spawn_animal(kind: String, position: Vector3) -> void:
 func _build_hud() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
-	var panel := ColorRect.new()
-	panel.color = Color(0.04, 0.1, 0.09, 0.82)
-	panel.position = Vector2(22, 20)
-	panel.size = Vector2(370, 132)
-	layer.add_child(panel)
+	hud_panel = ColorRect.new()
+	hud_panel.color = Color(0.04, 0.1, 0.09, 0.82)
+	layer.add_child(hud_panel)
 	hud_energy = _label(layer, Vector2(42, 34), "ENERGIE  180", 22, Color("#f2c978"))
 	hud_water = _label(layer, Vector2(42, 65), "WASSER   80", 22, Color("#8cd6e1"))
-	_label(layer, Vector2(42, 98), "WASD bewegen · E bauen · F entwickeln", 12, Color("#c8d8c0"))
-	_label(layer, Vector2(42, 116), "Q Quiz starten · Esc Maus lösen", 12, Color("#c8d8c0"))
+	control_hint_a = _label(layer, Vector2(42, 98), "WASD bewegen · E bauen · F entwickeln", 12, Color("#c8d8c0"))
+	control_hint_b = _label(layer, Vector2(42, 116), "Q Quiz starten · Esc Maus lösen", 12, Color("#c8d8c0"))
 	message = _label(layer, Vector2(34, 640), "", 18, Color("#f1edcf"))
-	message.size = Vector2(900, 40)
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	interaction_hint = _label(layer, Vector2(390, 548), "", 18, Color("#f2e6a4"))
-	interaction_hint.size = Vector2(500, 42)
 	interaction_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var crosshair := _label(layer, Vector2(637, 345), "+", 20, Color(0.95, 0.95, 0.82, 0.7))
-	crosshair.size = Vector2(20, 20)
+	crosshair = _label(layer, Vector2(637, 345), "+", 20, Color(0.95, 0.95, 0.82, 0.7))
 	save_hint = _label(layer, Vector2(1030, 28), "AUTOSAVE", 12, Color("#b9cbb5"))
 	mobile_controls = MobileControlsScript.new()
 	layer.add_child(mobile_controls)
@@ -174,6 +173,30 @@ func _build_hud() -> void:
 	layer.add_child(quiz_panel)
 	quiz_panel.completed.connect(_on_quiz_completed)
 	quiz_panel.closed.connect(_on_quiz_closed)
+	get_viewport().size_changed.connect(_layout_hud)
+	_layout_hud()
+
+func _layout_hud() -> void:
+	if not hud_panel or not get_viewport():
+		return
+	var view_size: Vector2 = get_viewport().get_visible_rect().size
+	var margin: float = clampf(view_size.y * 0.04, 16.0, 34.0)
+	var panel_width: float = minf(370.0, maxf(280.0, view_size.x * 0.42))
+	hud_panel.position = Vector2(margin, margin)
+	hud_panel.size = Vector2(panel_width, 132)
+	hud_energy.position = hud_panel.position + Vector2(20, 14)
+	hud_water.position = hud_panel.position + Vector2(20, 45)
+	control_hint_a.position = hud_panel.position + Vector2(20, 78)
+	control_hint_b.position = hud_panel.position + Vector2(20, 96)
+	if DisplayServer.is_touchscreen_available():
+		control_hint_a.text = "Touch: bewegen · umsehen"
+		control_hint_b.text = "Aktionen rechts · Pause oben"
+	message.position = Vector2(margin, max(420.0, view_size.y - 92.0))
+	message.size = Vector2(max(280.0, view_size.x - margin * 2.0), 44)
+	interaction_hint.position = Vector2(max(margin, (view_size.x - 500.0) * 0.5), view_size.y * 0.70)
+	interaction_hint.size = Vector2(min(500.0, view_size.x - margin * 2.0), 42)
+	crosshair.position = Vector2(view_size.x * 0.5 - 10.0, view_size.y * 0.5 - 10.0)
+	save_hint.position = Vector2(max(margin, view_size.x - 150.0 - margin), margin)
 
 func _build_pause_overlay(layer: CanvasLayer) -> void:
 	pause_overlay = Control.new()

@@ -30,6 +30,7 @@
 - [x] desktop keyboard/mouse fallback
 - [x] optional haptic feedback on supported touch devices
 - [x] large mobile pause button with deterministic resume
+- [x] responsive HUD with viewport-safe margins
 - [ ] Android/iOS device export and hands-on test
 - [ ] safe-area verification on a notched phone
 - [ ] performance profile on a real phone
