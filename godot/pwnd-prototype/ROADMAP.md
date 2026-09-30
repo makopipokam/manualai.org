@@ -50,7 +50,7 @@
 ## M4 — Content foundation
 
 - [x] initial data-driven animal definitions for frog, fish, and duck
-- [ ] data-driven structure definitions
+- [x] initial data-driven structure definition for the duck dock
 - [ ] habitat prerequisites
 - [ ] deterministic reward engine shared with the web beta
 - [ ] first three quiz activity types

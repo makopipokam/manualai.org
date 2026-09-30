@@ -5,6 +5,18 @@ const AnimalScript = preload("res://scripts/animal.gd")
 const QuizPanelScript = preload("res://scripts/quiz_panel.gd")
 const MobileControlsScript = preload("res://scripts/mobile_controls.gd")
 const SAVE_PATH := "user://pwnd_save.json"
+const STRUCTURE_DEFINITIONS := {
+	"duck_dock": {
+		"energy_cost": 60,
+		"platform_size": Vector3(2.2, 0.16, 0.8),
+		"platform_position": Vector3(5.0, 0.48, -1.6),
+		"platform_color": Color("#a4774e"),
+		"post_size": Vector3(0.12, 0.8, 0.12),
+		"post_positions": [Vector3(4.2, 0.15, -1.6), Vector3(5.8, 0.15, -1.6)],
+		"post_color": Color("#76533d"),
+		"target_position": Vector3(5.0, 0.35, -1.6)
+	}
+}
 var player: PwndPlayer
 var animals: Array[PwndAnimal] = []
 var energy := 180
@@ -363,13 +375,15 @@ func _on_quiz_completed(correct: bool, _feedback: String) -> void:
 	_save_game()
 
 func _build_dock() -> void:
+	var definition: Dictionary = STRUCTURE_DEFINITIONS["duck_dock"]
+	var energy_cost: int = int(definition["energy_cost"])
 	if dock_built:
 		_update_hud("Der Entensteg steht bereits.")
 		return
-	if energy < 60:
+	if energy < energy_cost:
 		_update_hud("Nicht genug Energie. Drücke Q für eine Quizrunde.")
 		return
-	energy -= 60
+	energy -= energy_cost
 	dock_built = true
 	_place_dock()
 	_set_duck_dock_target()
@@ -378,14 +392,22 @@ func _build_dock() -> void:
 	_save_game()
 
 func _place_dock() -> void:
-	_add_box("duck_dock", Vector3(2.2, 0.16, 0.8), Vector3(5.0, 0.48, -1.6), Color("#a4774e"))
-	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(4.2, 0.15, -1.6), Color("#76533d"))
-	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(5.8, 0.15, -1.6), Color("#76533d"))
+	var definition: Dictionary = STRUCTURE_DEFINITIONS["duck_dock"]
+	var platform_size: Vector3 = definition["platform_size"]
+	var platform_position: Vector3 = definition["platform_position"]
+	var platform_color: Color = definition["platform_color"]
+	_add_box("duck_dock", platform_size, platform_position, platform_color)
+	var post_size: Vector3 = definition["post_size"]
+	var post_color: Color = definition["post_color"]
+	for post_data in definition["post_positions"]:
+		var post_position: Vector3 = post_data
+		_add_box("duck_dock_post", post_size, post_position, post_color)
 
 func _set_duck_dock_target() -> void:
+	var target_position: Vector3 = STRUCTURE_DEFINITIONS["duck_dock"]["target_position"]
 	for animal in animals:
 		if animal.species == "duck":
-			animal.set_dock_target(Vector3(5.0, 0.35, -1.6))
+			animal.set_dock_target(target_position)
 
 func _animate_environment() -> void:
 	if water_surface:
