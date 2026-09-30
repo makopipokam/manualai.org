@@ -65,5 +65,11 @@
     return { delta, ip: Math.max(0, Math.round(before + delta)) };
   }
 
-  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewIP };
+  function calculateElixirReward({ mode = 'duel', correctAnswers, totalRounds, outcome = 0 }){
+    const accuracy = totalRounds ? correctAnswers / totalRounds : 0;
+    const base = mode === 'free' ? 18 : 28;
+    return Math.max(6, Math.round(base + accuracy * 24 + (outcome ? 12 : 0)));
+  }
+
+  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewIP, calculateElixirReward };
 });

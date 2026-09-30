@@ -33,5 +33,8 @@ assert.ok(score > .5 && score < 1);
 const rating = engine.calculateNewIP({ before: 1000, opponentRating: 1000, score, calibration: 0 });
 assert.ok(rating.ip > 1000 && rating.delta > 0);
 assert.equal(rating.ip, 1000 + rating.delta, 'the water resource should move by the deterministic delta');
+const duelElixir = engine.calculateElixirReward({ mode: 'duel', correctAnswers: 8, totalRounds: 10, outcome: 1 });
+const freeElixir = engine.calculateElixirReward({ mode: 'free', correctAnswers: 8, totalRounds: 10, outcome: 0 });
+assert.ok(duelElixir > freeElixir && freeElixir > 0, 'duel and free quiz should feed elixir independently from gold');
 
 console.log('pwnd-engine tests: ok');
