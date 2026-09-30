@@ -20,6 +20,9 @@ var save_hint: Label
 var water_surface: MeshInstance3D
 var lilies: Array[MeshInstance3D] = []
 var reeds: Array[MeshInstance3D] = []
+var ripples: Array[MeshInstance3D] = []
+var ripple_materials: Array[StandardMaterial3D] = []
+var ripple_times: Array[float] = []
 var world_time := 0.0
 
 func _ready() -> void:
@@ -27,6 +30,7 @@ func _ready() -> void:
 	_build_player()
 	_build_hud()
 	_spawn_animals()
+	_build_ripples()
 	_load_game()
 	_update_hud("Willkommen in deinem kleinen Teich.")
 	if dock_built:
@@ -169,6 +173,7 @@ func _label(parent: Node, position: Vector2, text: String, size: int, color: Col
 func _process(_delta: float) -> void:
 	world_time += _delta
 	_animate_environment()
+	_animate_ripples(_delta)
 	_update_interaction_hint()
 	if dock_built:
 		_set_duck_dock_target()
@@ -251,6 +256,47 @@ func _animate_environment() -> void:
 	for index in range(reeds.size()):
 		var reed := reeds[index]
 		reed.rotation.z = deg_to_rad(sin(world_time * 0.8 + index * 0.35) * 5.0)
+
+func _build_ripples() -> void:
+	_add_ripple()
+	_add_ripple()
+
+func _add_ripple() -> void:
+	var ripple := MeshInstance3D.new()
+	var mesh := TorusMesh.new()
+	mesh.inner_radius = 0.28
+	mesh.outer_radius = 0.34
+	mesh.rings = 16
+	mesh.ring_segments = 24
+	ripple.mesh = mesh
+	var material := StandardMaterial3D.new()
+	material.albedo_color = Color(0.64, 0.9, 0.92, 0.35)
+	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	ripple.material_override = material
+	ripple.position.y = 0.25
+	add_child(ripple)
+	ripples.append(ripple)
+	ripple_materials.append(material)
+	ripple_times.append(randf_range(0.0, 1.4))
+
+func _animate_ripples(delta: float) -> void:
+	if ripples.size() < 2 or animals.size() < 2:
+		return
+	var fish: PwndAnimal = animals[1]
+	for index in range(ripples.size()):
+		ripple_times[index] = fmod(ripple_times[index] + delta, 1.4)
+		var pulse := ripple_times[index] / 1.4
+		var ripple := ripples[index]
+		if index == 0:
+			ripple.position = Vector3(player.global_position.x, 0.25, player.global_position.z)
+		else:
+			ripple.position = Vector3(fish.global_position.x, 0.25, fish.global_position.z)
+		ripple.scale = Vector3.ONE * (0.65 + pulse * 1.45)
+		var visible := index == 1 or player.is_in_water()
+		var color := ripple_materials[index].albedo_color
+		color.a = (1.0 - pulse) * 0.42 if visible else 0.0
+		ripple_materials[index].albedo_color = color
 
 func _upgrade_nearest_animal() -> void:
 	if animals.is_empty():

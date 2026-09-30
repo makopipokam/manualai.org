@@ -27,6 +27,9 @@ func apply_touch_look(delta: Vector2) -> void:
 	pitch = clamp(pitch - delta.y * mouse_sensitivity, -1.2, 1.0)
 	camera.rotation.x = pitch
 
+func is_in_water() -> bool:
+	return global_position.z < 1.2 and global_position.z > -2.8 and global_position.x > -5.5 and global_position.x < 5.5
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		apply_touch_look(event.relative)
@@ -36,7 +39,7 @@ func _unhandled_input(event: InputEvent) -> void:
 func _physics_process(_delta: float) -> void:
 	var input_vec := mobile_move if mobile_move.length() > 0.05 else Input.get_vector("left", "right", "forward", "back")
 	var direction := (transform.basis * Vector3(input_vec.x, 0, input_vec.y)).normalized()
-	var in_water := global_position.z < 1.2 and global_position.z > -2.8 and global_position.x > -5.5 and global_position.x < 5.5
+	var in_water := is_in_water()
 	var speed := water_speed if in_water else walk_speed
 	velocity.x = move_toward(velocity.x, direction.x * speed, 18.0 * _delta)
 	velocity.z = move_toward(velocity.z, direction.z * speed, 18.0 * _delta)

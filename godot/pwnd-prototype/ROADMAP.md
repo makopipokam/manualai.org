@@ -36,8 +36,8 @@
 ## M3 — Emotional slice (next)
 
 - [x] duck uses the dock
-- [ ] frog returns to the player after development
-- [ ] fish reacts to boots and ripples
+- [x] frog returns to the player after development
+- [x] fish reacts to boots and ripples
 - [x] reeds, lilies, and water receive simple animation
 - [ ] first sound pass
 

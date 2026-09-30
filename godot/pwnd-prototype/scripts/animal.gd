@@ -88,7 +88,7 @@ func _process(delta: float) -> void:
 				velocity = (global_position - player.global_position).normalized() * 1.4
 				reaction_cooldown = 1.2
 		elif species == "fish":
-			state = "flieht" if player.global_position.z < 1.5 else "beobachtet"
+			state = "flieht" if _player_is_wading() else "beobachtet"
 			velocity = (global_position - player.global_position).normalized() * (0.5 if development > 0 else 1.0)
 		else:
 			state = "neugierig" if development > 0 else "beobachtet"
@@ -107,3 +107,6 @@ func _process(delta: float) -> void:
 
 func distance_to_target() -> float:
 	return global_position.distance_to(dock_target)
+
+func _player_is_wading() -> bool:
+	return player.has_method("is_in_water") and player.is_in_water()
