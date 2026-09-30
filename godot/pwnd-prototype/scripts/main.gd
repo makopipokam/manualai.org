@@ -2,6 +2,8 @@ extends Node3D
 
 const PlayerScript = preload("res://scripts/player.gd")
 const AnimalScript = preload("res://scripts/animal.gd")
+const QuizPanelScript = preload("res://scripts/quiz_panel.gd")
+const SAVE_PATH := "user://pwnd_save.json"
 var player: PwndPlayer
 var animals: Array[PwndAnimal] = []
 var energy := 180
@@ -10,14 +12,22 @@ var dock_built := false
 var hud_energy: Label
 var hud_water: Label
 var message: Label
-var pond_material: StandardMaterial3D
+var quiz_panel: PwndQuizPanel
+var save_hint: Label
 
 func _ready() -> void:
 	_build_environment()
 	_build_player()
 	_build_hud()
 	_spawn_animals()
+	_load_game()
 	_update_hud("Willkommen in deinem kleinen Teich.")
+	if dock_built:
+		_place_dock()
+	for animal in animals:
+		var saved_development: int = int(_loaded_animal_development(animal.species))
+		for _step in range(saved_development):
+			animal.upgrade()
 
 func _build_environment() -> void:
 	var world_env := WorldEnvironment.new()
@@ -112,14 +122,19 @@ func _build_hud() -> void:
 	var panel := ColorRect.new()
 	panel.color = Color(0.04, 0.1, 0.09, 0.82)
 	panel.position = Vector2(22, 20)
-	panel.size = Vector2(310, 112)
+	panel.size = Vector2(370, 132)
 	layer.add_child(panel)
 	hud_energy = _label(layer, Vector2(42, 34), "ENERGIE  180", 22, Color("#f2c978"))
 	hud_water = _label(layer, Vector2(42, 65), "WASSER   80", 22, Color("#8cd6e1"))
-	_label(layer, Vector2(42, 98), "WASD bewegen · E bauen · F Tier entwickeln · Q Quiz", 12, Color("#c8d8c0"))
+	_label(layer, Vector2(42, 98), "WASD bewegen · E bauen · F entwickeln", 12, Color("#c8d8c0"))
+	_label(layer, Vector2(42, 116), "Q Quiz starten · Esc Maus lösen", 12, Color("#c8d8c0"))
 	message = _label(layer, Vector2(34, 640), "", 18, Color("#f1edcf"))
 	message.size = Vector2(900, 40)
 	message.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	save_hint = _label(layer, Vector2(1030, 28), "AUTOSAVE", 12, Color("#b9cbb5"))
+	quiz_panel = QuizPanelScript.new()
+	layer.add_child(quiz_panel)
+	quiz_panel.completed.connect(_on_quiz_completed)
 
 func _label(parent: Node, position: Vector2, text: String, size: int, color: Color) -> Label:
 	var label := Label.new()
@@ -131,28 +146,45 @@ func _label(parent: Node, position: Vector2, text: String, size: int, color: Col
 	return label
 
 func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("quiz_reward"):
+	if Input.is_action_just_pressed("quiz_reward") and quiz_panel and not quiz_panel.visible:
+		_open_quiz()
+	if Input.is_action_just_pressed("interact") and not quiz_panel.visible:
+		_build_dock()
+	if Input.is_action_just_pressed("feed") and not quiz_panel.visible:
+		_upgrade_nearest_animal()
+
+func _open_quiz() -> void:
+	quiz_panel.open_quiz()
+	player.set_physics_process(false)
+	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+	_update_hud("Quiz geöffnet. Wähle eine Antwort.")
+
+func _on_quiz_completed(correct: bool, _feedback: String) -> void:
+	if correct:
 		energy += 28
 		water += 12
-		_update_hud("Quizrunde abgeschlossen: +28 Energie, +12 Wasser")
-	if Input.is_action_just_pressed("interact"):
-		_build_dock()
-	if Input.is_action_just_pressed("feed"):
-		_upgrade_nearest_animal()
+	else:
+		energy += 8
+	_update_hud("Quiz beendet. Die Belohnung wurde gespeichert.")
+	_save_game()
 
 func _build_dock() -> void:
 	if dock_built:
 		_update_hud("Der Entensteg steht bereits.")
 		return
 	if energy < 60:
-		_update_hud("Nicht genug Energie für den Entensteg. Drücke Q für eine Quizbelohnung.")
+		_update_hud("Nicht genug Energie. Drücke Q für eine Quizrunde.")
 		return
 	energy -= 60
 	dock_built = true
+	_place_dock()
+	_update_hud("Entensteg gebaut. Die Ente hat jetzt einen eigenen Ort.")
+	_save_game()
+
+func _place_dock() -> void:
 	_add_box("duck_dock", Vector3(2.2, 0.16, 0.8), Vector3(5.0, 0.48, -1.6), Color("#a4774e"))
 	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(4.2, 0.15, -1.6), Color("#76533d"))
 	_add_box("duck_dock_post", Vector3(0.12, 0.8, 0.12), Vector3(5.8, 0.15, -1.6), Color("#76533d"))
-	_update_hud("Entensteg gebaut. Die Ente hat jetzt einen eigenen Ort.")
 
 func _upgrade_nearest_animal() -> void:
 	if animals.is_empty():
@@ -168,7 +200,7 @@ func _upgrade_nearest_animal() -> void:
 		_update_hud("Geh näher an ein Tier heran, um es mit Wasser zu entwickeln.")
 		return
 	if water < 20:
-		_update_hud("Nicht genug Wasser für die Tierentwicklung. Drücke Q für eine Quizbelohnung.")
+		_update_hud("Nicht genug Wasser. Drücke Q für eine Quizrunde.")
 		return
 	if nearest.development >= 2:
 		_update_hud(nearest.species.capitalize() + " ist bereits vollständig entwickelt.")
@@ -176,6 +208,38 @@ func _upgrade_nearest_animal() -> void:
 	water -= 20
 	nearest.upgrade()
 	_update_hud(nearest.species.capitalize() + " entwickelt sich mit Wasser weiter.")
+	_save_game()
+
+func _save_game() -> void:
+	var animal_data := {}
+	for animal in animals:
+		animal_data[animal.species] = animal.development
+	var data := {"energy": energy, "water": water, "dock_built": dock_built, "animals": animal_data}
+	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data))
+		file.close()
+		if save_hint:
+			save_hint.text = "AUTOSAVE · gespeichert"
+
+func _load_game() -> void:
+	if not FileAccess.file_exists(SAVE_PATH):
+		return
+	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
+	if not file:
+		return
+	var parsed = JSON.parse_string(file.get_as_text())
+	file.close()
+	if parsed is Dictionary:
+		energy = int(parsed.get("energy", energy))
+		water = int(parsed.get("water", water))
+		dock_built = bool(parsed.get("dock_built", false))
+		_loaded_animals = parsed.get("animals", {})
+
+var _loaded_animals: Dictionary = {}
+
+func _loaded_animal_development(species: String) -> int:
+	return int(_loaded_animals.get(species, 0))
 
 func _update_hud(status: String) -> void:
 	if hud_energy:

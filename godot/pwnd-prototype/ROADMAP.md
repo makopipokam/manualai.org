@@ -1,6 +1,6 @@
 # pwnd Godot Prototype Roadmap
 
-## M0 — Proof of Fun (current)
+## M0 — Proof of Fun (complete)
 
 - [x] Godot 4 project
 - [x] First-person movement
@@ -11,15 +11,17 @@
 - [x] energy-based duck dock construction
 - [x] headless editor and runtime smoke tests
 
-## M1 — Playable loop
+## M1 — Playable loop (complete)
 
-- [ ] replace Q reward with a real quiz activity
-- [ ] save/load energy, water, built structures, and animal development
+- [x] real multiple-choice quiz activity
+- [x] correct and incorrect answer rewards
+- [x] save/load energy, water, built structures, and animal development
+- [x] automatic local save after meaningful actions
+- [x] clear feedback when energy or water is spent
 - [ ] interaction prompts in the world
 - [ ] one complete frog development chain
-- [ ] clear feedback when energy or water is spent
 
-## M2 — Emotional slice
+## M2 — Emotional slice (next)
 
 - [ ] three visibly different animal behaviors
 - [ ] duck uses the dock

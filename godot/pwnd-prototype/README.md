@@ -12,39 +12,30 @@ Für eine reine Parser-/Editor-Prüfung:
 
 ```bash
 godot --headless --path godot/pwnd-prototype --editor --quit
+godot --headless --path godot/pwnd-prototype --quit-after 120
 ```
 
 ## Steuerung
 
 - **WASD:** durch den Garten bewegen
 - **Maus:** First-Person-Kamera
-- **E:** Entensteg mit Energie bauen
-- **F:** nächstes Tier in der Nähe mit Wasser entwickeln
-- **Q:** Demo-Quizbelohnung erhalten (+28 Energie, +12 Wasser)
+- **E:** Entensteg mit 60 Energie bauen
+- **F:** nächstes Tier in der Nähe mit 20 Wasser entwickeln
+- **Q:** echte Quizrunde öffnen
 - **Esc:** Mauszeiger freigeben / wieder einfangen
+
+Eine richtig beantwortete Frage gibt **28 Energie und 12 Wasser**. Eine falsche Antwort gibt **8 Energie** als kleine Lernbelohnung. Nach jeder Aktion werden Ressourcen, Tierentwicklung und gebaute Strukturen automatisch in `user://pwnd_save.json` gespeichert und beim nächsten Start geladen.
 
 ## Aktueller Scope
 
-- kleiner Teich mit Ufer, Flachwasser, Schilf, Seerosen und Steinen
-- First-Person-Bewegung
-- langsamere Bewegung im flachen Wasser
-- Frosch, Fisch und Ente
-- einfache Tierreaktionen: ruhig, beobachtet, flieht, neugierig
-- Entensteg als erste Energie-Struktur
-- Wasserentwicklung für Tiere
-- provisorisches HUD
+Die Szene enthält einen kleinen Teich mit Ufer, Flachwasser, Schilf, Seerosen und Steinen, eine First-Person-Bewegung mit verlangsamtem Waten, Frosch, Fisch und Ente mit einfachen Reaktionen, den Entensteg als erste Energie-Struktur sowie Wasserentwicklung für Tiere.
 
-## Bewusste Platzhalter
+Das Quiz ist als eingeblendetes Multiple-Choice-Panel umgesetzt. Die Fragen sind zunächst lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein größerer Fragenkatalog folgen später. Die Szene nutzt weiterhin prozedural erzeugte Primitive statt finaler Assets.
 
-- Die Q-Taste ersetzt vorerst die Quizaktivität.
-- Die Szene nutzt prozedural erzeugte Primitive statt finaler Assets.
-- Der Spielstand ist in dieser ersten Szene noch nicht persistent gespeichert.
-- Touch-Steuerung und Mobile-Optimierung folgen erst nach dem Proof-of-Fun-Test.
+## Persistenz
+
+Der Spielstand wird lokal im Godot-Benutzerverzeichnis gespeichert. Es gibt bewusst noch keinen Cloud-Spielstand und keine Kontoanbindung. Zum Zurücksetzen des lokalen Prototypen kann die Datei `user://pwnd_save.json` gelöscht werden.
 
 ## Nächster Meilenstein
 
-1. tatsächliches Quizfenster als Aktivität einbauen,
-2. lokale Speicherung ergänzen,
-3. Interaktionsmarkierungen für Tiere und Strukturen hinzufügen,
-4. Frosch-Entwicklung mit sichtbaren drei Stufen ausarbeiten,
-5. erstes Audio- und Wasserfeedback ergänzen.
+Als Nächstes folgen sichtbare Interaktionsmarkierungen, die vollständige dreistufige Frosch-Entwicklung und erstes Audio-/Wasserfeedback. Danach ist der Mobile-Steuerungs- und Performance-Test sinnvoll.
