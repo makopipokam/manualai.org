@@ -35,7 +35,7 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
-const state = { ip: saved?.ip ?? 1000, elixir: saved?.elixir ?? 250, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], opponentId: 'mirror', mode: 'duel', mods: {}, match: null, timerId: null, sound: false };
+const state = { ip: saved?.ip ?? 1000, elixir: saved?.elixir ?? 250, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], opponentId: 'mirror', mode: 'duel', mods: {}, match: null, timerId: null };
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function save(){ localStorage.setItem('pwnd-profile', JSON.stringify({ ip: Math.round(state.ip), elixir: Math.round(state.elixir), calibration: state.calibration, upgrades: state.upgrades })); }
 function show(id){ screens.forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo(0,0); }
@@ -84,4 +84,4 @@ function renderPondUnlocks(){
 }
 function renderUpgrades(){ const choices=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3); $('upgrades').innerHTML=choices.map(u=>`<label class="upgrade"><input type="radio" name="upgrade" value="${u.id}"><strong>${u.name}</strong><small>${u.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('.upgrade').forEach(y=>y.classList.remove('selected'));x.classList.add('selected'); const id=x.querySelector('input').value;if(!state.upgrades.includes(id))state.upgrades=[...state.upgrades.slice(-2),id];save();})); }
 document.querySelectorAll('.opponent-option').forEach(button=>button.addEventListener('click',()=>{state.opponentId=button.dataset.opponent;document.querySelectorAll('.opponent-option').forEach(other=>other.classList.toggle('selected',other===button));}));
-  renderPondUnlocks(); $('startBtn').addEventListener('click',()=>startMatch('duel')); $('freeQuizBtn').addEventListener('click',()=>startMatch('free')); $('lockBtn').addEventListener('click',()=>submitAnswer(state.match.selected)); $('continueBtn').addEventListener('click',()=>state.match.round>=state.match.total?finishMatch():(show('screenBattle'),nextQuestion())); $('againBtn').addEventListener('click',()=>startMatch(state.mode)); $('soundToggle').addEventListener('click',()=>{state.sound=!state.sound;$('soundToggle').textContent=state.sound?'◉':'♪';});
+  renderPondUnlocks(); $('startBtn').addEventListener('click',()=>startMatch('duel')); $('freeQuizBtn').addEventListener('click',()=>startMatch('free')); $('lockBtn').addEventListener('click',()=>submitAnswer(state.match.selected)); $('continueBtn').addEventListener('click',()=>state.match.round>=state.match.total?finishMatch():(show('screenBattle'),nextQuestion())); $('againBtn').addEventListener('click',()=>startMatch(state.mode));
