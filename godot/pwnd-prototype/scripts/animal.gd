@@ -1,6 +1,33 @@
 class_name PwndAnimal
 extends Node3D
 
+const SPECIES_DEFINITIONS := {
+	"frog": {
+		"color": Color("#6eb66b"),
+		"stage_colors": [Color("#6eb66b"), Color("#8fd477"), Color("#c4e58b")],
+		"shape": "sphere",
+		"body_y": 0.22,
+		"scale": Vector3.ONE,
+		"flee_speed": 1.4
+	},
+	"fish": {
+		"color": Color("#e7a05d"),
+		"stage_colors": [Color("#e7a05d"), Color("#f0bd70"), Color("#ffe29a")],
+		"shape": "fish",
+		"body_y": 0.12,
+		"scale": Vector3(1.5, 0.65, 0.8),
+		"flee_speed": 1.0
+	},
+	"duck": {
+		"color": Color("#e6cf86"),
+		"stage_colors": [Color("#e6cf86"), Color("#f2df9c"), Color("#fff2ba")],
+		"shape": "capsule",
+		"body_y": 0.4,
+		"scale": Vector3.ONE,
+		"flee_speed": 0.28
+	}
+}
+
 var species := "frog"
 var player: Node3D
 var home_position := Vector3.ZERO
@@ -22,30 +49,29 @@ func setup(kind: String, player_node: Node3D, start_position: Vector3) -> void:
 
 func _build_visual() -> void:
 	body = MeshInstance3D.new()
+	var definition: Dictionary = _definition()
 	var material := StandardMaterial3D.new()
-	material.albedo_color = {"frog": Color("#6eb66b"), "fish": Color("#e7a05d"), "duck": Color("#e6cf86")}.get(species, Color.WHITE)
+	material.albedo_color = definition.get("color", Color.WHITE)
 	material.roughness = 0.8
 	body.material_override = material
-	if species == "frog":
+	if definition.get("shape", "sphere") == "sphere":
 		var mesh := SphereMesh.new()
 		mesh.radius = 0.22
 		mesh.height = 0.35
 		body.mesh = mesh
-		body.position.y = 0.22
-	elif species == "fish":
+	elif definition.get("shape", "") == "fish":
 		var mesh := SphereMesh.new()
 		mesh.radius = 0.18
 		mesh.height = 0.34
 		body.mesh = mesh
-		body.scale = Vector3(1.5, 0.65, 0.8)
-		body.position.y = 0.12
+		body.scale = definition.get("scale", Vector3.ONE)
 	else:
 		var mesh := CapsuleMesh.new()
 		mesh.radius = 0.25
 		mesh.height = 0.8
 		body.mesh = mesh
 		body.rotation.z = PI / 2.0
-		body.position.y = 0.4
+	body.position.y = float(definition.get("body_y", 0.22))
 	add_child(body)
 	label = Label3D.new()
 	label.text = species.capitalize()
@@ -63,12 +89,7 @@ func upgrade() -> void:
 	label.visible = true
 	if body:
 		body.scale *= 1.12
-		var stage_colors := {
-			"frog": [Color("#6eb66b"), Color("#8fd477"), Color("#c4e58b")],
-			"fish": [Color("#e7a05d"), Color("#f0bd70"), Color("#ffe29a")],
-			"duck": [Color("#e6cf86"), Color("#f2df9c"), Color("#fff2ba")]
-		}
-		var colors: Array = stage_colors.get(species, [Color.WHITE, Color.WHITE, Color.WHITE])
+		var colors: Array = _definition().get("stage_colors", [Color.WHITE, Color.WHITE, Color.WHITE])
 		(body.material_override as StandardMaterial3D).albedo_color = colors[development]
 
 func set_dock_target(target: Vector3) -> void:
@@ -85,11 +106,11 @@ func _process(delta: float) -> void:
 		if species == "frog":
 			state = "beobachtet" if development > 0 else "flieht"
 			if development == 0 and reaction_cooldown <= 0:
-				velocity = (global_position - player.global_position).normalized() * 1.4
+				velocity = (global_position - player.global_position).normalized() * float(_definition().get("flee_speed", 1.0))
 				reaction_cooldown = 1.2
 		elif species == "fish":
 			state = "flieht" if _player_is_wading() else "beobachtet"
-			velocity = (global_position - player.global_position).normalized() * (0.5 if development > 0 else 1.0)
+			velocity = (global_position - player.global_position).normalized() * (0.5 if development > 0 else float(_definition().get("flee_speed", 1.0)))
 		else:
 			state = "neugierig" if development > 0 else "beobachtet"
 			velocity = (player.global_position - global_position).normalized() * (0.28 if development > 1 else -0.18)
@@ -110,3 +131,6 @@ func distance_to_target() -> float:
 
 func _player_is_wading() -> bool:
 	return player.has_method("is_in_water") and player.is_in_water()
+
+func _definition() -> Dictionary:
+	return SPECIES_DEFINITIONS.get(species, SPECIES_DEFINITIONS["frog"])

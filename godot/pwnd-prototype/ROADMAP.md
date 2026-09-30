@@ -49,7 +49,7 @@
 
 ## M4 — Content foundation
 
-- [ ] data-driven animal definitions
+- [x] initial data-driven animal definitions for frog, fish, and duck
 - [ ] data-driven structure definitions
 - [ ] habitat prerequisites
 - [ ] deterministic reward engine shared with the web beta
