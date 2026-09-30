@@ -7,14 +7,15 @@
 | Ressource | Bedeutung | Hauptquelle | Hauptverwendung |
 |---|---|---|---|
 | **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | Tiere anlocken, Strukturen bauen, Pflanzen setzen, neue Bereiche erschließen |
-| **Wasser** | Lebensenergie des Teichs; macht Wachstum und Entwicklung möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Bewohner, Pflanzen und Strukturen verbessern, füttern, erweitern |
+| **Wasser** | Lebensenergie des Teichs; macht Tierentwicklung möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Tiere füttern, beruhigen, trainieren und evolvieren |
 
 ### Ökonomische Leitregel
 
 - **Energie zeigt, was der Spieler kann.**
 - **Wasser zeigt, was der Teich tragen kann.**
 - Energie wird für die Handlung ausgegeben: anlocken, bauen, platzieren, erkunden.
-- Wasser wird für die Entwicklung ausgegeben: füttern, pflegen, erweitern, aufwerten.
+- Wasser wird ausschließlich für die Tierentwicklung ausgegeben: füttern, pflegen, beruhigen, trainieren, evolvieren.
+- Strukturen und Pflanzen werden mit Energie gebaut, gesetzt und auch ausgebaut.
 - Wissen allein baut keinen Lebensraum; Wasser allein erschafft keinen neuen Bewohner.
 - Energie darf sinken, wenn sie ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
 - Wasser darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
@@ -23,10 +24,10 @@
 
 Die Kostenangaben im Katalog folgen diesem Muster:
 
-1. **Energie-Kosten:** Der Spieler lockt einen Bewohner an, baut eine Struktur oder setzt eine Pflanze.
-2. **Wasser-Kosten:** Der Spieler entwickelt das Objekt weiter und schaltet Wirkung, Animationen oder Synergien frei.
+1. **Energie-Kosten:** Der Spieler lockt einen Bewohner an, baut eine Struktur, setzt eine Pflanze oder erweitert einen Bereich.
+2. **Wasser-Kosten:** Der Spieler entwickelt ausschließlich ein Tier weiter und schaltet neue Reaktionen, Animationen oder Synergien frei.
 
-Beispiel: Ein Frosch kann für Energie in den Teich gebracht werden. Erst mit Wasser wird aus der einfachen Froschbucht ein guter Lebensraum für Kaulquappen und Libellen.
+Beispiel: Ein Frosch kann für Energie in den Teich gebracht werden. Erst mit Wasser wird der Frosch zutraulicher, reagiert auf den Spieler und kann später eine Kaulquappen-Familie anlocken. Die Froschbucht selbst wird mit Energie gebaut und ausgebaut.
 
 ## 2. Lebensräume des Teichs
 
@@ -129,7 +130,7 @@ Strukturen sind keine statischen Dekorationen. Tiere klicken sie sinngemäß an,
 - Biber verändern die **Biberwerkstatt**.
 - Der Eisvogel beobachtet den **Beobachtungsturm**.
 
-Der Bau kostet Energie. Wasser verbessert danach Zustand, Kapazität, Animation und Ressourcenwirkung der Struktur.
+Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die Struktur schafft stattdessen den Lebensraum, in dem Tiere mit Wasser entwickelt werden können.
 
 ### 5.1 Kernstrukturen
 
