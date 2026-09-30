@@ -10,6 +10,7 @@ var animals: Array[PwndAnimal] = []
 var energy := 180
 var water := 80
 var dock_built := false
+var audio_enabled := true
 var hud_energy: Label
 var hud_water: Label
 var hud_panel: ColorRect
@@ -34,12 +35,12 @@ var ambient_audio: AudioStreamPlayer
 
 func _ready() -> void:
 	_build_environment()
+	_load_game()
 	_build_ambient_audio()
 	_build_player()
 	_build_hud()
 	_spawn_animals()
 	_build_ripples()
-	_load_game()
 	_update_hud("Willkommen in deinem kleinen Teich.")
 	if dock_built:
 		_place_dock()
@@ -82,7 +83,8 @@ func _build_ambient_audio() -> void:
 	ambient_audio.volume_db = -15.0
 	ambient_audio.finished.connect(ambient_audio.play)
 	add_child(ambient_audio)
-	ambient_audio.play()
+	if audio_enabled:
+		ambient_audio.play()
 
 func _add_box(label_name: String, size: Vector3, position: Vector3, color: Color, transparency := 0.0) -> MeshInstance3D:
 	var item := MeshInstance3D.new()
@@ -168,6 +170,7 @@ func _build_hud() -> void:
 	mobile_controls.move_changed.connect(player.set_mobile_move)
 	mobile_controls.look_changed.connect(player.apply_touch_look)
 	mobile_controls.action_pressed.connect(_on_mobile_action)
+	mobile_controls.set_audio_enabled(audio_enabled)
 	_build_pause_overlay(layer)
 	quiz_panel = QuizPanelScript.new()
 	layer.add_child(quiz_panel)
@@ -287,6 +290,9 @@ func _on_mobile_action(action: String) -> void:
 	if action == "pause":
 		_toggle_pause()
 		return
+	if action == "sound":
+		_toggle_audio()
+		return
 	if quiz_panel.visible:
 		return
 	_vibrate(35)
@@ -308,6 +314,19 @@ func _toggle_pause() -> void:
 		pause_overlay.hide()
 		mobile_controls.show()
 		_update_hud("Zurück im Teichgarten.")
+
+func _toggle_audio() -> void:
+	audio_enabled = not audio_enabled
+	if ambient_audio:
+		if audio_enabled:
+			ambient_audio.play()
+		else:
+			ambient_audio.stop()
+	if mobile_controls:
+		mobile_controls.set_audio_enabled(audio_enabled)
+	_update_hud("Teichklang eingeschaltet." if audio_enabled else "Teichklang ausgeschaltet.")
+	_vibrate(20)
+	_save_game()
 
 func _on_quiz_closed() -> void:
 	player.set_physics_process(true)
@@ -457,7 +476,7 @@ func _save_game() -> void:
 	var animal_data := {}
 	for animal in animals:
 		animal_data[animal.species] = animal.development
-	var data := {"energy": energy, "water": water, "dock_built": dock_built, "animals": animal_data}
+	var data := {"energy": energy, "water": water, "dock_built": dock_built, "audio_enabled": audio_enabled, "animals": animal_data}
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
 	if file:
 		file.store_string(JSON.stringify(data))
@@ -477,6 +496,7 @@ func _load_game() -> void:
 		energy = int(parsed.get("energy", energy))
 		water = int(parsed.get("water", water))
 		dock_built = bool(parsed.get("dock_built", false))
+		audio_enabled = bool(parsed.get("audio_enabled", true))
 		_loaded_animals = parsed.get("animals", {})
 
 var _loaded_animals: Dictionary = {}

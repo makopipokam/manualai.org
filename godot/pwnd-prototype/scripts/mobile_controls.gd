@@ -12,6 +12,7 @@ var joystick_touch := -1
 var look_touch := -1
 var last_look_position := Vector2.ZERO
 var action_buttons: Array[Button] = []
+var sound_button: Button
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -36,6 +37,18 @@ func _build_action_buttons() -> void:
 	pause_button.add_theme_stylebox_override("pressed", _button_style(Color("#9dbb83")))
 	pause_button.pressed.connect(action_pressed.emit.bind("pause"))
 	add_child(pause_button)
+	sound_button = Button.new()
+	sound_button.text = "SOUND\nON"
+	sound_button.tooltip_text = "Ambient sound an/aus"
+	sound_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	sound_button.position = Vector2(-190, 22)
+	sound_button.size = Vector2(82, 58)
+	sound_button.add_theme_font_size_override("font_size", 13)
+	sound_button.add_theme_color_override("font_color", Color("#10251f"))
+	sound_button.add_theme_stylebox_override("normal", _button_style(Color("#d9c477")))
+	sound_button.add_theme_stylebox_override("pressed", _button_style(Color("#9dbb83")))
+	sound_button.pressed.connect(action_pressed.emit.bind("sound"))
+	add_child(sound_button)
 	var column := VBoxContainer.new()
 	column.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	column.position = Vector2(-210, -224)
@@ -54,6 +67,10 @@ func _build_action_buttons() -> void:
 	hint.position = Vector2(28, -42)
 	hint.size = Vector2(260, 28)
 	add_child(hint)
+
+func set_audio_enabled(enabled: bool) -> void:
+	if sound_button:
+		sound_button.text = "SOUND\nON" if enabled else "SOUND\nOFF"
 
 func _add_action_button(parent: Container, text: String, action: String) -> void:
 	var button := Button.new()
