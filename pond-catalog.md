@@ -6,16 +6,16 @@
 
 | Ressource | Bedeutung | Hauptquelle | Hauptverwendung |
 |---|---|---|---|
-| **Gold** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | fortgeschrittene Strukturen, dauerhafte Verbesserungen, seltene Bewohner |
-| **Elixier** | Wasserenergie des Teichs; macht Wachstum und Leben möglich | Aktivitäten, Pflege, Quellen, tägliche Teichereignisse | Bewohner, Pflanzen, Wasserflächen und Lebensraum |
+| **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | fortgeschrittene Strukturen, dauerhafte Verbesserungen, seltene Bewohner |
+| **Wasser** | Wasserenergie des Teichs; macht Wachstum und Leben möglich | Aktivitäten, Pflege, Quellen, tägliche Teichereignisse | Bewohner, Pflanzen, Wasserflächen und Lebensraum |
 
 ### Ökonomische Leitregel
 
-- **Gold zeigt, was der Spieler kann.**
-- **Elixier zeigt, was der Teich tragen kann.**
+- **Energie zeigt, was der Spieler kann.**
+- **Wasser zeigt, was der Teich tragen kann.**
 - Eine Freischaltung braucht oft beides: Wissen allein baut keinen Lebensraum; Wasser allein schafft keine intelligente Ordnung.
-- Gold darf sinken, wenn es ausgegeben wird. Das Goldkonto ist keine unveränderliche Rangzahl.
-- Elixier darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
+- Energie darf sinken, wenn es ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
+- Wasser darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
 
 ## 2. Lebensräume des Teichs
 
@@ -38,43 +38,43 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 
 | Bewohner | Lebensraum | Rolle im Spiel | Freischaltidee |
 |---|---|---|---|
-| **Teichfrosch** | Ufer | erster Charakter; zeigt an, dass der Teich lebt | Starter oder 1.000 Gold + 250 Elixier |
-| **Posthornschnecke** | Ufer / Flachwasser | verbessert langsam die Wasserqualität | 1.020 Gold + 280 Elixier |
-| **Wasserläufer** | Oberfläche | markiert ruhiges Wasser und gibt kleine tägliche Elixierboni | 1.040 Gold + 300 Elixier |
-| **Kaulquappen** | Flachwasser | wachsen über mehrere Teichstufen zu Fröschen | 1.080 Gold + 340 Elixier |
-| **Libelle** | Flachwasser / Blütenufer | erhöht Reaktions- und Geschwindigkeitsbelohnungen im Quiz | 1.120 Gold + 420 Elixier |
+| **Teichfrosch** | Ufer | erster Charakter; zeigt an, dass der Teich lebt | Starter oder 1.000 Energie + 250 Wasser |
+| **Posthornschnecke** | Ufer / Flachwasser | verbessert langsam die Wasserqualität | 1.020 Energie + 280 Wasser |
+| **Wasserläufer** | Oberfläche | markiert ruhiges Wasser und gibt kleine tägliche Wasserboni | 1.040 Energie + 300 Wasser |
+| **Kaulquappen** | Flachwasser | wachsen über mehrere Teichstufen zu Fröschen | 1.080 Energie + 340 Wasser |
+| **Libelle** | Flachwasser / Blütenufer | erhöht Reaktions- und Geschwindigkeitsbelohnungen im Quiz | 1.120 Energie + 420 Wasser |
 
 ### 3.2 Wasserbewohner
 
 | Bewohner | Lebensraum | Rolle im Spiel | Freischaltidee |
 |---|---|---|---|
-| **Elritzen-Schwarm** | Flachwasser | kleine, sichtbare Bewegung; Bonus auf Erkundungsfunde | 1.180 Gold + 450 Elixier |
-| **Karausche** | Flachwasser | stabilisiert Elixierproduktion bei regelmäßiger Pflege | 1.240 Gold + 500 Elixier |
-| **Karpfen** | Tiefwasser | macht tiefe Strukturen nutzbar; erhöht Speichergrenze | 1.320 Gold + 560 Elixier |
-| **Teichmuschel** | Tiefwasser | filtert Wasser; senkt Pflegekosten | 1.360 Gold + 620 Elixier |
-| **Molch** | Tiefwasser / Ufer | belohnt ruhige, fehlerarme Quizserien | 1.420 Gold + 680 Elixier |
-| **Wasserkäfer** | Flachwasser | macht kurze Aktivitäten profitabler | 1.500 Gold + 720 Elixier |
+| **Elritzen-Schwarm** | Flachwasser | kleine, sichtbare Bewegung; Bonus auf Erkundungsfunde | 1.180 Energie + 450 Wasser |
+| **Karausche** | Flachwasser | stabilisiert Wasserproduktion bei regelmäßiger Pflege | 1.240 Energie + 500 Wasser |
+| **Karpfen** | Tiefwasser | macht tiefe Strukturen nutzbar; erhöht Speichergrenze | 1.320 Energie + 560 Wasser |
+| **Teichmuschel** | Tiefwasser | filtert Wasser; senkt Pflegekosten | 1.360 Energie + 620 Wasser |
+| **Molch** | Tiefwasser / Ufer | belohnt ruhige, fehlerarme Quizserien | 1.420 Energie + 680 Wasser |
+| **Wasserkäfer** | Flachwasser | macht kurze Aktivitäten profitabler | 1.500 Energie + 720 Wasser |
 
 ### 3.3 Ufer- und Schilfbewohner
 
 | Bewohner | Lebensraum | Rolle im Spiel | Freischaltidee |
 |---|---|---|---|
-| **Stockente** | Schilfzone | bringt gelegentlich Gold-Funde an den Ufersteg | 1.560 Gold + 780 Elixier |
-| **Teichhuhn** | Schilfzone | erhöht die Chance auf Folgeereignisse | 1.620 Gold + 840 Elixier |
-| **Eisvogel** | Bachlauf / Schilfzone | seltener Beobachter; verbessert seltene Wissensfunde | 1.800 Gold + 1.000 Elixier |
-| **Graureiher** | Schilfzone / Tiefwasser | großer Meilenstein; schaltet Beobachtungsaufgaben frei | 2.100 Gold + 1.300 Elixier |
-| **Biber** | Bachlauf / Ufer | verändert aktiv die Teichstruktur; erzeugt neue Wasserwege | 2.300 Gold + 1.600 Elixier |
+| **Stockente** | Schilfzone | bringt gelegentlich Energie-Funde an den Ufersteg | 1.560 Energie + 780 Wasser |
+| **Teichhuhn** | Schilfzone | erhöht die Chance auf Folgeereignisse | 1.620 Energie + 840 Wasser |
+| **Eisvogel** | Bachlauf / Schilfzone | seltener Beobachter; verbessert seltene Wissensfunde | 1.800 Energie + 1.000 Wasser |
+| **Graureiher** | Schilfzone / Tiefwasser | großer Meilenstein; schaltet Beobachtungsaufgaben frei | 2.100 Energie + 1.300 Wasser |
+| **Biber** | Bachlauf / Ufer | verändert aktiv die Teichstruktur; erzeugt neue Wasserwege | 2.300 Energie + 1.600 Wasser |
 
 ### 3.4 Waldsaum und Nachtteich
 
 | Bewohner | Lebensraum | Rolle im Spiel | Freischaltidee |
 |---|---|---|---|
-| **Igel** | Waldsaum | bringt kleine Goldfunde nach Pflegerunden | 1.700 Gold + 900 Elixier |
-| **Feldmaus** | Waldsaum | erhöht die Chance auf Sammelmaterial | 1.580 Gold + 760 Elixier |
-| **Fledermaus** | Nachtteich | macht Nachtquizze und seltene Ereignisse möglich | 2.000 Gold + 1.200 Elixier |
-| **Glühwürmchen** | Nachtteich / Blütenufer | erzeugt nachts eine sanfte Elixierregeneration | 1.900 Gold + 1.100 Elixier |
-| **Ringelnatter** | Schilfzone / Tiefwasser | anspruchsvoller Bewohner; belohnt zusammenhängende Lebensräume | 2.400 Gold + 1.700 Elixier |
-| **Otter** | Bachlauf / Tiefwasser | Endgame-Bewohner; eröffnet soziale und spielerische Teichereignisse | 3.000 Gold + 2.400 Elixier |
+| **Igel** | Waldsaum | bringt kleine Energiefunde nach Pflegerunden | 1.700 Energie + 900 Wasser |
+| **Feldmaus** | Waldsaum | erhöht die Chance auf Sammelmaterial | 1.580 Energie + 760 Wasser |
+| **Fledermaus** | Nachtteich | macht Nachtquizze und seltene Ereignisse möglich | 2.000 Energie + 1.200 Wasser |
+| **Glühwürmchen** | Nachtteich / Blütenufer | erzeugt nachts eine sanfte Wasserregeneration | 1.900 Energie + 1.100 Wasser |
+| **Ringelnatter** | Schilfzone / Tiefwasser | anspruchsvoller Bewohner; belohnt zusammenhängende Lebensräume | 2.400 Energie + 1.700 Wasser |
+| **Otter** | Bachlauf / Tiefwasser | Endgame-Bewohner; eröffnet soziale und spielerische Teichereignisse | 3.000 Energie + 2.400 Wasser |
 
 ### Bewohner-Designregeln
 
@@ -99,7 +99,7 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 | **Moosufer** | verbessert ruhige, natürliche Optik und Wasserstabilität | Molch, Schnecke |
 | **Weidenast** | Schatten und Sitzplatz | Eisvogel, Fledermaus |
 | **Wildblumenrand** | Bestäuber und Farbreichtum | Libellen, Glühwürmchen |
-| **Kleeinsel** | kleine, günstige Goldchance bei Pflege | Igel, Feldmaus |
+| **Kleeinsel** | kleine, günstige Energiechance bei Pflege | Igel, Feldmaus |
 | **Nachtblüten** | nur nachts aktiv | Glühwürmchen, Fledermaus |
 | **Totholzinsel** | Versteck und Beobachtungspunkt | Käfer, Molch, Igel |
 | **Kiesbett** | verbessert Klarheit des Wassers | Elritzen, Wasserläufer |
@@ -110,34 +110,34 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 
 | Struktur | Primäre Ressource | Funktion |
 |---|---|---|
-| **Froschbucht** | Elixier | erster Bewohnerplatz und Einstieg in die Teichbevölkerung |
-| **Wasserspeicher** | Elixier | erhöht die maximale Elixierkapazität |
-| **Goldenes Ufer** | Gold | erhöht die Goldkapazität und macht Gold sichtbar im Hub |
-| **Schilfgürtel** | Elixier | schafft Schutzplätze für Uferbewohner |
-| **Karpfenkolk** | Elixier | schaltet Tiefwasserbewohner frei |
-| **Quellzulauf** | Gold + Elixier | regelmäßiger Elixierzufluss, aber Pflegebedarf |
-| **Ufersteg** | Gold | schaltet Sammel- und Beobachtungsaktivitäten frei |
-| **Pflegehütte** | Gold + Elixier | bündelt tägliche Pflege und Upgrade-Auswahl |
+| **Froschbucht** | Wasser | erster Bewohnerplatz und Einstieg in die Teichbevölkerung |
+| **Wasserspeicher** | Wasser | erhöht die maximale Wasserkapazität |
+| **Energieenes Ufer** | Energie | erhöht die Energiekapazität und macht Energie sichtbar im Hub |
+| **Schilfgürtel** | Wasser | schafft Schutzplätze für Uferbewohner |
+| **Karpfenkolk** | Wasser | schaltet Tiefwasserbewohner frei |
+| **Quellzulauf** | Energie + Wasser | regelmäßiger Wasserzufluss, aber Pflegebedarf |
+| **Ufersteg** | Energie | schaltet Sammel- und Beobachtungsaktivitäten frei |
+| **Pflegehütte** | Energie + Wasser | bündelt tägliche Pflege und Upgrade-Auswahl |
 
 ### 5.2 Wissens- und Aktivitätsstrukturen
 
 | Struktur | Neue Aktivität | Ressourcenprofil |
 |---|---|---|
-| **Fragefisch-Steg** | freies Quizzen mit Themenwahl | kleiner Goldgewinn, stabiler Elixiergewinn |
-| **Duellplatz am Ufer** | Quizduell gegen AI-Gegner | hoher Goldgewinn, variabler Elixiergewinn |
-| **Beobachtungsturm** | Muster- und Naturbeobachtung | hohe Goldchance, geringe Elixierkosten |
-| **Quellenarchiv** | Quellen prüfen und Aussagen sortieren | Gold für Begründungsqualität |
-| **Kräutergarten** | Pflege- und Kausalitätsaufgaben | Elixierbonus bei konsistenten Entscheidungen |
+| **Fragefisch-Steg** | freies Quizzen mit Themenwahl | kleiner Energiegewinn, stabiler Wassergewinn |
+| **Duellplatz am Ufer** | Quizduell gegen AI-Gegner | hoher Energiegewinn, variabler Wassergewinn |
+| **Beobachtungsturm** | Muster- und Naturbeobachtung | hohe Energiechance, geringe Wasserkosten |
+| **Quellenarchiv** | Quellen prüfen und Aussagen sortieren | Energie für Begründungsqualität |
+| **Kräutergarten** | Pflege- und Kausalitätsaufgaben | Wasserbonus bei konsistenten Entscheidungen |
 | **Nachtsteg** | zeitlich begrenzte Nachtquizze | seltene Ressourcen, höhere Risiken |
-| **Biberwerkstatt** | Strukturen umleiten und umbauen | Gold investieren, Elixierproduktion verbessern |
+| **Biberwerkstatt** | Strukturen umleiten und umbauen | Energie investieren, Wasserproduktion verbessern |
 | **Teichkarte** | neue Bereiche und Mini-Biome entdecken | Exploration als dritter späterer Wasserweg |
 
 ## 6. Freischaltlogik
 
 ### Phase 0 — Ein lebendiger Anfang
 
-- Gold: 1.000
-- Elixier: 250
+- Energie: 1.000
+- Wasser: 250
 - Offen: Froschbucht
 - Sichtbar: Frosch, erstes Schilf, eine kleine Seerose
 - Aktiv: Quizduell und freies Quizzen
@@ -180,7 +180,7 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 - Glühwürmchenhain
 - Quellzulauf-Ausbau
 
-**Spielgefühl:** Der Teich bekommt eine erkennbare Identität und der Spieler entscheidet zwischen Goldfokus, Wasserfokus, Wissensfokus oder Naturfokus.
+**Spielgefühl:** Der Teich bekommt eine erkennbare Identität und der Spieler entscheidet zwischen Energiefokus, Wasserfokus, Wissensfokus oder Naturfokus.
 
 ## 7. Synergie-Builds für unterschiedliche Spieler
 
@@ -188,20 +188,20 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 
 - Schnecke + Muschel + Kiesbett + Wasserpest
 - niedrige Pflegekosten
-- stabile Elixierproduktion
+- stabile Wasserproduktion
 - weniger spektakulär, aber sehr zuverlässig
 
 ### Der Wissensgarten
 
 - Libelle + Eisvogel + Beobachtungsturm + Quellenarchiv
-- hoher Goldgewinn durch schnelle und gut begründete Antworten
+- hoher Energiegewinn durch schnelle und gut begründete Antworten
 - stärkerer Fokus auf Quizduell und freie Themenwahl
 
 ### Das lebendige Ufer
 
 - Frosch + Schilf + Ente + Wildblumenrand
 - mehr Bewohnerereignisse
-- zusätzliche kleine Gold- und Elixierfunde
+- zusätzliche kleine Energie- und Wasserfunde
 - besonders zugänglich für neue Spieler
 
 ### Der tiefe Teich
@@ -236,7 +236,7 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 
 ### Später
 
-- aktive Pflege mit Elixierkosten,
+- aktive Pflege mit Wasserkosten,
 - Tages-/Nachtwechsel,
 - saisonale Bewohner,
 - seltene Quellereignisse,
@@ -251,4 +251,4 @@ Jeder Bewohner gehört zu mindestens einem Lebensraum. Neue Lebensräume sind wi
 - Kein neues Objekt nur für „mehr Content“.
 - Keine künstliche Seltenheit ohne spielerische Bedeutung.
 - Die erste Session muss den Teich lebendig machen; die zehnte Session muss eine Richtung zeigen.
-- Gold und Elixier dürfen nicht zu zwei identischen Balken werden: Gold ist Leistung und Entscheidungskraft, Elixier ist Lebensraum und Wachstum.
+- Energie und Wasser dürfen nicht zu zwei identischen Balken werden: Energie ist Leistung und Entscheidungskraft, Wasser ist Lebensraum und Wachstum.
