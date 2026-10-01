@@ -14,6 +14,7 @@ let appState = {
     currentDogIndex: 0,
     chatHistory: [],
     currentDog: null,
+    sharedProfile: false,
     favorites: [],
     filters: {
         size: [],
@@ -27,6 +28,7 @@ let appState = {
 };
 
 let imageLoadToken = 0;
+const SCORING_VERSION = 2;
 
 // DOM Elements
 const screens = {
@@ -43,7 +45,10 @@ const elements = {
     startTestBtn: document.getElementById('start-test-btn'),
     savedResultPanel: document.getElementById('saved-result-panel'),
     savedResultText: document.getElementById('saved-result-text'),
+    savedProgressPanel: document.getElementById('saved-progress-panel'),
+    savedProgressText: document.getElementById('saved-progress-text'),
     resumeResultBtn: document.getElementById('resume-result-btn'),
+    resumeTestBtn: document.getElementById('resume-test-btn'),
     retakeTestBtn: document.getElementById('retake-test-btn'),
     viewFavoritesBtn: document.getElementById('view-favorites-btn'),
     backFromFavoritesBtn: document.getElementById('back-from-favorites-btn'),
@@ -70,6 +75,7 @@ const elements = {
     dogImage6: document.getElementById('dog-image-6'),
     matchReason: document.getElementById('match-reason'),
     nextDogBtn: document.getElementById('next-dog-btn'),
+    chatBtn: document.getElementById('chat-btn'),
     favoriteBtn: document.getElementById('favorite-btn'),
     shareBtn: document.getElementById('share-btn'),
     backToResultsBtn: document.getElementById('back-to-results-btn'),
@@ -111,9 +117,9 @@ function loadState() {
     if (savedState) {
         try {
             const state = JSON.parse(savedState);
-            appState.favorites = state.favorites || [];
+            appState.favorites = Array.isArray(state.favorites) ? state.favorites : [];
             appState.darkMode = state.darkMode || false;
-            appState.userAnswers = state.userAnswers || [];
+            appState.userAnswers = Array.isArray(state.userAnswers) ? state.userAnswers : [];
             appState.currentQuestion = state.currentQuestion || 0;
             appState.lastResult = state.lastResult || null;
         } catch (e) {
@@ -139,6 +145,7 @@ function setupEventListeners() {
     // Start test button
     elements.startTestBtn.addEventListener('click', startTest);
     elements.resumeResultBtn.addEventListener('click', restoreLastResult);
+    elements.resumeTestBtn.addEventListener('click', resumeTest);
     elements.retakeTestBtn.addEventListener('click', startNewTest);
     elements.viewFavoritesBtn.addEventListener('click', showFavorites);
     
@@ -148,6 +155,7 @@ function setupEventListeners() {
     
     // Action buttons
     elements.nextDogBtn.addEventListener('click', showNextDog);
+    elements.chatBtn.addEventListener('click', showChat);
     elements.backToResultsBtn.addEventListener('click', backToResults);
     elements.restartTestBtn.addEventListener('click', restartTest);
     elements.backFromFavoritesBtn.addEventListener('click', () => showScreen('start'));
@@ -214,10 +222,19 @@ function renderSavedResult() {
     if (hasResult) {
         elements.savedResultText.textContent = `Zuletzt: ${firstDog.name}. Das Ergebnis bleibt auf diesem Gerät gespeichert.`;
     }
+
+    const answeredCount = appState.userAnswers.filter(Boolean).length;
+    const hasPartialTest = !hasResult && answeredCount > 0 && answeredCount < bigFiveQuestions.length;
+    elements.savedProgressPanel.hidden = !hasPartialTest;
+    if (hasPartialTest) {
+        const questionNumber = Math.min(appState.currentQuestion + 1, bigFiveQuestions.length);
+        elements.savedProgressText.textContent = ` ${answeredCount} von ${bigFiveQuestions.length} Fragen beantwortet. Du kannst bei Frage ${questionNumber} weitermachen.`;
+    }
 }
 
 function persistCompletedResult() {
     appState.lastResult = {
+        scoringVersion: SCORING_VERSION,
         dogIds: appState.matchingDogs.map(dog => dog.id),
         matchScores: Object.fromEntries(appState.matchingDogs.map(dog => [dog.id, dog.matchScore || 0])),
         userPersonality: { ...appState.userPersonality },
@@ -234,6 +251,15 @@ function restoreLastResult() {
         startNewTest();
         return;
     }
+    const hasCompleteSavedAnswers = appState.userAnswers.filter(Boolean).length === bigFiveQuestions.length;
+    if (result.scoringVersion !== SCORING_VERSION && hasCompleteSavedAnswers) {
+        calculatePersonality();
+        appState.matchingDogs = getMatchingDogs(appState.userPersonality, 10);
+        appState.currentDogIndex = 0;
+        persistCompletedResult();
+        showDogResult();
+        return;
+    }
     const restoredScores = result.matchScores || Object.fromEntries(
         getMatchingDogs(result.userPersonality || {}, result.dogIds.length).map(dog => [dog.id, dog.matchScore || 0])
     );
@@ -247,6 +273,7 @@ function restoreLastResult() {
     }
     appState.matchingDogs = restoredDogs;
     appState.userPersonality = result.userPersonality || appState.userPersonality;
+    appState.sharedProfile = false;
     appState.currentDogIndex = Math.min(result.currentDogIndex || 0, restoredDogs.length - 1);
     showDogResult();
 }
@@ -258,14 +285,27 @@ function startNewTest() {
     startTest();
 }
 
+function resumeTest() {
+    const answeredCount = appState.userAnswers.filter(Boolean).length;
+    if (!answeredCount || appState.lastResult) {
+        startTest();
+        return;
+    }
+    appState.currentQuestion = Math.max(0, Math.min(appState.currentQuestion, bigFiveQuestions.length - 1));
+    loadQuestion();
+    showScreen('test');
+}
+
 // Start the personality test
 function startTest() {
+    appState.lastResult = null;
     appState.currentQuestion = 0;
     appState.userAnswers = [];
     appState.userPersonality = { O: 50, C: 50, E: 50, A: 50, N: 50 };
     appState.matchingDogs = [];
     appState.currentDogIndex = 0;
     appState.chatHistory = [];
+    appState.sharedProfile = false;
     saveState();
     
     loadQuestion();
@@ -312,7 +352,7 @@ function loadQuestion() {
     
     // Enable/disable navigation buttons
     elements.prevQuestionBtn.disabled = appState.currentQuestion === 0;
-    elements.nextQuestionBtn.disabled = true;
+    elements.nextQuestionBtn.disabled = !savedAnswer || !Number.isInteger(savedAnswer.optionIndex);
 }
 
 // Select an option for the current question
@@ -330,6 +370,7 @@ function selectOption(optionIndex) {
     // Store the normalized Likert value so scoring remains explicit and replayable.
     appState.userAnswers[appState.currentQuestion] = {
         question: question.text,
+        questionIndex: appState.currentQuestion,
         option: String(optionIndex + 1),
         dimension: question.dimension,
         reverse: question.reverse,
@@ -338,6 +379,7 @@ function selectOption(optionIndex) {
     };
     // Save progress
     saveState();
+    renderSavedResult();
     
     // Enable next button
     elements.nextQuestionBtn.disabled = false;
@@ -347,6 +389,7 @@ function selectOption(optionIndex) {
 function prevQuestion() {
     if (appState.currentQuestion > 0) {
         appState.currentQuestion--;
+        saveState();
         loadQuestion();
     }
 }
@@ -355,6 +398,7 @@ function prevQuestion() {
 function nextQuestion() {
     if (appState.currentQuestion < bigFiveQuestions.length - 1) {
         appState.currentQuestion++;
+        saveState();
         loadQuestion();
     } else {
         // Test is complete, calculate personality and find matching dogs
@@ -383,7 +427,10 @@ function calculatePersonality() {
     appState.userAnswers.forEach(answer => {
         if (answer) {
             const dimension = answer.dimension;
-            const isReverse = answer.reverse;
+            const currentQuestion = bigFiveQuestions.find(question =>
+                question.dimension === answer.dimension && question.text === answer.question
+            );
+            const isReverse = currentQuestion ? currentQuestion.reverse : answer.reverse;
             const score = Number.isFinite(answer.likertValue)
                 ? answer.likertValue
                 : (answer.optionIndex === 1 ? 100 : 0);
@@ -420,6 +467,9 @@ function findMatchingDogs() {
 // Show the dog result
 function showDogResult() {
     const dog = appState.matchingDogs[appState.currentDogIndex];
+    if (!dog) return;
+    const hasPersonalMatch = Number.isFinite(dog.matchScore);
+    appState.sharedProfile = !hasPersonalMatch;
     appState.currentDog = dog;
     
     // Update dog info
@@ -435,12 +485,17 @@ function showDogResult() {
     // Load images with fallback and labels
     loadDogImages(dog.images, dog.imagesLabels);
     
-    // Show breed attributes separately and use overall stars for personal suitability.
+    // Show breed attributes separately; personal suitability is only shown for test results.
     updateRatings(dog.ratings, dog.matchScore);
     
     // Generate match explanation
-    const explanation = generateMatchExplanation(appState.userPersonality, dog);
-    elements.matchReason.textContent = explanation + ` (Übereinstimmung: ${dog.matchScore.toFixed(1)}%)`;
+    if (hasPersonalMatch) {
+        const explanation = generateMatchExplanation(appState.userPersonality, dog);
+        elements.matchReason.textContent = explanation + ` (Übereinstimmung: ${dog.matchScore.toFixed(1)}%)`;
+    } else {
+        elements.matchReason.textContent = 'Allgemeines Rasseprofil. Mache den Persönlichkeitstest, um deine persönliche Eignung zu sehen.';
+    }
+    elements.nextDogBtn.hidden = !hasPersonalMatch;
     
     // Update favorite button state
     updateFavoriteButton();
@@ -543,7 +598,12 @@ function updateRatings(ratings, matchScore) {
     elements.familyRating.innerHTML = generateStarRating(ratings.family || 3);
     elements.trainabilityRating.innerHTML = generateStarRating(ratings.trainability || 3);
     
-    const overall = calculateSuitabilityRating(matchScore) ?? calculateOverallRating(ratings);
+    const overall = calculateSuitabilityRating(matchScore);
+    if (overall === null) {
+        elements.overallRating.innerHTML = '<span class="rating-unavailable">—</span>';
+        elements.overallRatingText.textContent = 'Kein persönlicher Test';
+        return;
+    }
     elements.overallRating.innerHTML = generateStarRating(overall);
     elements.overallRatingText.textContent = `${overall.toFixed(1)}/5`;
 }
@@ -685,7 +745,10 @@ function renderFavorites() {
         const viewFavorite = () => {
             const fullDog = dogDatabase.find(d => d.id === dog.id);
             if (fullDog) {
-                appState.matchingDogs = [{ ...fullDog, matchScore: dog.matchScore || 0 }];
+                appState.matchingDogs = [{
+                    ...fullDog,
+                    matchScore: Number.isFinite(dog.matchScore) ? dog.matchScore : null
+                }];
                 appState.currentDogIndex = 0;
                 showDogResult();
                 showScreen('results');
@@ -761,11 +824,17 @@ function updateFavoriteButton() {
 function openShareModal() {
     const dog = appState.currentDog;
     if (!dog) return;
-    
-    const shareUrl = `${window.location.origin}${window.location.pathname}?dog=${dog.id}`;
-    
-    elements.shareLinkInput.value = shareUrl;
+
+    elements.shareLinkInput.value = getShareUrl(dog);
     elements.shareModal.classList.add('active');
+}
+
+function getShareUrl(dog = appState.currentDog) {
+    if (!dog) return window.location.href;
+    const url = new URL(window.location.href);
+    url.search = '';
+    url.searchParams.set('dog', String(dog.id));
+    return url.toString();
 }
 
 // Close share modal
@@ -775,23 +844,35 @@ function closeShareModal() {
 
 // Copy link to clipboard
 function copyLink() {
-    elements.shareLinkInput.select();
-    document.execCommand('copy');
-    showToast('Link kopiert!', 'success');
+    const text = elements.shareLinkInput.value;
+    const fallback = () => {
+        elements.shareLinkInput.select();
+        const copied = document.execCommand('copy');
+        showToast(copied ? 'Link kopiert!' : 'Link markiert – bitte kopieren.', copied ? 'success' : 'error');
+    };
+    if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).then(
+            () => showToast('Link kopiert!', 'success'),
+            fallback
+        );
+    } else {
+        fallback();
+    }
 }
 
 // Share on social media functions
 function shareOnTwitter() {
     const dog = appState.currentDog;
     if (!dog) return;
-    
-    const text = `Ich habe meinen perfekten Hund gefunden: ${dog.name}! Teste auch du auf ${window.location.origin}${window.location.pathname}`;
+
+    const shareUrl = getShareUrl(dog);
+    const text = `Schau dir das Rasseprofil ${dog.name} an: ${shareUrl}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
 
 function shareOnFacebook() {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
     window.open(url, '_blank');
 }
 
@@ -799,7 +880,7 @@ function shareOnWhatsApp() {
     const dog = appState.currentDog;
     if (!dog) return;
     
-    const text = `Ich habe meinen perfekten Hund gefunden: ${dog.name}! Teste auch du hier: ${window.location.href}`;
+    const text = `Schau dir das Rasseprofil ${dog.name} an: ${getShareUrl(dog)}`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
@@ -808,7 +889,9 @@ function shareOnWhatsApp() {
 function addChatMessage(sender, text) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `chat-message ${sender}`;
-    messageDiv.innerHTML = `<p>${text}</p>`;
+    const paragraph = document.createElement('p');
+    paragraph.textContent = text;
+    messageDiv.appendChild(paragraph);
     elements.chatMessages.appendChild(messageDiv);
     
     appState.chatHistory.push({ sender, text });
@@ -944,8 +1027,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (dogId) {
         const dog = dogDatabase.find(d => d.id == dogId);
         if (dog) {
-            appState.matchingDogs = [dog];
+            appState.matchingDogs = [{ ...dog, matchScore: null }];
             appState.currentDogIndex = 0;
+            appState.sharedProfile = true;
             setTimeout(() => {
                 showDogResult();
                 showScreen('results');

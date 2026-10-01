@@ -23,12 +23,12 @@ const bigFiveQuestions = [
     { text: "Ich genieße...", options: ["einfache Freuden", "tiefgründige Diskussionen"], dimension: "O", reverse: false },
     
     // Conscientiousness (6 questions)
-    { text: "Ich bin...", options: ["spontan", "organisiert"], dimension: "C", reverse: true },
-    { text: "Ich erledige Aufgaben...", options: ["wenn ich Lust habe", "pünktlich und gewissenhaft"], dimension: "C", reverse: true },
-    { text: "Ich bin...", options: ["nachlässig", "gründlich"], dimension: "C", reverse: true },
-    { text: "Ich plane...", options: ["selten im Voraus", "alles genau"], dimension: "C", reverse: true },
-    { text: "Ich bin...", options: ["unordentlich", "ordentlich"], dimension: "C", reverse: true },
-    { text: "Ich halte mich an...", options: ["Regeln nur wenn nötig", "Regeln strikt"], dimension: "C", reverse: true },
+    { text: "Ich bin...", options: ["spontan", "organisiert"], dimension: "C", reverse: false },
+    { text: "Ich erledige Aufgaben...", options: ["wenn ich Lust habe", "pünktlich und gewissenhaft"], dimension: "C", reverse: false },
+    { text: "Ich bin...", options: ["nachlässig", "gründlich"], dimension: "C", reverse: false },
+    { text: "Ich plane...", options: ["selten im Voraus", "alles genau"], dimension: "C", reverse: false },
+    { text: "Ich bin...", options: ["unordentlich", "ordentlich"], dimension: "C", reverse: false },
+    { text: "Ich halte mich an...", options: ["Regeln nur wenn nötig", "Regeln strikt"], dimension: "C", reverse: false },
     
     // Extraversion (6 questions)
     { text: "Ich bin...", options: ["zurückhaltend", "gesellig"], dimension: "E", reverse: false },
@@ -47,8 +47,8 @@ const bigFiveQuestions = [
     { text: "Ich helfe anderen...", options: ["nur wenn ich muss", "gerne und oft"], dimension: "A", reverse: false },
     
     // Neuroticism (2 questions)
-    { text: "Ich bin...", options: ["gelassen", "ängstlich"], dimension: "N", reverse: true },
-    { text: "Ich reagiere auf Stress...", options: ["ruhig", "gestresst"], dimension: "N", reverse: true }
+    { text: "Ich bin...", options: ["gelassen", "ängstlich"], dimension: "N", reverse: false },
+    { text: "Ich reagiere auf Stress...", options: ["ruhig", "gestresst"], dimension: "N", reverse: false }
 ];
 
 // Dog Database with personality matching

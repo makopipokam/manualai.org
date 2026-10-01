@@ -1,6 +1,9 @@
-// Service Worker for PWA - Hundefinder
-const CACHE_NAME = 'mydog-v1';
-const ASSETS_TO_CACHE = [
+// Service Worker for PWA - MyDog
+// Only caches owned by the /mydog/ app are managed here.
+const STATIC_CACHE = 'mydog-static-v2';
+const IMAGE_CACHE = 'mydog-images-v1';
+const OWNED_CACHE_PREFIX = 'mydog-';
+const APP_SHELL = [
     '/mydog/',
     '/mydog/index.html',
     '/mydog/style.css',
@@ -8,156 +11,109 @@ const ASSETS_TO_CACHE = [
     '/mydog/data.js',
     '/mydog/manifest.json',
     '/mydog/icon-192x192.png',
-    '/mydog/icon-512x512.png',
-    'https://fonts.googleapis.com/css?family=Segoe+UI',
-    'https://images.unsplash.com/photo-1568572933382-74d440642017?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1529429617124-95b44e41a3b2?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop'
+    '/mydog/icon-512x512.png'
 ];
+const IMAGE_HOSTS = new Set([
+    'images.dog.ceo',
+    'upload.wikimedia.org',
+    'thumb.wikimedia.org'
+]);
 
-// Install Service Worker
 self.addEventListener('install', (event) => {
-    console.log('Service Worker: Installing...');
-    
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('Service Worker: Caching assets...');
-                return cache.addAll(ASSETS_TO_CACHE);
-            })
-            .then(() => {
-                console.log('Service Worker: Assets cached successfully');
-                return self.skipWaiting();
-            })
-            .catch((error) => {
-                console.error('Service Worker: Error caching assets:', error);
-            })
+        caches.open(STATIC_CACHE)
+            .then(cache => cache.addAll(APP_SHELL))
+            .then(() => self.skipWaiting())
     );
 });
 
-// Activate Service Worker
 self.addEventListener('activate', (event) => {
-    console.log('Service Worker: Activating...');
-    
-    // Remove old caches
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (cacheName !== CACHE_NAME) {
-                        console.log(`Service Worker: Removing old cache ${cacheName}`);
-                        return caches.delete(cacheName);
-                    }
-                })
-            );
-        })
-        .then(() => {
-            console.log('Service Worker: Activated and ready to serve');
-            return self.clients.claim();
-        })
+        caches.keys()
+            .then(cacheNames => Promise.all(
+                cacheNames
+                    .filter(name => name.startsWith(OWNED_CACHE_PREFIX) && ![STATIC_CACHE, IMAGE_CACHE].includes(name))
+                    .map(name => caches.delete(name))
+            ))
+            .then(() => self.clients.claim())
     );
 });
 
-// Fetch Event - Serve from cache or fetch from network
-self.addEventListener('fetch', (event) => {
-    const url = new URL(event.request.url);
-    
-    // Skip POST requests and non-GET requests
-    if (event.request.method !== 'GET') {
-        return;
-    }
-    
-    // Skip requests to other origins (CORS)
-    if (url.origin !== self.location.origin && !url.pathname.includes('unsplash.com')) {
-        return;
-    }
-    
-    // Strategy: Cache first, then network
-    event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                if (response) {
-                    console.log(`Service Worker: Serving ${event.request.url} from cache`);
-                    return response;
-                }
-                
-                console.log(`Service Worker: Fetching ${event.request.url} from network`);
-                return fetch(event.request)
-                    .then((response) => {
-                        // Clone the response to cache it
-                        const responseClone = response.clone();
-                        
-                        // Cache images from Unsplash
-                        if (url.pathname.includes('unsplash.com')) {
-                            caches.open(CACHE_NAME)
-                                .then((cache) => {
-                                    cache.put(event.request, responseClone);
-                                });
-                        }
-                        
-                        return response;
-                    });
-            })
-            .catch((error) => {
-                console.error('Service Worker: Error fetching:', error);
-                // Fallback: Return a simple offline page
-                if (event.request.destination === 'document') {
-                    return caches.match('/mydog/index.html');
-                }
-            })
-    );
-});
-
-// Push Notification Support
-self.addEventListener('push', (event) => {
-    const data = event.data.json();
-    
-    const options = {
-        body: data.body,
-        icon: '/mydog/icon-192x192.png',
-        badge: '/mydog/icon-192x192.png',
-        data: {
-            url: data.url || '/mydog/'
-        }
-    };
-    
-    event.waitUntil(
-        self.registration.showNotification(data.title, options)
-    );
-});
-
-// Notification Click Handler
-self.addEventListener('notificationclick', (event) => {
-    event.notification.close();
-    
-    if (event.notification.data && event.notification.data.url) {
-        event.waitUntil(
-            clients.openWindow(event.notification.data.url)
-        );
-    }
-});
-
-// Background Sync Support
-self.addEventListener('sync', (event) => {
-    if (event.tag === 'sync-favorites') {
-        event.waitUntil(syncFavorites());
-    }
-});
-
-async function syncFavorites() {
-    // This would sync favorites with a server if we had one
-    console.log('Service Worker: Syncing favorites...');
-    return Promise.resolve();
+function isAppRequest(url) {
+    return url.origin === self.location.origin && url.pathname.startsWith('/mydog/');
 }
 
-// Periodic Background Sync (every 24 hours)
-self.addEventListener('periodicsync', (event) => {
-    if (event.tag === 'daily-sync') {
-        event.waitUntil(syncFavorites());
+function isDocumentRequest(request, url) {
+    return request.mode === 'navigate' || url.pathname === '/mydog/' || url.pathname.endsWith('/index.html');
+}
+
+function isAllowedImageRequest(request, url) {
+    return request.destination === 'image' && IMAGE_HOSTS.has(url.host);
+}
+
+function cacheSuccessfulResponse(cache, request, response) {
+    if (response && (response.ok || response.type === 'opaque')) {
+        cache.put(request, response.clone()).catch(() => {});
+    }
+    return response;
+}
+
+function appShellRequest(event, url) {
+    const request = event.request;
+    return caches.open(STATIC_CACHE).then(cache => {
+        if (isDocumentRequest(request, url)) {
+            return fetch(request)
+                .then(response => cacheSuccessfulResponse(cache, request, response))
+                .catch(() => cache.match('/mydog/index.html'));
+        }
+
+        return cache.match(request)
+            .then(cached => cached || fetch(request).then(response => cacheSuccessfulResponse(cache, request, response)));
+    });
+}
+
+function imageRequest(event) {
+    return caches.open(IMAGE_CACHE).then(cache => {
+        return cache.match(event.request).then(cached => {
+            if (cached) return cached;
+            return fetch(event.request)
+                .then(response => cacheSuccessfulResponse(cache, event.request, response));
+        });
+    });
+}
+
+self.addEventListener('fetch', (event) => {
+    if (event.request.method !== 'GET') return;
+
+    const url = new URL(event.request.url);
+    if (isAppRequest(url)) {
+        event.respondWith(appShellRequest(event, url));
+    } else if (isAllowedImageRequest(event.request, url)) {
+        event.respondWith(imageRequest(event));
     }
 });
 
-console.log('Service Worker: Loaded and ready');
+// Optional notification support remains isolated from app caching.
+self.addEventListener('push', (event) => {
+    const data = event.data ? event.data.json() : {};
+    event.waitUntil(self.registration.showNotification(data.title || 'MyDog', {
+        body: data.body || '',
+        icon: '/mydog/icon-192x192.png',
+        badge: '/mydog/icon-192x192.png',
+        data: { url: data.url || '/mydog/' }
+    }));
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const url = event.notification.data?.url || '/mydog/';
+    event.waitUntil(clients.openWindow(url));
+});
+
+self.addEventListener('sync', (event) => {
+    if (event.tag === 'sync-favorites') event.waitUntil(Promise.resolve());
+});
+
+self.addEventListener('periodicsync', (event) => {
+    if (event.tag === 'daily-sync') event.waitUntil(Promise.resolve());
+});

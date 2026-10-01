@@ -1,6 +1,6 @@
-# 🐾 Find deinen perfekten Hund
+# 🐾 Finde passende Hundevorschläge
 
-Eine interaktive Web-App, bei der du einen Big Five Persönlichkeitstest machst, um den passenden Hund für dich zu finden.
+Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest machst und passende Hundevorschläge entdeckst. Die Sterne sind eine spielerische Orientierung, keine tiermedizinische oder wissenschaftliche Eignungsdiagnose.
 
 ## 🚀 Features
 
@@ -25,6 +25,7 @@ Eine interaktive Web-App, bei der du einen Big Five Persönlichkeitstest machst,
 - Chat mit jedem Hund
 - Schnellauswahl-Buttons für häufige Fragen
 - Individuelle Antworten pro Hunderasse
+- Nutzereingaben werden als Text und nicht als HTML gerendert
 
 ### 📚 Favoriten
 - Füge Hunde zu deinen Favoriten hinzu
@@ -42,14 +43,16 @@ Eine interaktive Web-App, bei der du einen Big Five Persönlichkeitstest machst,
 
 ### 📱 PWA (Progressive Web App)
 - Installierbar auf Mobilgeräten
-- Offline-Funktionalität
-- Service Worker für Caching
+- Offline-App-Shell nach einem erfolgreichen Online-Besuch
+- Versionierter MyDog-only Service-Worker-Cache
+- Bereits geladene externe Bilder können im Runtime-Cache verfügbar sein
 - Automatische Service-Worker-Registrierung auf HTTPS und localhost
 - Enthaltene 192×192- und 512×512-PWA-Icons
 
 ### 💾 Fortschritt speichern
 - Testfortschritt wird automatisch gespeichert
-- Setze den Test jederzeit fort
+- Unvollständiger Test kann nach Reload fortgesetzt werden
+- Bereits beantwortete Fragen bleiben bei Zurück/Weiter auswählbar
 
 ## 🛠 Technologien
 
@@ -102,18 +105,20 @@ npm run test:mydog:beta
 Der Test prüft reproduzierbar:
 
 - alle 30 Fragen mit allen fünf Likert-Werten (1–5)
-- numerische Auswahl, Fortschritt sowie Zurück/Weiter
-- gespeicherte Antworten und Wiederherstellung nach einem Reload
-- Ergebnisberechnung und Ergebnisdarstellung
+- numerische Auswahl, Fortschritt sowie Zurück/Weiter inklusive gespeicherter Navigation
+- Fortsetzen eines unvollständigen Tests nach einem Reload
+- Ergebnisberechnung inklusive erwarteter OCEAN-Richtung
+- Ergebnisdarstellung und direkter Rasseprofil-Link ohne persönlichen Score
 - Favoriten speichern, entfernen und Favoritenübersicht
+- Chat-Zugriff und sichere Darstellung von Nutzereingaben
+- versionierten MyDog-only Service-Worker-Cache
 - „Test neu machen“ inklusive Löschen der alten Antworten
 - mobile Portrait- und Desktop-Viewport-Ausführung
 
 Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
 
 - Safe Area/Notch, Scrollverhalten und Touch-Ziele in iOS Safari und Android Chrome
-- Haptik-Unterstützung und Verhalten bei deaktivierter Vibration
-- PWA-Installation, Offline-Start und Browser-Zurück-Navigation
+- PWA-Installation, Offline-App-Shell, Service-Worker-Update und Browser-Zurück-Navigation
 - lokale Speicherung nach App-Neustart sowie Verhalten bei privatem Browsing
 
 ### PWA Installation
