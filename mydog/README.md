@@ -42,6 +42,8 @@ Eine interaktive Web-App, bei der du einen Big Five Persönlichkeitstest machst,
 - Installierbar auf Mobilgeräten
 - Offline-Funktionalität
 - Service Worker für Caching
+- Automatische Service-Worker-Registrierung auf HTTPS und localhost
+- Enthaltene 192×192- und 512×512-PWA-Icons
 
 ### 💾 Fortschritt speichern
 - Testfortschritt wird automatisch gespeichert

@@ -7,6 +7,8 @@ const ASSETS_TO_CACHE = [
     '/mydog/script.js',
     '/mydog/data.js',
     '/mydog/manifest.json',
+    '/mydog/icon-192x192.png',
+    '/mydog/icon-512x512.png',
     'https://fonts.googleapis.com/css?family=Segoe+UI',
     'https://images.unsplash.com/photo-1568572933382-74d440642017?w=400&h=300&fit=crop',
     'https://images.unsplash.com/photo-1529429617124-95b44e41a3b2?w=400&h=300&fit=crop',

@@ -809,3 +809,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 });
+
+// Enable the PWA cache only when served from a secure origin (or localhost).
+if ('serviceWorker' in navigator && (window.isSecureContext || window.location.hostname === 'localhost')) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js', { scope: './' })
+            .catch((error) => console.warn('MyDog offline mode unavailable:', error));
+    });
+}
