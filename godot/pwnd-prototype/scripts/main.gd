@@ -87,14 +87,18 @@ func _build_environment() -> void:
 	sun.shadow_enabled = true
 	add_child(sun)
 	_add_box("ground", Vector3(24, 0.35, 18), Vector3(0, -0.25, 0), Color("#6b8f59"))
+	_add_collision_box("ground_collision", Vector3(24, 0.35, 18), Vector3(0, -0.25, 0))
 	water_surface = _add_box("water", Vector3(11, 0.12, 7), Vector3(0, 0.12, -1.3), Color("#4f9eaa"), 0.72)
 	_add_box("bank", Vector3(5, 0.18, 10), Vector3(7.6, 0.05, 0), Color("#a9a06f"))
+	_add_collision_box("bank_collision", Vector3(5, 0.18, 10), Vector3(7.6, 0.05, 0))
 	for x in [-6.0, -4.8, 5.8, 7.0]:
 		_add_reed(Vector3(x, 0, -2.8 + fmod(abs(x) * 1.7, 4.2)))
 	for position in [Vector3(-3.0, 0.22, -1.0), Vector3(1.8, 0.22, -3.0), Vector3(3.2, 0.22, 0.0)]:
 		_add_lily(position)
 	_add_box("shore_stone", Vector3(1.1, 0.6, 0.8), Vector3(-6.5, 0.3, 2.7), Color("#768276"))
+	_add_collision_box("shore_stone_collision", Vector3(1.1, 0.6, 0.8), Vector3(-6.5, 0.3, 2.7))
 	_add_box("shore_stone", Vector3(0.8, 0.5, 0.7), Vector3(5.8, 0.25, 3.1), Color("#8c9280"))
+	_add_collision_box("shore_stone_collision", Vector3(0.8, 0.5, 0.7), Vector3(5.8, 0.25, 3.1))
 
 func _build_ambient_audio() -> void:
 	ambient_audio = AudioStreamPlayer.new()
@@ -122,6 +126,18 @@ func _add_box(label_name: String, size: Vector3, position: Vector3, color: Color
 	add_child(item)
 	return item
 
+func _add_collision_box(label_name: String, size: Vector3, position: Vector3) -> StaticBody3D:
+	var body := StaticBody3D.new()
+	body.name = label_name
+	var collision := CollisionShape3D.new()
+	var shape := BoxShape3D.new()
+	shape.size = size
+	collision.shape = shape
+	body.position = position
+	body.add_child(collision)
+	add_child(body)
+	return body
+
 func _add_reed(position: Vector3) -> void:
 	for index in range(4):
 		var reed := _add_box("reed", Vector3(0.08, 1.1 + index * 0.1, 0.08), position + Vector3(index * 0.14, 0.55, sin(index) * 0.16), Color("#48754d"))
@@ -146,7 +162,7 @@ func _add_lily(position: Vector3) -> void:
 func _build_player() -> void:
 	player = PlayerScript.new()
 	player.name = "Player"
-	player.position = Vector3(0, 0.65, 5.8)
+	player.position = Vector3(0, 0.0, 5.8)
 	var collision := CollisionShape3D.new()
 	var capsule := CapsuleShape3D.new()
 	capsule.radius = 0.35
@@ -415,11 +431,13 @@ func _place_dock() -> void:
 	var platform_position: Vector3 = definition["platform_position"]
 	var platform_color: Color = definition["platform_color"]
 	_add_box("duck_dock", platform_size, platform_position, platform_color)
+	_add_collision_box("duck_dock_collision", platform_size, platform_position)
 	var post_size: Vector3 = definition["post_size"]
 	var post_color: Color = definition["post_color"]
 	for post_data in definition["post_positions"]:
 		var post_position: Vector3 = post_data
 		_add_box("duck_dock_post", post_size, post_position, post_color)
+		_add_collision_box("duck_dock_post_collision", post_size, post_position)
 
 func _set_duck_dock_target() -> void:
 	var target_position: Vector3 = STRUCTURE_DEFINITIONS["duck_dock"]["target_position"]

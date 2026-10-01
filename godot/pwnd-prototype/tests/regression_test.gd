@@ -33,6 +33,7 @@ func _run() -> void:
 	await _test_touch_reset(main)
 	_test_animal_stays_on_plane(main)
 	_test_wading_matches_surface(main)
+	await _test_world_collisions(main)
 	await _test_quiz_layout(main)
 
 	print("")
@@ -180,6 +181,30 @@ func _test_wading_matches_surface(main: Node3D) -> void:
 	player.global_position = Vector3(sample.x, 0.65, sample.z)
 	_check(player.is_in_water(), "Wassergrenze berücksichtigt die Mesh-Rotation")
 	main.water_surface.rotation.y = 0.0
+
+func _test_world_collisions(main: Node3D) -> void:
+	print("Weltkollision")
+	var static_bodies: Array[Node] = []
+	for child in main.get_children():
+		if child is StaticBody3D:
+			static_bodies.append(child)
+	_check(static_bodies.size() >= 4, "Boden, Ufer und Steine haben Kollisionen", "körper=%d" % static_bodies.size())
+	main.energy = 999
+	main.dock_built = false
+	main._build_dock()
+	var with_dock := 0
+	for child in main.get_children():
+		if child is StaticBody3D:
+			with_dock += 1
+	_check(with_dock >= 7, "Entensteg erhält Plattform- und Pfostenkollisionen", "körper=%d" % with_dock)
+	main.player.rotation.y = PI / 2.0
+	main.player.global_position = Vector3(-5.0, 0.0, 2.7)
+	main.player.set_mobile_move(Vector2(0, -1))
+	for _step in range(18):
+		await physics_frame
+	main.player.set_mobile_move(Vector2.ZERO)
+	_check(main.player.global_position.x > -5.95, "Spieler wird vom Uferstein gestoppt", "x=%.2f" % main.player.global_position.x)
+	main.player.rotation.y = 0.0
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")
