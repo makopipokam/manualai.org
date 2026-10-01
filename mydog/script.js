@@ -26,6 +26,8 @@ let appState = {
     lastResult: null
 };
 
+let imageLoadToken = 0;
+
 // DOM Elements
 const screens = {
     start: document.getElementById('start-screen'),
@@ -447,37 +449,64 @@ function showDogResult() {
     showScreen('results');
 }
 
-// Load breed-specific dog images and labels
+// Load breed-specific images without showing stale images during transitions.
 function loadDogImages(imageUrls, labels) {
     const dog = appState.currentDog;
-    
-    // Set main image
-    elements.dogImageMain.onerror = function() {
-        this.style.visibility = 'hidden';
-    };
-    elements.dogImageMain.src = imageUrls[0] || '';
-    elements.dogImageMain.alt = dog.name;
-    elements.dogImageMain.loading = "eager";
-    
-    // Set thumbnail images
+    const loadToken = ++imageLoadToken;
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
-    thumbnailIds.forEach((id, index) => {
-        const imgElement = document.getElementById(id);
-        if (imgElement) {
-            imgElement.onerror = function() {
-                this.style.visibility = 'hidden';
-            };
-            imgElement.src = imageUrls[index] || imageUrls[0] || '';
-            imgElement.alt = `${dog.name} — Bild ${index + 1}`;
-            imgElement.loading = "lazy";
-            imgElement.addEventListener('click', () => {
-                selectThumbnail(index, imageUrls, labels);
-            });
-        }
+    const thumbnails = thumbnailIds.map(id => document.getElementById(id));
+
+    // Clear every previous image before the next dog is rendered.
+    [elements.dogImageMain, ...thumbnails].forEach(img => {
+        if (!img) return;
+        img.removeAttribute('src');
+        img.style.visibility = 'hidden';
+        img.classList.remove('selected');
+        img.onclick = null;
     });
-    
-    // Select first thumbnail by default
-    selectThumbnail(0, imageUrls, labels);
+
+    elements.dogImageMain.alt = dog.name;
+    elements.dogImageMain.loading = 'eager';
+    elements.dogImageMain.onerror = function() {
+        if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
+    };
+
+    thumbnails.forEach((imgElement, index) => {
+        if (!imgElement) return;
+        imgElement.alt = `${dog.name} — Bild ${index + 1}`;
+        imgElement.loading = 'lazy';
+        imgElement.onerror = function() {
+            if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
+        };
+        imgElement.onclick = () => {
+            if (loadToken === imageLoadToken) selectThumbnail(index, imageUrls, labels);
+        };
+    });
+
+    if (thumbnails[0]) thumbnails[0].classList.add('selected');
+
+    imageUrls.forEach((url, index) => {
+        if (!url) return;
+        const preloader = new Image();
+        preloader.onload = () => {
+            if (loadToken !== imageLoadToken) return;
+            const target = index === 0 ? elements.dogImageMain : thumbnails[index];
+            if (!target) return;
+            target.src = url;
+            target.style.visibility = 'visible';
+            if (index === 0) {
+                elements.dogImageMain.classList.add('selected');
+                if (thumbnails[0]) {
+                    thumbnails[0].src = url;
+                    thumbnails[0].style.visibility = 'visible';
+                }
+            }
+        };
+        preloader.onerror = () => {
+            if (loadToken === imageLoadToken && index === 0) elements.dogImageMain.style.visibility = 'hidden';
+        };
+        preloader.src = url;
+    });
 }
 
 // Select a thumbnail image
@@ -487,6 +516,7 @@ function selectThumbnail(index, imageUrls, labels) {
     // Update main image
     elements.dogImageMain.src = imageUrls[index] || imageUrls[0] || '';
     elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
+    elements.dogImageMain.style.visibility = 'visible';
     
     // Update thumbnail selection
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
