@@ -28,6 +28,7 @@ let appState = {
 };
 
 let imageLoadToken = 0;
+let imageObserver = null;
 const SCORING_VERSION = 2;
 
 // DOM Elements
@@ -508,6 +509,7 @@ function showDogResult() {
 function loadDogImages(imageUrls, labels) {
     const dog = appState.currentDog;
     const loadToken = ++imageLoadToken;
+    if (imageObserver) imageObserver.disconnect();
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
     const thumbnails = thumbnailIds.map(id => document.getElementById(id));
 
@@ -515,6 +517,8 @@ function loadDogImages(imageUrls, labels) {
     [elements.dogImageMain, ...thumbnails].forEach(img => {
         if (!img) return;
         img.removeAttribute('src');
+        delete img.dataset.loaded;
+        delete img.dataset.loading;
         img.style.visibility = 'hidden';
         img.classList.remove('selected');
         img.onclick = null;
@@ -526,6 +530,30 @@ function loadDogImages(imageUrls, labels) {
         if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
     };
 
+    const loadImage = (index, target, onReady) => {
+        if (loadToken !== imageLoadToken || !target || !imageUrls[index] || target.dataset.loading === 'true') return;
+        if (target.dataset.loaded === imageUrls[index]) {
+            if (onReady) onReady();
+            return;
+        }
+        target.dataset.loading = 'true';
+        const preloader = new Image();
+        preloader.onload = () => {
+            if (loadToken !== imageLoadToken) return;
+            target.dataset.loading = 'false';
+            target.dataset.loaded = imageUrls[index];
+            target.src = imageUrls[index];
+            target.style.visibility = 'visible';
+            if (onReady) onReady();
+        };
+        preloader.onerror = () => {
+            if (loadToken !== imageLoadToken) return;
+            target.dataset.loading = 'false';
+            target.style.visibility = 'hidden';
+        };
+        preloader.src = imageUrls[index];
+    };
+
     thumbnails.forEach((imgElement, index) => {
         if (!imgElement) return;
         imgElement.alt = `${dog.name} — Bild ${index + 1}`;
@@ -534,34 +562,35 @@ function loadDogImages(imageUrls, labels) {
             if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
         };
         imgElement.onclick = () => {
-            if (loadToken === imageLoadToken) selectThumbnail(index, imageUrls, labels);
+            if (loadToken !== imageLoadToken) return;
+            loadImage(index, imgElement, () => selectThumbnail(index, imageUrls, labels));
         };
     });
 
     if (thumbnails[0]) thumbnails[0].classList.add('selected');
 
-    imageUrls.forEach((url, index) => {
-        if (!url) return;
-        const preloader = new Image();
-        preloader.onload = () => {
-            if (loadToken !== imageLoadToken) return;
-            const target = index === 0 ? elements.dogImageMain : thumbnails[index];
-            if (!target) return;
-            target.src = url;
-            target.style.visibility = 'visible';
-            if (index === 0) {
-                elements.dogImageMain.classList.add('selected');
-                if (thumbnails[0]) {
-                    thumbnails[0].src = url;
-                    thumbnails[0].style.visibility = 'visible';
-                }
-            }
-        };
-        preloader.onerror = () => {
-            if (loadToken === imageLoadToken && index === 0) elements.dogImageMain.style.visibility = 'hidden';
-        };
-        preloader.src = url;
+    loadImage(0, elements.dogImageMain, () => {
+        elements.dogImageMain.classList.add('selected');
+        if (thumbnails[0] && imageUrls[0]) {
+            thumbnails[0].src = imageUrls[0];
+            thumbnails[0].dataset.loaded = imageUrls[0];
+            thumbnails[0].style.visibility = 'visible';
+        }
     });
+
+    if ('IntersectionObserver' in window) {
+        imageObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                const index = Number(entry.target.dataset.index);
+                loadImage(index, entry.target);
+                imageObserver.unobserve(entry.target);
+            });
+        }, { rootMargin: '120px' });
+        thumbnails.slice(1).forEach(img => {
+            if (img) imageObserver.observe(img);
+        });
+    }
 }
 
 // Select a thumbnail image
