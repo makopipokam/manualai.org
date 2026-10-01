@@ -34,8 +34,10 @@
       click('#start-test-btn');
       assert(active() === 'test-screen', 'test start opens test screen');
       assert(page.querySelectorAll('.likert-option').length === 5, 'five numeric Likert options render');
-      assert(page.querySelector('.likert-hint')?.textContent === '1 = eher links · 5 = eher rechts', 'orientation hint renders');
+      assert(page.querySelector('.likert-hint') === null, 'redundant orientation hint stays removed');
       assert(page.querySelector('.likert-labels') === null, 'descriptive labels stay removed');
+      assert(page.querySelector('.test-navigation').firstElementChild?.id === 'next-question-btn', 'Weiter is above Zurück');
+      assert(page.querySelector('.test-navigation').lastElementChild?.id === 'prev-question-btn', 'Zurück is below Weiter');
 
       for (let question = 0; question < 30; question += 1) {
         const options = page.querySelectorAll('.likert-option');
@@ -68,6 +70,7 @@
 
       click('#favorite-btn');
       assert(state().favorites.length === 1, 'favorite is persisted');
+      assert(getComputedStyle(page.querySelector('#favorite-btn')).backgroundColor !== 'rgb(255, 64, 129)', 'favorite state is not red');
       app.showFavorites();
       assert(active() === 'favorites-screen', 'favorites overview opens');
       assert(page.querySelectorAll('.favorite-card').length === 1, 'favorite card renders');
