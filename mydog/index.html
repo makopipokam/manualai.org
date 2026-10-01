@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
     <title>Find deinen perfekten Hund - Persönlichkeitstest</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="app-container">
@@ -13,6 +15,7 @@
             <h1>🐾 Find deinen perfekten Hund 🐶</h1>
             <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
             <button id="start-test-btn" class="btn-primary">Test starten</button>
+            <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
         </div>
 
         <!-- Personality Test Screen -->
@@ -69,19 +72,29 @@
                         <div class="info-item">
                             <span class="info-label">Energielevel:</span>
                             <span id="dog-energy" class="info-value"></span>
+                            <div id="energy-rating" class="star-rating"></div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Pflegebedarf:</span>
                             <span id="dog-grooming" class="info-value"></span>
+                            <div id="grooming-rating" class="star-rating"></div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Familientauglich:</span>
                             <span id="dog-family" class="info-value"></span>
+                            <div id="family-rating" class="star-rating"></div>
                         </div>
                         <div class="info-item">
                             <span class="info-label">Trainierbarkeit:</span>
                             <span id="dog-trainability" class="info-value"></span>
+                            <div id="trainability-rating" class="star-rating"></div>
                         </div>
+                    </div>
+                    
+                    <div class="ratings-overview">
+                        <h4>Gesamtbewertung:</h4>
+                        <div id="overall-rating" class="star-rating large"></div>
+                        <span id="overall-rating-text" class="rating-text"></span>
                     </div>
                     
                     <p id="dog-description" class="dog-description"></p>
@@ -96,6 +109,8 @@
             <div class="action-buttons">
                 <button id="interest-btn" class="btn-primary">✅ Interesse - Mehr erfahren</button>
                 <button id="no-interest-btn" class="btn-secondary">❌ Kein Interesse - Nächster Vorschlag</button>
+                <button id="favorite-btn" class="btn-favorite">❤️ Zu Favoriten hinzufügen</button>
+                <button id="share-btn" class="btn-share">📤 Teilen</button>
             </div>
         </div>
 
@@ -132,6 +147,17 @@
             </div>
         </div>
 
+        <!-- Favorites Screen -->
+        <div id="favorites-screen" class="screen">
+            <div class="favorites-header">
+                <button id="back-from-favorites-btn" class="back-btn">← Zurück</button>
+                <h2>📚 Meine Favoriten</h2>
+            </div>
+            <div id="favorites-list" class="favorites-list">
+                <!-- Favorites will be inserted by JS -->
+            </div>
+        </div>
+
         <!-- No More Dogs Screen -->
         <div id="no-more-screen" class="screen">
             <h2>Keine weiteren Hunde mehr</h2>
@@ -139,6 +165,25 @@
             <button id="restart-test-btn" class="btn-primary">Test neu starten</button>
         </div>
     </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Teilen</h3>
+            <p>Kopiere diesen Link, um deinen Hund mit Freunden zu teilen:</p>
+            <input type="text" id="share-link-input" readonly>
+            <button id="copy-link-btn" class="btn-primary">Link kopieren</button>
+            <div class="social-share-buttons">
+                <button class="social-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
+                <button class="social-btn facebook" onclick="shareOnFacebook()">📘 Facebook</button>
+                <button class="social-btn whatsapp" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Dark Mode">🌓</button>
 
     <script src="data.js"></script>
     <script src="script.js"></script>

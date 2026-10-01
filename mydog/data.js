@@ -66,13 +66,20 @@ const dogDatabase = [
         familyFriendly: "Sehr familienfreundlich",
         trainability: "Sehr gut trainierbar",
         personality: {
-            O: 70,  // Openness - anpassungsfähig, neugierig
-            C: 80,  // Conscientiousness - zuverlässig, arbeitswillig
-            E: 90,  // Extraversion - gesellig, freundlich
-            A: 95,  // Agreeableness - sehr verträglich
-            N: 30   // Neuroticism - gelassen, stabil
+            O: 70,
+            C: 80,
+            E: 90,
+            A: 95,
+            N: 30
         },
-        idealFor: "Aktive Familien, Ersthundebesitzer, Menschen die einen treuen Begleiter suchen"
+        idealFor: "Aktive Familien, Ersthundebesitzer, Menschen die einen treuen Begleiter suchen",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 5,
+            grooming: 4,
+            health: 4
+        }
     },
     {
         id: 2,
@@ -96,7 +103,14 @@ const dogDatabase = [
             A: 98,
             N: 25
         },
-        idealFor: "Familien mit Kindern, Senioren, Therapiearbeit"
+        idealFor: "Familien mit Kindern, Senioren, Therapiearbeit",
+        ratings: {
+            family: 5,
+            energy: 4,
+            trainability: 5,
+            grooming: 2,
+            health: 4
+        }
     },
     {
         id: 3,
@@ -120,7 +134,14 @@ const dogDatabase = [
             A: 60,
             N: 40
         },
-        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Hundesportler"
+        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Hundesportler",
+        ratings: {
+            family: 3,
+            energy: 5,
+            trainability: 5,
+            grooming: 3,
+            health: 4
+        }
     },
     {
         id: 4,
@@ -144,7 +165,14 @@ const dogDatabase = [
             A: 50,
             N: 60
         },
-        idealFor: "Erfahrene Hundebesitzer, Menschen die einen Hund mit Charakter suchen"
+        idealFor: "Erfahrene Hundebesitzer, Menschen die einen Hund mit Charakter suchen",
+        ratings: {
+            family: 3,
+            energy: 3,
+            trainability: 3,
+            grooming: 5,
+            health: 4
+        }
     },
     {
         id: 5,
@@ -168,7 +196,14 @@ const dogDatabase = [
             A: 85,
             N: 40
         },
-        idealFor: "Wohnungshaltung, Ersthundebesitzer, Menschen die einen gemütlichen Begleiter suchen"
+        idealFor: "Wohnungshaltung, Ersthundebesitzer, Menschen die einen gemütlichen Begleiter suchen",
+        ratings: {
+            family: 5,
+            energy: 2,
+            trainability: 3,
+            grooming: 5,
+            health: 3
+        }
     },
     {
         id: 6,
@@ -192,7 +227,14 @@ const dogDatabase = [
             A: 80,
             N: 45
         },
-        idealFor: "Aktive Familien, Menschen die gerne spazieren gehen"
+        idealFor: "Aktive Familien, Menschen die gerne spazieren gehen",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 3,
+            grooming: 5,
+            health: 4
+        }
     },
     {
         id: 7,
@@ -216,7 +258,14 @@ const dogDatabase = [
             A: 90,
             N: 35
         },
-        idealFor: "Wohnungshaltung, Menschen die einen Schoßhund suchen, Senioren"
+        idealFor: "Wohnungshaltung, Menschen die einen Schoßhund suchen, Senioren",
+        ratings: {
+            family: 3,
+            energy: 3,
+            trainability: 4,
+            grooming: 2,
+            health: 4
+        }
     },
     {
         id: 8,
@@ -240,7 +289,14 @@ const dogDatabase = [
             A: 70,
             N: 30
         },
-        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Schutz- und Diensthundearbeit"
+        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Schutz- und Diensthundearbeit",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 5,
+            grooming: 3,
+            health: 3
+        }
     },
     {
         id: 9,
@@ -251,7 +307,7 @@ const dogDatabase = [
             "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
             "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
         ],
-        description: "Der Pudel ist ein intelligenter, lernwilliger und hypoallergenen Hund. Er gibt es in drei Größen (Toy, Zwerg, Standard). Pudel sind vielseitig, können Tricks lernen und sind gute Begleiter für verschiedene Lebensstile.",
+        description: "Der Pudel ist ein intelligenter, lernwilliger und hypoallergener Hund. Er gibt es in drei Größen (Toy, Zwerg, Standard). Pudel sind vielseitig, können Tricks lernen und sind gute Begleiter für verschiedene Lebensstile.",
         size: "Variiert (Toy: 24-28 cm, Zwerg: 28-35 cm, Standard: 45-60 cm)",
         energy: "Hoch - Braucht viel Bewegung und geistige Auslastung",
         grooming: "Hoch - Professionelle Pflege empfohlen",
@@ -264,7 +320,14 @@ const dogDatabase = [
             A: 85,
             N: 25
         },
-        idealFor: "Allergiker, aktive Menschen, Hundesportler, Familien"
+        idealFor: "Allergiker, aktive Menschen, Hundesportler, Familien",
+        ratings: {
+            family: 5,
+            energy: 4,
+            trainability: 5,
+            grooming: 2,
+            health: 4
+        }
     },
     {
         id: 10,
@@ -288,7 +351,14 @@ const dogDatabase = [
             A: 50,
             N: 70
         },
-        idealFor: "Wohnungshaltung, Einzelpersonen, Menschen die einen kleinen Begleiter suchen"
+        idealFor: "Wohnungshaltung, Einzelpersonen, Menschen die einen kleinen Begleiter suchen",
+        ratings: {
+            family: 2,
+            energy: 3,
+            trainability: 3,
+            grooming: 4,
+            health: 3
+        }
     },
     {
         id: 11,
@@ -312,7 +382,14 @@ const dogDatabase = [
             A: 65,
             N: 40
         },
-        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Hundesportler, Bauernhöfe"
+        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, Hundesportler, Bauernhöfe",
+        ratings: {
+            family: 4,
+            energy: 5,
+            trainability: 5,
+            grooming: 3,
+            health: 4
+        }
     },
     {
         id: 12,
@@ -336,7 +413,14 @@ const dogDatabase = [
             A: 95,
             N: 30
         },
-        idealFor: "Wohnungshaltung, Familien, Senioren, Menschen die einen sanften Begleiter suchen"
+        idealFor: "Wohnungshaltung, Familien, Senioren, Menschen die einen sanften Begleiter suchen",
+        ratings: {
+            family: 5,
+            energy: 3,
+            trainability: 4,
+            grooming: 2,
+            health: 3
+        }
     },
     {
         id: 13,
@@ -354,13 +438,175 @@ const dogDatabase = [
         familyFriendly: "Sehr familienfreundlich",
         trainability: "Ausgezeichnet trainierbar",
         personality: {
-            O: 80,  // Neugierig, anpassungsfähig
-            C: 85,  // Gewissenhaft, arbeitswillig
-            E: 75,  // Gesellig, aber nicht übertrieben
-            A: 70,  // Verträglich, aber mit eigenem Willen
-            N: 35   // Gelassen, stabil
+            O: 80,
+            C: 85,
+            E: 75,
+            A: 70,
+            N: 35
         },
-        idealFor: "Aktive Familien, Hundesportler, Menschen die einen treuen und intelligenten Begleiter suchen"
+        idealFor: "Aktive Familien, Hundesportler, Menschen die einen treuen und intelligenten Begleiter suchen",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 5,
+            grooming: 3,
+            health: 4
+        }
+    },
+    {
+        id: 14,
+        name: "Berner Sennenhund",
+        breed: "Berner Sennenhund",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Berner Sennenhund ist ein sanfter Riese mit dreifarbigem Fell. Er ist bekannt für sein freundliches, ruhiges Wesen und seine Treue. Berner sind hervorragende Familienhunde, die gut mit Kindern umgehen können. Sie brauchen viel Platz und sind nicht für heiße Klimazonen geeignet.",
+        size: "Groß (58-70 cm, 36-54 kg)",
+        energy: "Mittel - Braucht moderate Bewegung",
+        grooming: "Hoch - Tägliches Bürsten empfohlen",
+        familyFriendly: "Sehr familienfreundlich",
+        trainability: "Gut trainierbar",
+        personality: {
+            O: 60,
+            C: 70,
+            E: 70,
+            A: 95,
+            N: 30
+        },
+        idealFor: "Familien mit Kindern, Menschen mit viel Platz, kühles Klima",
+        ratings: {
+            family: 5,
+            energy: 3,
+            trainability: 4,
+            grooming: 2,
+            health: 3
+        }
+    },
+    {
+        id: 15,
+        name: "Shiba Inu",
+        breed: "Shiba Inu",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Shiba Inu ist eine japanische Hunderasse mit fuchsähnlichem Aussehen und einem starken, unabhängigen Charakter. Er ist intelligent, sauber und hat eine katzenartige Persönlichkeit. Shibas sind loyal, können aber auch eigenwillig sein.",
+        size: "Mittel (35-43 cm, 8-10 kg)",
+        energy: "Mittel bis Hoch - Braucht tägliche Bewegung und geistige Auslastung",
+        grooming: "Hoch - Tägliches Bürsten, besonders während des Haarwechsels",
+        familyFriendly: "Mit älteren Kindern geeignet",
+        trainability: "Mittel - Kann stur sein, braucht konsequente Erziehung",
+        personality: {
+            O: 70,
+            C: 60,
+            E: 50,
+            A: 40,
+            N: 50
+        },
+        idealFor: "Erfahrene Hundebesitzer, Menschen die einen Hund mit Charakter suchen",
+        ratings: {
+            family: 3,
+            energy: 4,
+            trainability: 3,
+            grooming: 2,
+            health: 4
+        }
+    },
+    {
+        id: 16,
+        name: "Sibirischer Husky",
+        breed: "Sibirischer Husky",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Sibirische Husky ist bekannt für seine atemberaubenden blauen oder mehrfarbigen Augen und sein wolfsähnliches Aussehen. Er ist ein energiegeladener, freundlicher und geselliger Hund, der ursprünglich als Schlittenhund gezüchtet wurde.",
+        size: "Groß (50-60 cm, 16-27 kg)",
+        energy: "Sehr hoch - Braucht extrem viel Bewegung",
+        grooming: "Hoch - Tägliches Bürsten, besonders während des Haarwechsels",
+        familyFriendly: "Sehr familienfreundlich",
+        trainability: "Mittel - Intelligent, aber eigenwillig",
+        personality: {
+            O: 85,
+            C: 40,
+            E: 90,
+            A: 80,
+            N: 40
+        },
+        idealFor: "Erfahrene Hundebesitzer, aktive Menschen, kühles Klima",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 3,
+            grooming: 2,
+            health: 4
+        }
+    },
+    {
+        id: 17,
+        name: "Dalmatiner",
+        breed: "Dalmatiner",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Dalmatiner ist bekannt für sein einzigartiges geflecktes Fell und sein energiegeladenes Wesen. Er ist ein aktiver, intelligenter und geselliger Hund, der ursprünglich als Kutschenbegleithund gezüchtet wurde.",
+        size: "Groß (56-61 cm, 23-32 kg)",
+        energy: "Sehr hoch - Braucht viel Bewegung und Auslastung",
+        grooming: "Niedrig - Wöchentliches Bürsten reicht",
+        familyFriendly: "Sehr familienfreundlich",
+        trainability: "Gut trainierbar",
+        personality: {
+            O: 80,
+            C: 70,
+            E: 90,
+            A: 75,
+            N: 40
+        },
+        idealFor: "Aktive Familien, Menschen mit viel Platz, erfahrene Hundebesitzer",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 4,
+            grooming: 5,
+            health: 4
+        }
+    },
+    {
+        id: 18,
+        name: "Boxer",
+        breed: "Boxer",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Boxer ist ein muskulöser, energiegeladener Hund mit einem freundlichen, verspieltem Wesen. Er ist bekannt für seine Treue und seinen Schutzinstinkt. Boxer sind hervorragende Familienhunde, die gut mit Kindern umgehen.",
+        size: "Groß (53-63 cm, 25-32 kg)",
+        energy: "Hoch - Braucht viel Bewegung und Auslastung",
+        grooming: "Niedrig - Wöchentliches Bürsten reicht",
+        familyFriendly: "Sehr familienfreundlich",
+        trainability: "Gut trainierbar",
+        personality: {
+            O: 70,
+            C: 75,
+            E: 85,
+            A: 80,
+            N: 40
+        },
+        idealFor: "Aktive Familien, Menschen die einen Beschützer und Spielkameraden suchen",
+        ratings: {
+            family: 5,
+            energy: 5,
+            trainability: 4,
+            grooming: 5,
+            health: 4
+        }
     }
 ];
 
@@ -469,6 +715,46 @@ const dogChatResponses = {
         grooming: "Mein drahtiges Fell braucht wöchentliches Bürsten, um Verfilzungen zu vermeiden. Alle 2-3 Monate sollte ich professionell getrimmt werden. Mein Fell ist wetterfest und schützt mich gut.",
         lifespan: "Ich lebe durchschnittlich 12-14 Jahre. Berger Picards sind im Allgemeinen gesunde Hunde, aber Hüftdysplasie kann vorkommen. Regelmäßige Bewegung hält mich fit!",
         training: "Ich bin extrem intelligent und lernwillig! Ich eigne mich hervorragend für Hundesport, Hütearbeit und Gehorsamstraining. Ich brauche eine konsequente, positive Erziehung und viel geistige Auslastung. Ich liebe es, neue Aufgaben zu lernen!"
+    },
+    "Berner Sennenhund": {
+        movement: "Ich brauche moderate Bewegung - etwa 1 Stunde täglich reicht mir. Ich liebe Spaziergänge und Zeit mit meiner Familie. Ich bin kein Hochleistungssportler, aber ich bin gerne aktiv. Achte darauf, mich nicht bei großer Hitze zu überlasten!",
+        food: "Ich esse etwa 400-600g hochwertiges Hundefutter täglich, aufgeteilt auf 2-3 Mahlzeiten. Berner sind große Hunde und brauchen viel hochwertiges Futter. Achte auf eine ausgewogene Ernährung.",
+        children: "Ich bin ein perfekter Familienhund! Ich bin sanft, geduldig und liebe Kinder. Ich bin sehr beschützend und treu. Aber wegen meiner Größe sollten kleine Kinder nicht auf mir reiten oder mich überfordern.",
+        grooming: "Mein langes, dreifarbiges Fell braucht tägliches Bürsten, besonders während des Haarwechsels (zweimal jährlich). Mein Fell ist wetterfest, aber ich haare viel! Ein guter Staubsauger ist empfehlenswert.",
+        lifespan: "Ich lebe leider nur durchschnittlich 7-10 Jahre. Berner Sennenhunde haben eine kürzere Lebenserwartung als viele andere Rassen. Regelmäßige Tierarztbesuche sind wichtig, um meine Gesundheit zu überwachen.",
+        training: "Ich bin intelligent und lernwillig. Ich reagiere gut auf positive Verstärkung mit Leckerlis und Lob. Ich bin ein sanfter Riese, aber ich brauche eine konsequente Erziehung. Sozialisierung ist wichtig, damit ich ein gut erzogener Familienhund werde."
+    },
+    "Shiba Inu": {
+        movement: "Ich brauche täglich 45-60 Minuten Bewegung. Ich liebe Spaziergänge und das Erkunden neuer Gerüche. Ich bin aktiv, aber kein Hochleistungssportler. Ich genieße auch Zeit auf dem Sofa.",
+        food: "Ich esse etwa 150-200g hochwertiges Hundefutter täglich, aufgeteilt auf 2 Mahlzeiten. Shibas können wählerisch sein, also finde ein Futter, das ich gerne esse. Achte auf hochwertige Proteine.",
+        children: "Ich kann mit älteren Kindern umgehen, die respektvoll und sanft mit mir sind. Kleine Kinder können mich überfordern, da ich eigenwillig bin. Ich bin ein sauberer Hund und mag es nicht, schmutzig zu werden. Ich bin sehr an meine Bezugsperson gebunden.",
+        grooming: "Mein dickes Fell braucht tägliches Bürsten, besonders während des Haarwechsels (zweimal jährlich). Ich haare sehr stark! Mein Fell ist wasserabweisend, aber ich mag es nicht, nass zu werden. Professionelles Trimmen ist normalerweise nicht nötig.",
+        lifespan: "Ich lebe durchschnittlich 12-15 Jahre. Shibas sind im Allgemeinen gesunde Hunde, aber Allergien, Patellaluxation und Hüftdysplasie können vorkommen.",
+        training: "Ich bin intelligent, aber sehr eigenwillig! Ich brauche eine konsequente, positive Erziehung mit viel Geduld. Ich reagiere gut auf Leckerlis, aber ich bin kein Hund für harte Methoden. Sozialisierung ist extrem wichtig, damit ich nicht aggressiv werde. Ich bin ein Hund mit starkem Charakter!"
+    },
+    "Sibirischer Husky": {
+        movement: "Ich brauche EXTREM viel Bewegung - mindestens 2 Stunden täglich, besser mehr! Ich bin ein Hochleistungssportler und brauche intensive Auslastung. Ohne genug Bewegung werde ich unglücklich und kann Verhaltensprobleme entwickeln. Ich liebe Laufen, Ziehen und Hundesport.",
+        food: "Ich esse etwa 400-600g hochwertiges Hundefutter täglich, je nach Aktivitätslevel. Bei viel Bewegung kann ich auch mehr brauchen. Achte auf eine proteinreiche Ernährung. Ich bin ein effizienter Futterverwerter!",
+        children: "Ich bin ein hervorragender Familienhund! Ich bin freundlich, gesellig und liebe Kinder. Aber ich bin sehr energiegeladen und kann kleine Kinder versehentlich umrennen. Ich brauche eine sichere Umzäunung, da ich ein Escape-Künstler bin!",
+        grooming: "Mein dickes Doppelfell braucht tägliches Bürsten, besonders während des Haarwechsels (zweimal jährlich, dann verlier ich extrem viel Fell!). Ich haare viel, besonders im Frühling und Herbst. Ein guter Staubsauger ist ein Muss!",
+        lifespan: "Ich lebe durchschnittlich 12-14 Jahre. Huskys sind im Allgemeinen gesunde Hunde, aber Augenprobleme (Katarakt, progressive Retinaatrophie) und Hüftdysplasie können vorkommen. Regelmäßige Bewegung hält mich gesund!",
+        training: "Ich bin intelligent, aber sehr eigenwillig! Ich lerne schnell, aber ich entscheide selbst, ob ich gehorchen will. Ich brauche eine konsequente, positive Erziehung mit viel Geduld. Ich eigne mich gut für Hundesport. Aber ich bin kein Hund für Anfänger!"
+    },
+    "Dalmatiner": {
+        movement: "Ich brauche viel Bewegung - mindestens 1-2 Stunden täglich! Ich bin ein energiegeladener Hund, der viel Auslastung braucht. Ich liebe Laufen, Apportierspiele und lange Spaziergänge. Ohne genug Bewegung werde ich unglücklich.",
+        food: "Ich esse etwa 300-450g hochwertiges Hundefutter täglich, aufgeteilt auf 2 Mahlzeiten. Dalmatiner können zu Harnsteinen neigen, also achte auf eine spezielle Ernährung mit wenig Purin. Viel Wasser ist wichtig!",
+        children: "Ich bin ein hervorragender Familienhund! Ich bin verspielt, freundlich und liebe Kinder. Ich bin sehr geduldig und kann ein guter Spielkamerad sein. Aber ich bin groß und stark, also sollten kleine Kinder nicht zu wild mit mir spielen.",
+        grooming: "Mein kurzes Fell braucht nur wöchentliches Bürsten. Aber ich haare ganz schön! Mein Fell ist pflegeleicht, aber ich verlier viele Haare. Ein guter Staubsauger ist empfehlenswert. Meine Ohren sollten regelmäßig kontrolliert werden.",
+        lifespan: "Ich lebe durchschnittlich 11-13 Jahre. Dalmatiner sind im Allgemeinen gesunde Hunde, aber Taubheit (angeboren oder erworben) und Harnsteine können Probleme sein. Regelmäßige Tierarztbesuche sind wichtig.",
+        training: "Ich bin intelligent und lernwillig! Ich reagiere gut auf positive Verstärkung mit Leckerlis und Lob. Ich bin ein aktiver Hund, der viel geistige und körperliche Auslastung braucht. Ich eigne mich gut für Hundesport und Gehorsamstraining."
+    },
+    "Boxer": {
+        movement: "Ich brauche viel Bewegung - mindestens 1-2 Stunden täglich! Ich bin ein energiegeladener Hund, der viel Auslastung braucht. Ich liebe Laufen, Spielen, Apportieren und lange Spaziergänge. Ich bin ein Sportler!",
+        food: "Ich esse etwa 350-500g hochwertiges Hundefutter täglich, aufgeteilt auf 2 Mahlzeiten. Boxer sind muskulöse Hunde und brauchen eine proteinreiche Ernährung. Achte auf eine ausgewogene Ernährung.",
+        children: "Ich bin ein hervorragender Familienhund! Ich bin verspielt, freundlich und liebe Kinder. Ich bin sehr geduldig und beschützend. Ich bin bekannt als 'Kinderliebhaber' und kann ein toller Spielkamerad sein. Aber ich bin groß und stark, also sollten kleine Kinder nicht zu wild mit mir spielen.",
+        grooming: "Mein kurzes Fell braucht nur wöchentliches Bürsten. Ich bin pflegeleicht! Aber ich haare und sabbere etwas. Ein guter Staubsauger ist empfehlenswert. Meine Hautfalten sollten regelmäßig kontrolliert und gereinigt werden.",
+        lifespan: "Ich lebe durchschnittlich 10-12 Jahre. Boxer sind im Allgemeinen gesunde Hunde, aber Herzprobleme, Hüftdysplasie und bestimmte Krebsarten können vorkommen. Regelmäßige Tierarztbesuche sind wichtig.",
+        training: "Ich bin intelligent und lernwillig! Ich reagiere sehr gut auf positive Verstärkung mit Leckerlis und Lob. Ich bin ein arbeitswilliger Hund, der gerne gefordert wird. Ich eigne mich gut für Gehorsamstraining und Hundesport. Konsequenz ist wichtig, da ich manchmal etwas stur sein kann."
     }
 };
 
@@ -504,7 +790,7 @@ function calculateMatchScore(userPersonality, dogPersonality) {
 }
 
 // Function to get the best matching dogs for a user personality
-function getMatchingDogs(userPersonality, limit = 5) {
+function getMatchingDogs(userPersonality, limit = 10) {
     const dogsWithScores = dogDatabase.map(dog => {
         const score = calculateMatchScore(userPersonality, dog.personality);
         return { ...dog, matchScore: score };
