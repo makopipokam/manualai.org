@@ -48,6 +48,8 @@ Das Quiz ist lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein gr
 
 Der Spielstand wird lokal im Godot-Benutzerverzeichnis gespeichert. Es gibt bewusst noch keinen Cloud-Spielstand und keine Kontoanbindung. Zum Zurücksetzen des lokalen Prototypen kann die Datei `user://pwnd_save.json` gelöscht werden.
 
+Das Projekt ist für die nächste mobile Exportstufe vorbereitet: Version und Beschreibung sind in `project.godot` gesetzt, die Sensor-Orientierung und der `expand`-Stretch bleiben aktiv, und die reproduzierbare [Mobile-Export-Checkliste](MOBILE_EXPORT_CHECKLIST.md) trennt lokale Prüfungen klar von echten Android-/iOS-Gerätetests. Im aktuellen Sandbox-Setup sind keine Android-/iOS-Export-Templates installiert.
+
 Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset, horizontale Tierbewegung, die Grenzen der sichtbaren Wasserfläche, statische Weltkollisionen, die Gummistiefel-/Wasserhöhe, die Safe-Area-Ränder und Hochformat-Quiz-Touchflächen (mindestens 44 Pixel bei simulierten 720×1280). Die Antwortflächen wurden zusätzlich in einem virtuellen Linux-Display gerendert und visuell geprüft. Ein echter Test auf Android/iOS-Hardware steht noch aus; Notches und Betriebssystem-Skalierung sind damit nicht abschließend verifiziert.
 
 ## Nächster Meilenstein
