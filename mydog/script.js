@@ -434,8 +434,8 @@ function showDogResult() {
     // Load images with fallback and labels
     loadDogImages(dog.images, dog.imagesLabels);
     
-    // Update ratings
-    updateRatings(dog.ratings);
+    // Show breed attributes separately and use overall stars for personal suitability.
+    updateRatings(dog.ratings, dog.matchScore);
     
     // Generate match explanation
     const explanation = generateMatchExplanation(appState.userPersonality, dog);
@@ -508,8 +508,8 @@ function selectThumbnail(index, imageUrls, labels) {
     });
 }
 
-// Update star ratings
-function updateRatings(ratings) {
+// Update breed attribute ratings and personal suitability rating
+function updateRatings(ratings, matchScore) {
     if (!ratings) {
         ratings = { family: 3, energy: 3, trainability: 3, grooming: 3, health: 3 };
     }
@@ -519,7 +519,7 @@ function updateRatings(ratings) {
     elements.familyRating.innerHTML = generateStarRating(ratings.family || 3);
     elements.trainabilityRating.innerHTML = generateStarRating(ratings.trainability || 3);
     
-    const overall = calculateOverallRating(ratings);
+    const overall = calculateSuitabilityRating(matchScore) ?? calculateOverallRating(ratings);
     elements.overallRating.innerHTML = generateStarRating(overall);
     elements.overallRatingText.textContent = `${overall.toFixed(1)}/5`;
 }
@@ -550,6 +550,11 @@ function calculateOverallRating(ratings) {
     if (values.length === 0) return 3;
     const sum = values.reduce((a, b) => a + b, 0);
     return sum / values.length;
+}
+
+function calculateSuitabilityRating(matchScore) {
+    if (!Number.isFinite(matchScore)) return null;
+    return Math.max(0, Math.min(5, matchScore / 20));
 }
 
 // Show chat screen
@@ -638,13 +643,14 @@ function renderFavorites() {
         card.className = 'favorite-card';
         card.setAttribute('role', 'group');
         card.dataset.dogId = dog.id;
+        const suitability = calculateSuitabilityRating(dog.matchScore);
         card.innerHTML = `
             <img src="${dog.images[0] || ''}" alt="${dog.name}" onerror="this.style.visibility='hidden'">
             <h3>${dog.name}</h3>
             <p class="breed">${dog.breed}</p>
             <p>${dog.description.substring(0, 100)}...</p>
             <div class="rating">
-                <span>⭐ ${calculateOverallRating(dog.ratings).toFixed(1)}/5</span>
+                <span>⭐ ${suitability === null ? '—' : `${suitability.toFixed(1)}/5`} Eignung</span>
             </div>
             <div class="favorite-card-actions">
                 <button class="view-btn" type="button">Profil ansehen</button>
@@ -704,7 +710,8 @@ function addFavorite(dog) {
             breed: dog.breed,
             images: dog.images,
             description: dog.description,
-            ratings: dog.ratings
+            ratings: dog.ratings,
+            matchScore: dog.matchScore
         });
     }
 }
