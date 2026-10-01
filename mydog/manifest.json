@@ -1,0 +1,21 @@
+{
+  "name": "Find deinen perfekten Hund",
+  "short_name": "Hundefinder",
+  "description": "Mache einen Persönlichkeitstest und finde den Hund, der perfekt zu dir passt!",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#4CAF50",
+  "theme_color": "#4CAF50",
+  "icons": [
+    {
+      "src": "icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
