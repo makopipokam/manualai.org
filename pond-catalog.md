@@ -2,30 +2,60 @@
 
 > **pwnd wird wie „pond“ ausgesprochen.** Der Teich ist kein Menü voller Sammelobjekte, sondern ein lebendiger Ort. Jede Freischaltung verändert Wasser, Lebensraum, Bewohner oder die Wege, auf denen der Spieler Ressourcen verdient.
 
-## 1. Die zwei Ressourcen
+## 1. Die vier Ressourcen
 
 | Ressource | Bedeutung | Hauptquelle | Hauptverwendung |
 |---|---|---|---|
 | **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | Tiere anlocken, Strukturen bauen, Pflanzen setzen, neue Bereiche erschließen |
-| **Wasser** | Lebensenergie des Teichs; macht Tierentwicklung möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Tiere füttern, beruhigen, trainieren und evolvieren |
+| **Wasser** | Lebensenergie des Teichs; macht Tierentwicklung und ökologischen Betrieb möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Versickerung und Pflanzenverbrauch ausgleichen; Tiere füttern, beruhigen, trainieren und evolvieren |
+| **Luft** | Offenheit, Bewegung und gesunder Kreislauf des Teichs | Schilf, freie Ufer, Wind-/Erkundungsaktivitäten und spätere Atmosphärenereignisse | Senkt die effektiven Energie-Kosten von Handlungen |
+| **Liebe** | Pflege, Bindung und Vertrauen zwischen Spieler, Tieren und Teich | Tierpflege, gelungene Interaktionen, stabile Lebensräume und fürsorgliche Ereignisse | Senkt die effektiven Wasser-Kosten der Tierentwicklung und Teichpflege |
 
 ### Ökonomische Leitregel
 
 - **Energie zeigt, was der Spieler kann.**
 - **Wasser zeigt, was der Teich tragen kann.**
+- **Luft zeigt, wie frei und gesund der Teich atmet.**
+- **Liebe zeigt, wie gut Spieler und Bewohner miteinander verbunden sind.**
 - Energie wird für die Handlung ausgegeben: anlocken, bauen, platzieren, erkunden.
-- Wasser wird ausschließlich für die Tierentwicklung ausgegeben: füttern, pflegen, beruhigen, trainieren, evolvieren.
+- Wasser wird für zwei klar sichtbare Zwecke ausgegeben: laufende Teichpflege sowie Tierentwicklung — füttern, beruhigen, trainieren und evolvieren.
+- Luft und Liebe sind unterstützende Vorräte und werden bei der Handlung nicht verbraucht.
+- Luft reduziert nur Energie-Kosten; Liebe reduziert nur Wasser-Kosten, einschließlich Tierentwicklung und laufender Teichpflege. Die Zuordnung bleibt klar lesbar.
 - Strukturen und Pflanzen werden mit Energie gebaut, gesetzt und auch ausgebaut.
 - Wissen allein baut keinen Lebensraum; Wasser allein erschafft keinen neuen Bewohner.
 - Energie darf sinken, wenn sie ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
 - Wasser darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
+- Kein Rabatt darf die jeweilige Hauptressource vollständig auf null reduzieren.
+
+### Kostenmodifikatoren
+
+Die Basiswerte bleiben im Katalog sichtbar; erst beim Bezahlen wird der passende unterstützende Vorrat berücksichtigt:
+
+- `effektive Energie = aufrunden(max(Basis-Energie × (1 − Luft / 2.000), Basis-Energie × 0,5))`
+- `effektives Wasser = aufrunden(max(Basis-Wasser × (1 − Liebe / 2.000), Basis-Wasser × 0,5))`
+
+Die Wirkung ist abnehmend und bei 50 % gedeckelt. Beispiel: Ein Bau mit 60 Energie kostet bei 500 Luft 45 Energie; eine Tierentwicklung mit 20 Wasser kostet bei 500 Liebe 15 Wasser. Luft beeinflusst niemals Wasser-Kosten, Liebe niemals Energie-Kosten.
+
+### Laufender Wasserhaushalt
+
+Der Teich verbraucht Wasser automatisch während aktiver Spielzeit:
+
+- **Versickerung:** Grundverbrauch, der mit der nutzbaren Teichfläche steigt.
+- **Pflanzen:** zusätzlicher Verbrauch pro gesetzter Teichpflanze; eine dichte, vielfältige Bepflanzung erhöht die Pflegeanforderung.
+- **Tierentwicklung:** separate, einmalige Wasserinvestitionen für neue Stufen.
+
+Für die erste Balancing-Skizze gilt pro aktiver Minute:
+
+`Basisverbrauch = 0,20 + (Teichgröße × 0,04) + (Pflanzenzahl × 0,08)`
+
+Der tatsächliche Abzug wird anschließend mit dem Liebe-Modifikator reduziert und auf die kleinste sinnvolle Zeiteinheit gerundet. Bei leerem Wasser entstehen keine versteckten Schulden: Stattdessen werden wasserabhängige Entwicklungsaktionen gesperrt und der HUD zeigt klar „Teich braucht Wasser“. Während der Pause läuft kein Verbrauch; Offline-Verbrauch wird erst nach einem eigenen Balancing- und Speichermeilenstein aktiviert.
 
 ### Erwerb und Verbesserung sind getrennte Schritte
 
 Die Kostenangaben im Katalog folgen diesem Muster:
 
 1. **Energie-Kosten:** Der Spieler lockt einen Bewohner an, baut eine Struktur, setzt eine Pflanze oder erweitert einen Bereich.
-2. **Wasser-Kosten:** Der Spieler entwickelt ausschließlich ein Tier weiter und schaltet neue Reaktionen, Animationen oder Synergien frei.
+2. **Wasser-Kosten:** Der Teich bezahlt seinen laufenden Wasserhaushalt; zusätzlich entwickelt der Spieler Tiere weiter und schaltet neue Reaktionen, Animationen oder Synergien frei.
 
 Beispiel: Ein Frosch kann für Energie in den Teich gebracht werden. Erst mit Wasser wird der Frosch zutraulicher, reagiert auf den Spieler und kann später eine Kaulquappen-Familie anlocken. Die Froschbucht selbst wird mit Energie gebaut und ausgebaut.
 
@@ -157,6 +187,21 @@ Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die S
 | **Nachtsteg** | zeitlich begrenzte Nachtquizze | seltene Ressourcen, höhere Risiken |
 | **Biberwerkstatt** | Strukturen umleiten und umbauen | Energie investieren, Wasserproduktion verbessern |
 | **Teichkarte** | neue Bereiche und Mini-Biome entdecken | Exploration als dritter späterer Wasserweg |
+
+### 5.3 Schlangen-Gegner im Quiz-Modul
+
+Schlangen sind **Quiz-Gegner**, nicht automatisch Bewohner des Teichs. Jede Gegnerdefinition ist datengetrieben und enthält mindestens: `id`, `name`, `difficulty`, `topics`, `answer_speed`, `mistake_tolerance` und `reward_profile`. So können neue Schlangen ergänzt werden, ohne die Quizlogik zu duplizieren.
+
+| Gegner | Schwierigkeit | Themenprofil | Spielverhalten |
+|---|---|---|---|
+| **Wassernatter** | Einstieg | Teich, Natur, Alltagswissen | großzügiges Antwortfenster, klare Hinweise |
+| **Ringelnatter** | Leicht–mittel | Biologie, Ökologie, Beobachtung | solide Grundlagen, gelegentliche Fangfrage |
+| **Kreuzotter** | Mittel | Kausalität, Logik, Risikoentscheidungen | bestraft hektische Antworten, bleibt berechenbar |
+| **Kobra** | Schwer | Wissenschaft, Geschichte, gemischte Wissensgebiete | schnelleres Tempo, kleinere Fehlertoleranz |
+| **Python** | Sehr schwer | Mathematik, Algorithmen, Technik | komplexe Fragen und kurze Entscheidungsfenster |
+| **Anakonda** | Meisterstufe | wechselnde Themen, Serien und Zeitdruck | lange Frageserien, hohe Belohnung, hoher Druck |
+
+Die Schwierigkeit darf nur Frageauswahl, Tempo, Serienlänge und Fehlertoleranz verändern. Die korrekte Antwort bleibt für jede Schlange deterministisch und fair. Belohnungen werden weiterhin von der Engine berechnet; die AI liefert Charakter und Gegnerstimme, nicht die Spielökonomie.
 
 ## 6. Freischaltlogik
 

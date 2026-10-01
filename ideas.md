@@ -2,12 +2,42 @@
 
 ## Produktidee
 
-**pwnd wird wie „pond“ ausgesprochen.** Der Spieler baut und bevölkert seinen eigenen Teich. Die Wirtschaft hat zwei klare Ressourcen wie bei einem klassischen Aufbauspiel:
+**pwnd wird wie „pond“ ausgesprochen.** Der Spieler baut und bevölkert seinen eigenen Teich. Die Wirtschaft hat vier miteinander verbundene Ressourcen wie bei einem klassischen Aufbauspiel:
 
 - **Energie = Intelligenzpunkte/IP:** gibt der Spieler aus, um Tiere anzulocken, Strukturen zu bauen und neue Orte zu erschließen.
-- **Wasser:** wird ausschließlich in die Entwicklung der Tiere investiert — füttern, pflegen, trainieren und evolvieren.
+- **Wasser:** ist die Lebensenergie des Teichs. Es wird in die Entwicklung der Tiere investiert und laufend für Versickerung sowie den Verbrauch der Teichpflanzen benötigt.
+- **Luft:** steht für Offenheit, Bewegung und einen gesunden Teichkreislauf. Ihr Vorrat senkt die effektiven Energie-Kosten von Handlungen.
+- **Liebe:** steht für Pflege, Bindung und Vertrauen zwischen Agent und Teich. Ihr Vorrat senkt die effektiven Wasser-Kosten der Tierentwicklung und der laufenden Teichpflege.
+
+Luft und Liebe werden bei einer Handlung nicht verbraucht. Sie sind unterstützende Vorräte: Je größer der Vorrat, desto günstiger die jeweils zugeordnete Hauptressource. Der Nutzen nimmt bewusst ab und kann Kosten nicht vollständig auf null reduzieren.
+
+Für die erste Balancing-Fassung gilt:
+
+- `effektive Energie = max(50 %, Basis-Energie × (1 − Luft / 2.000))`
+- `effektives Wasser = max(50 %, Basis-Wasser × (1 − Liebe / 2.000))`
+
+Die beiden Werte werden auf ganze Einheiten aufgerundet. Damit geben 1.000 Luft oder Liebe ungefähr 50 % Rabatt; zusätzliche Vorräte bleiben wertvoll, brechen aber die Wirtschaft nicht.
+
+### Der Teich hat einen laufenden Wasserhaushalt
+
+Wasser verschwindet auch ohne direkte Spieleraktion: Ein Teil versickert im Boden, ein weiterer Teil wird von den Teichpflanzen aufgenommen. Die laufenden Kosten wachsen daher mit der **Teichgröße** und der **Anzahl der Pflanzen**. Ein größerer, dichter bepflanzter Teich ist schöner und lebendiger, verlangt aber regelmäßige Wasserquellen, Aktivitäten und Pflege. Die Wasserpflege läuft nur während aktiver Spielzeit; ein pausiertes Spiel verbraucht kein Wasser. Offline-Verbrauch bleibt eine spätere Produktentscheidung.
 
 Jede Aktivität kann beide Ressourcen in unterschiedlicher Mischung liefern; Quizduelle und freies Quizzen sind die ersten spielbaren Wege.
+
+### Schlangen als Quiz-Gegner
+
+Im Quiz-Modul tritt der Spieler gegen Schlangen an. Die Schlangen sind keine zusätzlichen Teichbewohner, sondern klar erkennbare AI-Gegner mit eigener Persönlichkeit, Schwierigkeit und Themenausrichtung. Das Grundgerüst bleibt datengetrieben: Jede Schlange definiert mindestens **Schwierigkeitsstufe**, **Themenpool**, **Antworttempo**, **Fehlerneigung** und **Belohnungsprofil**.
+
+Beispiele für die erste Gegnerfamilie:
+
+- **Wassernatter:** Einstieg; Teich, Natur und Alltagswissen.
+- **Ringelnatter:** leicht bis mittel; Biologie, Ökologie und Beobachtung.
+- **Kreuzotter:** mittel; Kausalität, Logik und Risikoentscheidungen.
+- **Kobra:** schwer; Wissenschaft, Geschichte und anspruchsvolle Mischfragen.
+- **Python:** sehr schwer; Mathematik, Algorithmen und Technik.
+- **Anakonda:** Meisterstufe; wechselnde Themen, Zeitdruck und lange Frageserien.
+
+Die Schlange soll den Spieler fordern, nicht beleidigen. Schwierigkeit verändert Frageauswahl, Tempo und Fehlertoleranz — nicht die Fairness der richtigen Antwort. Neue Schlangen können später über Themen, Biome oder Quizserien freigeschaltet werden.
 
 ### Der Kernkreislauf
 
