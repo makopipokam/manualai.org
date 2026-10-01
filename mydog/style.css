@@ -201,7 +201,7 @@ body {
 }
 
 .btn-favorite.favorited {
-    background-color: #FF4081;
+    background-color: #6A1B9A;
 }
 
 .btn-share {
@@ -306,13 +306,6 @@ body {
 
 .likert-anchors span:last-child {
     text-align: right;
-}
-
-.likert-hint {
-    margin: -4px 0 0;
-    color: var(--text-light);
-    font-size: 0.78rem;
-    text-align: center;
 }
 
 .likert-options {
@@ -1128,7 +1121,7 @@ body {
     50% { transform: scale(1.05); }
 }
 
-.favorite-btn.favorited {
+.btn-favorite.favorited {
     animation: pulse 0.5s ease;
 }
 
