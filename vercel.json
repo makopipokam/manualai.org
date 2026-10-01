@@ -5,7 +5,11 @@
       "destination": "/pwnd.html"
     },
     {
-      "source": "/mydog(/*)?",
+      "source": "/mydog",
+      "destination": "/mydog/index.html"
+    },
+    {
+      "source": "/mydog/(.*)",
       "destination": "/mydog/index.html"
     }
   ],
