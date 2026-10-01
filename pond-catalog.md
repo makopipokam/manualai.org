@@ -2,23 +2,39 @@
 
 > **pwnd wird wie „pond“ ausgesprochen.** Der Teich ist kein Menü voller Sammelobjekte, sondern ein lebendiger Ort. Jede Freischaltung verändert Wasser, Lebensraum, Bewohner oder die Wege, auf denen der Spieler Ressourcen verdient.
 
-## 1. Die zwei Ressourcen
+## 1. Die vier Ressourcen
 
 | Ressource | Bedeutung | Hauptquelle | Hauptverwendung |
 |---|---|---|---|
 | **Energie** | Intelligenzpunkte / IP; misst Leistung, Lernfortschritt und strategische Qualität | Quizduell, freies Quizzen, spätere Entdeckungsaufgaben | Tiere anlocken, Strukturen bauen, Pflanzen setzen, neue Bereiche erschließen |
 | **Wasser** | Lebensenergie des Teichs; macht Tierentwicklung möglich | Pflege, Quellen, Aktivitäten, tägliche Teichereignisse | Tiere füttern, beruhigen, trainieren und evolvieren |
+| **Luft** | Offenheit, Bewegung und gesunder Kreislauf des Teichs | Schilf, freie Ufer, Wind-/Erkundungsaktivitäten und spätere Atmosphärenereignisse | Senkt die effektiven Energie-Kosten von Handlungen |
+| **Liebe** | Pflege, Bindung und Vertrauen zwischen Spieler, Tieren und Teich | Tierpflege, gelungene Interaktionen, stabile Lebensräume und fürsorgliche Ereignisse | Senkt die effektiven Wasser-Kosten der Tierentwicklung |
 
 ### Ökonomische Leitregel
 
 - **Energie zeigt, was der Spieler kann.**
 - **Wasser zeigt, was der Teich tragen kann.**
+- **Luft zeigt, wie frei und gesund der Teich atmet.**
+- **Liebe zeigt, wie gut Spieler und Bewohner miteinander verbunden sind.**
 - Energie wird für die Handlung ausgegeben: anlocken, bauen, platzieren, erkunden.
 - Wasser wird ausschließlich für die Tierentwicklung ausgegeben: füttern, pflegen, beruhigen, trainieren, evolvieren.
+- Luft und Liebe sind unterstützende Vorräte und werden bei der Handlung nicht verbraucht.
+- Luft reduziert nur Energie-Kosten; Liebe reduziert nur Wasser-Kosten. Die Zuordnung bleibt klar lesbar.
 - Strukturen und Pflanzen werden mit Energie gebaut, gesetzt und auch ausgebaut.
 - Wissen allein baut keinen Lebensraum; Wasser allein erschafft keinen neuen Bewohner.
 - Energie darf sinken, wenn sie ausgegeben wird. Das Energiekonto ist keine unveränderliche Rangzahl.
 - Wasser darf sich im Teich sichtbar ansammeln und durch Pflege, Quellen und Aktivitäten wachsen.
+- Kein Rabatt darf die jeweilige Hauptressource vollständig auf null reduzieren.
+
+### Kostenmodifikatoren
+
+Die Basiswerte bleiben im Katalog sichtbar; erst beim Bezahlen wird der passende unterstützende Vorrat berücksichtigt:
+
+- `effektive Energie = aufrunden(max(Basis-Energie × (1 − Luft / 2.000), Basis-Energie × 0,5))`
+- `effektives Wasser = aufrunden(max(Basis-Wasser × (1 − Liebe / 2.000), Basis-Wasser × 0,5))`
+
+Die Wirkung ist abnehmend und bei 50 % gedeckelt. Beispiel: Ein Bau mit 60 Energie kostet bei 500 Luft 45 Energie; eine Tierentwicklung mit 20 Wasser kostet bei 500 Liebe 15 Wasser. Luft beeinflusst niemals Wasser-Kosten, Liebe niemals Energie-Kosten.
 
 ### Erwerb und Verbesserung sind getrennte Schritte
 
