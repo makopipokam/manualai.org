@@ -1,1835 +1,250 @@
-<!doctype html>
-<html lang="en" data-theme="dark">
+<!DOCTYPE html>
+<html lang="de">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0f14">
-<meta name="color-scheme" content="dark light">
-<script>try{if(location.hostname==="app.manualai.org"&&location.pathname==="/")location.replace("/pwnd");if(localStorage.getItem("theme")==="light")document.documentElement.setAttribute("data-theme","light")}catch(e){}</script>
-<title>manualAI: Learn how to find answers</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='11' fill='%230a0f14'/%3E%3Cpath d='M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z' fill='%235cadff'/%3E%3Ccircle cx='11' cy='14.5' r='1.4' fill='%230a0f14'/%3E%3C/svg%3E">
-<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="manifest" href="/manifest.webmanifest">
-<meta name="apple-mobile-web-app-title" content="manualAI">
-<meta name="description" content="manualAI is a learning companion that shows you how to find answers yourself.">
-<style>
-:root,:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#0a0f14;
-  --page:#070a0e;
-  --surface:#121a21;
-  --tint:#1c2631;
-  --accent:#5cadff;
-  --ink:#ecf0f4;
-  --muted:#96a6b6;
-  --line:#33404d;
-  --strong:#5cadff;
-  --on-strong:#070f18;
-  --user-bg:#2d5276;
-  --on-user:#ffffff;
-  --send-bg:#5cadff;
-  --send-fg:#070f18;
-  --ic-bg:#2a3846;
-  --ic-fg:#5cadff;
-  --ic-sel-bg:#5cadff;
-  --ic-sel-fg:#070f18;
-  --sel-border:#5cadff;
-  --focus:#5cadff;
-  --danger:#FF9A8A;
-  --scrim:rgba(0,0,0,.65);
-  --top-bg:#0a0f14;
-  --top-line:#1c242c;
-  --hero-bg:linear-gradient(160deg,#1c2e40 0%,#0f1a24 100%);
-  --logo-bg:#5cadff;
-  --logo-fg:#070f18;
-  --fish-body:#5cadff;
-  --fish-acc:#070f18;
-  --art:#5cadff;
-  --display:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
-  --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-}
-:root[data-theme="light"]{
-  color-scheme:light;
-  --bg:#f6fafe;
-  --page:#d1e6fa;
-  --surface:#ffffff;
-  --tint:#deedfc;
-  --accent:#479ef5;
-  --ink:#0e1f2f;
-  --muted:#435970;
-  --line:#c3d1df;
-  --strong:#104f8e;
-  --on-strong:#ffffff;
-  --user-bg:#104f8e;
-  --on-user:#ffffff;
-  --send-bg:#104f8e;
-  --send-fg:#ffffff;
-  --ic-bg:#afd6fd;
-  --ic-fg:#0e1f2f;
-  --ic-sel-bg:#104f8e;
-  --ic-sel-fg:#ffffff;
-  --sel-border:#104f8e;
-  --focus:#104f8e;
-  --danger:#8A1F11;
-  --scrim:rgba(10,10,30,.5);
-  --top-bg:#afd6fd;
-  --top-line:transparent;
-  --hero-bg:#afd6fd;
-  --logo-bg:#104f8e;
-  --logo-fg:#b8dbff;
-  --fish-body:#104f8e;
-  --fish-acc:#b8dbff;
-  --art:#104f8e;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{background:var(--page);color:var(--ink);font:16px/1.5 var(--body);-webkit-text-size-adjust:100%}
-button,select,textarea,input{font:inherit;color:inherit}
-button{cursor:pointer}
-:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-[hidden]{display:none !important}
-.lg-bg{fill:var(--logo-bg)} .lg-fg{fill:var(--logo-fg)}
-.fs-body{fill:var(--fish-body)} .fs-acc{fill:var(--fish-acc)} .fs-line{fill:none;stroke:var(--fish-body);stroke-width:2} .fs-fin{fill:none;stroke:var(--fish-acc);stroke-width:3;stroke-linecap:round}
-.fs-eye{fill:var(--fish-acc)}
-.fish .fs-pupil{fill:var(--fish-body)}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <title>manualAI.org - App Auswahl</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-.app{height:100dvh;max-width:640px;margin:0 auto;display:flex;flex-direction:column;background:var(--bg)}
-@media (min-width:680px){.app{border-inline:1px solid var(--line)}}
+        :root {
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #333333;
+            --text-light: #666666;
+            --primary: #4CAF50;
+            --primary-hover: #45a049;
+            --border: #dddddd;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
 
+        [data-theme="dark"] {
+            --bg: #121212;
+            --card-bg: #1e1e1e;
+            --text: #e0e0e0;
+            --text-light: #b0b0b0;
+            --border: #404040;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
 
-/* pond backdrop: tone on tone, very quiet */
-.app{position:relative;isolation:isolate}
-.top,main,.dock{position:relative;z-index:1}
-#pond{position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;color:var(--art);transition:opacity .4s}
-.app.chatting #pond{opacity:.55}
-#pond .f{fill:currentColor}
-#pond .s{fill:none;stroke:currentColor;stroke-linecap:round}
-#pond .bg-f{fill:var(--bg)}
-#pond .bg-s{fill:none;stroke:var(--bg);stroke-linecap:round}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
 
-/* top bar */
-.top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px;background:var(--top-bg);border-bottom:1px solid var(--top-line);transition:border-radius .2s}
-.app.chatting .top{border-radius:0 0 22px 22px}
-.brand{display:flex;align-items:center;gap:9px}
-.brand svg{width:34px;height:34px;flex:none}
-.wordmark{font-family:var(--display);font-weight:600;font-size:23px;letter-spacing:-.01em;margin:0}
-.pwnd-launch{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:4px 10px 4px 7px;border:1px solid var(--line);border-radius:999px;background:linear-gradient(135deg,#123b48,#24213d);color:#ecfafa;text-decoration:none;box-shadow:0 0 18px #62e6e022;transition:transform .2s,box-shadow .2s,border-color .2s}
-.pwnd-launch:hover{transform:translateY(-1px);border-color:#62e6e0;box-shadow:0 0 22px #62e6e044}
-.pwnd-launch .pwnd-mark{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#62e6e0;color:#08202a;font-weight:800}
-.pwnd-launch strong{display:block;font:700 13px/1 var(--display);letter-spacing:.04em;text-transform:lowercase}
-.pwnd-launch small{display:block;margin-top:3px;color:#a8cbd0;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
-.tools{display:flex;gap:8px;align-items:center}
-.tools select{min-height:40px;border:0;background:var(--surface);border-radius:999px;padding:0 12px;font-weight:600}
-.iconbtn{width:40px;height:40px;border:0;border-radius:50%;background:var(--surface);display:grid;place-items:center}
-.iconbtn svg{width:20px;height:20px}
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
 
-/* scroll area */
-main{flex:1;overflow-y:auto;scroll-behavior:smooth}
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
 
-/* hero */
-.hero{background:var(--hero-bg);border-radius:0 0 34px 34px;padding:6px 18px 28px}
-.hero-row{display:flex;gap:10px;align-items:flex-end}
-h1{font-family:var(--display);font-weight:600;font-size:clamp(30px,9vw,42px);line-height:1.06;letter-spacing:-.01em;margin:0;flex:1}
-.fish{width:92px;flex:none;margin-bottom:-2px}
-.sub{margin:12px 0 0;max-width:36ch;font-size:17px}
+        header h1 {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
 
-.wbody{padding:22px 16px 12px}
-h2{font-family:var(--display);font-weight:600;font-size:19px;margin:0 0 4px}
-.hint{color:var(--muted);font-size:14px;margin:0 0 12px}
+        header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
 
-/* setup */
-fieldset{border:0;margin:0 0 22px;padding:0;min-width:0}
-legend{font-family:var(--display);font-weight:600;font-size:19px;padding:0;margin-bottom:2px}
-.opt{position:relative;display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;padding:12px;margin-bottom:10px;border:2px solid var(--line);border-radius:20px;background:var(--surface);cursor:pointer}
-.opt input{position:absolute;opacity:0;pointer-events:none}
-.opt:has(input:checked){border-color:var(--sel-border);background:var(--tint)}
-.opt:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
-.ic{width:44px;height:44px;border-radius:14px;background:var(--ic-bg);display:grid;place-items:center;color:var(--ic-fg)}
-.ic svg{width:24px;height:24px}
-.opt:has(input:checked) .ic{background:var(--ic-sel-bg);color:var(--ic-sel-fg)}
-.txt{display:flex;flex-direction:column;min-width:0}
-.txt strong{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.2}
-.txt .d{color:var(--muted);font-size:14.5px;line-height:1.35;margin-top:2px}
-.opt:has(input:checked) .txt .d{color:var(--ink)}
-.meter{display:flex;gap:4px}
-.meter i{width:9px;height:9px;border-radius:50%;border:2px solid var(--ink)}
-.meter i.on{background:var(--ink)}
-.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.seg.two{grid-template-columns:repeat(2,1fr)}
-.seg label{text-align:center;padding:10px 4px;border:2px solid var(--line);border-radius:999px;background:var(--surface);font-weight:600;cursor:pointer;position:relative}
-.seg input{position:absolute;opacity:0;pointer-events:none}
-.seg label:has(input:checked){background:var(--strong);border-color:var(--strong);color:var(--on-strong)}
-.seg label:has(input:focus-visible){outline:3px solid var(--focus);outline-offset:2px}
-.done{display:none;width:100%;min-height:46px;border:0;border-radius:999px;background:var(--strong);color:var(--on-strong);font-weight:600}
-.setup.sheet{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:14px 14px 12px;margin-bottom:10px;max-height:56dvh;overflow:auto}
-.setup.sheet .done{display:block}
-.setup.sheet fieldset{margin-bottom:14px}
+        .apps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            width: 100%;
+        }
 
-/* examples */
-.ex{display:block;width:100%;text-align:left;background:var(--surface);background:color-mix(in srgb,var(--surface) 82%,transparent);border:2px solid var(--line);border-radius:16px;padding:12px 14px;min-height:46px;margin-bottom:8px;font-weight:600}
-.ex:hover{border-color:var(--sel-border)}
-.contact{margin:0;padding:22px 16px 28px;text-align:center;color:var(--muted);font-size:14px}
-.contact a{display:inline-block;padding:8px 2px;color:var(--ink);font-weight:600}
-.clear{border:0;background:none;color:var(--muted);text-decoration:underline;font-size:14px;padding:8px 2px;min-height:40px}
+        .app-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
 
-/* messages */
-#messages{display:flex;flex-direction:column;gap:12px;padding:16px}
-#messages:empty{padding:0}
-.brow{display:flex;gap:8px;align-items:flex-end;max-width:94%;align-self:flex-start}
-.av{width:28px;height:28px;flex:none}
-.msg{padding:10px 14px;border-radius:20px;overflow-wrap:anywhere}
-.msg.user{align-self:flex-end;max-width:88%;background:var(--user-bg);color:var(--on-user);border-bottom-right-radius:6px;white-space:pre-wrap}
-.msg.bot{background:var(--tint);border-bottom-left-radius:6px;min-width:0}
-.msg.bot p{margin:0 0 .6em}
-.msg.bot p:last-child,.msg.bot ul:last-child,.msg.bot ol:last-child{margin-bottom:0}
-.msg.bot ul,.msg.bot ol{margin:0 0 .6em;padding-left:1.3em}
-.msg.bot code{background:var(--surface);padding:1px 5px;border-radius:6px;font-size:.92em}
-.msg.bot pre{background:var(--surface);padding:10px 12px;border-radius:12px;overflow-x:auto;margin:0 0 .6em}
-.msg.bot pre code{padding:0;background:none}
-.msg.bot .tw{overflow-x:auto;margin:0 0 .6em;border-radius:12px}
-.msg.bot table{border-collapse:collapse;font-size:.95em;min-width:100%}
-.msg.bot th,.msg.bot td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:top}
-.msg.bot th{background:var(--surface);font-weight:600}
-.msg.bot a{color:var(--ink);font-weight:600}
-.note{align-self:center;color:var(--muted);font-size:14px;text-align:center}
-.note.err{color:var(--danger);font-weight:600}
-.thinking .msg{display:flex;align-items:center;color:var(--muted)}
-.thinking .av{animation:bob 1s ease-in-out infinite alternate}
-@keyframes bob{from{transform:translateY(2px)}to{transform:translateY(-4px)}}
+        .app-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+        }
 
-/* dock */
-.dock{padding:10px 14px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--bg)}
-.banner{background:var(--tint);border:2px solid var(--accent);border-radius:18px;padding:10px 12px;margin-bottom:10px}
-.banner p{margin:0 0 8px}
-.banner .acts{display:flex;gap:8px;flex-wrap:wrap}
-.banner button{min-height:40px;border-radius:999px;padding:0 16px;border:2px solid var(--ink);background:transparent;font-weight:600}
-.banner button.primary{background:var(--strong);border-color:var(--strong);color:var(--on-strong)}
-.mode{display:inline-flex;gap:8px;align-items:baseline;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;margin-bottom:8px;min-height:36px;font-size:14px;font-weight:600}
-.mode .chg{font-weight:500;color:var(--muted);text-decoration:underline}
-.row{display:flex;gap:8px;align-items:flex-end}
-textarea{flex:1;resize:none;border:2px solid var(--line);border-radius:24px;background:var(--surface);padding:10px 16px;min-height:48px;max-height:160px;line-height:1.4}
-textarea::placeholder{color:var(--muted);opacity:.9}
-.send{width:48px;height:48px;flex:none;border:0;border-radius:50%;background:var(--send-bg);color:var(--send-fg);display:grid;place-items:center}
-.send svg{width:22px;height:22px}
-.send:disabled{opacity:.45;cursor:default}
+        .app-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--primary), #66bb6a);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
 
-.iconbtn.signed{position:relative}
-.iconbtn.signed::after{content:"";position:absolute;top:5px;right:5px;width:10px;height:10px;border-radius:50%;background:#2E9E5B;border:2px solid var(--surface)}
-.txtin{width:100%;min-height:48px;border:2px solid var(--line);border-radius:16px;background:var(--surface);padding:0 14px;font-size:16px}
-.txtin.code{font-size:22px;letter-spacing:.25em}
-.chatrow{display:flex;gap:8px;margin-bottom:8px}
-.chatopen{flex:1;min-width:0;text-align:left;padding:12px 14px;border:2px solid var(--line);border-radius:16px;background:var(--surface)}
-.chatopen strong{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.chatopen span{font-size:13px;color:var(--muted)}
-.chatdel{flex:none;width:48px;border:2px solid var(--line);border-radius:16px;background:var(--surface);display:grid;place-items:center;color:var(--ink)}
-.chatdel svg{width:20px;height:20px}
-.dangerlnk{color:var(--danger)}
-.swatches{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 4px}
-.sw{position:relative;width:40px;height:40px}
-.sw input{position:absolute;inset:0;width:100%;height:100%;opacity:0;margin:0;cursor:pointer}
-.sw span{display:block;width:100%;height:100%;border-radius:50%;border:3px solid var(--line)}
-.sw input:checked + span{border-color:var(--ink);box-shadow:inset 0 0 0 3px var(--bg)}
-.sw input:focus-visible + span{outline:3px solid var(--focus);outline-offset:2px}
-.hue{-webkit-appearance:none;appearance:none;width:100%;height:26px;border-radius:999px;border:0;margin:2px 0 0;background:linear-gradient(90deg,#ff6b6b,#ffb14a,#f2e94a,#6be36b,#4adfd0,#5aa5ff,#a07bff,#ff6bd6,#ff6b6b)}
-.hue::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--bg);border:4px solid var(--ink)}
-.hue::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--bg);border:4px solid var(--ink)}
-/* overlay */
-.overlay{position:fixed;inset:0;z-index:50;background:var(--scrim);display:flex;align-items:flex-end;justify-content:center}
-.panel{width:100%;max-width:640px;max-height:92dvh;overflow:auto;background:var(--bg);border-radius:28px 28px 0 0;padding:22px 18px calc(22px + env(safe-area-inset-bottom));outline:none}
-.panel h2{font-size:24px;margin:0 0 10px}
-.panel h3{font-family:var(--display);font-weight:600;font-size:17px;margin:18px 0 4px}
-.panel h4{font-size:15px;margin:12px 0 2px}
-.panel p{margin:0 0 10px}
-.panel ul{margin:0 0 10px;padding-left:1.2em}
-.panel .hint{margin:0 0 6px}
-.panel fieldset{margin:16px 0 6px}
-.bigbtn{display:block;width:100%;text-align:left;padding:16px;margin-bottom:10px;border:2px solid var(--line);border-radius:20px;background:var(--surface);font-size:17px}
-.bigbtn:hover{border-color:var(--sel-border)}
-.bigbtn strong{font-family:var(--display);font-weight:600}
-.btn{display:block;width:100%;min-height:48px;margin:10px 0 0;border:0;border-radius:999px;background:var(--strong);color:var(--on-strong);font-weight:600}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--ink)}
-.fl{display:block;font-weight:600;margin:12px 0 4px}
-.pin{width:100%;min-height:48px;border:2px solid var(--line);border-radius:16px;background:var(--surface);padding:0 14px;font-size:20px;letter-spacing:.3em}
-.chk{display:flex;gap:10px;align-items:flex-start;margin:16px 0 4px}
-.chk input{width:22px;height:22px;flex:none;margin-top:2px;accent-color:var(--strong)}
-.oerr{color:var(--danger);font-weight:600;min-height:1.4em;margin:8px 0 0}
-.ovlang{min-height:40px;border:2px solid var(--line);border-radius:999px;background:var(--surface);padding:0 12px;font-weight:600;margin-bottom:14px}
-.profline{margin:0 0 6px}
-.links{margin:0;display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
-.lnk{border:0;background:none;color:var(--ink);text-decoration:underline;font-weight:600;padding:8px 2px;min-height:40px}
-.panel .links{justify-content:flex-start;margin-top:8px}
-.panel .contact{text-align:left;padding:10px 0 4px;font-size:15px}
-.legal{font-size:15px;line-height:1.55}
-.legal a{color:var(--ink)}
-.fine{margin:8px 2px 0;font-size:12.5px;color:var(--muted);text-align:center}
-.botcol{min-width:0;display:flex;flex-direction:column;align-items:flex-start}
-.report{border:0;background:none;color:var(--muted);font-size:13px;text-decoration:underline;padding:6px 4px;min-height:32px}
-@media (max-width:420px){
-  .top{padding:10px}
-  .brand{gap:7px}
-  .brand svg{width:30px;height:30px}
-  .wordmark{font-size:20px}
-  .tools{gap:6px}
-  .tools select{padding:0 6px 0 10px;font-size:14px}
-  .iconbtn{width:38px;height:38px}
-}
-@media (max-width:340px){.wordmark{display:none}}
+        .app-card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+            color: var(--text);
+        }
 
-@media (prefers-reduced-motion:reduce){.thinking .av{animation:none}main{scroll-behavior:auto}.top{transition:none}}
-</style>
+        .app-card p {
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .app-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(76, 175, 80, 0.1);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .pwnd-card .app-icon {
+            background: linear-gradient(135deg, #1c2631, #24213d);
+        }
+
+        .pwnd-card .app-tag {
+            background: rgba(91, 173, 255, 0.1);
+            color: #5cadff;
+        }
+
+        .mydog-card .app-tag {
+            background: rgba(76, 175, 80, 0.1);
+            color: var(--primary);
+        }
+
+        footer {
+            margin-top: 60px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: background 0.3s ease;
+        }
+
+        .dark-mode-toggle:hover {
+            background: var(--primary-hover);
+        }
+
+        .dark-mode-toggle:active {
+            transform: scale(0.95);
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app" id="app">
-  <svg id="pond" viewBox="0 0 400 800" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
-    <g class="s" stroke-width="2"><path stroke-opacity="0.1" d="M-20 230q25-12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0"/><path stroke-opacity="0.08" d="M-20 370q25-12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0"/><path stroke-opacity="0.1" d="M-20 505q25-12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0"/><path stroke-opacity="0.08" d="M-20 690q25-12 50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0t50 0"/><ellipse cx="92" cy="560" rx="26" ry="9" stroke-opacity="0.24"/><ellipse cx="92" cy="560" rx="46" ry="16" stroke-opacity="0.15"/><ellipse cx="92" cy="560" rx="68" ry="23" stroke-opacity="0.08"/><ellipse cx="330" cy="330" rx="18" ry="6" stroke-opacity="0.22"/><ellipse cx="330" cy="330" rx="34" ry="11" stroke-opacity="0.13"/><ellipse cx="330" cy="330" rx="52" ry="17" stroke-opacity="0.07"/><ellipse cx="150" cy="300" rx="14" ry="5" stroke-opacity="0.2"/><ellipse cx="150" cy="300" rx="28" ry="10" stroke-opacity="0.1"/><circle cx="104" cy="268" r="3" stroke-opacity=".2"/><circle cx="112" cy="254" r="4.5" stroke-opacity=".2"/><circle cx="300" cy="392" r="3" stroke-opacity=".2"/><circle cx="292" cy="376" r="5" stroke-opacity=".2"/><circle cx="196" cy="448" r="3.5" stroke-opacity=".2"/><path stroke-width="3" stroke-opacity=".24" d="M22 800C14 700 36 620 26 540"/><path stroke-width="3" stroke-opacity=".24" d="M44 800C50 720 30 650 42 590"/><path stroke-width="3" stroke-opacity=".24" d="M8 800C0 740 14 690 10 640"/><path stroke-width="3" stroke-opacity=".24" d="M380 800C388 730 372 660 384 600"/><path stroke-width="3" stroke-opacity=".24" d="M362 800C356 740 372 700 366 660"/></g>
-    <g class="f">
-      <g transform="translate(96 560) scale(1)"><ellipse rx="34" ry="12" fill-opacity="0.24"/><path class="bg-s" stroke-width="2.5" d="M0 0L34-2"/></g><g transform="translate(46 692) scale(1.2)"><ellipse rx="34" ry="12" fill-opacity="0.24"/><path class="bg-s" stroke-width="2.5" d="M0 0L34-2"/></g><g transform="translate(356 522) scale(0.8)"><ellipse rx="34" ry="12" fill-opacity="0.24"/><path class="bg-s" stroke-width="2.5" d="M0 0L34-2"/></g><g transform="translate(196 612) scale(0.7)"><ellipse rx="34" ry="12" fill-opacity="0.2"/><path class="bg-s" stroke-width="2.5" d="M0 0L34-2"/></g><g transform="translate(300 612) scale(1.55)"><ellipse rx="34" ry="12" fill-opacity="0.24"/><path class="bg-s" stroke-width="2.5" d="M0 0L34-2"/></g>
-      <g transform="translate(300 594)">
-      <ellipse cx="-22" cy="8" rx="15" ry="8" fill-opacity=".42" transform="rotate(-24 -22 8)"/>
-      <ellipse cx="22" cy="8" rx="15" ry="8" fill-opacity=".42" transform="rotate(24 22 8)"/>
-      <ellipse cx="0" cy="0" rx="25" ry="17" fill-opacity=".5"/>
-      <ellipse cx="0" cy="-15" rx="21" ry="12" fill-opacity=".56"/>
-      <circle cx="-12" cy="-25" r="8" fill-opacity=".56"/><circle cx="12" cy="-25" r="8" fill-opacity=".56"/>
-      <circle class="bg-f" cx="-12" cy="-25" r="3.4"/><circle class="bg-f" cx="12" cy="-25" r="3.4"/>
-      <path class="bg-s" stroke-width="2" d="M-9 -12q9 7 18 0"/>
-      <ellipse cx="-10" cy="14" rx="6" ry="4" fill-opacity=".5"/><ellipse cx="10" cy="14" rx="6" ry="4" fill-opacity=".5"/>
-    </g>
-      <g transform="translate(70 300) rotate(-12) scale(2.7 2.7) translate(-15 -16)" fill-opacity="0.24"><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="bg-f" cx="11" cy="14.5" r="1.5" fill-opacity="1"/></g><g transform="translate(300 430) rotate(10) scale(-1.9 1.9) translate(-15 -16)" fill-opacity="0.2"><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="bg-f" cx="11" cy="14.5" r="1.5" fill-opacity="1"/></g><g transform="translate(168 474) rotate(-6) scale(1.3 1.3) translate(-15 -16)" fill-opacity="0.18"><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="bg-f" cx="11" cy="14.5" r="1.5" fill-opacity="1"/></g><g transform="translate(340 250) rotate(8) scale(-1.2 1.2) translate(-15 -16)" fill-opacity="0.14"><path d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="bg-f" cx="11" cy="14.5" r="1.5" fill-opacity="1"/></g>
-      <ellipse cx="26" cy="528" rx="5" ry="15" fill-opacity=".32" transform="rotate(3 26 528)"/><ellipse cx="42" cy="578" rx="4.5" ry="13" fill-opacity=".3" transform="rotate(-4 42 578)"/><ellipse cx="384" cy="588" rx="5" ry="14" fill-opacity=".32" transform="rotate(4 384 588)"/><ellipse cx="366" cy="648" rx="4" ry="12" fill-opacity=".28" transform="rotate(-3 366 648)"/>
-    </g>
-  </svg>
-  <header class="top">
-    <div class="brand">
-      <svg viewBox="0 0 32 32" aria-hidden="true"><rect class="lg-bg" width="32" height="32" rx="11"/><path class="lg-fg" d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="lg-bg" cx="11" cy="14.5" r="1.4"/></svg>
-      <p class="wordmark">manualAI</p>
-    </div>
-    <a class="pwnd-launch" href="/pwnd" aria-label="pwnd Quizbattle öffnen"><span class="pwnd-mark">π</span><span><strong>pwnd</strong><small>Quizbattle</small></span></a>
-    <div class="tools">
-      <select id="lang" aria-label="Language">
-        <option value="de">Deutsch</option>
-        <option value="en">English</option>
-        <option value="es">Español</option>
-        <option value="fr">Français</option>
-      </select>
-      <button id="menuBtn" type="button" class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg></button>
-      <button id="newChat" type="button" class="iconbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
-    </div>
-  </header>
+    <div class="container">
+        <header>
+            <h1>🎯 manualAI.org</h1>
+            <p>Wähle eine App aus</p>
+        </header>
 
-  <main id="scroll">
-    <div id="welcome">
-      <section class="hero">
-        <div class="hero-row">
-          <h1 id="h1"></h1>
-          <svg class="fish" viewBox="0 0 96 64" aria-hidden="true">
-            <circle class="fs-line" cx="6" cy="14" r="3"/>
-            <circle class="fs-line" cx="13" cy="6" r="2"/>
-            <path class="fs-body" d="M8 34C22 12 52 10 70 28L90 14l-4 20 4 20-20-14C52 58 22 56 8 34z"/>
-            <path class="fs-fin" d="M38 38c8 10 18 10 24 4"/>
-            <circle class="fs-eye" cx="26" cy="30" r="4.5"/><circle class="fs-pupil" cx="26" cy="30" r="1.8"/>
-          </svg>
+        <div class="apps-grid">
+            <!-- PWND App Card -->
+            <a href="/pwnd/" class="app-card pwnd-card">
+                <div class="app-icon">π</div>
+                <h2>pwnd</h2>
+                <p>Quizbattle - Teste dein Wissen mit KI-gestützten Fragen und Herausforderungen</p>
+                <span class="app-tag">🧠 Quiz & Lernen</span>
+            </a>
+
+            <!-- MyDog App Card -->
+            <a href="/mydog/" class="app-card mydog-card">
+                <div class="app-icon">🐕</div>
+                <h2>MyDog</h2>
+                <p>Finde deinen perfekten Hund basierend auf deinem Persönlichkeitstest</p>
+                <span class="app-tag">🐾 Hundesuche</span>
+            </a>
         </div>
-        <p class="sub" id="sub"></p>
-      </section>
-      <div class="wbody" id="recent" hidden>
-        <h2 id="tryTitle"></h2>
-        <div id="examples"></div>
-        <button type="button" class="clear" id="clearHist"></button>
-      </div>
+
+        <footer>
+            <p>© 2024 manualAI.org | <a href="https://manualai.org">Zurück zur Hauptseite</a></p>
+        </footer>
     </div>
-    <div id="messages" aria-live="polite"></div>
-  </main>
 
-  <div class="dock">
-    <div class="banner" id="banner" hidden>
-      <p id="bannerText"></p>
-      <div class="acts">
-        <button type="button" class="primary" id="bannerYes"></button>
-        <button type="button" id="bannerNo"></button>
-      </div>
-    </div>
-    <div id="sheetSlot"><section class="setup sheet" id="setup" hidden></section></div>
-    <button class="mode" id="modeBtn" type="button" aria-expanded="false"></button>
-    <div class="row">
-      <textarea id="input" rows="1"></textarea>
-      <button class="send" id="sendBtn" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
-    </div>
-    <p class="fine" id="fine"></p>
-  </div>
-</div>
+    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Dark Mode">🌙</button>
 
-<div class="overlay" id="overlay" hidden><div class="panel" id="panel" role="dialog" aria-modal="true" tabindex="-1"></div></div>
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        let darkMode = localStorage.getItem('app_darkMode') === 'true' || prefersDark;
 
-<script>
-const I18N = {
-  de:{
-    who:"Wer nutzt manualAI?",
-    under18:"Ich bin unter 18",
-    adult18:"Ich bin 18 oder älter",
-    parentTitle:"Bitte eine erwachsene Person",
-    parentText:"Für Nutzer unter 18 richtet ein Elternteil, eine erziehungsberechtigte Person oder eine Lehrkraft das Kinderprofil ein. Es ist mit einem PIN geschützt und lässt sich nur damit wieder verlassen. Kinder unter 13 nutzen manualAI bitte nur gemeinsam mit einer erwachsenen Person.",
-    pinLabel:"PIN festlegen (4 Ziffern)",
-    pinRepeat:"PIN wiederholen",
-    consent:"Ich bin Elternteil, erziehungsberechtigt oder Lehrkraft, erlaube die Nutzung und habe die Datenschutzerklärung gelesen.",
-    startKids:"Kinderprofil starten",
-    errPinLen:"Bitte genau 4 Ziffern eingeben.",
-    errPinMismatch:"Die PINs stimmen nicht überein.",
-    errConsent:"Bitte bestätige die Erlaubnis.",
-    menu:"Menü",
-    profileNow:"Aktives Profil",
-    profKids:"Kinderprofil",
-    profAdult:"Erwachsenenprofil",
-    toAdult:"Zum Erwachsenenprofil wechseln",
-    toKids:"Kinderprofil einrichten",
-    pinEnter:"PIN eingeben",
-    pinWrong:"Falscher PIN.",
-    pinLocked:"Zu viele Versuche. Bitte versuche es in 5 Minuten noch einmal.",
-    confirm:"Bestätigen",
-    cancel:"Abbrechen",
-    close:"Schließen",
-    back:"Zurück",
-    privacy:"Datenschutz",
-    legal:"Impressum",
-    germanOnly:"Dieser Text ist nur auf Deutsch verfügbar.",
-    aiNote:"manualAI ist eine KI und kann sich irren.",
-    kidsNote:"Du sprichst mit einer KI. Schreib keine persönlichen Daten wie Name, Adresse oder Schule.",
-    report:"Melden",
-    reportSubject:"Meldung zu einer Antwort von manualAI",
-    reportBody:"Diese Antwort möchte ich melden:\n\n{a}\n\nWas ist das Problem?\n",
-    blockedCare:"Das klingt, als wäre etwas schwer für dich. Sprich bitte mit einer Person, der du vertraust, zum Beispiel mit deinen Eltern oder einer Lehrkraft. Kostenlose Hilfe für Kinder und Jugendliche in Deutschland: Nummer gegen Kummer, 116 111. Wenn du in Gefahr bist, ruf sofort den Notruf 112 an.",
-    blockedUnsafe:"Dabei kann ich dir nicht helfen. Frag mich gern etwas anderes zum Lernen, oder sprich mit einer Person, der du vertraust.",
-    examplesTitle:"Probier zum Beispiel",
-    modeLead:"Hilfe:",
-    examplesList:["Woran erkenne ich, ob eine Quelle vertrauenswürdig ist?", "Wie finde ich heraus, ob ein Foto gefälscht ist?", "Wie finde ich den Fehler in meinem Code?"],
-    account:"Konto",
-    signIn:"Anmelden",
-    signInHint:"Mit einem Konto werden deine Chats gespeichert. Dafür schicken wir dir einen Code per E-Mail, ein Passwort brauchst du nicht.",
-    emailLabel:"E-Mail-Adresse",
-    adultCheck:"Ich bin 18 oder älter und habe die Datenschutzerklärung gelesen.",
-    sendCode:"Code senden",
-    codeSent:"Wir haben einen Code an {e} geschickt. Schau auch im Spam-Ordner nach.",
-    codeLabel:"Code aus der E-Mail",
-    verify:"Bestätigen",
-    errEmail:"Bitte gib eine gültige E-Mail-Adresse ein.",
-    errAdult:"Bitte bestätige, dass du 18 oder älter bist.",
-    errSend:"Der Code konnte nicht gesendet werden. Bitte versuche es später noch einmal.",
-    errCode:"Der Code ist falsch oder abgelaufen.",
-    errRate:"Zu viele Versuche. Bitte warte ein paar Minuten und versuch es dann noch einmal.",
-    signedInAs:"Angemeldet als",
-    myChats:"Meine Chats",
-    noChats:"Noch keine gespeicherten Chats.",
-    signOut:"Abmelden",
-    exportData:"Meine Daten exportieren",
-    deleteAccount:"Konto löschen",
-    deleteWarn:"Dein Konto und alle gespeicherten Chats werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.",
-    deleteGo:"Endgültig löschen",
-    delChatLabel:"Chat löschen",
-    loadErr:"Das hat nicht geklappt. Bitte versuche es noch einmal.",
-    stop:"Stopp",
-    appearance:"Darstellung",
-    themeDark:"Dunkel",
-    themeLight:"Hell",
-    colorTitle:"Farbe",
-    customColor:"Eigene Farbe",
-    pal:{"ocean": "Ozean", "teal": "Türkis", "meadow": "Wiese", "sun": "Sonne", "coral": "Koralle", "rose": "Rosa", "violet": "Lila"},
-    newChat:"Neuer Chat", h1:"Finde es selbst heraus.",
-    sub:"Dein KI-Lernbegleiter: manualAI zeigt dir, wie du Antworten selbst findest, statt sie fertig zu bekommen.",
-    levelTitle:"Wie viel Unterstützung möchtest du?",
-    meterHint:"Die Punkte zeigen, wie stark du geführt wirst.",
-    levels:{
-      pathfinder:{name:"Wegweiser",desc:"Ich zeige dir, wo und wie du suchen kannst. Die Antwort findest du selbst."},
-      coach:{name:"Coach",desc:"Ich stelle Fragen und gebe Tipps. Die Schritte gehst du selbst."},
-      safety_net:{name:"Sicherheitsnetz",desc:"Du löst es allein, ich sehe mir dein Ergebnis an."}
-    },
-    dialTitle:"Wie viel Zeit und Energie hast du gerade?",
-    dials:{compact:"Kurz",normal:"Normal",thorough:"Ausführlich"},
-    styleTitle:"Wie soll ich erklären?",
-    styles:{simple:"Einfach",standard:"Standard",expert:"Fachlich"},
-    placeholder:"Stell deine Frage…", send:"Senden", done:"Fertig", change:"Ändern",
-    thinking:"Ich überlege…", now:"Eingestellt:", notNow:"Nicht jetzt", switchTo:"Wechseln zu {x}",
-    contact:"Fragen oder Feedback?", docTitle:"manualAI: Lerne, Antworten selbst zu finden", metaDesc:"manualAI ist dein Lernbegleiter: Er zeigt dir, wie du Antworten selbst findest, statt sie fertig zu liefern.", limitUser:"Du hast das Tageslimit erreicht. Morgen kannst du weiterfragen.", limitGlobal:"manualAI ist heute ausgelastet. Bitte versuche es morgen noch einmal.", recentTitle:"Zuletzt gefragt", forYou:"Für dich", clear:"Verlauf löschen",
-    cut:"Die Antwort wurde gekürzt. Schreib „weiter“, dann geht es an der Stelle weiter.",
-    error:"Das hat leider nicht geklappt. Prüfe deine Verbindung und sende die Nachricht noch einmal.",
-  },
-  en:{
-    who:"Who is using manualAI?",
-    under18:"I'm under 18",
-    adult18:"I'm 18 or older",
-    parentTitle:"Please get an adult",
-    parentText:"For users under 18, a parent, guardian or teacher sets up the child profile. It is protected with a PIN and can only be left with it. Children under 13 should use manualAI only together with an adult.",
-    pinLabel:"Set a PIN (4 digits)",
-    pinRepeat:"Repeat PIN",
-    consent:"I am a parent, guardian or teacher, I allow this use and I have read the privacy policy.",
-    startKids:"Start child profile",
-    errPinLen:"Please enter exactly 4 digits.",
-    errPinMismatch:"The PINs don't match.",
-    errConsent:"Please confirm the permission.",
-    menu:"Menu",
-    profileNow:"Active profile",
-    profKids:"Child profile",
-    profAdult:"Adult profile",
-    toAdult:"Switch to adult profile",
-    toKids:"Set up child profile",
-    pinEnter:"Enter PIN",
-    pinWrong:"Wrong PIN.",
-    pinLocked:"Too many attempts. Please try again in 5 minutes.",
-    confirm:"Confirm",
-    cancel:"Cancel",
-    close:"Close",
-    back:"Back",
-    privacy:"Privacy",
-    legal:"Legal notice",
-    germanOnly:"This text is only available in German.",
-    aiNote:"manualAI is an AI and can make mistakes.",
-    kidsNote:"You are talking to an AI. Don't write personal details like your name, address or school.",
-    report:"Report",
-    reportSubject:"Report about a manualAI answer",
-    reportBody:"I would like to report this answer:\n\n{a}\n\nWhat is the problem?\n",
-    blockedCare:"That sounds like something is hard for you right now. Please talk to someone you trust, such as your parents or a teacher. If you are in danger, call your local emergency number right away.",
-    blockedUnsafe:"I can't help with that. Feel free to ask me something else about learning, or talk to someone you trust.",
-    examplesTitle:"Try asking",
-    modeLead:"Help:",
-    examplesList:["How can I tell if a source is trustworthy?", "How do I find out whether a photo is fake?", "How do I track down a bug in my code?"],
-    account:"Account",
-    signIn:"Sign in",
-    signInHint:"With an account your chats are saved. We email you a code, no password needed.",
-    emailLabel:"Email address",
-    adultCheck:"I am 18 or older and have read the privacy policy.",
-    sendCode:"Send code",
-    codeSent:"We sent a code to {e}. Check your spam folder too.",
-    codeLabel:"Code from the email",
-    verify:"Confirm",
-    errEmail:"Please enter a valid email address.",
-    errAdult:"Please confirm that you are 18 or older.",
-    errSend:"The code could not be sent. Please try again later.",
-    errCode:"The code is wrong or has expired.",
-    errRate:"Too many attempts. Please wait a few minutes and try again.",
-    signedInAs:"Signed in as",
-    myChats:"My chats",
-    noChats:"No saved chats yet.",
-    signOut:"Sign out",
-    exportData:"Export my data",
-    deleteAccount:"Delete account",
-    deleteWarn:"Your account and all saved chats will be deleted permanently. This cannot be undone.",
-    deleteGo:"Delete permanently",
-    delChatLabel:"Delete chat",
-    loadErr:"That didn't work. Please try again.",
-    stop:"Stop",
-    appearance:"Appearance",
-    themeDark:"Dark",
-    themeLight:"Light",
-    colorTitle:"Colour",
-    customColor:"Custom colour",
-    pal:{"ocean": "Ocean", "teal": "Teal", "meadow": "Meadow", "sun": "Sun", "coral": "Coral", "rose": "Pink", "violet": "Violet"},
-    newChat:"New chat", h1:"Find it out yourself.",
-    sub:"Your AI learning companion: manualAI shows you how to find answers instead of handing them over.",
-    levelTitle:"How much help do you want?",
-    meterHint:"Dots show how much guidance you get.",
-    levels:{
-      pathfinder:{name:"Pathfinder",desc:"I tell you where and how to look. You find the answer."},
-      coach:{name:"Coach",desc:"I ask questions and give hints. You take the steps."},
-      safety_net:{name:"Safety net",desc:"You solve it alone, I check your result."}
-    },
-    dialTitle:"How much time and energy do you have right now?",
-    dials:{compact:"Short",normal:"Normal",thorough:"Detailed"},
-    styleTitle:"How should I explain?",
-    styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
-    placeholder:"Ask your question…", send:"Send", done:"Done", change:"Change",
-    thinking:"Thinking…", now:"Set to:", notNow:"Not now", switchTo:"Switch to {x}",
-    contact:"Questions or feedback?", docTitle:"manualAI: Learn how to find answers", metaDesc:"manualAI is a learning companion that shows you how to find answers yourself instead of handing them over.", limitUser:"You've reached today's limit. You can keep asking tomorrow.", limitGlobal:"manualAI is at capacity today. Please try again tomorrow.", recentTitle:"Recently asked", forYou:"For you", clear:"Clear history",
-    cut:"The answer was cut short. Write “continue” and I will pick up where it stopped.",
-    error:"That didn't work. Check your connection and send it again.",
-  },
-  es:{
-    who:"¿Quién usa manualAI?",
-    under18:"Soy menor de 18",
-    adult18:"Tengo 18 años o más",
-    parentTitle:"Necesitamos a una persona adulta",
-    parentText:"Para menores de 18 años, un padre, madre, tutor o docente configura el perfil infantil. Está protegido con un PIN y solo se puede salir con él. Los menores de 13 años deben usar manualAI solo junto a una persona adulta.",
-    pinLabel:"Crea un PIN (4 dígitos)",
-    pinRepeat:"Repite el PIN",
-    consent:"Soy padre, madre, tutor o docente, permito el uso y he leído la política de privacidad.",
-    startKids:"Iniciar perfil infantil",
-    errPinLen:"Introduce exactamente 4 dígitos.",
-    errPinMismatch:"Los PIN no coinciden.",
-    errConsent:"Confirma el permiso.",
-    menu:"Menú",
-    profileNow:"Perfil activo",
-    profKids:"Perfil infantil",
-    profAdult:"Perfil adulto",
-    toAdult:"Cambiar al perfil adulto",
-    toKids:"Configurar perfil infantil",
-    pinEnter:"Introduce el PIN",
-    pinWrong:"PIN incorrecto.",
-    pinLocked:"Demasiados intentos. Inténtalo de nuevo en 5 minutos.",
-    confirm:"Confirmar",
-    cancel:"Cancelar",
-    close:"Cerrar",
-    back:"Atrás",
-    privacy:"Privacidad",
-    legal:"Aviso legal",
-    germanOnly:"Este texto solo está disponible en alemán.",
-    aiNote:"manualAI es una IA y puede equivocarse.",
-    kidsNote:"Hablas con una IA. No escribas datos personales como tu nombre, dirección o colegio.",
-    report:"Reportar",
-    reportSubject:"Aviso sobre una respuesta de manualAI",
-    reportBody:"Quiero avisar de esta respuesta:\n\n{a}\n\n¿Cuál es el problema?\n",
-    blockedCare:"Parece que algo es difícil para ti ahora. Habla, por favor, con alguien de confianza, como tus padres o un profesor. Si estás en peligro, llama ya al número de emergencias de tu país.",
-    blockedUnsafe:"Con eso no puedo ayudarte. Pregúntame otra cosa sobre aprender, o habla con alguien de confianza.",
-    examplesTitle:"Prueba con",
-    modeLead:"Ayuda:",
-    examplesList:["¿Cómo sé si una fuente es fiable?", "¿Cómo averiguo si una foto es falsa?", "¿Cómo encuentro un error en mi código?"],
-    account:"Cuenta",
-    signIn:"Iniciar sesión",
-    signInHint:"Con una cuenta se guardan tus chats. Te enviamos un código por correo, no necesitas contraseña.",
-    emailLabel:"Correo electrónico",
-    adultCheck:"Tengo 18 años o más y he leído la política de privacidad.",
-    sendCode:"Enviar código",
-    codeSent:"Hemos enviado un código a {e}. Revisa también la carpeta de spam.",
-    codeLabel:"Código del correo",
-    verify:"Confirmar",
-    errEmail:"Introduce un correo electrónico válido.",
-    errAdult:"Confirma que tienes 18 años o más.",
-    errSend:"No se pudo enviar el código. Inténtalo de nuevo más tarde.",
-    errCode:"El código es incorrecto o ha caducado.",
-    errRate:"Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
-    signedInAs:"Sesión iniciada como",
-    myChats:"Mis chats",
-    noChats:"Aún no hay chats guardados.",
-    signOut:"Cerrar sesión",
-    exportData:"Exportar mis datos",
-    deleteAccount:"Eliminar cuenta",
-    deleteWarn:"Tu cuenta y todos los chats guardados se eliminarán para siempre. No se puede deshacer.",
-    deleteGo:"Eliminar para siempre",
-    delChatLabel:"Eliminar chat",
-    loadErr:"No ha funcionado. Inténtalo de nuevo.",
-    stop:"Detener",
-    appearance:"Apariencia",
-    themeDark:"Oscuro",
-    themeLight:"Claro",
-    colorTitle:"Color",
-    customColor:"Color propio",
-    pal:{"ocean": "Océano", "teal": "Turquesa", "meadow": "Prado", "sun": "Sol", "coral": "Coral", "rose": "Rosa", "violet": "Violeta"},
-    newChat:"Nuevo chat", h1:"Descúbrelo tú mismo.",
-    sub:"Tu compañero de aprendizaje con IA: manualAI te enseña a encontrar las respuestas en lugar de dártelas hechas.",
-    levelTitle:"¿Cuánta ayuda quieres?",
-    meterHint:"Los puntos muestran cuánta guía recibes.",
-    levels:{
-      pathfinder:{name:"Guía",desc:"Te digo dónde y cómo buscar. La respuesta la encuentras tú."},
-      coach:{name:"Coach",desc:"Te hago preguntas y te doy pistas. Los pasos los das tú."},
-      safety_net:{name:"Red de seguridad",desc:"Lo resuelves por tu cuenta, yo reviso tu resultado."}
-    },
-    dialTitle:"¿Cuánto tiempo y energía tienes ahora?",
-    dials:{compact:"Breve",normal:"Normal",thorough:"Detallado"},
-    styleTitle:"¿Cómo debo explicar?",
-    styles:{simple:"Sencillo",standard:"Estándar",expert:"Experto"},
-    placeholder:"Haz tu pregunta…", send:"Enviar", done:"Listo", change:"Cambiar",
-    thinking:"Pensando…", now:"Ajustado a:", notNow:"Ahora no", switchTo:"Cambiar a {x}",
-    contact:"¿Preguntas o comentarios?", docTitle:"manualAI: Aprende a encontrar respuestas", metaDesc:"manualAI es tu compañero de aprendizaje: te enseña a encontrar las respuestas tú mismo.", limitUser:"Has alcanzado el límite de hoy. Mañana puedes seguir preguntando.", limitGlobal:"manualAI está al máximo hoy. Inténtalo de nuevo mañana.", recentTitle:"Preguntado recientemente", forYou:"Para ti", clear:"Borrar historial",
-    cut:"La respuesta se cortó. Escribe «continúa» y sigo desde donde quedó.",
-    error:"No ha funcionado. Revisa tu conexión y vuelve a enviarlo.",
-  },
-  fr:{
-    who:"Qui utilise manualAI ?",
-    under18:"J'ai moins de 18 ans",
-    adult18:"J'ai 18 ans ou plus",
-    parentTitle:"Un adulte est nécessaire",
-    parentText:"Pour les moins de 18 ans, un parent, un tuteur ou un enseignant configure le profil enfant. Il est protégé par un code PIN et on ne peut le quitter qu'avec lui. Les enfants de moins de 13 ans utilisent manualAI uniquement avec un adulte.",
-    pinLabel:"Choisir un code PIN (4 chiffres)",
-    pinRepeat:"Répéter le code PIN",
-    consent:"Je suis parent, tuteur ou enseignant, j'autorise cet usage et j'ai lu la politique de confidentialité.",
-    startKids:"Démarrer le profil enfant",
-    errPinLen:"Saisis exactement 4 chiffres.",
-    errPinMismatch:"Les codes PIN ne correspondent pas.",
-    errConsent:"Confirme l'autorisation.",
-    menu:"Menu",
-    profileNow:"Profil actif",
-    profKids:"Profil enfant",
-    profAdult:"Profil adulte",
-    toAdult:"Passer au profil adulte",
-    toKids:"Configurer le profil enfant",
-    pinEnter:"Saisir le code PIN",
-    pinWrong:"Code PIN incorrect.",
-    pinLocked:"Trop de tentatives. Réessaie dans 5 minutes.",
-    confirm:"Confirmer",
-    cancel:"Annuler",
-    close:"Fermer",
-    back:"Retour",
-    privacy:"Confidentialité",
-    legal:"Mentions légales",
-    germanOnly:"Ce texte n'est disponible qu'en allemand.",
-    aiNote:"manualAI est une IA et peut se tromper.",
-    kidsNote:"Tu parles à une IA. N'écris pas de données personnelles comme ton nom, ton adresse ou ton école.",
-    report:"Signaler",
-    reportSubject:"Signalement d'une réponse de manualAI",
-    reportBody:"Je voudrais signaler cette réponse :\n\n{a}\n\nQuel est le problème ?\n",
-    blockedCare:"On dirait que quelque chose est difficile pour toi en ce moment. Parle-en à une personne de confiance, comme tes parents ou un enseignant. Si tu es en danger, appelle tout de suite le numéro d'urgence de ton pays.",
-    blockedUnsafe:"Je ne peux pas t'aider pour ça. Pose-moi une autre question pour apprendre, ou parle à une personne de confiance.",
-    examplesTitle:"Essaie par exemple",
-    modeLead:"Aide :",
-    examplesList:["Comment savoir si une source est fiable ?", "Comment vérifier si une photo est truquée ?", "Comment trouver une erreur dans mon code ?"],
-    account:"Compte",
-    signIn:"Se connecter",
-    signInHint:"Avec un compte, tes discussions sont enregistrées. Nous t'envoyons un code par e-mail, pas besoin de mot de passe.",
-    emailLabel:"Adresse e-mail",
-    adultCheck:"J'ai 18 ans ou plus et j'ai lu la politique de confidentialité.",
-    sendCode:"Envoyer le code",
-    codeSent:"Nous avons envoyé un code à {e}. Regarde aussi dans les spams.",
-    codeLabel:"Code reçu par e-mail",
-    verify:"Confirmer",
-    errEmail:"Saisis une adresse e-mail valide.",
-    errAdult:"Confirme que tu as 18 ans ou plus.",
-    errSend:"Le code n'a pas pu être envoyé. Réessaie plus tard.",
-    errCode:"Le code est incorrect ou a expiré.",
-    errRate:"Trop de tentatives. Patiente quelques minutes, puis réessaie.",
-    signedInAs:"Connecté en tant que",
-    myChats:"Mes discussions",
-    noChats:"Aucune discussion enregistrée.",
-    signOut:"Se déconnecter",
-    exportData:"Exporter mes données",
-    deleteAccount:"Supprimer le compte",
-    deleteWarn:"Ton compte et toutes les discussions enregistrées seront supprimés définitivement. Cette action est irréversible.",
-    deleteGo:"Supprimer définitivement",
-    delChatLabel:"Supprimer la discussion",
-    loadErr:"Ça n'a pas marché. Réessaie.",
-    stop:"Arrêter",
-    appearance:"Apparence",
-    themeDark:"Sombre",
-    themeLight:"Clair",
-    colorTitle:"Couleur",
-    customColor:"Couleur perso",
-    pal:{"ocean": "Océan", "teal": "Turquoise", "meadow": "Prairie", "sun": "Soleil", "coral": "Corail", "rose": "Rose", "violet": "Violet"},
-    newChat:"Nouveau chat", h1:"Trouve-le par toi-même.",
-    sub:"Ton compagnon d'apprentissage IA : manualAI t'apprend à trouver les réponses au lieu de te les donner.",
-    levelTitle:"Combien d'aide veux-tu ?",
-    meterHint:"Les points indiquent le niveau d'accompagnement.",
-    levels:{
-      pathfinder:{name:"Éclaireur",desc:"Je t'indique où et comment chercher. Tu trouves la réponse."},
-      coach:{name:"Coach",desc:"Je pose des questions et donne des pistes. Tu fais les étapes."},
-      safety_net:{name:"Filet de sécurité",desc:"Tu le résous par toi-même, je vérifie ton résultat."}
-    },
-    dialTitle:"Combien de temps et d'énergie as-tu en ce moment ?",
-    dials:{compact:"Court",normal:"Normal",thorough:"Détaillé"},
-    styleTitle:"Comment dois-je expliquer ?",
-    styles:{simple:"Simple",standard:"Standard",expert:"Expert"},
-    placeholder:"Pose ta question…", send:"Envoyer", done:"Terminé", change:"Modifier",
-    thinking:"Réflexion…", now:"Réglé sur :", notNow:"Pas maintenant", switchTo:"Passer à {x}",
-    contact:"Une question ou un avis ?", docTitle:"manualAI : apprends à trouver les réponses", metaDesc:"manualAI est ton compagnon d'apprentissage : il t'apprend à trouver les réponses par toi-même.", limitUser:"Tu as atteint la limite du jour. Tu pourras continuer demain.", limitGlobal:"manualAI est complet aujourd'hui. Réessaie demain.", recentTitle:"Demandé récemment", forYou:"Pour toi", clear:"Effacer l'historique",
-    cut:"La réponse a été coupée. Écris « continue » et je reprends là où elle s'est arrêtée.",
-    error:"Ça n'a pas marché. Vérifie ta connexion et renvoie ton message.",
-  }
-};
+        function updateDarkMode() {
+            if (darkMode) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                darkModeToggle.textContent = '☀️';
+            } else {
+                document.documentElement.removeAttribute('data-theme');
+                darkModeToggle.textContent = '🌙';
+            }
+            localStorage.setItem('app_darkMode', darkMode);
+        }
 
-const LEVELS = ["pathfinder","coach","safety_net"];
-const DIALS = ["compact","normal","thorough"];
-const STYLES = ["simple","standard","expert"];
-const GUIDANCE = { pathfinder:3, coach:2, safety_net:1 };
-const SVG = (inner) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+inner+'</svg>';
-const ICONS = {
-  pathfinder: SVG('<path d="M12 3v18"/><path d="M5 5h10l3 3-3 3H5z"/><path d="M19 13H9l-3 3 3 3h10z"/>'),
-  coach: SVG('<path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.4A8 8 0 1 1 21 12z"/><path d="M9 12.5l2 2 4-4.5"/>'),
-  safety_net: SVG('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M5.6 5.6l3.9 3.9M14.5 14.5l3.9 3.9M18.4 5.6l-3.9 3.9M9.5 14.5l-3.9 3.9"/>')
-};
-const AVATAR = '<svg class="av" viewBox="0 0 32 32" aria-hidden="true"><rect class="lg-bg" width="32" height="32" rx="11"/><path class="lg-fg" d="M6 16c3-5 8-7 13-4l5-3v14l-5-3c-5 3-10 1-13-4z"/><circle class="lg-bg" cx="11" cy="14.5" r="1.4"/></svg>';
-
-const store = {
-  get(k){ try{ return localStorage.getItem(k); }catch{ return null; } },
-  set(k,v){ try{ localStorage.setItem(k,v); }catch{} }
-};
-
-// Set to true to re-enable the child profile (needs legal review first).
-const KIDS_ENABLED = false;
-
-// Supabase (both values are public by design; data is protected by row level security).
-const SB_URL = "https://raqoawgvthttcjoihqii.supabase.co";
-const SB_KEY = "sb_publishable_6KjHprkZSX2zRMisxubJfQ_M3S6uqBv";
-function loadSession(){
-  try{ const x = JSON.parse(store.get("sb_session") || "null"); return x && x.access_token && x.refresh_token ? x : null; }
-  catch{ return null; }
-}
-
-function loadHue(){
-  const raw = store.get("hue");
-  const v = raw === null || raw === "" ? NaN : Number(raw);
-  return v >= 0 && v < 360 ? Math.round(v) : 210;
-}
-
-const state = {
-  lang: I18N[store.get("lang")] ? store.get("lang") : (I18N[(navigator.language||"en").slice(0,2)] ? navigator.language.slice(0,2) : "en"),
-  level: LEVELS.includes(store.get("level")) ? store.get("level") : "coach",
-  dial: DIALS.includes(store.get("dial")) ? store.get("dial") : "normal",
-  style: STYLES.includes(store.get("style")) ? store.get("style") : "standard",
-  theme: store.get("theme") === "light" ? "light" : "dark",
-  hue: loadHue(),
-  profile: KIDS_ENABLED ? (["kids","adult"].includes(store.get("profile")) ? store.get("profile") : null) : "adult",
-  session: loadSession(),
-  chat: { id: null, chain: Promise.resolve() },
-  epoch: 0,
-  messages: [],
-  busy: false,
-  sheetOpen: false,
-  snapshot: null,
-  suggestion: null
-};
-const T = () => I18N[state.lang];
-const isKids = () => state.profile === "kids";
-const $ = (id) => document.getElementById(id);
-const els = {
-  app:$("app"), scroll:$("scroll"), welcome:$("welcome"), recent:$("recent"), setup:$("setup"),
-  sheetSlot:$("sheetSlot"), messages:$("messages"), input:$("input"), sendBtn:$("sendBtn"),
-  modeBtn:$("modeBtn"), banner:$("banner"), lang:$("lang"), examples:$("examples"), clearHist:$("clearHist")
-};
-const started = () => state.messages.length > 0 || els.messages.childElementCount > 0;
-const SEND_ICON = els.sendBtn.innerHTML;
-const STOP_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
-const countTurns = () => state.messages.filter(m => m.role === "user").length;
-
-/* ---------- history (stored on this device only) ---------- */
-const HKEY = "history";
-function getHistory(){
-  try{ const a = JSON.parse(store.get(HKEY) || "[]"); return Array.isArray(a) ? a.filter(x => typeof x === "string") : []; }
-  catch{ return []; }
-}
-function saveHistory(text){
-  text = text.trim();
-  if(text.length < 8 || text.length > 160) return;
-  const h = getHistory().filter(x => x !== text);
-  h.unshift(text);
-  store.set(HKEY, JSON.stringify(h.slice(0, 20)));
-}
-const SKEY = "sugg";
-let suggInFlight = false, suggFailedKey = null;
-const histKey = (top) => state.lang + "|" + top.join("\n");
-function getCachedSugg(top){
-  try{
-    const c = JSON.parse(store.get(SKEY) || "null");
-    return c && c.key === histKey(top) && Array.isArray(c.items) && c.items.length ? c.items : null;
-  }catch{ return null; }
-}
-async function fetchSugg(top){
-  if(suggInFlight) return;
-  suggInFlight = true;
-  const key = histKey(top);
-  try{
-    const r = await fetch("/api/suggest", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ history: top, lang: state.lang })
-    });
-    if(!r.ok) throw new Error("HTTP " + r.status);
-    const d = await r.json();
-    if(!Array.isArray(d.items) || !d.items.length) throw new Error("empty");
-    store.set(SKEY, JSON.stringify({ key, items: d.items.filter(x => typeof x === "string").slice(0, 3) }));
-  }catch(err){
-    console.error(err);
-    suggFailedKey = key;
-  }finally{
-    suggInFlight = false;
-    if(!started()) renderRecent();
-  }
-}
-function renderRecent(){
-  if(isKids()){ els.examples.innerHTML = ""; els.recent.hidden = true; return; }
-  const all = getHistory();
-  const top = all.slice(0, 5);
-  const cached = top.length ? getCachedSugg(top) : null;
-  let items, title;
-  if(cached){ items = cached; title = T().forYou; }
-  else{
-    items = all.slice(0, 3); title = T().recentTitle;
-    if(top.length && !started() && histKey(top) !== suggFailedKey) fetchSugg(top);
-  }
-  let direct = false;
-  if(!items.length){ items = T().examplesList; title = T().examplesTitle; direct = true; }
-  $("tryTitle").textContent = title;
-  els.clearHist.hidden = direct;
-  els.examples.innerHTML = "";
-  items.forEach(text => {
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "ex"; b.textContent = text;
-    b.addEventListener("click", () => { if(direct){ send(text); } else { els.input.value = text; autosize(); els.input.focus(); } });
-    els.examples.appendChild(b);
-  });
-  els.recent.hidden = items.length === 0 || started();
-}
-
-/* ---------- rendering helpers ---------- */
-const esc = (s) => String(s ?? "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-
-function inline(s){
-  return s
-    .replace(/`([^`]+)`/g,"<code>$1</code>")
-    .replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>")
-    .replace(/(^|[\s(])\*([^*\s][^*]*)\*/g,"$1<em>$2</em>")
-    .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g,'<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-}
-
-function md(src){
-  const lines = esc(src).split("\n");
-  let html = "", para = [], list = null;
-  const flushPara = () => { if(para.length){ html += "<p>"+inline(para.join("<br>"))+"</p>"; para = []; } };
-  const flushList = () => { if(list){ html += "<"+list.t+">"+list.items.map(x=>"<li>"+inline(x)+"</li>").join("")+"</"+list.t+">"; list = null; } };
-  for(let i=0;i<lines.length;i++){
-    const l = lines[i];
-    if(l.trim().startsWith("```")){
-      flushPara(); flushList();
-      const code = []; i++;
-      while(i<lines.length && !lines[i].trim().startsWith("```")){ code.push(lines[i]); i++; }
-      html += "<pre><code>"+code.join("\n")+"</code></pre>";
-      continue;
-    }
-    if(l.trim().startsWith("|") && i + 1 < lines.length && /^\s*\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?\s*$/.test(lines[i + 1])){
-      flushPara(); flushList();
-      const cells = (r) => r.trim().replace(/^\||\|$/g, "").split("|").map(x => x.trim());
-      const head = cells(l), rows = [];
-      i += 2;
-      while(i < lines.length && lines[i].trim().startsWith("|")){ rows.push(cells(lines[i])); i++; }
-      i--;
-      html += '<div class="tw"><table><thead><tr>' + head.map(x => "<th>" + inline(x) + "</th>").join("") + "</tr></thead><tbody>" +
-        rows.map(r => "<tr>" + r.map(x => "<td>" + inline(x) + "</td>").join("") + "</tr>").join("") + "</tbody></table></div>";
-      continue;
-    }
-    let m;
-    if((m = l.match(/^#{1,6}\s+(.*)/))){ flushPara(); flushList(); html += "<p><strong>"+inline(m[1])+"</strong></p>"; continue; }
-    if((m = l.match(/^\s*[-*]\s+(.*)/))){ flushPara(); if(!list || list.t!=="ul"){ flushList(); list={t:"ul",items:[]}; } list.items.push(m[1]); continue; }
-    if((m = l.match(/^\s*\d+[.)]\s+(.*)/))){ flushPara(); if(!list || list.t!=="ol"){ flushList(); list={t:"ol",items:[]}; } list.items.push(m[1]); continue; }
-    if(!l.trim()){ flushPara(); flushList(); continue; }
-    flushList(); para.push(l);
-  }
-  flushPara(); flushList();
-  return html;
-}
-
-function scrollDown(){ els.scroll.scrollTop = els.scroll.scrollHeight; }
-
-function buildBotRow(text){
-  const row = document.createElement("div");
-  row.className = "brow";
-  row.innerHTML = AVATAR + '<div class="botcol"><div class="msg bot">' + md(text) + '</div><button type="button" class="report">' + esc(T().report) + '</button></div>';
-  row.querySelector(".report").addEventListener("click", () => reportAnswer(text));
-  return row;
-}
-function addMsg(kind, text){
-  let el;
-  if(kind === "user"){
-    el = document.createElement("div");
-    el.className = "msg user";
-    el.textContent = text;
-  }else{
-    el = buildBotRow(text);
-  }
-  els.messages.appendChild(el);
-  scrollDown();
-  return el;
-}
-function addNote(text, isErr){
-  const d = document.createElement("div");
-  d.className = "note" + (isErr ? " err" : "");
-  if(isErr) d.setAttribute("role","alert");
-  d.textContent = text;
-  els.messages.appendChild(d);
-  scrollDown();
-  return d;
-}
-function addThinking(){
-  const row = document.createElement("div");
-  row.className = "brow thinking";
-  row.setAttribute("role","status");
-  row.innerHTML = AVATAR + '<div class="msg bot">'+T().thinking+'</div>';
-  els.messages.appendChild(row);
-  scrollDown();
-  return row;
-}
-
-/* ---------- setup (levels + dial) ---------- */
-function meter(k){
-  let s = '<span class="meter" aria-hidden="true">';
-  for(let i=1;i<=3;i++) s += '<i'+(i<=GUIDANCE[k]?' class="on"':'')+'></i>';
-  return s + '</span>';
-}
-function buildSetup(){
-  const t = T();
-  els.setup.innerHTML =
-    '<fieldset><legend>'+t.levelTitle+'</legend><p class="hint">'+t.meterHint+'</p>' +
-    LEVELS.map(k =>
-      '<label class="opt"><input type="radio" name="level" value="'+k+'"'+(state.level===k?" checked":"")+'>' +
-      '<span class="ic">'+ICONS[k]+'</span>' +
-      '<span class="txt"><strong>'+t.levels[k].name+'</strong><span class="d">'+t.levels[k].desc+'</span></span>' +
-      meter(k)+'</label>'
-    ).join("") + '</fieldset>' +
-    '<fieldset><legend>'+t.dialTitle+'</legend><div class="seg">' +
-    DIALS.map(k =>
-      '<label><input type="radio" name="dial" value="'+k+'"'+(state.dial===k?" checked":"")+'>'+t.dials[k]+'</label>'
-    ).join("") + '</div></fieldset>' +
-    (isKids() ? '' : '<fieldset><legend>'+t.styleTitle+'</legend><div class="seg">' +
-    STYLES.map(k =>
-      '<label><input type="radio" name="style" value="'+k+'"'+(state.style===k?" checked":"")+'>'+t.styles[k]+'</label>'
-    ).join("") + '</div></fieldset>') +
-    '<button type="button" class="done" id="doneBtn">'+t.done+'</button>';
-}
-
-function modeLabel(level, dial, style = (isKids() ? "standard" : state.style)){
-  const t = T();
-  let s = t.levels[level].name + ", " + t.dials[dial].toLowerCase();
-  if(style !== "standard") s += ", " + t.styles[style].toLowerCase();
-  return s;
-}
-function updateMode(){
-  const t = T();
-  els.modeBtn.innerHTML = '<span>'+t.modeLead+' '+modeLabel(state.level,state.dial)+'</span><span class="chg">'+t.change+'</span>';
-  els.modeBtn.setAttribute("aria-expanded", String(state.sheetOpen));
-  els.app.classList.toggle("chatting", started());
-}
-
-function openSheet(){
-  state.sheetOpen = true;
-  state.snapshot = state.level + "|" + state.dial + "|" + state.style;
-  els.setup.hidden = false;
-  updateMode();
-}
-function closeSheet(){
-  if(!state.sheetOpen) return;
-  state.sheetOpen = false;
-  els.setup.hidden = true;
-  if(started() && state.snapshot !== state.level + "|" + state.dial + "|" + state.style){
-    addNote(T().now + " " + modeLabel(state.level,state.dial));
-  }
-  updateMode();
-}
-
-/* ---------- language ---------- */
-function applyLang(){
-  const t = T();
-  document.documentElement.lang = state.lang;
-  els.lang.value = state.lang;
-  $("newChat").setAttribute("aria-label", t.newChat);
-  $("newChat").title = t.newChat;
-  $("menuBtn").setAttribute("aria-label", t.menu);
-  $("menuBtn").title = t.menu;
-  updateFine();
-  $("h1").textContent = t.h1;
-  document.querySelector('meta[name="description"]').setAttribute("content", t.metaDesc);
-  document.title = t.docTitle;
-  $("sub").textContent = t.sub;
-  $("tryTitle").textContent = t.recentTitle;
-  els.clearHist.textContent = t.clear;
-
-  els.input.placeholder = t.placeholder;
-  els.input.setAttribute("aria-label", t.placeholder);
-  updateSendLabel();
-  document.querySelectorAll(".report").forEach(b => { b.textContent = t.report; });
-  $("bannerNo").textContent = t.notNow;
-  renderRecent();
-  buildSetup();
-  updateMode();
-  if(state.suggestion) renderBanner();
-}
-
-/* ---------- suggestion banner ---------- */
-function suggestionName(s){
-  const t = T(), parts = [];
-  if(s.level) parts.push(t.levels[s.level].name);
-  if(s.dial) parts.push(t.dials[s.dial].toLowerCase());
-  if(s.style) parts.push(t.styles[s.style].toLowerCase());
-  const out = parts.join(", ");
-  return out.charAt(0).toUpperCase() + out.slice(1);
-}
-function renderBanner(){
-  const s = state.suggestion;
-  $("bannerText").textContent = s.reason;
-  $("bannerYes").textContent = T().switchTo.replace("{x}", suggestionName(s));
-  els.banner.hidden = false;
-}
-function showBanner(s){
-  const level = LEVELS.includes(s.level) ? s.level : null;
-  const dial = DIALS.includes(s.dial) ? s.dial : null;
-  const style = !isKids() && STYLES.includes(s.style) ? s.style : null;
-  if(!level && !dial && !style) return;
-  state.suggestion = { level, dial, style, reason: String(s.reason || "") };
-  renderBanner();
-}
-function hideBanner(){ state.suggestion = null; els.banner.hidden = true; }
-
-$("bannerYes").addEventListener("click", () => {
-  const s = state.suggestion; if(!s) return;
-  if(s.level){ state.level = s.level; store.set("level", s.level); }
-  if(s.dial){ state.dial = s.dial; store.set("dial", s.dial); }
-  if(s.style){ state.style = s.style; store.set("style", s.style); }
-  hideBanner();
-  buildSetup();
-  addNote(T().now + " " + modeLabel(state.level,state.dial));
-  updateMode();
-});
-$("bannerNo").addEventListener("click", hideBanner);
-
-/* ---------- chat ---------- */
-function autosize(){
-  els.input.style.height = "auto";
-  els.input.style.height = Math.min(els.input.scrollHeight,160) + "px";
-}
-
-function startConversation(){
-  if(started()) return;
-  els.setup.hidden = true;
-  state.sheetOpen = false;
-  els.recent.hidden = true;
-  els.welcome.hidden = true;
-}
-
-function updateSendLabel(){
-  els.sendBtn.setAttribute("aria-label", state.busy ? T().stop : T().send);
-  els.sendBtn.title = state.busy ? T().stop : "";
-}
-function setBusy(b){
-  state.busy = b;
-  els.sendBtn.innerHTML = b ? STOP_ICON : SEND_ICON;
-  els.messages.setAttribute("aria-busy", String(b));
-  updateSendLabel();
-}
-function stopGeneration(){ if(state.abort) state.abort.abort(); }
-/* Chat wechselt (neuer Chat, anderer Chat, Abmelden): laufende Antwort verwerfen, damit sie nicht im falschen Chat landet */
-function cancelGeneration(){
-  state.epoch++;
-  if(state.abort){ state.abort.abort(); state.abort = null; }
-  setBusy(false);
-}
-
-/* reads the streamed answer (one JSON object per line) into the live bubble */
-async function readStream(r, live, st){
-  const bubble = live.querySelector(".msg");
-  const reader = r.body.getReader();
-  const dec = new TextDecoder();
-  let buf = "", raf = 0, done = false;
-  const paint = () => {
-    raf = 0;
-    const stick = els.scroll.scrollHeight - els.scroll.scrollTop - els.scroll.clientHeight < 140;
-    bubble.innerHTML = md(st.acc);
-    if(stick) scrollDown();
-  };
-  const handle = (line) => {
-    if(!line.trim()) return;
-    let o; try{ o = JSON.parse(line); }catch{ return; }
-    if(o.t === "delta" && typeof o.text === "string"){
-      if(!st.acc){ live.classList.remove("thinking"); live.removeAttribute("role"); }
-      st.acc += o.text;
-      if(!raf) raf = requestAnimationFrame(paint);
-    }else if(o.t === "done"){ done = true; st.suggestion = o.suggestion || null; st.truncated = o.truncated === true; }
-    else if(o.t === "error"){ throw new Error("stream error"); }
-  };
-  try{
-    for(;;){
-      const { value, done: end } = await reader.read();
-      if(end) break;
-      buf += dec.decode(value, { stream:true });
-      let i;
-      while((i = buf.indexOf("\n")) >= 0){ handle(buf.slice(0, i)); buf = buf.slice(i + 1); }
-    }
-    buf += dec.decode(); handle(buf);
-  }finally{ if(raf) cancelAnimationFrame(raf); }
-  if(!done) throw new Error("stream ended early");
-}
-
-async function send(text){
-  text = (text || "").trim();
-  if(!text || state.busy || !state.profile) return;
-  hideBanner();
-  els.messages.querySelectorAll(".err").forEach(n => n.remove());
-  if(state.sheetOpen) closeSheet();
-  if(!started() && !isKids()) saveHistory(text);
-  startConversation();
-
-  state.messages.push({ role:"user", content:text });
-  const userEl = addMsg("user", text);
-  els.input.value = ""; autosize();
-  setBusy(true);
-  updateMode();
-  const live = addThinking();
-  const ctrl = new AbortController();
-  state.abort = ctrl;
-  const st = { acc:"", suggestion:null, truncated:false };
-  const epoch = state.epoch;
-  const stale = () => epoch !== state.epoch;
-
-  const finish = (reply, suggestion, truncated) => {
-    if(stale()) return;
-    live.replaceWith(buildBotRow(reply));
-    state.messages.push({ role:"assistant", content:reply });
-    persist("user", text);
-    persist("assistant", reply);
-    if(truncated) addNote(T().cut);
-    if(suggestion) showBanner(suggestion);
-    scrollDown();
-  };
-
-  try{
-    const r = await fetch("/api/chat", {
-      method:"POST",
-      headers: await authHeaders(),
-      signal: ctrl.signal,
-      body: JSON.stringify({
-        messages: state.messages.slice(-30), turn: countTurns(), stream: true,
-        level: state.level, dial: state.dial, style: isKids() ? "simple" : state.style, profile: state.profile
-      })
-    });
-    if(r.status === 429){
-      let scope = "user";
-      try{ scope = (await r.json()).scope || "user"; }catch{}
-      const e = new Error("limit"); e.limit = scope; throw e;
-    }
-    if(!r.ok) throw new Error("HTTP " + r.status);
-
-    if((r.headers.get("content-type") || "").includes("ndjson")){
-      await readStream(r, live, st);
-      if(!st.acc.trim()) throw new Error("empty answer");
-      finish(st.acc, st.suggestion, st.truncated);
-    }else{
-      const data = await r.json();
-      if(stale()) return;
-      if(data.blocked){
-        live.remove();
-        state.messages.pop();
-        addMsg("bot", data.blocked === "care" ? T().blockedCare : T().blockedUnsafe);
-      }else{
-        const reply = String(data.reply ?? "");
-        if(!reply.trim()) throw new Error("empty answer");
-        finish(reply, data.suggestion, data.truncated === true);
-      }
-    }
-  }catch(err){
-    if(stale()) return;
-    const aborted = err && err.name === "AbortError";
-    if(aborted && st.acc.trim()){
-      finish(st.acc, null);            /* stopped by the user: keep what was written */
-    }else{
-      if(!aborted) console.error(err);
-      live.remove();
-      state.messages.pop();
-      userEl.remove();
-      els.input.value = text; autosize();
-      if(!started()){ resetToWelcome(); }
-      if(!aborted) addNote(err && err.limit ? (err.limit === "global" ? T().limitGlobal : T().limitUser) : T().error, true);
-    }
-  }finally{
-    if(stale()) return;
-    state.abort = null;
-    setBusy(false);
-    if(matchMedia("(pointer:fine)").matches) els.input.focus();
-  }
-}
-
-function resetToWelcome(){
-  state.sheetOpen = false;
-  els.setup.hidden = true;
-  els.welcome.hidden = false;
-  renderRecent();
-  updateMode();
-}
-
-function newChat(){
-  cancelGeneration();
-  state.messages = [];
-  state.chat = { id: null, chain: Promise.resolve() };
-  hideBanner();
-  els.messages.innerHTML = "";
-  resetToWelcome();
-  els.input.value = ""; autosize();
-  els.scroll.scrollTop = 0;
-}
-
-/* ---------- events ---------- */
-els.setup.addEventListener("change", (e) => {
-  const el = e.target;
-  if(el.name === "level"){ state.level = el.value; store.set("level", el.value); }
-  if(el.name === "dial"){ state.dial = el.value; store.set("dial", el.value); }
-  if(el.name === "style"){ state.style = el.value; store.set("style", el.value); }
-  updateMode();
-});
-els.setup.addEventListener("click", (e) => { if(e.target.id === "doneBtn") closeSheet(); });
-els.modeBtn.addEventListener("click", () => { state.sheetOpen ? closeSheet() : openSheet(); });
-els.lang.addEventListener("change", () => {
-  state.lang = els.lang.value; store.set("lang", state.lang); applyLang();
-});
-$("newChat").addEventListener("click", newChat);
-els.clearHist.addEventListener("click", () => { store.set(HKEY, "[]"); renderRecent(); });
-els.sendBtn.addEventListener("click", () => { state.busy ? stopGeneration() : send(els.input.value); });
-els.input.addEventListener("input", autosize);
-els.input.addEventListener("keydown", (e) => {
-  if(e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer:fine)").matches){
-    e.preventDefault(); send(els.input.value);
-  }
-});
-
-/* ---------- report, fine print ---------- */
-function reportAnswer(text){
-  const t = T();
-  const body = t.reportBody.replace("{a}", text.slice(0, 600));
-  location.href = "mailto:info@manualai.org?subject=" + encodeURIComponent(t.reportSubject) + "&body=" + encodeURIComponent(body);
-}
-function updateFine(){ $("fine").textContent = isKids() ? T().kidsNote : T().aiNote; }
-
-/* ---------- overlay ---------- */
-const overlay = $("overlay"), panel = $("panel");
-let ovDismissible = true, ovReturn = null, currentView = null, legalBack = null;
-
-function render(html, dismissible = true){
-  ovDismissible = dismissible;
-  if(overlay.hidden) ovReturn = document.activeElement;
-  panel.innerHTML = html;
-  overlay.hidden = false;
-  panel.scrollTop = 0;
-  const f = panel.querySelector("input:not([type=hidden]), select, button");
-  (f || panel).focus();
-}
-function hideOverlay(){
-  overlay.hidden = true;
-  panel.innerHTML = "";
-  if(ovReturn && ovReturn.focus) ovReturn.focus();
-  ovReturn = null;
-}
-overlay.addEventListener("keydown", (e) => {
-  if(e.key === "Escape" && ovDismissible){ hideOverlay(); return; }
-  if(e.key === "Tab"){
-    const f = [...panel.querySelectorAll("button, input, select, a[href]")].filter(x => !x.disabled);
-    if(!f.length) return;
-    const first = f[0], last = f[f.length - 1];
-    if(e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if(!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-  }
-});
-overlay.addEventListener("click", (e) => { if(e.target === overlay && ovDismissible) hideOverlay(); });
-
-const errBox = () => '<p class="oerr" id="oerr" role="alert"></p>';
-const setErr = (m) => { const e = $("oerr"); if(e) e.textContent = m; };
-const legalLinks = () => '<p class="links"><button type="button" class="lnk" data-act="privacy">' + T().privacy + '</button><button type="button" class="lnk" data-act="legal">' + T().legal + '</button></p>';
-const pinInput = (id, ac) => '<input id="' + id + '" class="pin" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" autocomplete="' + ac + '">';
-
-function viewOnboard(){
-  currentView = viewOnboard;
-  const t = T();
-  const opts = [["de","Deutsch"],["en","English"],["es","Español"],["fr","Français"]]
-    .map(([v,n]) => '<option value="'+v+'"'+(state.lang===v?" selected":"")+'>'+n+'</option>').join("");
-  render('<select id="ovLang" class="ovlang" aria-label="Language">' + opts + '</select>' +
-    '<h2>' + t.who + '</h2>' +
-    '<button type="button" class="bigbtn" data-act="minor"><strong>' + t.under18 + '</strong></button>' +
-    '<button type="button" class="bigbtn" data-act="adult"><strong>' + t.adult18 + '</strong></button>' +
-    legalLinks(), false);
-}
-function viewParent(dismissible){
-  currentView = () => viewParent(dismissible);
-  const t = T();
-  render('<h2>' + t.parentTitle + '</h2><p>' + t.parentText + '</p>' +
-    '<label class="fl" for="pin1">' + t.pinLabel + '</label>' + pinInput("pin1","new-password") +
-    '<label class="fl" for="pin2">' + t.pinRepeat + '</label>' + pinInput("pin2","new-password") +
-    '<label class="chk"><input type="checkbox" id="consent"><span>' + t.consent + '</span></label>' +
-    errBox() +
-    '<button type="button" class="btn" data-act="startKids">' + t.startKids + '</button>' +
-    '<button type="button" class="btn ghost" data-act="' + (dismissible ? "close" : "toOnboard") + '">' + (dismissible ? t.cancel : t.back) + '</button>' +
-    legalLinks(), dismissible);
-}
-function viewMenu(){
-  currentView = viewMenu;
-  const t = T();
-  const acct = state.session
-    ? '<p class="profline">' + t.signedInAs + ': <strong>' + esc(state.session.user.email || "") + '</strong></p>' +
-      '<button type="button" class="btn" data-act="myChats">' + t.myChats + '</button>' +
-      '<button type="button" class="btn ghost" data-act="export">' + t.exportData + '</button>' +
-      '<button type="button" class="btn ghost" data-act="signOut">' + t.signOut + '</button>' +
-      errBox() +
-      '<p class="links"><button type="button" class="lnk dangerlnk" data-act="deleteAccount">' + t.deleteAccount + '</button></p>'
-    : '<p class="hint">' + t.signInHint + '</p><button type="button" class="btn" data-act="signIn">' + t.signIn + '</button>';
-  render('<h2>' + t.menu + '</h2>' + acct +
-    (KIDS_ENABLED ? '<p class="profline">' + t.profileNow + ': <strong>' + (isKids() ? t.profKids : t.profAdult) + '</strong></p>' +
-    '<button type="button" class="btn" data-act="' + (isKids() ? "toAdult" : "toKids") + '">' + (isKids() ? t.toAdult : t.toKids) + '</button>' : '') +
-    '<fieldset><legend>' + t.appearance + '</legend><div class="seg two">' +
-    [["dark", t.themeDark], ["light", t.themeLight]].map(([k, n]) =>
-      '<label><input type="radio" name="theme" value="' + k + '"' + (state.theme === k ? " checked" : "") + '>' + n + '</label>').join("") +
-    '</div></fieldset>' +
-    '<fieldset><legend>' + t.colorTitle + '</legend><div class="swatches" role="radiogroup" aria-label="' + esc(t.colorTitle) + '">' +
-    PALETTES.map(([k, h]) =>
-      '<label class="sw" title="' + esc(t.pal[k]) + '"><input type="radio" name="pal" value="' + h + '"' + (state.hue === h ? " checked" : "") + ' aria-label="' + esc(t.pal[k]) + '"><span style="background:' + hsl2hex(h, 90, 58) + '"></span></label>').join("") +
-    '</div><label class="fl" for="hueRange">' + t.customColor + '</label>' +
-    '<input id="hueRange" class="hue" type="range" min="0" max="359" value="' + state.hue + '"></fieldset>' +
-    legalLinks() +
-    '<p class="contact">' + t.contact + ' <a href="mailto:info@manualai.org">info@manualai.org</a></p>' +
-    '<button type="button" class="btn ghost" data-act="close">' + t.close + '</button>', true);
-}
-function viewPin(){
-  currentView = viewPin;
-  const t = T();
-  render('<h2>' + t.toAdult + '</h2>' +
-    '<label class="fl" for="pinIn">' + t.pinEnter + '</label>' + pinInput("pinIn","off") +
-    errBox() +
-    '<button type="button" class="btn" data-act="pinOk">' + t.confirm + '</button>' +
-    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>', true);
-}
-function viewLegal(kind){
-  legalBack = overlay.hidden ? null : currentView;
-  const dis = overlay.hidden ? true : ovDismissible;
-  const t = T();
-  render('<button type="button" class="lnk" data-act="legalBack">' + t.back + '</button>' +
-    (state.lang !== "de" ? '<p class="hint">' + t.germanOnly + '</p>' : '') +
-    '<div class="legal">' + (kind === "legal" ? LEGAL_IMPRESSUM : LEGAL_PRIVACY) + '</div>' +
-    '<button type="button" class="btn ghost" data-act="legalBack">' + t.close + '</button>', dis);
-}
-
-panel.addEventListener("click", async (e) => {
-  const b = e.target.closest("[data-act]");
-  if(!b) return;
-  const act = b.dataset.act;
-  if(act === "close") hideOverlay();
-  else if(act === "adult"){ setProfile("adult"); hideOverlay(); }
-  else if(act === "minor") viewParent(false);
-  else if(act === "toOnboard") viewOnboard();
-  else if(act === "toKids") viewParent(true);
-  else if(act === "toAdult") viewPin();
-  else if(act === "menu") viewMenu();
-  else if(act === "privacy" || act === "legal") viewLegal(act);
-  else if(act === "legalBack"){ legalBack ? legalBack() : hideOverlay(); }
-  else if(act === "signIn") viewSignIn();
-  else if(act === "sendCode") await sendCode();
-  else if(act === "verifyCode") await verifyCode();
-  else if(act === "myChats") await viewChats();
-  else if(act === "openChat") await openChat(b.dataset.id);
-  else if(act === "delChat") await removeChat(b.dataset.id);
-  else if(act === "export") await exportData();
-  else if(act === "signOut") await doSignOut();
-  else if(act === "deleteAccount") viewDeleteAccount();
-  else if(act === "deleteAccountGo") await doDeleteAccount();
-  else if(act === "startKids") await startKids();
-  else if(act === "pinOk") await checkPin();
-});
-panel.addEventListener("input", (e) => {
-  if(e.target.id !== "hueRange") return;
-  applyHue(e.target.value);
-  panel.querySelectorAll('input[name="pal"]').forEach(r => { r.checked = Number(r.value) === state.hue; });
-});
-panel.addEventListener("change", (e) => {
-  if(e.target.name === "theme"){ applyTheme(e.target.value); return; }
-  if(e.target.name === "pal"){ applyHue(e.target.value); const r = $("hueRange"); if(r) r.value = state.hue; return; }
-  if(e.target.id === "ovLang"){
-    state.lang = e.target.value; store.set("lang", state.lang); applyLang(); viewOnboard();
-  }
-});
-
-/* ---------- theme: dark by default, colour from one hue ---------- */
-/* ---------- colour design: every colour is derived from one hue, contrast is checked in code ---------- */
-function hsl2hex(h, s, l){
-  s /= 100; l /= 100;
-  const k = (n) => (n + h / 30) % 12;
-  const a = s * Math.min(l, 1 - l);
-  const f = (n) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
-  const x = (v) => Math.round(255 * v).toString(16).padStart(2, "0");
-  return "#" + x(f(0)) + x(f(8)) + x(f(4));
-}
-function lum(hex){
-  const c = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16) / 255)
-    .map(v => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4));
-  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
-}
-function ratio(a, b){ const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); }
-function seek(h, s, from, to, ok){
-  const step = from <= to ? 1 : -1;
-  for(let l = from; step > 0 ? l <= to : l >= to; l += step){ const c = hsl2hex(h, s, l); if(ok(c)) return c; }
-  return hsl2hex(h, s, to);
-}
-function designTokens(mode, h){
-  if(mode === "light"){
-    const bg = hsl2hex(h, 80, 98), tint = hsl2hex(h, 85, 93), top = hsl2hex(h, 95, 84);
-    const ink = hsl2hex(h, 55, 12);
-    const muted = seek(h, 25, 50, 15, c => ratio(c, tint) >= 6 && ratio(c, bg) >= 6);
-    const strong = seek(h, 80, 50, 12, c => ratio("#ffffff", c) >= 8);
-    const bright = hsl2hex(h, 100, 86);
-    return {
-      "--bg": bg, "--page": hsl2hex(h, 80, 90), "--surface": "#ffffff", "--tint": tint,
-      "--accent": hsl2hex(h, 90, 62), "--ink": ink, "--muted": muted, "--line": hsl2hex(h, 30, 82),
-      "--strong": strong, "--on-strong": "#ffffff", "--user-bg": strong, "--on-user": "#ffffff",
-      "--send-bg": strong, "--send-fg": "#ffffff",
-      "--ic-bg": top, "--ic-fg": ink, "--ic-sel-bg": strong, "--ic-sel-fg": "#ffffff",
-      "--sel-border": strong, "--focus": strong, "--danger": "#8A1F11", "--scrim": "rgba(10,10,30,.5)",
-      "--top-bg": top, "--top-line": "transparent", "--hero-bg": top,
-      "--logo-bg": strong, "--logo-fg": bright, "--fish-body": strong, "--fish-acc": bright, "--art": strong
-    };
-  }
-  const bg = hsl2hex(h, 32, 6), tint = hsl2hex(h, 28, 15);
-  const accent = seek(h, 100, 62, 92, c => ratio(c, bg) >= 8);
-  const onAccent = seek(h, 55, 10, 1, c => ratio(c, accent) >= 8);
-  const muted = seek(h, 18, 60, 92, c => ratio(c, tint) >= 6);
-  const userBg = seek(h, 45, 40, 10, c => ratio("#ffffff", c) >= 8);
-  const icBg = hsl2hex(h, 25, 22);
-  return {
-    "--bg": bg, "--page": hsl2hex(h, 35, 4), "--surface": hsl2hex(h, 28, 10), "--tint": tint,
-    "--accent": accent, "--ink": hsl2hex(h, 25, 94), "--muted": muted, "--line": hsl2hex(h, 20, 25),
-    "--strong": accent, "--on-strong": onAccent, "--user-bg": userBg, "--on-user": "#ffffff",
-    "--send-bg": accent, "--send-fg": onAccent,
-    "--ic-bg": icBg, "--ic-fg": accent, "--ic-sel-bg": accent, "--ic-sel-fg": onAccent,
-    "--sel-border": accent, "--focus": accent, "--danger": "#FF9A8A", "--scrim": "rgba(0,0,0,.65)",
-    "--top-bg": bg, "--top-line": hsl2hex(h, 22, 14),
-    "--hero-bg": "linear-gradient(160deg," + hsl2hex(h, 40, 18) + " 0%," + hsl2hex(h, 40, 10) + " 100%)",
-    "--logo-bg": accent, "--logo-fg": onAccent, "--fish-body": accent, "--fish-acc": onAccent, "--art": accent
-  };
-}
-
-const PALETTES = [["ocean",210],["teal",175],["meadow",140],["sun",45],["coral",12],["rose",330],["violet",265]];
-function applyDesign(){
-  const root = document.documentElement;
-  root.setAttribute("data-theme", state.theme);
-  const t = designTokens(state.theme, state.hue);
-  for(const k in t) root.style.setProperty(k, t[k]);
-  const m = document.querySelector('meta[name="theme-color"]');
-  if(m) m.setAttribute("content", t["--top-bg"]);
-}
-function applyTheme(mode){ state.theme = mode === "light" ? "light" : "dark"; store.set("theme", state.theme); applyDesign(); }
-function applyHue(h){ state.hue = Math.max(0, Math.min(359, Math.round(Number(h) || 0))); store.set("hue", String(state.hue)); applyDesign(); }
-
-/* ---------- profiles and PIN ---------- */
-async function hashPin(pin, salt){
-  const buf = new TextEncoder().encode(salt + ":" + pin);
-  const d = await crypto.subtle.digest("SHA-256", buf);
-  return [...new Uint8Array(d)].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-function randomSalt(){
-  const a = new Uint8Array(16); crypto.getRandomValues(a);
-  return [...a].map(b => b.toString(16).padStart(2, "0")).join("");
-}
-function setProfile(p){
-  state.profile = p; store.set("profile", p);
-  if(p === "kids"){ store.set(HKEY, "[]"); store.set(SKEY, "null"); }
-  else{ store.set("pinHash", ""); store.set("pinSalt", ""); }
-  hideBanner();
-  buildSetup();
-  updateFine();
-  newChat();
-}
-async function startKids(){
-  const t = T();
-  const p1 = $("pin1").value.trim(), p2 = $("pin2").value.trim();
-  if(!/^\d{4}$/.test(p1)) return setErr(t.errPinLen);
-  if(p1 !== p2) return setErr(t.errPinMismatch);
-  if(!$("consent").checked) return setErr(t.errConsent);
-  const salt = randomSalt();
-  store.set("pinSalt", salt);
-  store.set("pinHash", await hashPin(p1, salt));
-  setProfile("kids");
-  hideOverlay();
-}
-async function checkPin(){
-  const t = T();
-  if(Date.now() < Number(store.get("pinLock") || 0)) return setErr(t.pinLocked);
-  const pin = $("pinIn").value.trim();
-  const stored = store.get("pinHash");
-  const ok = !stored || (/^\d{4}$/.test(pin) && (await hashPin(pin, store.get("pinSalt") || "")) === stored);
-  if(ok){ store.set("pinFails", "0"); setProfile("adult"); hideOverlay(); return; }
-  const fails = Number(store.get("pinFails") || 0) + 1;
-  if(fails >= 5){ store.set("pinFails", "0"); store.set("pinLock", String(Date.now() + 300000)); setErr(t.pinLocked); }
-  else{ store.set("pinFails", String(fails)); setErr(t.pinWrong); }
-}
-
-
-/* ---------- accounts (Supabase over plain REST, no external library) ---------- */
-const TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>';
-const isUuid = (x) => /^[0-9a-f-]{36}$/i.test(String(x || ""));
-let pendingEmail = "", refreshing = null;
-
-function updateAccountUI(){ $("menuBtn").classList.toggle("signed", !!state.session); }
-function saveSession(x){
-  if(x && x.access_token){
-    state.session = {
-      access_token: x.access_token,
-      refresh_token: x.refresh_token,
-      expires_at: x.expires_at || Math.floor(Date.now() / 1000) + (x.expires_in || 3600),
-      user: { id: x.user && x.user.id, email: x.user && x.user.email }
-    };
-    store.set("sb_session", JSON.stringify(state.session));
-  }else{
-    state.session = null;
-    store.set("sb_session", "");
-  }
-  updateAccountUI();
-}
-async function getToken(){
-  const x = state.session;
-  if(!x) return null;
-  if(x.expires_at - 60 > Date.now() / 1000) return x.access_token;
-  if(!refreshing){
-    refreshing = (async () => {
-      try{
-        const r = await fetch(SB_URL + "/auth/v1/token?grant_type=refresh_token", {
-          method:"POST",
-          headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
-          body: JSON.stringify({ refresh_token: x.refresh_token })
+        darkModeToggle.addEventListener('click', () => {
+            darkMode = !darkMode;
+            updateDarkMode();
         });
-        if(r.status === 400 || r.status === 401 || r.status === 403){ saveSession(null); return null; }
-        if(!r.ok) throw new Error("refresh " + r.status);
-        saveSession(await r.json());
-        return state.session ? state.session.access_token : null;
-      }catch(e){ console.error(e); return null; }
-      finally{ refreshing = null; }
-    })();
-  }
-  return refreshing;
-}
-async function authHeaders(){
-  const h = { "Content-Type":"application/json" };
-  const tok = await getToken();
-  if(tok) h.Authorization = "Bearer " + tok;
-  return h;
-}
-async function sbRest(method, path, body, prefer){
-  const tok = await getToken();
-  if(!tok) throw new Error("not signed in");
-  const headers = { apikey: SB_KEY, Authorization: "Bearer " + tok, "Content-Type":"application/json" };
-  if(prefer) headers.Prefer = prefer;
-  const r = await fetch(SB_URL + "/rest/v1" + path, { method, headers, body: body ? JSON.stringify(body) : undefined });
-  if(!r.ok) throw new Error("REST " + r.status);
-  if(r.status === 204) return null;
-  return r.json().catch(() => null);
-}
-async function fetchAll(path){
-  const out = [], page = 1000;
-  for(let off = 0; ; off += page){
-    const rows = await sbRest("GET", path + (path.includes("?") ? "&" : "?") + "limit=" + page + "&offset=" + off);
-    out.push(...(rows || []));
-    if(!rows || rows.length < page) break;
-  }
-  return out;
-}
 
-/* save chats for signed-in users (failures never block the chat) */
-function persist(role, content){
-  if(!state.session) return;
-  const chat = state.chat;   /* merkt sich den Chat von jetzt, auch wenn danach ein anderer geoeffnet wird */
-  chat.chain = chat.chain.then(async () => {
-    try{
-      if(!chat.id){
-        const rows = await sbRest("POST", "/chats", { title: content.slice(0, 60) }, "return=representation");
-        chat.id = rows && rows[0] && rows[0].id;
-      }
-      if(chat.id) await sbRest("POST", "/messages", { chat_id: chat.id, role, content: content.slice(0, 12000) }, "return=minimal");
-    }catch(e){ console.error("save failed", e); }
-  });
-}
-
-/* sign in with an emailed code */
-function viewSignIn(){
-  currentView = viewSignIn;
-  const t = T();
-  render('<h2>' + t.signIn + '</h2><p class="hint">' + t.signInHint + '</p>' +
-    '<label class="fl" for="emailIn">' + t.emailLabel + '</label>' +
-    '<input id="emailIn" class="txtin" type="email" inputmode="email" autocomplete="email" autocapitalize="off">' +
-    '<label class="chk"><input type="checkbox" id="adultChk"><span>' + t.adultCheck + '</span></label>' +
-    errBox() +
-    '<button type="button" class="btn" data-act="sendCode">' + t.sendCode + '</button>' +
-    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>' +
-    legalLinks(), true);
-}
-function viewCode(email){
-  pendingEmail = email;
-  currentView = () => viewCode(email);
-  const t = T();
-  render('<h2>' + t.signIn + '</h2><p>' + esc(t.codeSent.replace("{e}", email)) + '</p>' +
-    '<label class="fl" for="codeIn">' + t.codeLabel + '</label>' +
-    '<input id="codeIn" class="txtin code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10">' +
-    errBox() +
-    '<button type="button" class="btn" data-act="verifyCode">' + t.verify + '</button>' +
-    '<button type="button" class="btn ghost" data-act="signIn">' + t.back + '</button>', true);
-}
-async function errDetail(r){
-  let code = "";
-  try{ const j = await r.json(); code = j.error_code || j.code || j.error || j.msg || ""; }catch{}
-  return String(r.status) + (code ? " " + String(code).slice(0, 60) : "");
-}
-/* Technische Codes nur im Debug-Modus zeigen (in der Browser-Konsole: localStorage.setItem("debug","1")) */
-const DEBUG = (() => { try{ return localStorage.getItem("debug") === "1"; }catch{ return false; } })();
-const withDetail = (msg, e) => msg + (DEBUG && e && (e.detail || e instanceof TypeError) ? " (" + (e.detail || "network") + ")" : "");
-
-async function sendCode(){
-  const t = T();
-  const email = ($("emailIn").value || "").trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return setErr(t.errEmail);
-  if(!$("adultChk").checked) return setErr(t.errAdult);
-  setErr("");
-  try{
-    const r = await fetch(SB_URL + "/auth/v1/otp", {
-      method:"POST",
-      headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
-      body: JSON.stringify({ email, create_user: true, data: { adult_confirmed: true } })
-    });
-    if(!r.ok){ const e = new Error("otp " + r.status); e.status = r.status; e.detail = await errDetail(r); throw e; }
-    viewCode(email);
-  }catch(e){ console.error(e); setErr(e && e.status === 429 ? t.errRate : withDetail(t.errSend, e)); }
-}
-async function verifyCode(){
-  const t = T();
-  const token = ($("codeIn").value || "").replace(/\s/g, "");
-  if(!/^\d{6,10}$/.test(token)) return setErr(t.errCode);
-  try{
-    const r = await fetch(SB_URL + "/auth/v1/verify", {
-      method:"POST",
-      headers:{ apikey: SB_KEY, "Content-Type":"application/json" },
-      body: JSON.stringify({ email: pendingEmail, token, type: "email" })
-    });
-    if(!r.ok){ const e = new Error("verify " + r.status); e.status = r.status; e.detail = await errDetail(r); throw e; }
-    const x = await r.json();
-    if(!x.access_token) throw new Error("no session");
-    saveSession(x);
-    hideOverlay();
-  }catch(e){ console.error(e); setErr(e && e.status === 429 ? t.errRate : withDetail(t.errCode, e)); }
-}
-async function doSignOut(){
-  try{
-    const tok = state.session && state.session.access_token;
-    if(tok) await fetch(SB_URL + "/auth/v1/logout", { method:"POST", headers:{ apikey: SB_KEY, Authorization: "Bearer " + tok } });
-  }catch{}
-  saveSession(null);
-  newChat();
-  hideOverlay();
-}
-
-/* saved chats */
-async function viewChats(){
-  currentView = viewChats;
-  const t = T();
-  render('<h2>' + t.myChats + '</h2><div id="chatList" aria-live="polite">…</div>' +
-    '<button type="button" class="btn ghost" data-act="menu">' + t.back + '</button>', true);
-  try{
-    const rows = await sbRest("GET", "/chats?select=id,title,updated_at&order=updated_at.desc&limit=30");
-    const box = $("chatList");
-    if(!box) return;
-    box.innerHTML = rows && rows.length
-      ? rows.map(c =>
-          '<div class="chatrow"><button type="button" class="chatopen" data-act="openChat" data-id="' + esc(c.id) + '"><strong>' + esc(c.title || t.newChat) + '</strong><span>' + esc(new Date(c.updated_at).toLocaleDateString(state.lang)) + '</span></button>' +
-          '<button type="button" class="chatdel" data-act="delChat" data-id="' + esc(c.id) + '" aria-label="' + esc(t.delChatLabel) + '" title="' + esc(t.delChatLabel) + '">' + TRASH + '</button></div>'
-        ).join("")
-      : '<p class="hint">' + t.noChats + '</p>';
-  }catch(e){
-    console.error(e);
-    const box = $("chatList");
-    if(box) box.innerHTML = '<p class="oerr">' + t.loadErr + '</p>';
-  }
-}
-async function openChat(id){
-  if(!isUuid(id)) return;
-  try{
-    const rows = await sbRest("GET", "/messages?chat_id=eq." + id + "&select=role,content&order=id.asc&limit=500");
-    cancelGeneration();
-    els.messages.innerHTML = "";
-    state.messages = [];
-    hideBanner();
-    startConversation();
-    state.messages = (rows || []).map(m => ({ role: m.role, content: m.content }));
-    state.chat = { id, chain: Promise.resolve() };
-    state.messages.forEach(m => addMsg(m.role === "user" ? "user" : "bot", m.content));
-    updateMode();
-    hideOverlay();
-    scrollDown();
-  }catch(e){
-    console.error(e);
-    const box = $("chatList");
-    if(box) box.innerHTML = '<p class="oerr">' + T().loadErr + '</p>';
-  }
-}
-async function removeChat(id){
-  if(!isUuid(id)) return;
-  try{
-    await sbRest("DELETE", "/chats?id=eq." + id);
-    if(state.chat.id === id) newChat();
-    await viewChats();
-  }catch(e){ console.error(e); const box = $("chatList"); if(box) box.innerHTML = '<p class="oerr">' + T().loadErr + '</p>'; }
-}
-
-/* data export and account deletion */
-async function exportData(){
-  try{
-    const profile = await sbRest("GET", "/profiles?select=created_at,adult_confirmed_at,settings");
-    const chats = await fetchAll("/chats?select=id,title,created_at,updated_at&order=created_at.asc");
-    const messages = await fetchAll("/messages?select=chat_id,role,content,created_at&order=id.asc");
-    const blob = new Blob([JSON.stringify({ exported_at: new Date().toISOString(), email: state.session.user.email, profile, chats, messages }, null, 2)], { type:"application/json" });
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = "manualai-export.json";
-    document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-  }catch(e){ console.error(e); setErr(T().loadErr); }
-}
-function viewDeleteAccount(){
-  currentView = viewDeleteAccount;
-  const t = T();
-  render('<h2>' + t.deleteAccount + '</h2><p>' + t.deleteWarn + '</p>' + errBox() +
-    '<button type="button" class="btn" data-act="deleteAccountGo">' + t.deleteGo + '</button>' +
-    '<button type="button" class="btn ghost" data-act="menu">' + t.cancel + '</button>', true);
-}
-async function doDeleteAccount(){
-  try{
-    await sbRest("POST", "/rpc/delete_my_account", {});
-    saveSession(null);
-    newChat();
-    hideOverlay();
-  }catch(e){ console.error(e); setErr(T().loadErr); }
-}
-
-panel.addEventListener("keydown", (e) => {
-  if(e.key !== "Enter") return;
-  if(e.target.id === "emailIn"){ e.preventDefault(); sendCode(); }
-  else if(e.target.id === "codeIn"){ e.preventDefault(); verifyCode(); }
-});
-updateAccountUI();
-
-$("menuBtn").addEventListener("click", viewMenu);
-
-/* ---------- legal texts (German) ---------- */
-const LEGAL_IMPRESSUM = `
-<h2>Impressum</h2>
-<h3>Angaben gemäß § 5 DDG</h3>
-<p>Manuel Picard<br>c/o PICARD Lederwaren GmbH &amp; Co. KG<br>Friedensstraße 22<br>63179 Obertshausen</p>
-<h3>Kontakt</h3>
-<p>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
-<h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
-<p>Name und Anschrift wie oben.</p>
-<h3>Hinweis zu KI-Antworten</h3>
-<p>Die Antworten in manualAI werden von einem KI-System (Claude von Anthropic) erzeugt. Sie können Fehler enthalten und ersetzen keine rechtliche, medizinische oder andere fachliche Beratung. Bitte prüfe wichtige Angaben in verlässlichen Quellen.</p>`;
-
-const LEGAL_PRIVACY = `
-<h2>Datenschutzerklärung</h2>
-<p class="hint">Stand: 29. September 2026</p>
-<h3>Kurz erklärt</h3>
-<p>Du kannst manualAI ohne Konto nutzen. Dann wird das, was du in den Chat schreibst, zur Beantwortung an eine KI geschickt und von uns nicht gespeichert; Einstellungen und deine letzten Fragen bleiben nur auf deinem Gerät. Wenn du ein Konto anlegst, speichern wir zusätzlich deine E-Mail-Adresse und deine Chats, bis du sie löschst. Bitte schreib keine persönlichen Daten wie Name, Adresse oder Schule in den Chat.</p>
-<h3>1. Verantwortlich</h3>
-<p>Manuel Picard<br>c/o PICARD Lederwaren GmbH &amp; Co. KG<br>Friedensstraße 22<br>63179 Obertshausen<br>E-Mail: <a href="mailto:info@manualai.org">info@manualai.org</a></p>
-<h3>2. Welche Daten wir verarbeiten</h3>
-<h4>a) Aufruf der Website (Hosting)</h4>
-<p>Beim Aufruf verarbeitet unser Hosting-Anbieter Vercel Inc. (USA) technisch notwendige Daten, insbesondere deine IP-Adresse, Datum und Uhrzeit, die aufgerufene Adresse und Angaben zu deinem Browser (Server-Logfiles). Zweck: Bereitstellung, Stabilität und Sicherheit. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
-<h4>b) Chat mit der KI</h4>
-<p>Deine Nachrichten, die gewählte Stufe, Tiefe und der Erklärstil${KIDS_ENABLED ? ", dein Profil (Kinder- oder Erwachsenenprofil)," : ""} und die Sprache werden an unseren Server und von dort an Anthropic PBC (USA) übermittelt, um Antworten zu erzeugen. Zusätzlich wertet die KI den Gesprächsverlauf aus, um dir passende Einstellungen vorzuschlagen. ${KIDS_ENABLED ? "Im Kinderprofil wird jede Nachricht vorab automatisch auf Sicherheit geprüft." : ""} Ohne Konto speichern wir Gesprächsinhalte nicht in einer eigenen Datenbank; mit Konto siehe Abschnitt g). Wie Anthropic Daten verarbeitet, steht in deren Datenschutzhinweisen (anthropic.com/legal/privacy).</p>
-<p>Rechtsgrundlage: Art. 6 Abs. 1 lit. b bzw. lit. f DSGVO. ${KIDS_ENABLED ? "Bei Kindern unter 16 Jahren beruht die Verarbeitung zusätzlich auf der Einwilligung der Erziehungsberechtigten (Art. 6 Abs. 1 lit. a, Art. 8 DSGVO)." : ""} Bitte gib keine sensiblen Daten (zum Beispiel Gesundheitsdaten) in den Chat ein.</p>
-<h4>c) Nutzungsbegrenzung</h4>
-<p>Um Missbrauch und übermäßige Kosten zu verhindern, zählen wir die Anfragen pro Tag. Dafür bilden wir aus deiner IP-Adresse (bei angemeldeten Nutzern aus der Konto-ID) einen gekürzten Hashwert (die IP-Adresse selbst speichern wir nicht) und speichern den Zähler für etwa 25 Stunden bei unserem Datenbank-Dienstleister Upstash. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
-<h4>d) Speicher auf deinem Gerät</h4>
-<p>Wir nutzen den lokalen Speicher deines Browsers (kein Tracking, keine Werbe-Cookies), um Sprache, Einstellungen und dein Profil zu merken. ${KIDS_ENABLED ? "Im Kinderprofil wird zusätzlich ein geschützter PIN-Wert (Hash) gespeichert. Im Erwachsenenprofil merkt sich die App deine letzten Fragen," : "Die App merkt sich deine letzten Fragen,"} um Vorschläge anzuzeigen; für die Vorschläge werden diese Fragen an die KI gesendet. Diese Speicherung ist für den von dir genutzten Dienst erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG). Du kannst alles löschen, in der App über "Verlauf löschen" oder in den Einstellungen deines Browsers.</p>
-<h4>e) Kontakt und Meldungen</h4>
-<p>Wenn du uns schreibst oder eine Antwort meldest, öffnet sich dein E-Mail-Programm, und die Nachricht geht an unser Postfach (E-Mail-Dienst: Spaceship). Wir verarbeiten deine Angaben, um dein Anliegen zu bearbeiten (Art. 6 Abs. 1 lit. b bzw. f DSGVO).</p>
-<h4>f) Schriftarten</h4>
-<p>manualAI nutzt die Schriftarten deines Geräts. Es werden keine Schriften von fremden Servern geladen.</p>
-<h4>g) Konto und gespeicherte Chats</h4>
-<p>Wenn du ein Konto anlegst, speichern wir deine E-Mail-Adresse, den Zeitpunkt der Registrierung, deine Bestätigung, dass du mindestens 18 Jahre alt bist, deine Chats (deine Nachrichten und die Antworten der KI) und deine Einstellungen. Die Daten liegen bei unserem Dienstleister Supabase (Datenbank-Standort: Frankfurt am Main, Deutschland). Zur Anmeldung schicken wir dir einen Code per E-Mail, ein Passwort gibt es nicht. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung des Kontos und der Speicherfunktion). Du kannst Chats einzeln löschen, deine Daten als Datei exportieren und dein Konto samt aller Daten jederzeit im Menü löschen.</p>
-<h3>3. Empfänger und Übermittlung in Drittländer</h3>
-<p>Empfänger sind unsere Dienstleister Vercel Inc., Anthropic PBC, Upstash, Supabase und Spaceship (E-Mail). Mehrere sitzen in den USA. Die Übermittlung erfolgt auf Grundlage der EU-Standardvertragsklauseln oder eines Angemessenheitsbeschlusses (EU-US Data Privacy Framework), soweit der jeweilige Anbieter zertifiziert ist.</p>
-<h3>4. Speicherdauer</h3>
-<p>Server-Logfiles werden nach den Einstellungen des Hosting-Anbieters nur kurz gespeichert. Die Zähler zur Nutzungsbegrenzung laufen nach etwa 25 Stunden ab. E-Mails speichern wir so lange, wie es für die Bearbeitung nötig ist. Kontodaten und gespeicherte Chats bleiben, bis du sie oder dein Konto löschst. Daten im lokalen Speicher bleiben, bis du sie löschst.</p>
-${KIDS_ENABLED ? `<h3>5. Kinder und Jugendliche</h3>
-<p>manualAI richtet sich auch an Schülerinnen und Schüler. Für Nutzer unter 18 gibt es das Kinderprofil, das ein Elternteil, eine erziehungsberechtigte Person oder eine Lehrkraft einrichtet und mit einem PIN schützt. Kinder unter 13 sollen manualAI nur gemeinsam mit einer erwachsenen Person nutzen. Im Kinderprofil speichern wir keine Liste der letzten Fragen. Die Erlaubnis wird bei der Einrichtung bestätigt und nur auf dem Gerät vermerkt. Eltern können sich jederzeit mit Fragen zu Auskunft, Löschung oder Widerruf an info@manualai.org wenden.</p>
-<h3>6. Automatisierte Prüfung</h3>
-<p>Die Sicherheitsprüfung im Kinderprofil erfolgt automatisiert und kann Nachrichten ablehnen. Sie ist keine Entscheidung mit rechtlicher Wirkung im Sinne von Art. 22 DSGVO.</p>
-` : `<h3>5. Altersgrenze</h3>
-<p>manualAI richtet sich an Personen ab 18 Jahren. Für die Registrierung bestätigst du, dass du mindestens 18 Jahre alt bist. Wenn du unter 18 bist, nutze manualAI bitte nicht ohne Wissen und Erlaubnis deiner Erziehungsberechtigten. Solltest du davon erfahren, dass ein Kind manualAI genutzt hat, schreib uns an info@manualai.org, dann löschen wir, was wir löschen können.</p>
-`}
-<h3>${KIDS_ENABLED ? "7" : "6"}. Deine Rechte</h3>
-<p>Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch (Art. 21). Eine erteilte Einwilligung kannst du jederzeit mit Wirkung für die Zukunft widerrufen (Art. 7 Abs. 3). Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren (Art. 77), zum Beispiel bei der Behörde deines Bundeslandes. Export und Löschung deiner Kontodaten kannst du direkt im Menü auslösen. Für alles andere schreib uns an info@manualai.org.</p>`;
-
-
-applyDesign();
-applyLang();
-if(!state.profile) viewOnboard();
-</script>
+        // Initialize
+        updateDarkMode();
+    </script>
 </body>
 </html>

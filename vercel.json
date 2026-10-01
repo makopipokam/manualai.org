@@ -1,7 +1,15 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/pwnd",
+      "destination": "/pwnd.html"
+    },
+    {
+      "source": "/pwnd/(.*)",
       "destination": "/pwnd.html"
     },
     {
@@ -11,6 +19,18 @@
     {
       "source": "/mydog/(.*)",
       "destination": "/mydog/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/pwnd",
+      "destination": "/pwnd/",
+      "permanent": true
+    },
+    {
+      "source": "/mydog",
+      "destination": "/mydog/",
+      "permanent": true
     }
   ],
   "functions": {
