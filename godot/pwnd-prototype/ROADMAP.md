@@ -64,7 +64,9 @@ Siehe [REVIEW.md](REVIEW.md) für reproduzierte Befunde und Testgrenzen.
 ## M3 — Emotional slice (initial pass)
 
 - [x] **Design:** Luft senkt Energie-Kosten und Liebe senkt Wasser-Kosten; beide Modifikatoren sind nicht verbrauchend, abnehmend wirksam und bei 50 % Rabatt gedeckelt
+- [x] **Design:** Wasserverbrauch skaliert mit Teichgröße und Pflanzenzahl; Versickerung und Pflanzenpflege laufen nur während aktiver Spielzeit
 - [ ] **Implementierung:** Luft-/Liebe-Anzeige, Quellen und effektive Kosten im Godot-Prototypen
+- [ ] **Implementierung:** laufender Wasserhaushalt, HUD-Warnung bei leerem Wasser und Regressionstests
 
 - [x] duck uses the dock
 - [x] frog returns to the player after development
