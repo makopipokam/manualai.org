@@ -337,6 +337,30 @@ const dogDatabase = [
             N: 30
         },
         idealFor: "Wohnungshaltung, Familien, Senioren, Menschen die einen sanften Begleiter suchen"
+    },
+    {
+        id: 13,
+        name: "Berger Picard",
+        breed: "Berger Picard (Picardischer Schäferhund)",
+        images: [
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=300&fit=crop",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=300&fit=crop"
+        ],
+        description: "Der Berger Picard ist ein französischer Hütehund mit drahtigem, wetterfestem Fell und aufmerksamen, ausdrucksstarken Augen. Er ist intelligent, energiegeladen und sehr an seine Familie gebunden. Berger Picards sind vielseitige Arbeitshunde, die auch als Familienhunde glänzen.",
+        size: "Mittel bis Groß (55-65 cm, 20-30 kg)",
+        energy: "Sehr hoch - Braucht intensive Bewegung und geistige Auslastung",
+        grooming: "Mittel - Regelmäßiges Bürsten und gelegentliches Trimmen",
+        familyFriendly: "Sehr familienfreundlich",
+        trainability: "Ausgezeichnet trainierbar",
+        personality: {
+            O: 80,  // Neugierig, anpassungsfähig
+            C: 85,  // Gewissenhaft, arbeitswillig
+            E: 75,  // Gesellig, aber nicht übertrieben
+            A: 70,  // Verträglich, aber mit eigenem Willen
+            N: 35   // Gelassen, stabil
+        },
+        idealFor: "Aktive Familien, Hundesportler, Menschen die einen treuen und intelligenten Begleiter suchen"
     }
 ];
 
@@ -437,6 +461,14 @@ const dogChatResponses = {
         grooming: "Mein seidiges Fell braucht tägliches Bürsten, um Verfilzungen zu vermeiden. Besonders die Ohren, die Beine und der Schwanz brauchen Aufmerksamkeit. Professionelles Trimmen alle 6-8 Wochen ist empfehlenswert.",
         lifespan: "Ich lebe durchschnittlich 9-14 Jahre. Cavaliers sind im Allgemeinen gesunde Hunde, aber Herzprobleme (Mitralklappenerkrankung) und Syringomyelie können vorkommen. Regelmäßige Tierarztbesuche sind wichtig.",
         training: "Ich bin intelligent und lernwillig. Ich reagiere gut auf positive Verstärkung mit Leckerlis und Lob. Ich kann viele Tricks lernen! Aber ich bin auch empfindlich, also sei geduldig und sanft mit mir."
+    },
+    "Berger Picard": {
+        movement: "Ich brauche viel Bewegung - mindestens 1-2 Stunden täglich! Ich liebe lange Spaziergänge, Laufen, Apportierspiele und geistige Herausforderungen. Als Hütehund brauche ich viel Auslastung, sonst werde ich unglücklich.",
+        food: "Ich esse etwa 300-400g hochwertiges Hundefutter täglich, aufgeteilt auf 2 Mahlzeiten. Bei viel Arbeit kann ich mehr brauchen. Achte auf eine ausgewogene Ernährung mit hochwertigen Proteinen.",
+        children: "Ich bin ein hervorragender Familienhund! Ich bin geduldig mit Kindern und beschützend. Aber ich brauche eine konsequente Erziehung und viel Sozialisierung. Mein drahtiges Fell macht mich robust für Spiel mit Kindern.",
+        grooming: "Mein drahtiges Fell braucht wöchentliches Bürsten, um Verfilzungen zu vermeiden. Alle 2-3 Monate sollte ich professionell getrimmt werden. Mein Fell ist wetterfest und schützt mich gut.",
+        lifespan: "Ich lebe durchschnittlich 12-14 Jahre. Berger Picards sind im Allgemeinen gesunde Hunde, aber Hüftdysplasie kann vorkommen. Regelmäßige Bewegung hält mich fit!",
+        training: "Ich bin extrem intelligent und lernwillig! Ich eigne mich hervorragend für Hundesport, Hütearbeit und Gehorsamstraining. Ich brauche eine konsequente, positive Erziehung und viel geistige Auslastung. Ich liebe es, neue Aufgaben zu lernen!"
     }
 };
 
