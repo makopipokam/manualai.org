@@ -387,10 +387,12 @@ func _toggle_pause() -> void:
 	paused = not paused
 	get_tree().paused = paused
 	if paused:
+		player.set_physics_process(false)
 		mobile_controls.hide()
 		_update_performance_label()
 		pause_overlay.show()
 	else:
+		player.set_physics_process(true)
 		pause_overlay.hide()
 		mobile_controls.show()
 		_update_hud("Zurück im Teichgarten.")

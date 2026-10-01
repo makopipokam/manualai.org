@@ -157,6 +157,17 @@ func _test_touch_reset(main: Node3D) -> void:
 	controls._handle_drag(drag)
 	controls._notification(Node.NOTIFICATION_APPLICATION_FOCUS_OUT)
 	_check(main.player.mobile_move.length() < 0.001, "Fokusverlust stoppt die Bewegung")
+	var player: PwndPlayer = main.player
+	player.rotation.y = 0.0
+	player.pitch = 0.0
+	player.camera.rotation.x = 0.0
+	player.apply_touch_look(Vector2(10000.0, 0.0))
+	_check(absf(player.rotation.y) <= 0.361, "Touch-Kamera begrenzt extreme horizontale Drags", "yaw=%.3f" % player.rotation.y)
+	for _step in range(4):
+		player.apply_touch_look(Vector2(0.0, 10000.0))
+	_check(is_equal_approx(player.pitch, -1.2) and is_equal_approx(player.camera.rotation.x, -1.2), "Touch-Kamera begrenzt vertikale Drags")
+	player.pitch = -0.18
+	player.camera.rotation.x = player.pitch
 
 func _test_animal_stays_on_plane(main: Node3D) -> void:
 	print("Tierbewegung")
@@ -277,13 +288,14 @@ func _test_safe_area_layout(main: Node3D) -> void:
 
 func _test_pause_resume(main: Node3D) -> void:
 	print("Pause / Resume")
+	var scene_tree: SceneTree = Engine.get_main_loop()
 	main.player.set_mobile_move(Vector2(1.0, 0.0))
 	main._toggle_pause()
-	_check(main.paused and root.paused, "Pause setzt den globalen Pausenstatus")
+	_check(main.paused and scene_tree.paused, "Pause setzt den globalen Pausenstatus")
 	_check(not main.player.is_physics_processing(), "Pause stoppt die Spielerphysik")
 	_check(not main.mobile_controls.visible and main.pause_overlay.visible, "Pause blendet Controls aus und Overlay ein")
 	main._toggle_pause()
-	_check(not main.paused and not root.paused, "Resume hebt den globalen Pausenstatus auf")
+	_check(not main.paused and not scene_tree.paused, "Resume hebt den globalen Pausenstatus auf")
 	_check(main.player.is_physics_processing(), "Resume aktiviert die Spielerphysik")
 	_check(main.mobile_controls.visible and not main.pause_overlay.visible, "Resume blendet Controls ein und Overlay aus")
 	main.player.set_mobile_move(Vector2.ZERO)

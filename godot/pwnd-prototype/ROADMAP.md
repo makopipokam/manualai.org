@@ -25,6 +25,7 @@
 
 - [x] virtual joystick for movement
 - [x] touch-drag camera look area
+- [x] bounded touch-camera deltas with separate mobile sensitivity and pitch clamp regression
 - [x] on-screen action buttons (thumb suitability on device not verified)
 - [x] portrait quiz panel with larger text and touch targets (simulated 720×1280: answer and next buttons ≥44px)
 - [x] desktop keyboard/mouse fallback

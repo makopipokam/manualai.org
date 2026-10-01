@@ -4,6 +4,8 @@ extends CharacterBody3D
 @export var walk_speed := 4.2
 @export var water_speed := 2.1
 @export var mouse_sensitivity := 0.0025
+@export var touch_look_sensitivity := 0.003
+const MAX_TOUCH_LOOK_DELTA := 120.0
 const BOOT_REST_HEIGHT := -1.22
 var camera: Camera3D
 var pitch := -0.18
@@ -62,8 +64,14 @@ func set_mobile_move(value: Vector2) -> void:
 	mobile_move = value.limit_length(1.0)
 
 func apply_touch_look(delta: Vector2) -> void:
-	rotate_y(-delta.x * mouse_sensitivity)
-	pitch = clamp(pitch - delta.y * mouse_sensitivity, -1.2, 1.0)
+	_apply_look(delta.limit_length(MAX_TOUCH_LOOK_DELTA), touch_look_sensitivity)
+
+func apply_mouse_look(delta: Vector2) -> void:
+	_apply_look(delta, mouse_sensitivity)
+
+func _apply_look(delta: Vector2, sensitivity: float) -> void:
+	rotate_y(-delta.x * sensitivity)
+	pitch = clamp(pitch - delta.y * sensitivity, -1.2, 1.0)
 	camera.rotation.x = pitch
 
 func is_in_water() -> bool:
@@ -77,7 +85,7 @@ func is_in_water() -> bool:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		apply_touch_look(event.relative)
+		apply_mouse_look(event.relative)
 	if event.is_action_pressed("ui_cancel"):
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED else Input.MOUSE_MODE_CAPTURED
 

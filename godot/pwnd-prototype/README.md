@@ -24,6 +24,8 @@ Links befindet sich ein virtueller Joystick für die Bewegung. Eine Berührung u
 
 Auch die visuelle Ruheposition des Joysticks wird aus derselben Safe-Area berechnet. Neue Bewegungs- oder Kamera-Touches, die außerhalb dieses Bereichs beginnen, werden ignoriert; ein bereits aktiver Touch darf weiterhin sauber loslassen, auch wenn der Finger den Rand verlässt.
 
+Touch-Kamera-Drags verwenden eine eigene Empfindlichkeit und werden pro Ereignis auf 120 Pixel begrenzt. Dadurch führen verspätete oder zusammengefasste Touch-Events nicht zu einem unkontrollierten Kamerasprung; die vertikale Kamera bleibt zusätzlich im definierten Pitch-Bereich.
+
 Das Pause-Overlay verwendet ebenfalls ein festes, responsives Panel innerhalb der Safe-Area. Dadurch kann die Inhaltsgröße im Hochformat den **WEITER**-Button nicht mehr aus dem sichtbaren Bereich drücken; der Button bleibt mindestens 58 Pixel hoch.
 
 Der Regressionstest prüft zusätzlich den kompletten Zustandswechsel: globale SceneTree-Pause, Spielerphysik, mobile Controls und Overlay-Sichtbarkeit werden gemeinsam pausiert und beim Resume wiederhergestellt.
