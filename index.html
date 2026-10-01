@@ -1,250 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#4CAF50">
-    <title>manualAI.org - App Auswahl</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --text-light: #666666;
-            --primary: #4CAF50;
-            --primary-hover: #45a049;
-            --border: #dddddd;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        [data-theme="dark"] {
-            --bg: #121212;
-            --card-bg: #1e1e1e;
-            --text: #e0e0e0;
-            --text-light: #b0b0b0;
-            --border: #404040;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        header h1 {
-            font-size: 2.5rem;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        header p {
-            color: var(--text-light);
-            font-size: 1.1rem;
-        }
-
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 24px;
-            width: 100%;
-        }
-
-        .app-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-
-        .app-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .app-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, var(--primary), #66bb6a);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-        }
-
-        .app-card h2 {
-            font-size: 1.4rem;
-            margin-bottom: 8px;
-            color: var(--text);
-        }
-
-        .app-card p {
-            color: var(--text-light);
-            line-height: 1.6;
-            margin-bottom: 12px;
-        }
-
-        .app-tag {
-            display: inline-block;
-            padding: 6px 12px;
-            background: rgba(76, 175, 80, 0.1);
-            border-radius: 20px;
-            font-size: 0.85rem;
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .pwnd-card .app-icon {
-            background: linear-gradient(135deg, #1c2631, #24213d);
-        }
-
-        .pwnd-card .app-tag {
-            background: rgba(91, 173, 255, 0.1);
-            color: #5cadff;
-        }
-
-        .mydog-card .app-tag {
-            background: rgba(76, 175, 80, 0.1);
-            color: var(--primary);
-        }
-
-        footer {
-            margin-top: 60px;
-            text-align: center;
-            color: var(--text-light);
-            font-size: 0.9rem;
-        }
-
-        footer a {
-            color: var(--primary);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        .dark-mode-toggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.2rem;
-            box-shadow: var(--shadow);
-            z-index: 1000;
-            transition: background 0.3s ease;
-        }
-
-        .dark-mode-toggle:hover {
-            background: var(--primary-hover);
-        }
-
-        .dark-mode-toggle:active {
-            transform: scale(0.95);
-        }
-
-        @media (max-width: 600px) {
-            header h1 {
-                font-size: 2rem;
-            }
-            
-            .apps-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#071a1d">
+  <meta name="description" content="manualAI.org — wähle deine nächste Erfahrung: pwnd oder MyDog.">
+  <title>manualAI.org — App-Auswahl</title>
+  <style>
+    :root{color-scheme:dark;--ink:#eaf8f3;--muted:#9bbab1;--night:#071a1d;--night-2:#0c292b;--line:rgba(206,245,231,.14);--pond:#69e0b5;--sun:#ffd27d;--violet:#bca5ff;--shadow:0 24px 70px rgba(0,0,0,.28)}
+    *{box-sizing:border-box}html{min-height:100%;background:var(--night)}
+    body{min-height:100vh;margin:0;padding:max(24px,env(safe-area-inset-top)) max(18px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(18px,env(safe-area-inset-left));display:grid;place-items:center;overflow-x:hidden;color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:radial-gradient(circle at 12% 8%,rgba(105,224,181,.16),transparent 28rem),radial-gradient(circle at 90% 75%,rgba(188,165,255,.12),transparent 24rem),linear-gradient(145deg,var(--night),var(--night-2))}
+    body:before,body:after{content:"";position:fixed;pointer-events:none;border-radius:999px;filter:blur(2px);opacity:.34}body:before{width:11px;height:11px;top:16%;left:10%;background:var(--pond);box-shadow:40vw 14vh 0 2px var(--sun),76vw 5vh 0 1px var(--pond),64vw 72vh 0 2px var(--violet)}body:after{width:5px;height:5px;top:74%;left:19%;background:var(--sun);box-shadow:63vw -41vh 0 1px var(--pond),46vw 23vh 0 1px var(--violet)}
+    main{width:min(1080px,100%);position:relative}.masthead{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:clamp(42px,8vw,88px)}.brand{display:inline-flex;align-items:center;gap:12px;color:var(--ink);text-decoration:none;font-weight:800;letter-spacing:-.03em}.brand-mark{display:grid;place-items:center;width:42px;height:42px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(145deg,rgba(105,224,181,.3),rgba(105,224,181,.06));color:var(--pond);font-size:22px;box-shadow:0 8px 24px rgba(0,0,0,.18)}.brand span{font-size:17px}.eyebrow{margin:0 0 15px;color:var(--pond);font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase}h1{max-width:760px;margin:0;font-size:clamp(42px,8vw,86px);line-height:.98;letter-spacing:-.075em;text-wrap:balance}.intro{max-width:620px;margin:22px 0 0;color:var(--muted);font-size:clamp(17px,2.2vw,21px);line-height:1.55}
+    .status{padding:8px 11px;border:1px solid rgba(255,255,255,.16);border-radius:99px;color:var(--accent,var(--muted));background:rgba(0,0,0,.12);font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.masthead>.status{--accent:var(--pond)}
+    .app-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:clamp(42px,7vw,72px)}.app-card{position:relative;min-height:360px;display:flex;flex-direction:column;justify-content:space-between;padding:clamp(24px,4vw,40px);overflow:hidden;border:1px solid var(--line);border-radius:30px;color:var(--ink);text-decoration:none;box-shadow:var(--shadow);isolation:isolate;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}.app-card:before{content:"";position:absolute;z-index:-1;inset:0;background:radial-gradient(circle at 80% 10%,var(--glow),transparent 54%),linear-gradient(145deg,var(--card),rgba(7,26,29,.45))}.app-card:after{content:"";position:absolute;z-index:-1;width:230px;height:230px;right:-82px;bottom:-96px;border:1px solid rgba(255,255,255,.14);border-radius:50%;box-shadow:0 0 0 18px rgba(255,255,255,.025),0 0 0 38px rgba(255,255,255,.02)}.app-card:hover,.app-card:focus-visible{transform:translateY(-6px);border-color:var(--accent);box-shadow:0 30px 80px rgba(0,0,0,.38);outline:none}.pwnd{--accent:var(--pond);--glow:rgba(105,224,181,.25);--card:rgba(17,90,77,.72)}.mydog{--accent:var(--sun);--glow:rgba(255,210,125,.22);--card:rgba(106,73,33,.66)}.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}.icon{display:grid;place-items:center;width:68px;height:68px;border:1px solid rgba(255,255,255,.2);border-radius:22px;background:rgba(0,0,0,.16);font-size:36px}.app-card h2{margin:32px 0 10px;font-size:clamp(31px,4vw,48px);letter-spacing:-.06em}.app-card p{max-width:390px;margin:0;color:rgba(234,248,243,.76);font-size:16px;line-height:1.55}.launch{display:inline-flex;align-items:center;justify-content:space-between;gap:12px;margin-top:30px;color:var(--accent);font-size:15px;font-weight:800}.arrow{display:inline-grid;place-items:center;width:34px;height:34px;border:1px solid currentColor;border-radius:50%;font-size:18px;transition:transform .25s ease}.app-card:hover .arrow,.app-card:focus-visible .arrow{transform:translateX(4px)}footer{display:flex;justify-content:space-between;gap:20px;margin-top:28px;color:var(--muted);font-size:13px}footer a{color:var(--ink);text-decoration:none}footer a:hover{color:var(--pond)}
+    @media(max-width:680px){body{place-items:start center}.masthead{margin-bottom:52px}.app-grid{grid-template-columns:1fr}.app-card{min-height:300px;border-radius:25px}footer{flex-direction:column;margin-bottom:10px}}@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important}}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>🎯 manualAI.org</h1>
-            <p>Wähle eine App aus</p>
-        </header>
-
-        <div class="apps-grid">
-            <!-- PWND App Card -->
-            <a href="/pwnd/" class="app-card pwnd-card">
-                <div class="app-icon">π</div>
-                <h2>pwnd</h2>
-                <p>Quizbattle - Teste dein Wissen mit KI-gestützten Fragen und Herausforderungen</p>
-                <span class="app-tag">🧠 Quiz & Lernen</span>
-            </a>
-
-            <!-- MyDog App Card -->
-            <a href="/mydog/" class="app-card mydog-card">
-                <div class="app-icon">🐕</div>
-                <h2>MyDog</h2>
-                <p>Finde deinen perfekten Hund basierend auf deinem Persönlichkeitstest</p>
-                <span class="app-tag">🐾 Hundesuche</span>
-            </a>
-        </div>
-
-        <footer>
-            <p>© 2024 manualAI.org | <a href="https://manualai.org">Zurück zur Hauptseite</a></p>
-        </footer>
-    </div>
-
-    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Dark Mode">🌙</button>
-
-    <script>
-        // Dark Mode Toggle
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        let darkMode = localStorage.getItem('app_darkMode') === 'true' || prefersDark;
-
-        function updateDarkMode() {
-            if (darkMode) {
-                document.documentElement.setAttribute('data-theme', 'dark');
-                darkModeToggle.textContent = '☀️';
-            } else {
-                document.documentElement.removeAttribute('data-theme');
-                darkModeToggle.textContent = '🌙';
-            }
-            localStorage.setItem('app_darkMode', darkMode);
-        }
-
-        darkModeToggle.addEventListener('click', () => {
-            darkMode = !darkMode;
-            updateDarkMode();
-        });
-
-        // Initialize
-        updateDarkMode();
-    </script>
+  <main>
+    <div class="masthead"><a class="brand" href="/" aria-label="manualAI.org Startseite"><span class="brand-mark" aria-hidden="true">✦</span><span>manualAI.org</span></a><span class="status">Zwei Welten</span></div>
+    <header><p class="eyebrow">Willkommen bei manualAI</p><h1>Wähle deine nächste Erfahrung.</h1><p class="intro">Zwei eigenständige Projekte, ein gemeinsamer Ort. Starte ein Quizduell oder finde den Hund, der zu dir passt.</p></header>
+    <section class="app-grid" aria-label="Apps auswählen">
+      <a class="app-card pwnd" href="/pwnd/"><div class="card-top"><span class="icon" aria-hidden="true">◌</span><span class="status">Spielbar</span></div><div><h2>pwnd</h2><p>Quizbattle trifft Teichgarten. Sammle Energie, entwickle dein Ökosystem und stelle dich der KI.</p><span class="launch">Zum Teich <span class="arrow" aria-hidden="true">→</span></span></div></a>
+      <a class="app-card mydog" href="/mydog/"><div class="card-top"><span class="icon" aria-hidden="true">🐾</span><span class="status">Entdecken</span></div><div><h2>MyDog</h2><p>Beantworte ein paar Fragen und entdecke den Hund, der zu deiner Persönlichkeit passt.</p><span class="launch">Test starten <span class="arrow" aria-hidden="true">→</span></span></div></a>
+    </section>
+    <footer><span>© <span id="year"></span> manualAI.org</span><a href="https://manualai.org">manualAI.org</a></footer>
+  </main>
+  <script>document.getElementById('year').textContent=new Date().getFullYear();</script>
 </body>
 </html>
