@@ -54,7 +54,7 @@ if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v2'" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v3'" "$ROOT/mydog/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
 echo 'service-worker: PASS | versioned MyDog-only app-shell cache'
 
@@ -69,6 +69,8 @@ import sys
 html = Path(sys.argv[1]).read_text()
 if 'id="results-screen" class="screen active"' not in html:
     raise SystemExit('direct dog profile did not activate results screen')
+if 'id="start-screen" class="screen active"' in html:
+    raise SystemExit('direct dog profile left start screen active')
 if 'Kein persönlicher Test' not in html:
     raise SystemExit('direct dog profile did not render neutral score state')
 print('direct-profile: PASS | shared dog profile renders without personal score')

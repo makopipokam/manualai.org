@@ -519,6 +519,7 @@ function loadDogImages(imageUrls, labels) {
         img.removeAttribute('src');
         delete img.dataset.loaded;
         delete img.dataset.loading;
+        img.style.display = 'none';
         img.style.visibility = 'hidden';
         img.classList.remove('selected');
         img.onclick = null;
@@ -543,12 +544,14 @@ function loadDogImages(imageUrls, labels) {
             target.dataset.loading = 'false';
             target.dataset.loaded = imageUrls[index];
             target.src = imageUrls[index];
+            target.style.display = 'block';
             target.style.visibility = 'visible';
             if (onReady) onReady();
         };
         preloader.onerror = () => {
             if (loadToken !== imageLoadToken) return;
             target.dataset.loading = 'false';
+            target.style.display = 'none';
             target.style.visibility = 'hidden';
         };
         preloader.src = imageUrls[index];
@@ -574,6 +577,7 @@ function loadDogImages(imageUrls, labels) {
         if (thumbnails[0] && imageUrls[0]) {
             thumbnails[0].src = imageUrls[0];
             thumbnails[0].dataset.loaded = imageUrls[0];
+            thumbnails[0].style.display = 'block';
             thumbnails[0].style.visibility = 'visible';
         }
     });

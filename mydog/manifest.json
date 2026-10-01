@@ -4,8 +4,8 @@
   "description": "Experimenteller Persönlichkeitstest mit passenden Hundevorschlägen.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#4CAF50",
-  "theme_color": "#4CAF50",
+  "background_color": "#f5f1e8",
+  "theme_color": "#1f5a45",
   "icons": [
     {
       "src": "icon-192x192.png",
