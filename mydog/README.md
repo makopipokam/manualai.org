@@ -77,27 +77,15 @@ mydog/
 3. Teste die App lokal
 
 ### Deployment
+Die App wird gemeinsam mit dem Repository deployed und ist unter `/mydog/` erreichbar. Die Vercel-Konfiguration und die App-Auswahl liegen bewusst im Repository-Root; die eigentlichen MyDog-Dateien bleiben vollständig in diesem Ordner.
 
-#### GitHub Pages
+Für eine lokale Vorschau genügt ein statischer Server im Repository-Root, zum Beispiel:
+
 ```bash
-# Stelle sicher, dass du im Branch manualAi.org-mydog bist
-cd mydog
-git checkout manualAi.org-mydog
-
-# Push zu GitHub
-git add .
-git commit -m "Bereit für Deployment"
-git push origin manualAi.org-mydog
+python3 -m http.server 3000
 ```
 
-Dann aktiviere GitHub Pages in den Repository-Einstellungen:
-1. Gehe zu Settings > Pages
-2. Wähle Branch: `manualAi.org-mydog`
-3. Wähle Folder: `/mydog`
-4. Speichern
-
-#### Andere Hosting-Anbieter
-Einfach alle Dateien im `mydog/` Ordner auf deinen Webserver hochladen.
+Danach ist die App unter `http://localhost:3000/mydog/` erreichbar.
 
 ### PWA Installation
 1. Öffne die App in Chrome auf einem Mobilgerät

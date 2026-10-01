@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test:pwnd": "node test/pwnd-engine.test.cjs"
+    "test:pwnd": "node pwnd/test/pwnd-engine.test.cjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "latest"

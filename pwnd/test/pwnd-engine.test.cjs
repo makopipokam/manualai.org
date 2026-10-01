@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const vm = require('node:vm');
 const context = { console };
-vm.runInNewContext(fs.readFileSync('pwnd-engine.js', 'utf8'), context);
+vm.runInNewContext(fs.readFileSync(require('node:path').join(__dirname, '..', 'pwnd-engine.js'), 'utf8'), context);
 const engine = context.PwndEngine;
 
 const question = { id: 'q', type: 'recall', skill: 'recall', difficulty: .5, answer: 1, time: 12000 };
