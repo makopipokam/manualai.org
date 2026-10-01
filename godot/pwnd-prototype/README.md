@@ -2,7 +2,7 @@
 
 Der erste Proof-of-Fun für den begehbaren Teichgarten. Die Anwendung wird **mobile first** entwickelt und im Querformat als First-Person-Spiel gedacht.
 
-> **Stand nach der Zweitprüfung:** Dies ist eine technische Rohfassung, kein auf Smartphone getesteter Build. Quiz-Fortschritt, Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung sind inzwischen behoben und durch [Regressionstests](tests/regression_test.gd) abgedeckt. Weltkollision und Hochformat-Quiz bleiben offen. Ursprüngliche Befunde: [REVIEW.md](REVIEW.md).
+> **Stand nach der Zweitprüfung:** Dies ist eine technische Rohfassung, kein auf Smartphone getesteter Build. Quiz-Fortschritt, Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung sind inzwischen behoben und durch [Regressionstests](tests/regression_test.gd) abgedeckt. Das Hochformat-Quiz wurde im simulierten 720×1280-Fenster verbessert; echte Safe-Area- und Gerätetests sowie Weltkollision bleiben offen. Ursprüngliche Befunde: [REVIEW.md](REVIEW.md).
 
 ## Starten
 
@@ -42,8 +42,8 @@ Das Quiz ist lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein gr
 
 Der Spielstand wird lokal im Godot-Benutzerverzeichnis gespeichert. Es gibt bewusst noch keinen Cloud-Spielstand und keine Kontoanbindung. Zum Zurücksetzen des lokalen Prototypen kann die Datei `user://pwnd_save.json` gelöscht werden.
 
-Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset und die horizontale Tierbewegung. Ein echter Test auf Android/iOS-Hardware steht noch aus; dafür werden im nächsten Schritt Exportprofil, Safe-Area-Prüfung und Performance-Messung ergänzt.
+Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset, horizontale Tierbewegung und Hochformat-Quiz-Touchflächen (mindestens 44 Pixel bei simulierten 720×1280). Die Antwortflächen wurden zusätzlich in einem virtuellen Linux-Display gerendert und visuell geprüft. Ein echter Test auf Android/iOS-Hardware steht noch aus; Notches und Betriebssystem-Skalierung sind damit nicht abgedeckt.
 
 ## Nächster Meilenstein
 
-Als Nächstes werden Weltkollision, sichtbarer Wasserbereich und Hochformat-Bedienbarkeit stabilisiert. Erst danach folgen Android-Testbuild, Safe-Area-Prüfung und Performance-Messung auf einem realen Telefon.
+Als Nächstes werden Weltkollision, sichtbarer Wasserbereich und sichere Bildschirmränder für Notches stabilisiert. Erst danach folgen Android-Testbuild und Performance-Messung auf einem realen Telefon.

@@ -2,7 +2,7 @@
 
 Stand: Godot 4.7.2, Branch `feat/pwnd-godot-vertical-slice`, Ausgangscommit `3fe2999`. Prüfung: Quellcode, isolierte Gameplay-Reproduktionen, Editor-/Runtime-Smoke-Test und gerenderte Fenster in 1280×720 sowie simuliertem 720×1280. Keine Änderung an der Web-Beta.
 
-> **Historischer Prüfstand:** Diese Tabelle beschreibt den Zustand bei Commit `3fe2999`, nicht automatisch den aktuellen Branch. Quiz-Fortschritt, durchgesetzte Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung wurden anschließend korrigiert und in `tests/regression_test.gd` abgesichert. Weltkollision, Hochformat-UI und echter Gerätetest bleiben offen; aktuelle Prioritäten stehen in [ROADMAP.md](ROADMAP.md).
+> **Historischer Prüfstand:** Diese Tabelle beschreibt den Zustand bei Commit `3fe2999`, nicht automatisch den aktuellen Branch. Quiz-Fortschritt, durchgesetzte Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung wurden anschließend korrigiert und in `tests/regression_test.gd` abgesichert. Die Hochformat-Quiz-UI wurde danach für ein simuliertes 720×1280-Fenster vergrößert; Weltkollision, Notch-Safe-Area und echter Gerätetest bleiben offen. Aktuelle Prioritäten stehen in [ROADMAP.md](ROADMAP.md).
 
 ## Kurzurteil
 

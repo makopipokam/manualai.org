@@ -12,17 +12,22 @@ var questions: Array[Dictionary] = [
 var question_index := 0
 var option_order: Array[int] = []
 var correct_reward_text := "Richtig. Dein Teich profitiert."
+var panel: PanelContainer
+var title_label: Label
 var question_label: Label
 var feedback_label: Label
 var answer_buttons: Array[Button] = []
 var next_button: Button
 var close_button: Button
+var hint_label: Label
 var answered := false
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_build_ui()
+	get_viewport().size_changed.connect(_layout_for_viewport)
+	_layout_for_viewport()
 	hide()
 
 func _build_ui() -> void:
@@ -30,7 +35,7 @@ func _build_ui() -> void:
 	shade.color = Color(0.015, 0.04, 0.035, 0.88)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(shade)
-	var panel := PanelContainer.new()
+	panel = PanelContainer.new()
 	panel.anchor_left = 0.05
 	panel.anchor_top = 0.10
 	panel.anchor_right = 0.95
@@ -50,11 +55,11 @@ func _build_ui() -> void:
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 10)
 	margin.add_child(column)
-	var title := Label.new()
-	title.text = "FREIES QUIZZEN"
-	title.add_theme_font_size_override("font_size", 26)
-	title.add_theme_color_override("font_color", Color("#f2c978"))
-	column.add_child(title)
+	title_label = Label.new()
+	title_label.text = "FREIES QUIZZEN"
+	title_label.add_theme_font_size_override("font_size", 26)
+	title_label.add_theme_color_override("font_color", Color("#f2c978"))
+	column.add_child(title_label)
 	question_label = Label.new()
 	question_label.custom_minimum_size = Vector2(0, 74)
 	question_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -91,12 +96,42 @@ func _build_ui() -> void:
 	close_button.add_theme_font_size_override("font_size", 16)
 	close_button.pressed.connect(_close_quiz)
 	actions.add_child(close_button)
-	var hint := Label.new()
-	hint.text = "Beantworte Fragen, um Energie und Wasser für deinen Teich zu gewinnen."
-	hint.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	hint.add_theme_font_size_override("font_size", 12)
-	hint.add_theme_color_override("font_color", Color("#b9cbb5"))
-	column.add_child(hint)
+	hint_label = Label.new()
+	hint_label.text = "Beantworte Fragen, um Energie und Wasser für deinen Teich zu gewinnen."
+	hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	hint_label.add_theme_font_size_override("font_size", 12)
+	hint_label.add_theme_color_override("font_color", Color("#b9cbb5"))
+	column.add_child(hint_label)
+
+func _layout_for_viewport() -> void:
+	if panel == null:
+		return
+	var view_size: Vector2 = get_viewport().get_visible_rect().size
+	var portrait := view_size.y > view_size.x * 1.15
+	if portrait:
+		# With canvas_items/expand, a 720px phone can have a 1280-unit GUI.
+		# At least 84 logical units are needed for a 47px physical touch target.
+		panel.anchor_top = 0.045
+		panel.anchor_bottom = 0.045
+		panel.offset_top = 0.0
+		panel.offset_bottom = 830.0
+	else:
+		panel.anchor_top = 0.10
+		panel.anchor_bottom = 0.90
+		panel.offset_top = 0.0
+		panel.offset_bottom = 0.0
+	title_label.add_theme_font_size_override("font_size", 34 if portrait else 26)
+	question_label.add_theme_font_size_override("font_size", 30 if portrait else 20)
+	question_label.custom_minimum_size.y = 110 if portrait else 74
+	for button in answer_buttons:
+		button.custom_minimum_size.y = 92 if portrait else 52
+		button.add_theme_font_size_override("font_size", 26 if portrait else 16)
+	feedback_label.custom_minimum_size.y = 70 if portrait else 42
+	feedback_label.add_theme_font_size_override("font_size", 22 if portrait else 16)
+	for button in [next_button, close_button]:
+		button.custom_minimum_size.y = 84 if portrait else 48
+		button.add_theme_font_size_override("font_size", 25 if portrait else 16)
+	hint_label.add_theme_font_size_override("font_size", 18 if portrait else 12)
 
 func _panel_style() -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

@@ -26,7 +26,7 @@
 - [x] virtual joystick for movement
 - [x] touch-drag camera look area
 - [x] on-screen action buttons (thumb suitability on device not verified)
-- [ ] portrait quiz panel with readable text and adequate touch targets (simulated 720×1280 revealed small controls)
+- [x] portrait quiz panel with larger text and touch targets (simulated 720×1280: answer and next buttons ≥44px)
 - [x] desktop keyboard/mouse fallback
 - [x] optional haptic feedback on supported touch devices
 - [x] large mobile pause button with deterministic resume
@@ -45,7 +45,8 @@
 - [x] **P1:** Touch-/Joystick-Zustand beim Verstecken, Pausieren und Quizstart zurückgesetzt
 - [x] **P1:** Vertikale Tierbewegung gestoppt; horizontale Reaktionen getestet
 - [ ] **P1:** Weltkollision und Waten-Höhe korrigieren
-- [ ] **P1:** Portrait-Quiz, Safe Area und Touchziele vor Geräteexport prüfen
+- [x] **P1:** Portrait-Quiz und Touchziele im simulierten 720×1280-Fenster geprüft
+- [ ] **P1:** Safe Area/Notch und Touch-Bedienung auf einem realen Gerät prüfen
 - [ ] **P2:** Bau-Reichweite, Wasserbereich und Save-Validierung konsistent machen
 
 Siehe [REVIEW.md](REVIEW.md) für reproduzierte Befunde und Testgrenzen.

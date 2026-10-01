@@ -32,6 +32,7 @@ func _run() -> void:
 	_test_habitat_requirement(main)
 	await _test_touch_reset(main)
 	_test_animal_stays_on_plane(main)
+	await _test_quiz_layout(main)
 
 	print("")
 	if failures.is_empty():
@@ -160,3 +161,24 @@ func _test_animal_stays_on_plane(main: Node3D) -> void:
 			animal._process(0.1)
 		var drift: float = absf(animal.global_position.y - start_y)
 		_check(drift < 0.001, "%s bleibt auf seiner Ebene" % animal.species, "abweichung=%.3f" % drift)
+
+func _test_quiz_layout(main: Node3D) -> void:
+	print("Quiz-Layout")
+	var quiz = main.quiz_panel
+	root.size = Vector2i(720, 1280)
+	quiz.open_quiz()
+	await process_frame
+	var virtual_width: float = root.get_visible_rect().size.x
+	var physical_height: float = quiz.answer_buttons[0].size.y * 720.0 / virtual_width
+	_check(physical_height >= 44.0, "Portrait-Antwortfläche mindestens 44px", "höhe=%.1fpx" % physical_height)
+	_check(quiz.answer_buttons[0].get_global_rect().end.x <= virtual_width, "Portrait-Antwortfläche bleibt im Viewport")
+	quiz._answer(quiz.option_order.find(int(quiz.questions[quiz.question_index]["answer"])))
+	await process_frame
+	var next_height: float = quiz.next_button.size.y * 720.0 / virtual_width
+	_check(next_height >= 44.0, "Portrait-Weiter-Fläche mindestens 44px", "höhe=%.1fpx" % next_height)
+	quiz._close_quiz()
+	root.size = Vector2i(1280, 720)
+	quiz.open_quiz()
+	await process_frame
+	_check(quiz.answer_buttons[0].size.y >= 52.0, "Querformat behält bisherige Antwortflächen")
+	quiz._close_quiz()
