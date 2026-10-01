@@ -140,6 +140,8 @@ func _gui_input(event: InputEvent) -> void:
 func _handle_touch(event: InputEventScreenTouch) -> void:
 	var width := size.x
 	if event.pressed:
+		if not _get_safe_view_rect(size).has_point(event.position):
+			return
 		if event.position.x < width * 0.46 and event.position.y > size.y * 0.48 and joystick_touch == -1:
 			joystick_touch = event.index
 			joystick_center = event.position
@@ -168,7 +170,7 @@ func _handle_drag(event: InputEventScreenDrag) -> void:
 		last_look_position = event.position
 
 func _draw() -> void:
-	var center := Vector2(112, size.y - 130)
+	var center := _get_idle_joystick_center()
 	if joystick_touch != -1:
 		center = joystick_center
 		draw_circle(center, joystick_radius, Color(0.05, 0.13, 0.11, 0.40))
@@ -176,3 +178,11 @@ func _draw() -> void:
 	else:
 		draw_circle(center, joystick_radius, Color(0.05, 0.13, 0.11, 0.24))
 		draw_circle(center, 32, Color(0.84, 0.78, 0.47, 0.48))
+
+func _get_idle_joystick_center() -> Vector2:
+	var safe_rect: Rect2 = _get_safe_view_rect(size)
+	var min_x: float = safe_rect.position.x + joystick_radius
+	var min_y: float = safe_rect.position.y + joystick_radius
+	var max_x: float = maxf(min_x, safe_rect.end.x - joystick_radius)
+	var max_y: float = maxf(min_y, safe_rect.end.y - joystick_radius)
+	return Vector2(clampf(safe_rect.position.x + 112.0, min_x, max_x), clampf(safe_rect.end.y - 130.0, min_y, max_y))

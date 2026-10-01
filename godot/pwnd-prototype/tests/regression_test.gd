@@ -262,6 +262,13 @@ func _test_safe_area_layout(main: Node3D) -> void:
 	_check(controls.sound_button.get_global_rect().end.x <= controls_safe.end.x + 1.0, "Sound-Button bleibt am sicheren rechten Rand")
 	_check(controls.action_column.get_global_rect().end.x <= controls_safe.end.x + 1.0 and controls.action_column.get_global_rect().end.y <= controls_safe.end.y + 1.0, "Aktionsbuttons bleiben am sicheren unteren Rand")
 	_check(controls.movement_hint.get_global_rect().position.x >= controls_safe.position.x and controls.movement_hint.get_global_rect().end.y <= controls_safe.end.y + 1.0, "Bewegungshinweis bleibt innerhalb der Safe-Area")
+	_check(controls_safe.has_point(controls._get_idle_joystick_center()), "Joystick-Ruheposition bleibt innerhalb der Safe-Area")
+	var unsafe_touch := InputEventScreenTouch.new()
+	unsafe_touch.index = 91
+	unsafe_touch.position = Vector2(2.0, 2.0)
+	unsafe_touch.pressed = true
+	controls._handle_touch(unsafe_touch)
+	_check(controls.joystick_touch == -1 and controls.look_touch == -1, "Touch-Start außerhalb der Safe-Area wird ignoriert")
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")
