@@ -1,8 +1,28 @@
 {
   "rewrites": [
     {
+      "source": "/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/pwnd",
-      "destination": "/pwnd.html"
+      "destination": "/pwnd/index.html"
+    },
+    {
+      "source": "/mydog",
+      "destination": "/mydog/index.html"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/pwnd",
+      "destination": "/pwnd/",
+      "permanent": true
+    },
+    {
+      "source": "/mydog",
+      "destination": "/mydog/",
+      "permanent": true
     }
   ],
   "functions": {
@@ -38,7 +58,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://*.supabase.co; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co; manifest-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; object-src 'none'"
         }
       ]
     },

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
+    <title>Find deinen perfekten Hund - Persönlichkeitstest</title>
+    <link rel="stylesheet" href="/mydog/style.css">
+    <link rel="manifest" href="/mydog/manifest.json">
+    <base href="/mydog/">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>🐾 Find deinen perfekten Hund 🐶</h1>
+            <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
+            <button id="start-test-btn" class="btn-primary">Test starten</button>
+            <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
+        </div>
+
+        <!-- Personality Test Screen -->
+        <div id="test-screen" class="screen">
+            <div class="test-header">
+                <h2>Persönlichkeitstest</h2>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <span id="progress-text" class="progress-text">Frage 1 von 30</span>
+            </div>
+            
+            <div class="question-container">
+                <h3 id="question-text">Ich bin eher...</h3>
+                <div id="options-container" class="options-container">
+                    <!-- Options will be inserted by JS -->
+                </div>
+            </div>
+            
+            <div class="test-navigation">
+                <button id="prev-question-btn" class="btn-secondary" disabled>Zurück</button>
+                <button id="next-question-btn" class="btn-primary" disabled>Weiter</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen">
+            <div class="loading-spinner"></div>
+            <h2>Wir finden deinen perfekten Hund...</h2>
+            <p>Basierend auf deinen Antworten analysieren wir, welcher Hund am besten zu dir passt.</p>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <h2>Dein perfekter Match: <span id="dog-name"></span> 🐕</h2>
+            
+            <div class="dog-profile">
+                <div class="dog-images">
+                    <img id="dog-image-main" class="dog-image main-image" src="" alt="">
+                    <div class="thumbnail-gallery">
+                        <img id="dog-image-1" class="dog-image thumbnail" src="" alt="" data-index="0">
+                        <img id="dog-image-2" class="dog-image thumbnail" src="" alt="" data-index="1">
+                        <img id="dog-image-3" class="dog-image thumbnail" src="" alt="" data-index="2">
+                        <img id="dog-image-4" class="dog-image thumbnail" src="" alt="" data-index="3">
+                        <img id="dog-image-5" class="dog-image thumbnail" src="" alt="" data-index="4">
+                        <img id="dog-image-6" class="dog-image thumbnail" src="" alt="" data-index="5">
+                    </div>
+                    <p id="image-label" class="image-label"></p>
+                </div>
+                
+                <div class="dog-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Rasse:</span>
+                            <span id="dog-breed" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Größe:</span>
+                            <span id="dog-size" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Energielevel:</span>
+                            <span id="dog-energy" class="info-value"></span>
+                            <div id="energy-rating" class="star-rating"></div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Pflegebedarf:</span>
+                            <span id="dog-grooming" class="info-value"></span>
+                            <div id="grooming-rating" class="star-rating"></div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Familientauglich:</span>
+                            <span id="dog-family" class="info-value"></span>
+                            <div id="family-rating" class="star-rating"></div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Trainierbarkeit:</span>
+                            <span id="dog-trainability" class="info-value"></span>
+                            <div id="trainability-rating" class="star-rating"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="ratings-overview">
+                        <h4>Gesamtbewertung:</h4>
+                        <div id="overall-rating" class="star-rating large"></div>
+                        <span id="overall-rating-text" class="rating-text"></span>
+                    </div>
+                    
+                    <p id="dog-description" class="dog-description"></p>
+                </div>
+            </div>
+            
+            <div class="match-explanation">
+                <h3>Warum dieser Hund zu dir passt:</h3>
+                <p id="match-reason"></p>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="interest-btn" class="btn-primary">✅ Interesse - Mehr erfahren</button>
+                <button id="no-interest-btn" class="btn-secondary">❌ Kein Interesse - Nächster Vorschlag</button>
+                <button id="favorite-btn" class="btn-favorite">❤️ Zu Favoriten hinzufügen</button>
+                <button id="share-btn" class="btn-share">📤 Teilen</button>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <button id="back-to-results-btn" class="back-btn">← Zurück</button>
+                    <h2>Chat mit <span id="chat-dog-name"></span></h2>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages">
+                    <div class="chat-message assistant">
+                        <p>Hallo! Ich bin <span id="chat-dog-name-msg"></span>. 🐶 Wie kann ich dir helfen?</p>
+                    </div>
+                </div>
+                
+                <div class="quick-replies">
+                    <h4>Schnellauswahl:</h4>
+                    <div class="quick-reply-buttons">
+                        <button class="quick-reply-btn" data-message="Wie viel Bewegung brauchst du täglich?">🏃‍♂️ Bewegung</button>
+                        <button class="quick-reply-btn" data-message="Was frisst du am liebsten?">🍖 Ernährung</button>
+                        <button class="quick-reply-btn" data-message="Wie verhältst du dich mit Kindern?">👶 Kinder</button>
+                        <button class="quick-reply-btn" data-message="Brauchst du viel Pflege?">💇 Pflege</button>
+                        <button class="quick-reply-btn" data-message="Wie lange lebst du durchschnittlich?">⏳ Lebenserwartung</button>
+                        <button class="quick-reply-btn" data-message="Bist du leicht zu erziehen?">🎓 Erziehung</button>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="user-message-input" placeholder="Schreibe eine Nachricht..." autocomplete="off">
+                    <button id="send-message-btn" class="send-btn">→</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Favorites Screen -->
+        <div id="favorites-screen" class="screen">
+            <div class="favorites-header">
+                <button id="back-from-favorites-btn" class="back-btn">← Zurück</button>
+                <h2>📚 Meine Favoriten</h2>
+            </div>
+            <div id="favorites-list" class="favorites-list">
+                <!-- Favorites will be inserted by JS -->
+            </div>
+        </div>
+
+        <!-- No More Dogs Screen -->
+        <div id="no-more-screen" class="screen">
+            <h2>Keine weiteren Hunde mehr</h2>
+            <p>Du hast alle passenden Hunde gesehen. Möchtest du den Test noch einmal machen?</p>
+            <button id="restart-test-btn" class="btn-primary">Test neu starten</button>
+        </div>
+    </div>
+
+    <!-- Share Modal -->
+    <div id="share-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h3>Teilen</h3>
+            <p>Kopiere diesen Link, um deinen Hund mit Freunden zu teilen:</p>
+            <input type="text" id="share-link-input" readonly>
+            <button id="copy-link-btn" class="btn-primary">Link kopieren</button>
+            <div class="social-share-buttons">
+                <button class="social-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
+                <button class="social-btn facebook" onclick="shareOnFacebook()">📘 Facebook</button>
+                <button class="social-btn whatsapp" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button id="dark-mode-toggle" class="dark-mode-toggle" title="Dark Mode">🌓</button>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
