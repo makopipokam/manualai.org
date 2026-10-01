@@ -38,6 +38,7 @@
       assert(page.querySelector('.likert-labels') === null, 'descriptive labels stay removed');
       assert(page.querySelector('.test-navigation').firstElementChild?.id === 'next-question-btn', 'Weiter is above Zurück');
       assert(page.querySelector('.test-navigation').lastElementChild?.id === 'prev-question-btn', 'Zurück is below Weiter');
+      assert(getComputedStyle(page.querySelector('#view-favorites-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites overview button is not red');
 
       for (let question = 0; question < 30; question += 1) {
         const options = page.querySelectorAll('.likert-option');
@@ -75,10 +76,12 @@
       assert(active() === 'favorites-screen', 'favorites overview opens');
       assert(page.querySelectorAll('.favorite-card').length === 1, 'favorite card renders');
       assert(page.querySelector('#favorites-count').textContent === '1', 'favorite count renders');
+      assert(getComputedStyle(page.querySelector('.remove-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites remove action is not red');
       click('.remove-btn');
       assert(state().favorites.length === 0, 'favorite removal persists');
 
       app.showScreen('start');
+      assert(getComputedStyle(page.querySelector('#resume-result-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'Ergebnis anzeigen is not red');
       click('#resume-result-btn');
       assert(active() === 'results-screen', 'saved result restores');
       app.startNewTest();
