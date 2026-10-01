@@ -33,6 +33,7 @@ func _run() -> void:
 	await _test_touch_reset(main)
 	_test_animal_stays_on_plane(main)
 	_test_wading_matches_surface(main)
+	_test_boot_height(main)
 	await _test_world_collisions(main)
 	await _test_quiz_layout(main)
 
@@ -181,6 +182,16 @@ func _test_wading_matches_surface(main: Node3D) -> void:
 	player.global_position = Vector3(sample.x, 0.65, sample.z)
 	_check(player.is_in_water(), "Wassergrenze berücksichtigt die Mesh-Rotation")
 	main.water_surface.rotation.y = 0.0
+
+func _test_boot_height(main: Node3D) -> void:
+
+	print("Gummistiefel-Höhe")
+	var player: PwndPlayer = main.player
+	player.global_position.y = 0.0
+	var sole_world: Vector3 = player.camera.to_global(player.boot_nodes[0].position + Vector3(0, -0.18, -0.12))
+	var water_y: float = main.water_surface.global_position.y
+	_check(absf(sole_world.y - water_y) < 0.14, "Stiefelsohle liegt nahe der Wasseroberfläche", "sohle=%.2f wasser=%.2f" % [sole_world.y, water_y])
+	_check(sole_world.y > -0.08, "Stiefelsohle bleibt über dem Boden", "sohle=%.2f" % sole_world.y)
 
 func _test_world_collisions(main: Node3D) -> void:
 	print("Weltkollision")

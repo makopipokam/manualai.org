@@ -34,7 +34,7 @@ Wenn sich der Spieler einem Tier nähert, erscheint ein zentraler Interaktionshi
 
 Die Waten-Erkennung liest jetzt die **sichtbare, animierte Wasserfläche** statt eigener fest codierter Koordinaten. Damit lösen die Gummistiefel-Verlangsamung, Fischreaktion und Ripples auch am fernen und nahen Ende des sichtbaren Teichs aus; außerhalb der Fläche nicht. Das ist eine 2D-Flächenabfrage und keine eigene Wasserflächenkollision; die festen Ufer-/Hinderniskollisionen sind separat umgesetzt.
 
-Boden, Ufersteine und der Entensteg besitzen jetzt eigene `StaticBody3D`-Boxkollisionen. Der Spieler bleibt dadurch auf dem Boden und wird von den Hindernissen gestoppt; Wasser, Seerosen und Schilf bleiben absichtlich durchquerbar. Die exakte Fuß-/Wasserhöhe ist noch ein eigener Playtest-Schritt.
+Boden, Ufersteine und der Entensteg besitzen jetzt eigene `StaticBody3D`-Boxkollisionen. Der Spieler bleibt dadurch auf dem Boden und wird von den Hindernissen gestoppt; Wasser, Seerosen und Schilf bleiben absichtlich durchquerbar. Die gelben Gummistiefel liegen nun mit ihrer Sohle nahe der Wasseroberfläche und bleiben über dem Boden; die Beziehung wird im Regressionstest geprüft.
 
 ## Aktueller Scope
 
@@ -46,8 +46,8 @@ Das Quiz ist lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein gr
 
 Der Spielstand wird lokal im Godot-Benutzerverzeichnis gespeichert. Es gibt bewusst noch keinen Cloud-Spielstand und keine Kontoanbindung. Zum Zurücksetzen des lokalen Prototypen kann die Datei `user://pwnd_save.json` gelöscht werden.
 
-Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset, horizontale Tierbewegung, die Grenzen der sichtbaren Wasserfläche, statische Weltkollisionen und Hochformat-Quiz-Touchflächen (mindestens 44 Pixel bei simulierten 720×1280). Die Antwortflächen wurden zusätzlich in einem virtuellen Linux-Display gerendert und visuell geprüft. Ein echter Test auf Android/iOS-Hardware steht noch aus; Notches, Betriebssystem-Skalierung und reale Fußhöhe sind damit nicht abgedeckt.
+Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset, horizontale Tierbewegung, die Grenzen der sichtbaren Wasserfläche, statische Weltkollisionen, die Gummistiefel-/Wasserhöhe und Hochformat-Quiz-Touchflächen (mindestens 44 Pixel bei simulierten 720×1280). Die Antwortflächen wurden zusätzlich in einem virtuellen Linux-Display gerendert und visuell geprüft. Ein echter Test auf Android/iOS-Hardware steht noch aus; Notches und Betriebssystem-Skalierung sind damit nicht abgedeckt.
 
 ## Nächster Meilenstein
 
-Als Nächstes werden Spieler-/Watenhöhe und sichere Bildschirmränder für Notches stabilisiert. Erst danach folgen Android-Testbuild und Performance-Messung auf einem realen Telefon.
+Als Nächstes werden sichere Bildschirmränder für Notches stabilisiert. Erst danach folgen Android-Testbuild und Performance-Messung auf einem realen Telefon.

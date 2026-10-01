@@ -4,6 +4,7 @@ extends CharacterBody3D
 @export var walk_speed := 4.2
 @export var water_speed := 2.1
 @export var mouse_sensitivity := 0.0025
+const BOOT_REST_HEIGHT := -1.22
 var camera: Camera3D
 var pitch := -0.18
 var water_surface: MeshInstance3D
@@ -32,7 +33,7 @@ func _build_boots() -> void:
 	for side in [-1.0, 1.0]:
 		var boot := Node3D.new()
 		boot.name = "RubberBoot"
-		boot.position = Vector3(side * 0.22, -0.98, -0.48)
+		boot.position = Vector3(side * 0.22, BOOT_REST_HEIGHT, -0.48)
 		camera.add_child(boot)
 		var shaft := MeshInstance3D.new()
 		var shaft_mesh := BoxMesh.new()
@@ -103,5 +104,5 @@ func _animate_boots(delta: float, input_vec: Vector2, in_water: bool) -> void:
 		var phase := boot_time * (5.0 if in_water else 7.5) + index * PI
 		var amount := 0.028 if moving else 0.006
 		var bob := sin(phase) * amount
-		boot.position.y = lerp(boot.position.y, -0.98 + bob, min(delta * 12.0, 1.0))
+		boot.position.y = lerp(boot.position.y, BOOT_REST_HEIGHT + bob, min(delta * 12.0, 1.0))
 		boot.rotation.x = lerp(boot.rotation.x, sin(phase) * (0.045 if moving else 0.012), min(delta * 12.0, 1.0))

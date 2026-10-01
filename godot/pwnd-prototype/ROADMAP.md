@@ -45,7 +45,8 @@
 - [x] **P1:** Touch-/Joystick-Zustand beim Verstecken, Pausieren und Quizstart zurückgesetzt
 - [x] **P1:** Vertikale Tierbewegung gestoppt; horizontale Reaktionen getestet
 - [x] **P1:** Statische Weltkollision für Boden, Ufersteine und Entensteg ergänzt und getestet
-- [ ] **P1:** Spieler-/Watenhöhe auf realen Bewegungs- und Gerätebedingungen feinjustieren
+- [x] **P1:** Gummistiefel-Sohle an Boden-/Wasserhöhe ausgerichtet und automatisiert geprüft
+- [ ] **P1:** Spieler-/Watenhöhe unter realen Bewegungs- und Gerätebedingungen feinjustieren
 - [x] **P1:** Portrait-Quiz und Touchziele im simulierten 720×1280-Fenster geprüft
 - [ ] **P1:** Safe Area/Notch und Touch-Bedienung auf einem realen Gerät prüfen
 - [x] **P2:** Sichtbare Wasserfläche ist die gemeinsame Grenze für Waten, Fischreaktion und Ripples (inklusive Rotationstest)
