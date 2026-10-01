@@ -448,16 +448,15 @@ function showDogResult() {
     showScreen('results');
 }
 
-// Load dog images with fallback and labels
+// Load breed-specific dog images and labels
 function loadDogImages(imageUrls, labels) {
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     const dog = appState.currentDog;
     
     // Set main image
     elements.dogImageMain.onerror = function() {
-        this.src = fallbackImage;
+        this.style.visibility = 'hidden';
     };
-    elements.dogImageMain.src = imageUrls[0] || fallbackImage;
+    elements.dogImageMain.src = imageUrls[0] || '';
     elements.dogImageMain.alt = dog.name;
     elements.dogImageMain.loading = "eager";
     
@@ -467,9 +466,9 @@ function loadDogImages(imageUrls, labels) {
         const imgElement = document.getElementById(id);
         if (imgElement) {
             imgElement.onerror = function() {
-                this.src = fallbackImage;
+                this.style.visibility = 'hidden';
             };
-            imgElement.src = imageUrls[index] || imageUrls[0] || fallbackImage;
+            imgElement.src = imageUrls[index] || imageUrls[0] || '';
             imgElement.alt = `${dog.name} — Bild ${index + 1}`;
             imgElement.loading = "lazy";
             imgElement.addEventListener('click', () => {
@@ -485,10 +484,9 @@ function loadDogImages(imageUrls, labels) {
 // Select a thumbnail image
 function selectThumbnail(index, imageUrls, labels) {
     const dog = appState.currentDog;
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     
     // Update main image
-    elements.dogImageMain.src = imageUrls[index] || fallbackImage;
+    elements.dogImageMain.src = imageUrls[index] || imageUrls[0] || '';
     elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
     
     // Update label
@@ -641,7 +639,7 @@ function renderFavorites() {
         card.setAttribute('role', 'group');
         card.dataset.dogId = dog.id;
         card.innerHTML = `
-            <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'}" alt="${dog.name}" onerror="this.src='https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'">
+            <img src="${dog.images[0] || ''}" alt="${dog.name}" onerror="this.style.visibility='hidden'">
             <h3>${dog.name}</h3>
             <p class="breed">${dog.breed}</p>
             <p>${dog.description.substring(0, 100)}...</p>

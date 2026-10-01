@@ -24,6 +24,32 @@ for _ in $(seq 1 30); do
 done
 curl -fsS "$URL" >/dev/null
 
+python3 - "$ROOT/mydog/data.js" <<'PY'
+from pathlib import Path
+import re
+import sys
+
+source = Path(sys.argv[1]).read_text()
+entries = re.findall(
+    r'\{\s*id:\s*\d+,\s*name:\s*"([^"]+)".*?images:\s*\[(.*?)\]\s*,\s*imagesLabels:',
+    source,
+    re.S,
+)
+if len(entries) != 18:
+    raise SystemExit(f'expected 18 dog entries, found {len(entries)}')
+breed_images = {}
+for breed, block in entries:
+    urls = re.findall(r'"(https?://[^"\n]+)"', block)
+    if len(urls) != 6:
+        raise SystemExit(f'{breed}: expected 6 image references, found {len(urls)}')
+    breed_images[breed] = set(urls)
+for breed, urls in breed_images.items():
+    reused_by = [other for other, other_urls in breed_images.items() if other != breed and urls & other_urls]
+    if reused_by:
+        raise SystemExit(f'{breed}: image URLs reused by {reused_by}')
+print(f'catalogue: PASS | {len(entries)} breeds | 6 non-shared image references each')
+PY
+
 for mode in desktop mobile; do
   if [[ "$mode" == desktop ]]; then
     size='1280,900'
