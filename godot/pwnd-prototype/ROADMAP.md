@@ -48,6 +48,7 @@
 - [x] **P1:** Gummistiefel-Sohle an Boden-/Wasserhöhe ausgerichtet und automatisiert geprüft
 - [ ] **P1:** Spieler-/Watenhöhe unter realen Bewegungs- und Gerätebedingungen feinjustieren
 - [x] **P1:** Portrait-Quiz und Touchziele im simulierten 720×1280-Fenster geprüft
+- [x] **P1:** HUD nutzt Display-Safe-Area mit Vollviewport-Fallback; simulierte Randprüfung ergänzt
 - [ ] **P1:** Safe Area/Notch und Touch-Bedienung auf einem realen Gerät prüfen
 - [x] **P2:** Sichtbare Wasserfläche ist die gemeinsame Grenze für Waten, Fischreaktion und Ripples (inklusive Rotationstest)
 - [x] **P2:** Bau-Reichweite und Save-Validierung konsistent machen

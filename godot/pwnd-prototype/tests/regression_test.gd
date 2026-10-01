@@ -36,6 +36,7 @@ func _run() -> void:
 	_test_boot_height(main)
 	_test_build_and_save_consistency(main)
 	await _test_world_collisions(main)
+	_test_safe_area_layout(main)
 	await _test_quiz_layout(main)
 
 	print("")
@@ -241,6 +242,19 @@ func _test_build_and_save_consistency(main: Node3D) -> void:
 	_check(safe["energy"] == 0 and safe["water"] == 9999, "Gespeicherte Ressourcen werden begrenzt", "energy=%s water=%s" % [safe["energy"], safe["water"]])
 	_check(safe["dock_built"] == false and safe["audio_enabled"] == true, "Ungültige Save-Typen fallen auf sichere Werte zurück")
 	_check(safe["animals"]["frog"] == 2 and safe["animals"]["duck"] == 0 and not safe["animals"].has("unknown"), "Tierstufen werden begrenzt und unbekannte Arten ignoriert")
+
+func _test_safe_area_layout(main: Node3D) -> void:
+	print("Safe-Area-HUD")
+	main.get_viewport().size = Vector2i(720, 1280)
+	main._layout_hud()
+	var view_size: Vector2 = main.get_viewport().get_visible_rect().size
+	var safe_rect: Rect2 = main._get_safe_view_rect(view_size)
+	_check(safe_rect.position.x >= 0.0 and safe_rect.position.y >= 0.0, "Safe-Area beginnt innerhalb des Viewports")
+	_check(safe_rect.end.x <= view_size.x + 0.1 and safe_rect.end.y <= view_size.y + 0.1, "Safe-Area endet innerhalb des Viewports")
+	_check(main.hud_panel.position.x >= safe_rect.position.x, "HUD-Panel respektiert den linken Safe-Area-Rand")
+	_check(main.save_hint.get_global_rect().end.x <= safe_rect.end.x + 1.0, "Autosave-Hinweis respektiert den rechten Safe-Area-Rand")
+	var crosshair_center: Vector2 = main.crosshair.position + Vector2(10.0, 10.0)
+	_check(safe_rect.has_point(crosshair_center), "Fadenkreuz bleibt im Safe-Area-Zentrum")
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")

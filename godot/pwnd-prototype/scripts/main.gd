@@ -222,9 +222,12 @@ func _layout_hud() -> void:
 	if not hud_panel or not get_viewport():
 		return
 	var view_size: Vector2 = get_viewport().get_visible_rect().size
-	var margin: float = clampf(view_size.y * 0.04, 16.0, 34.0)
-	var panel_width: float = minf(370.0, maxf(280.0, view_size.x * 0.42))
-	hud_panel.position = Vector2(margin, margin)
+	var safe_rect: Rect2 = _get_safe_view_rect(view_size)
+	var margin_left: float = maxf(16.0, safe_rect.position.x + 16.0)
+	var margin_top: float = maxf(16.0, safe_rect.position.y + 16.0)
+	var margin_right: float = maxf(16.0, view_size.x - safe_rect.end.x + 16.0)
+	var panel_width: float = minf(370.0, maxf(240.0, safe_rect.size.x * 0.42))
+	hud_panel.position = Vector2(margin_left, margin_top)
 	hud_panel.size = Vector2(panel_width, 132)
 	hud_energy.position = hud_panel.position + Vector2(20, 14)
 	hud_water.position = hud_panel.position + Vector2(20, 45)
@@ -233,12 +236,24 @@ func _layout_hud() -> void:
 	if DisplayServer.is_touchscreen_available():
 		control_hint_a.text = "Touch: bewegen · umsehen"
 		control_hint_b.text = "Aktionen rechts · Pause oben"
-	message.position = Vector2(margin, max(420.0, view_size.y - 92.0))
-	message.size = Vector2(max(280.0, view_size.x - margin * 2.0), 44)
-	interaction_hint.position = Vector2(max(margin, (view_size.x - 500.0) * 0.5), view_size.y * 0.70)
-	interaction_hint.size = Vector2(min(500.0, view_size.x - margin * 2.0), 42)
-	crosshair.position = Vector2(view_size.x * 0.5 - 10.0, view_size.y * 0.5 - 10.0)
-	save_hint.position = Vector2(max(margin, view_size.x - 150.0 - margin), margin)
+	message.position = Vector2(margin_left, maxf(420.0, safe_rect.end.y - 76.0))
+	message.size = Vector2(maxf(240.0, safe_rect.size.x - 32.0), 44)
+	interaction_hint.position = Vector2(safe_rect.position.x + maxf(0.0, (safe_rect.size.x - 500.0) * 0.5), safe_rect.position.y + safe_rect.size.y * 0.70)
+	interaction_hint.size = Vector2(minf(500.0, maxf(240.0, safe_rect.size.x - 32.0)), 42)
+	var safe_center: Vector2 = safe_rect.position + safe_rect.size * 0.5
+	crosshair.position = safe_center - Vector2(10.0, 10.0)
+	save_hint.position = Vector2(maxf(margin_left, safe_rect.end.x - 150.0 - margin_right), margin_top)
+
+func _get_safe_view_rect(view_size: Vector2) -> Rect2:
+	var safe_area: Rect2i = DisplayServer.get_display_safe_area()
+	var screen_size: Vector2i = DisplayServer.screen_get_size()
+	if safe_area.size.x <= 0 or safe_area.size.y <= 0 or screen_size.x <= 0 or screen_size.y <= 0:
+		return Rect2(Vector2.ZERO, view_size)
+	var left_ratio: float = clampf(float(safe_area.position.x) / float(screen_size.x), 0.0, 1.0)
+	var top_ratio: float = clampf(float(safe_area.position.y) / float(screen_size.y), 0.0, 1.0)
+	var right_ratio: float = clampf(float(safe_area.end.x) / float(screen_size.x), left_ratio, 1.0)
+	var bottom_ratio: float = clampf(float(safe_area.end.y) / float(screen_size.y), top_ratio, 1.0)
+	return Rect2(Vector2(view_size.x * left_ratio, view_size.y * top_ratio), Vector2(view_size.x * (right_ratio - left_ratio), view_size.y * (bottom_ratio - top_ratio)))
 
 func _build_pause_overlay(layer: CanvasLayer) -> void:
 	pause_overlay = Control.new()
