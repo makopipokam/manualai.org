@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#4CAF50">
-    <title>Find deinen perfekten Hund - Persönlichkeitstest</title>
+    <title>Finde passende Hunde - Persönlichkeitstest</title>
     <link rel="stylesheet" href="/mydog/style.css">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
@@ -13,8 +13,8 @@
     <div class="app-container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
-            <h1>🐾 Find deinen perfekten Hund 🐶</h1>
-            <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
+            <h1>🐾 Finde passende Hunde 🐶</h1>
+            <p class="subtitle">Mache einen kurzen Persönlichkeitstest und entdecke Hunde, die zu dir passen.</p>
             <button id="start-test-btn" class="btn-primary">Test starten</button>
             <div id="saved-result-panel" class="saved-result-panel" hidden>
                 <p><strong>Dein Ergebnis ist gespeichert.</strong><span id="saved-result-text">Du kannst es wieder öffnen oder den Test neu machen.</span></p>
@@ -52,13 +52,13 @@
         <!-- Loading Screen -->
         <div id="loading-screen" class="screen">
             <div class="loading-spinner"></div>
-            <h2>Wir finden deinen perfekten Hund...</h2>
+            <h2>Wir bereiten deine Vorschläge vor...</h2>
             <p>Basierend auf deinen Antworten analysieren wir, welcher Hund am besten zu dir passt.</p>
         </div>
 
         <!-- Results Screen -->
         <div id="results-screen" class="screen">
-            <h2>Dein perfekter Match: <span id="dog-name"></span> 🐕</h2>
+            <h2>Vorschlag für dich: <span id="dog-name"></span> 🐕</h2>
             
             <div class="dog-profile">
                 <div class="dog-images">
@@ -117,7 +117,7 @@
             </div>
             
             <div class="match-explanation">
-                <h3>Warum dieser Hund zu dir passt:</h3>
+                <h3>Warum dieser Hund zu dir passen könnte:</h3>
                 <p id="match-reason"></p>
             </div>
             
@@ -177,7 +177,7 @@
 
         <!-- No More Dogs Screen -->
         <div id="no-more-screen" class="screen">
-            <h2>Keine weiteren Hunde mehr</h2>
+            <h2>Keine weiteren Vorschläge</h2>
             <p>Du hast alle passenden Hunde gesehen. Möchtest du den Test noch einmal machen?</p>
             <button id="restart-test-btn" class="btn-primary">Test neu starten</button>
         </div>
