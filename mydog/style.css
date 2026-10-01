@@ -553,7 +553,9 @@ body {
 }
 
 /* Chat Screen */
+#chat-screen.screen.active { display: flex; }
 #chat-screen {
+    display: none;
     background-color: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
@@ -561,7 +563,6 @@ body {
     margin: 40px auto;
     max-width: 800px;
     max-height: 90vh;
-    display: flex;
     flex-direction: column;
     overflow: hidden;
     animation: slideIn 0.5s ease;

@@ -68,8 +68,7 @@ const elements = {
     dogImage6: document.getElementById('dog-image-6'),
     imageLabel: document.getElementById('image-label'),
     matchReason: document.getElementById('match-reason'),
-    interestBtn: document.getElementById('interest-btn'),
-    noInterestBtn: document.getElementById('no-interest-btn'),
+    nextDogBtn: document.getElementById('next-dog-btn'),
     favoriteBtn: document.getElementById('favorite-btn'),
     shareBtn: document.getElementById('share-btn'),
     backToResultsBtn: document.getElementById('back-to-results-btn'),
@@ -145,8 +144,7 @@ function setupEventListeners() {
     elements.nextQuestionBtn.addEventListener('click', nextQuestion);
     
     // Action buttons
-    elements.interestBtn.addEventListener('click', showChat);
-    elements.noInterestBtn.addEventListener('click', showNextDog);
+    elements.nextDogBtn.addEventListener('click', showNextDog);
     elements.backToResultsBtn.addEventListener('click', backToResults);
     elements.restartTestBtn.addEventListener('click', restartTest);
     elements.backFromFavoritesBtn.addEventListener('click', () => showScreen('start'));
@@ -218,6 +216,7 @@ function renderSavedResult() {
 function persistCompletedResult() {
     appState.lastResult = {
         dogIds: appState.matchingDogs.map(dog => dog.id),
+        matchScores: Object.fromEntries(appState.matchingDogs.map(dog => [dog.id, dog.matchScore || 0])),
         userPersonality: { ...appState.userPersonality },
         completedAt: new Date().toISOString(),
         currentDogIndex: 0
@@ -232,7 +231,13 @@ function restoreLastResult() {
         startNewTest();
         return;
     }
-    const restoredDogs = result.dogIds.map(id => dogDatabase.find(dog => dog.id === id)).filter(Boolean);
+    const restoredScores = result.matchScores || Object.fromEntries(
+        getMatchingDogs(result.userPersonality || {}, result.dogIds.length).map(dog => [dog.id, dog.matchScore || 0])
+    );
+    const restoredDogs = result.dogIds.map(id => {
+        const dog = dogDatabase.find(candidate => candidate.id === id);
+        return dog ? { ...dog, matchScore: restoredScores[id] ?? 0 } : null;
+    }).filter(Boolean);
     if (!restoredDogs.length) {
         startNewTest();
         return;
@@ -674,7 +679,7 @@ function updateFavoriteButton() {
     
     const isFavorite = appState.favorites.some(f => f.id === appState.currentDog.id);
     elements.favoriteBtn.classList.toggle('favorited', isFavorite);
-    elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten hinzufügen';
+    elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten speichern';
 }
 
 // Open share modal
