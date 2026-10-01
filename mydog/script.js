@@ -22,7 +22,8 @@ let appState = {
         trainability: [],
         grooming: []
     },
-    darkMode: false
+    darkMode: false,
+    lastResult: null
 };
 
 // DOM Elements
@@ -38,6 +39,10 @@ const screens = {
 
 const elements = {
     startTestBtn: document.getElementById('start-test-btn'),
+    savedResultPanel: document.getElementById('saved-result-panel'),
+    savedResultText: document.getElementById('saved-result-text'),
+    resumeResultBtn: document.getElementById('resume-result-btn'),
+    retakeTestBtn: document.getElementById('retake-test-btn'),
     viewFavoritesBtn: document.getElementById('view-favorites-btn'),
     backFromFavoritesBtn: document.getElementById('back-from-favorites-btn'),
     questionText: document.getElementById('question-text'),
@@ -63,8 +68,7 @@ const elements = {
     dogImage6: document.getElementById('dog-image-6'),
     imageLabel: document.getElementById('image-label'),
     matchReason: document.getElementById('match-reason'),
-    interestBtn: document.getElementById('interest-btn'),
-    noInterestBtn: document.getElementById('no-interest-btn'),
+    nextDogBtn: document.getElementById('next-dog-btn'),
     favoriteBtn: document.getElementById('favorite-btn'),
     shareBtn: document.getElementById('share-btn'),
     backToResultsBtn: document.getElementById('back-to-results-btn'),
@@ -76,6 +80,8 @@ const elements = {
     restartTestBtn: document.getElementById('restart-test-btn'),
     quickReplyBtns: document.querySelectorAll('.quick-reply-btn'),
     favoritesList: document.getElementById('favorites-list'),
+    favoritesCount: document.getElementById('favorites-count'),
+    favoritesSummary: document.getElementById('favorites-summary'),
     energyRating: document.getElementById('energy-rating'),
     groomingRating: document.getElementById('grooming-rating'),
     familyRating: document.getElementById('family-rating'),
@@ -94,6 +100,7 @@ function init() {
     loadState();
     setupEventListeners();
     updateDarkMode();
+    renderSavedResult();
     showScreen('start');
 }
 
@@ -107,6 +114,7 @@ function loadState() {
             appState.darkMode = state.darkMode || false;
             appState.userAnswers = state.userAnswers || [];
             appState.currentQuestion = state.currentQuestion || 0;
+            appState.lastResult = state.lastResult || null;
         } catch (e) {
             console.error('Error loading state:', e);
         }
@@ -119,7 +127,8 @@ function saveState() {
         favorites: appState.favorites,
         darkMode: appState.darkMode,
         userAnswers: appState.userAnswers,
-        currentQuestion: appState.currentQuestion
+        currentQuestion: appState.currentQuestion,
+        lastResult: appState.lastResult
     };
     localStorage.setItem('mydog_appState', JSON.stringify(state));
 }
@@ -128,6 +137,8 @@ function saveState() {
 function setupEventListeners() {
     // Start test button
     elements.startTestBtn.addEventListener('click', startTest);
+    elements.resumeResultBtn.addEventListener('click', restoreLastResult);
+    elements.retakeTestBtn.addEventListener('click', startNewTest);
     elements.viewFavoritesBtn.addEventListener('click', showFavorites);
     
     // Navigation buttons
@@ -135,8 +146,7 @@ function setupEventListeners() {
     elements.nextQuestionBtn.addEventListener('click', nextQuestion);
     
     // Action buttons
-    elements.interestBtn.addEventListener('click', showChat);
-    elements.noInterestBtn.addEventListener('click', showNextDog);
+    elements.nextDogBtn.addEventListener('click', showNextDog);
     elements.backToResultsBtn.addEventListener('click', backToResults);
     elements.restartTestBtn.addEventListener('click', restartTest);
     elements.backFromFavoritesBtn.addEventListener('click', () => showScreen('start'));
@@ -191,6 +201,60 @@ function showScreen(screenName) {
     
     // Scroll to top
     window.scrollTo(0, 0);
+}
+
+// Render the saved-result affordance on the start screen.
+function renderSavedResult() {
+    if (!elements.savedResultPanel) return;
+    const result = appState.lastResult;
+    const firstDog = result && result.dogIds ? dogDatabase.find(dog => dog.id === result.dogIds[0]) : null;
+    const hasResult = Boolean(firstDog);
+    elements.savedResultPanel.hidden = !hasResult;
+    if (hasResult) {
+        elements.savedResultText.textContent = `Zuletzt: ${firstDog.name}. Das Ergebnis bleibt auf diesem Gerät gespeichert.`;
+    }
+}
+
+function persistCompletedResult() {
+    appState.lastResult = {
+        dogIds: appState.matchingDogs.map(dog => dog.id),
+        matchScores: Object.fromEntries(appState.matchingDogs.map(dog => [dog.id, dog.matchScore || 0])),
+        userPersonality: { ...appState.userPersonality },
+        completedAt: new Date().toISOString(),
+        currentDogIndex: 0
+    };
+    saveState();
+    renderSavedResult();
+}
+
+function restoreLastResult() {
+    const result = appState.lastResult;
+    if (!result || !Array.isArray(result.dogIds)) {
+        startNewTest();
+        return;
+    }
+    const restoredScores = result.matchScores || Object.fromEntries(
+        getMatchingDogs(result.userPersonality || {}, result.dogIds.length).map(dog => [dog.id, dog.matchScore || 0])
+    );
+    const restoredDogs = result.dogIds.map(id => {
+        const dog = dogDatabase.find(candidate => candidate.id === id);
+        return dog ? { ...dog, matchScore: restoredScores[id] ?? 0 } : null;
+    }).filter(Boolean);
+    if (!restoredDogs.length) {
+        startNewTest();
+        return;
+    }
+    appState.matchingDogs = restoredDogs;
+    appState.userPersonality = result.userPersonality || appState.userPersonality;
+    appState.currentDogIndex = Math.min(result.currentDogIndex || 0, restoredDogs.length - 1);
+    showDogResult();
+}
+
+function startNewTest() {
+    appState.lastResult = null;
+    saveState();
+    renderSavedResult();
+    startTest();
 }
 
 // Start the personality test
@@ -323,6 +387,7 @@ function findMatchingDogs() {
     setTimeout(() => {
         appState.matchingDogs = getMatchingDogs(appState.userPersonality, 10);
         appState.currentDogIndex = 0;
+        persistCompletedResult();
         
         if (appState.matchingDogs.length > 0) {
             showDogResult();
@@ -366,7 +431,7 @@ function showDogResult() {
 
 // Load dog images with fallback and labels
 function loadDogImages(imageUrls, labels) {
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
+    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     const dog = appState.currentDog;
     
     // Set main image
@@ -375,6 +440,7 @@ function loadDogImages(imageUrls, labels) {
     };
     elements.dogImageMain.src = imageUrls[0] || fallbackImage;
     elements.dogImageMain.alt = dog.name;
+    elements.dogImageMain.loading = "eager";
     
     // Set thumbnail images
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
@@ -385,7 +451,8 @@ function loadDogImages(imageUrls, labels) {
                 this.src = fallbackImage;
             };
             imgElement.src = imageUrls[index] || imageUrls[0] || fallbackImage;
-            imgElement.alt = labels ? labels[index] || dog.name : dog.name;
+            imgElement.alt = `${dog.name} — Bild ${index + 1}`;
+            imgElement.loading = "lazy";
             imgElement.addEventListener('click', () => {
                 selectThumbnail(index, imageUrls, labels);
             });
@@ -399,15 +466,15 @@ function loadDogImages(imageUrls, labels) {
 // Select a thumbnail image
 function selectThumbnail(index, imageUrls, labels) {
     const dog = appState.currentDog;
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
+    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     
     // Update main image
     elements.dogImageMain.src = imageUrls[index] || fallbackImage;
-    elements.dogImageMain.alt = labels ? labels[index] || dog.name : dog.name;
+    elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
     
     // Update label
     if (elements.imageLabel && labels && labels[index]) {
-        elements.imageLabel.textContent = labels[index];
+        elements.imageLabel.textContent = `${dog.name} · Bild ${index + 1}`;
     }
     
     // Update thumbnail selection
@@ -493,6 +560,10 @@ function showChat() {
 // Show next dog
 function showNextDog() {
     appState.currentDogIndex++;
+    if (appState.lastResult) {
+        appState.lastResult.currentDogIndex = appState.currentDogIndex;
+        saveState();
+    }
     
     if (appState.currentDogIndex < appState.matchingDogs.length) {
         showDogResult();
@@ -522,8 +593,24 @@ function showFavorites() {
 
 // Render favorites list
 function renderFavorites() {
+    const favoriteCount = appState.favorites.length;
+    if (elements.favoritesCount) {
+        elements.favoritesCount.textContent = favoriteCount;
+    }
+    if (elements.favoritesSummary) {
+        elements.favoritesSummary.textContent = favoriteCount === 0
+            ? 'Noch keine gespeicherten Hunde.'
+            : `${favoriteCount} ${favoriteCount === 1 ? 'Hund' : 'Hunde'} gespeichert — wähle einen Hund aus, um sein Profil zu öffnen.`;
+    }
     if (appState.favorites.length === 0) {
-        elements.favoritesList.innerHTML = '<div class="empty-favorites">Du hast noch keine Favoriten. Füge Hunde zu deinen Favoriten hinzu, indem du auf den ❤️-Button klickst!</div>';
+        elements.favoritesList.innerHTML = `
+            <div class="empty-favorites">
+                <span class="empty-favorites-icon" aria-hidden="true">🐾</span>
+                <h3>Noch keine Favoriten</h3>
+                <p>Speichere Hunde aus deinen Testergebnissen, damit du sie hier jederzeit wiederfindest.</p>
+                <button class="btn-primary empty-favorites-action" type="button">Test starten</button>
+            </div>`;
+        elements.favoritesList.querySelector('.empty-favorites-action').addEventListener('click', startTest);
         return;
     }
     
@@ -532,27 +619,36 @@ function renderFavorites() {
     appState.favorites.forEach((dog, index) => {
         const card = document.createElement('div');
         card.className = 'favorite-card';
+        card.setAttribute('role', 'group');
+        card.dataset.dogId = dog.id;
         card.innerHTML = `
-            <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop'}" alt="${dog.name}">
+            <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'}" alt="${dog.name}" onerror="this.src='https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'">
             <h3>${dog.name}</h3>
             <p class="breed">${dog.breed}</p>
             <p>${dog.description.substring(0, 100)}...</p>
             <div class="rating">
                 <span>⭐ ${calculateOverallRating(dog.ratings).toFixed(1)}/5</span>
             </div>
-            <button class="remove-btn" data-index="${index}">Entfernen</button>
+            <div class="favorite-card-actions">
+                <button class="view-btn" type="button">Profil ansehen</button>
+                <button class="remove-btn" type="button" data-index="${index}">Entfernen</button>
+            </div>
         `;
-        
-        card.addEventListener('click', () => {
+
+        const viewFavorite = () => {
             const fullDog = dogDatabase.find(d => d.id === dog.id);
             if (fullDog) {
-                appState.matchingDogs = [fullDog];
+                appState.matchingDogs = [{ ...fullDog, matchScore: dog.matchScore || 0 }];
                 appState.currentDogIndex = 0;
                 showDogResult();
                 showScreen('results');
             }
+        };
+        card.querySelector('.view-btn').addEventListener('click', viewFavorite);
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('button')) viewFavorite();
         });
-        
+
         const removeBtn = card.querySelector('.remove-btn');
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -610,7 +706,7 @@ function updateFavoriteButton() {
     
     const isFavorite = appState.favorites.some(f => f.id === appState.currentDog.id);
     elements.favoriteBtn.classList.toggle('favorited', isFavorite);
-    elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten hinzufügen';
+    elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten speichern';
 }
 
 // Open share modal

@@ -98,6 +98,35 @@ body {
     margin-right: auto;
 }
 
+.saved-result-panel {
+    max-width: 620px;
+    margin: 28px auto 0;
+    padding: 20px;
+    border: 1px solid rgba(76, 175, 80, 0.28);
+    border-radius: var(--border-radius);
+    background: rgba(76, 175, 80, 0.08);
+    text-align: left;
+}
+
+.saved-result-panel[hidden] { display: none; }
+.saved-result-panel p { margin: 0 0 16px; color: var(--text-light); }
+.saved-result-panel p strong, .saved-result-panel p span { display: block; }
+.saved-result-panel p strong { color: var(--text-color); margin-bottom: 4px; }
+.saved-result-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.saved-result-actions button { flex: 1 1 180px; }
+.btn-outline {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+    padding: 12px 24px;
+    font-size: 1rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 600;
+}
+.btn-outline:hover { background: rgba(76, 175, 80, 0.1); transform: translateY(-2px); }
+
 /* Buttons */
 .btn-primary {
     background-color: var(--primary-color);
@@ -524,7 +553,9 @@ body {
 }
 
 /* Chat Screen */
+#chat-screen.screen.active { display: flex; }
 #chat-screen {
+    display: none;
     background-color: var(--card-background);
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
@@ -532,7 +563,6 @@ body {
     margin: 40px auto;
     max-width: 800px;
     max-height: 90vh;
-    display: flex;
     flex-direction: column;
     overflow: hidden;
     animation: slideIn 0.5s ease;
@@ -718,6 +748,25 @@ body {
     color: var(--primary-color);
     margin: 0;
 }
+.favorites-count {
+    display: inline-flex;
+    min-width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+.favorites-summary {
+    margin: 5px 0 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
 
 .favorites-list {
     display: grid;
@@ -769,17 +818,32 @@ body {
     gap: 10px;
     margin-top: 10px;
 }
-
+.favorite-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.favorite-card .view-btn,
+.favorite-card .remove-btn {
+    flex: 1 1 120px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+.favorite-card .view-btn {
+    background-color: var(--primary-color);
+}
+.favorite-card .view-btn:hover {
+    background-color: var(--primary-hover);
+}
 .favorite-card .remove-btn {
     background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.8rem;
-    margin-top: 10px;
 }
 
 .favorite-card .remove-btn:hover {
@@ -791,6 +855,23 @@ body {
     padding: 40px;
     color: var(--text-light);
     font-size: 1.1rem;
+}
+.empty-favorites-icon {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 2.5rem;
+}
+.empty-favorites h3 {
+    margin: 0 0 8px;
+    color: var(--text-color);
+}
+.empty-favorites p {
+    max-width: 480px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+}
+.empty-favorites-action {
+    margin-top: 4px;
 }
 
 /* No More Dogs Screen */

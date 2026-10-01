@@ -55,12 +55,12 @@ const dogDatabase = [
         name: "Labrador Retriever",
         breed: "Labrador Retriever",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Labrador_Retriever_black.jpg/800px-Labrador_Retriever_black.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Labrador_retriever_with_ball.jpg/800px-Labrador_retriever_with_ball.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Labrador_Retriever_portrait.jpg/800px-Labrador_Retriever_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Labrador_puppy.jpg/800px-Labrador_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Labrador_swimming.jpg/800px-Labrador_swimming.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Labrador_old.jpg/800px-Labrador_old.jpg"
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Labrador (schwarz)", "Labrador mit Ball", "Labrador Porträt", "Labrador Welpe", "Labrador beim Schwimmen", "Labrador Senior"],
         description: "Der Labrador Retriever ist einer der beliebtesten Familienhunde weltweit. Er ist freundlich, intelligent und extrem lernwillig. Labradore lieben Wasser und Apportierspiele. Sie sind hervorragende Begleiter für aktive Familien und Einzelpersonen.",
@@ -90,12 +90,12 @@ const dogDatabase = [
         name: "Golden Retriever",
         breed: "Golden Retriever",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Golden_Retriever_Adult_Male.jpg/800px-Golden_Retriever_Adult_Male.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Golden_Retriever_snow.jpg/800px-Golden_Retriever_snow.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Golden_Retriever_portrait.jpg/800px-Golden_Retriever_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Golden_Retriever_puppy.jpg/800px-Golden_Retriever_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Golden_Retriever_fetching.jpg/800px-Golden_Retriever_fetching.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Golden_Retriever_old.jpg/800px-Golden_Retriever_old.jpg"
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Golden Retriever", "Golden im Schnee", "Golden Porträt", "Golden Welpe", "Golden beim Apportieren", "Golden Senior"],
         description: "Der Golden Retriever ist bekannt für sein sanftes Wesen und seine Geduld. Er ist ein hervorragender Familienhund und Therapiehund. Goldies sind intelligent, lernwillig und lieben es, Menschen zu gefallen.",
@@ -125,12 +125,12 @@ const dogDatabase = [
         name: "Border Collie",
         breed: "Border Collie",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Border_Collie_black_white.jpg/800px-Border_Collie_black_white.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Border_Collie_herding.jpg/800px-Border_Collie_herding.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Border_Collie_portrait.jpg/800px-Border_Collie_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Border_Collie_puppy.jpg/800px-Border_Collie_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Border_Collie_agility.jpg/800px-Border_Collie_agility.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Border_Collie_old.jpg/800px-Border_Collie_old.jpg"
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Border Collie", "Border Collie beim Hüten", "Border Collie Porträt", "Border Collie Welpe", "Border Collie beim Agility", "Border Collie Senior"],
         description: "Der Border Collie ist einer der intelligentesten Hunde der Welt. Er ist extrem arbeitswillig und braucht viel geistige und körperliche Auslastung. Border Collies sind hervorragende Hütehunde und Sportpartner.",
@@ -160,12 +160,12 @@ const dogDatabase = [
         name: "Dackel",
         breed: "Dackel (Teckel)",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Dachshund_black_tan.jpg/800px-Dachshund_black_tan.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Dachshund_in_grass.jpg/800px-Dachshund_in_grass.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Dachshund_portrait.jpg/800px-Dachshund_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Dachshund_puppy.jpg/800px-Dachshund_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Dachshund_playing.jpg/800px-Dachshund_playing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Dachshund_old.jpg/800px-Dachshund_old.jpg"
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Dackel", "Dackel im Gras", "Dackel Porträt", "Dackel Welpe", "Dackel beim Spielen", "Dackel Senior"],
         description: "Der Dackel ist ein mutiger, intelligenter und eigenwilliger kleiner Hund. Ursprünglich für die Jagd gezüchtet, hat er einen starken Jagdtrieb. Dackel sind loyal und haben eine große Persönlichkeit.",
@@ -195,12 +195,12 @@ const dogDatabase = [
         name: "Französische Bulldogge",
         breed: "Französische Bulldogge",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/French_Bulldog_adult.jpg/800px-French_Bulldog_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/French_Bulldog_sofa.jpg/800px-French_Bulldog_sofa.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/French_Bulldog_portrait.jpg/800px-French_Bulldog_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/French_Bulldog_puppy.jpg/800px-French_Bulldog_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/French_Bulldog_sleeping.jpg/800px-French_Bulldog_sleeping.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/French_Bulldog_old.jpg/800px-French_Bulldog_old.jpg"
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsene Französische Bulldogge", "Bulldogge auf Sofa", "Bulldogge Porträt", "Bulldogge Welpe", "Bulldogge beim Schlafen", "Bulldogge Senior"],
         description: "Die Französische Bulldogge ist ein lustiger, verspielter und anhänglicher Begleithund. Sie ist relativ pflegeleicht und kommt gut in Wohnungen zurecht. Französische Bulldoggen sind bekannt für ihre 'Fledermausohren' und ihr charmantes Wesen.",
@@ -230,12 +230,12 @@ const dogDatabase = [
         name: "Beagle",
         breed: "Beagle",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Beagle_adult.jpg/800px-Beagle_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Beagle_sniffing.jpg/800px-Beagle_sniffing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Beagle_portrait.jpg/800px-Beagle_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Beagle_puppy.jpg/800px-Beagle_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Beagle_playing.jpg/800px-Beagle_playing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Beagle_old.jpg/800px-Beagle_old.jpg"
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Beagle", "Beagle beim Schnüffeln", "Beagle Porträt", "Beagle Welpe", "Beagle beim Spielen", "Beagle Senior"],
         description: "Der Beagle ist ein fröhlicher, neugieriger und geselliger Hund. Er hat einen starken Jagdtrieb und eine hervorragende Nase. Beagles sind gute Familienhunde, die viel Bewegung und geistige Auslastung brauchen.",
@@ -265,12 +265,12 @@ const dogDatabase = [
         name: "Malteser",
         breed: "Malteser",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Maltese_adult.jpg/800px-Maltese_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Maltese_lap.jpg/800px-Maltese_lap.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Maltese_portrait.jpg/800px-Maltese_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Maltese_puppy.jpg/800px-Maltese_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Maltese_sleeping.jpg/800px-Maltese_sleeping.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Maltese_old.jpg/800px-Maltese_old.jpg"
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Malteser", "Malteser auf Schoß", "Malteser Porträt", "Malteser Welpe", "Malteser beim Schlafen", "Malteser Senior"],
         description: "Der Malteser ist ein kleiner, eleganter und anhänglicher Begleithund. Er ist intelligent, lernwillig und liebt es, auf dem Schoß zu sitzen. Malteser haben ein langes, seidiges Fell, das regelmäßige Pflege erfordert.",
@@ -300,12 +300,12 @@ const dogDatabase = [
         name: "Deutscher Schäferhund",
         breed: "Deutscher Schäferhund",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/German_Shepherd_adult.jpg/800px-German_Shepherd_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/German_Shepherd_working.jpg/800px-German_Shepherd_working.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/German_Shepherd_portrait.jpg/800px-German_Shepherd_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/German_Shepherd_puppy.jpg/800px-German_Shepherd_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/German_Shepherd_training.jpg/800px-German_Shepherd_training.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/German_Shepherd_old.jpg/800px-German_Shepherd_old.jpg"
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Schäferhund", "Schäferhund beim Arbeiten", "Schäferhund Porträt", "Schäferhund Welpe", "Schäferhund beim Training", "Schäferhund Senior"],
         description: "Der Deutsche Schäferhund ist ein vielseitiger, intelligenter und treuer Hund. Er ist ein hervorragender Arbeitshund (Polizei, Rettung, Diensthund) und Familienhund. Schäferhunde brauchen viel Bewegung, geistige Auslastung und eine konsequente Erziehung.",
@@ -335,12 +335,12 @@ const dogDatabase = [
         name: "Pudel",
         breed: "Pudel (alle Größen)",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Poodle_standard_black.jpg/800px-Poodle_standard_black.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Poodle_tricks.jpg/800px-Poodle_tricks.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Poodle_portrait.jpg/800px-Poodle_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Poodle_puppy.jpg/800px-Poodle_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Poodle_running.jpg/800px-Poodle_running.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Poodle_old.jpg/800px-Poodle_old.jpg"
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Pudel", "Pudel beim Tricktraining", "Pudel Porträt", "Pudel Welpe", "Pudel beim Laufen", "Pudel Senior"],
         description: "Der Pudel ist ein intelligenter, lernwilliger und hypoallergener Hund. Er gibt es in drei Größen (Toy, Zwerg, Standard). Pudel sind vielseitig, können Tricks lernen und sind gute Begleiter für verschiedene Lebensstile.",
@@ -370,12 +370,12 @@ const dogDatabase = [
         name: "Chihuahua",
         breed: "Chihuahua",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Chihuahua_adult.jpg/800px-Chihuahua_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Chihuahua_blanket.jpg/800px-Chihuahua_blanket.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Chihuahua_portrait.jpg/800px-Chihuahua_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Chihuahua_puppy.jpg/800px-Chihuahua_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Chihuahua_sleeping.jpg/800px-Chihuahua_sleeping.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Chihuahua_old.jpg/800px-Chihuahua_old.jpg"
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Chihuahua", "Chihuahua auf Decke", "Chihuahua Porträt", "Chihuahua Welpe", "Chihuahua beim Schlafen", "Chihuahua Senior"],
         description: "Der Chihuahua ist der kleinste Hunderasse der Welt, aber mit einer großen Persönlichkeit. Er ist mutig, wachsam und sehr an seine Bezugsperson gebunden. Chihuahuas können in Wohnungen gut gehalten werden.",
@@ -405,12 +405,12 @@ const dogDatabase = [
         name: "Australian Shepherd",
         breed: "Australian Shepherd",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Australian_Shepherd_blue_merle.jpg/800px-Australian_Shepherd_blue_merle.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Australian_Shepherd_herding.jpg/800px-Australian_Shepherd_herding.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Australian_Shepherd_portrait.jpg/800px-Australian_Shepherd_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Australian_Shepherd_puppy.jpg/800px-Australian_Shepherd_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Australian_Shepherd_agility.jpg/800px-Australian_Shepherd_agility.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Australian_Shepherd_old.jpg/800px-Australian_Shepherd_old.jpg"
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Australian Shepherd", "Aussie beim Hüten", "Aussie Porträt", "Aussie Welpe", "Aussie beim Agility", "Aussie Senior"],
         description: "Der Australian Shepherd ist ein intelligenter, energiegeladener Hütehund. Er ist extrem arbeitswillig und braucht viel körperliche und geistige Auslastung. Aussies sind loyal und gut mit Kindern, wenn sie richtig sozialisiert sind.",
@@ -440,12 +440,12 @@ const dogDatabase = [
         name: "Cavalier King Charles Spaniel",
         breed: "Cavalier King Charles Spaniel",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Cavalier_King_Charles_Spaniel_adult.jpg/800px-Cavalier_King_Charles_Spaniel_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Cavalier_King_Charles_Spaniel_sofa.jpg/800px-Cavalier_King_Charles_Spaniel_sofa.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Cavalier_King_Charles_Spaniel_portrait.jpg/800px-Cavalier_King_Charles_Spaniel_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Cavalier_King_Charles_Spaniel_puppy.jpg/800px-Cavalier_King_Charles_Spaniel_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cavalier_King_Charles_Spaniel_cuddling.jpg/800px-Cavalier_King_Charles_Spaniel_cuddling.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Cavalier_King_Charles_Spaniel_old.jpg/800px-Cavalier_King_Charles_Spaniel_old.jpg"
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Cavalier", "Cavalier auf Sofa", "Cavalier Porträt", "Cavalier Welpe", "Cavalier beim Kuscheln", "Cavalier Senior"],
         description: "Der Cavalier King Charles Spaniel ist ein sanfter, anhänglicher und freundlicher Begleithund. Er ist bekannt für seine großen, dunklen Augen und sein seidiges Fell. Cavaliers sind hervorragende Schoßhunde und gute Familienhunde.",
@@ -475,12 +475,12 @@ const dogDatabase = [
         name: "Berger Picard",
         breed: "Berger Picard (Picardischer Schäferhund)",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Berger_Picard_2021.jpg/800px-Berger_Picard_2021.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Berger_Picard_standing.jpg/800px-Berger_Picard_standing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Berger_Picard_portrait.jpg/800px-Berger_Picard_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Berger_Picard_puppy.jpg/800px-Berger_Picard_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7a/Berger_Picard_working.jpg/800px-Berger_Picard_working.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Berger_Picard_old.jpg/800px-Berger_Picard_old.jpg"
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Berger Picard", "Berger Picard stehend", "Berger Picard Porträt", "Berger Picard Welpe", "Berger Picard bei der Arbeit", "Berger Picard Senior"],
         description: "Der Berger Picard ist ein französischer Hütehund mit drahtigem, wetterfestem Fell und aufmerksamen, ausdrucksstarken Augen. Er ist intelligent, energiegeladen und sehr an seine Familie gebunden. Berger Picards sind vielseitige Arbeitshunde, die auch als Familienhunde glänzen.",
@@ -510,12 +510,12 @@ const dogDatabase = [
         name: "Berner Sennenhund",
         breed: "Berner Sennenhund",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Bernese_Mountain_Dog_adult.jpg/800px-Bernese_Mountain_Dog_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Bernese_Mountain_Dog_snow.jpg/800px-Bernese_Mountain_Dog_snow.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Bernese_Mountain_Dog_portrait.jpg/800px-Bernese_Mountain_Dog_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Bernese_Mountain_Dog_puppy.jpg/800px-Bernese_Mountain_Dog_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Bernese_Mountain_Dog_family.jpg/800px-Bernese_Mountain_Dog_family.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Bernese_Mountain_Dog_old.jpg/800px-Bernese_Mountain_Dog_old.jpg"
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Berner Sennenhund", "Berner im Schnee", "Berner Porträt", "Berner Welpe", "Berner mit Familie", "Berner Senior"],
         description: "Der Berner Sennenhund ist ein sanfter Riese mit dreifarbigem Fell. Er ist bekannt für sein freundliches, ruhiges Wesen und seine Treue. Berner sind hervorragende Familienhunde, die gut mit Kindern umgehen können. Sie brauchen viel Platz und sind nicht für heiße Klimazonen geeignet.",
@@ -545,12 +545,12 @@ const dogDatabase = [
         name: "Shiba Inu",
         breed: "Shiba Inu",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Shiba_Inu_adult.jpg/800px-Shiba_Inu_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Shiba_Inu_autumn.jpg/800px-Shiba_Inu_autumn.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Shiba_Inu_portrait.jpg/800px-Shiba_Inu_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Shiba_Inu_puppy.jpg/800px-Shiba_Inu_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Shiba_Inu_playing.jpg/800px-Shiba_Inu_playing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Shiba_Inu_old.jpg/800px-Shiba_Inu_old.jpg"
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Shiba Inu", "Shiba Inu im Herbst", "Shiba Inu Porträt", "Shiba Inu Welpe", "Shiba Inu beim Spielen", "Shiba Inu Senior"],
         description: "Der Shiba Inu ist eine japanische Hunderasse mit fuchsähnlichem Aussehen und einem starken, unabhängigen Charakter. Er ist intelligent, sauber und hat eine katzenartige Persönlichkeit. Shibas sind loyal, können aber auch eigenwillig sein.",
@@ -580,12 +580,12 @@ const dogDatabase = [
         name: "Sibirischer Husky",
         breed: "Sibirischer Husky",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Siberian_Husky_adult.jpg/800px-Siberian_Husky_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Siberian_Husky_snow.jpg/800px-Siberian_Husky_snow.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Siberian_Husky_portrait.jpg/800px-Siberian_Husky_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Siberian_Husky_puppy.jpg/800px-Siberian_Husky_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Siberian_Husky_running.jpg/800px-Siberian_Husky_running.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Siberian_Husky_old.jpg/800px-Siberian_Husky_old.jpg"
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Husky", "Husky im Schnee", "Husky Porträt", "Husky Welpe", "Husky beim Laufen", "Husky Senior"],
         description: "Der Sibirische Husky ist bekannt für seine atemberaubenden blauen oder mehrfarbigen Augen und sein wolfsähnliches Aussehen. Er ist ein energiegeladener, freundlicher und geselliger Hund, der ursprünglich als Schlittenhund gezüchtet wurde.",
@@ -615,12 +615,12 @@ const dogDatabase = [
         name: "Dalmatiner",
         breed: "Dalmatiner",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Dalmatian_adult.jpg/800px-Dalmatian_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Dalmatian_running.jpg/800px-Dalmatian_running.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Dalmatian_portrait.jpg/800px-Dalmatian_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Dalmatian_puppy.jpg/800px-Dalmatian_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Dalmatian_family.jpg/800px-Dalmatian_family.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Dalmatian_old.jpg/800px-Dalmatian_old.jpg"
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Dalmatiner", "Dalmatiner beim Laufen", "Dalmatiner Porträt", "Dalmatiner Welpe", "Dalmatiner mit Familie", "Dalmatiner Senior"],
         description: "Der Dalmatiner ist bekannt für sein einzigartiges geflecktes Fell und sein energiegeladenes Wesen. Er ist ein aktiver, intelligenter und geselliger Hund, der ursprünglich als Kutschenbegleithund gezüchtet wurde.",
@@ -650,12 +650,12 @@ const dogDatabase = [
         name: "Boxer",
         breed: "Boxer",
         images: [
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Boxer_adult.jpg/800px-Boxer_adult.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/Boxer_playing.jpg/800px-Boxer_playing.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Boxer_portrait.jpg/800px-Boxer_portrait.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Boxer_puppy.jpg/800px-Boxer_puppy.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Boxer_training.jpg/800px-Boxer_training.jpg",
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Boxer_old.jpg/800px-Boxer_old.jpg"
+            "https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=82",
+            "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=82"
         ],
         imagesLabels: ["Erwachsener Boxer", "Boxer beim Spielen", "Boxer Porträt", "Boxer Welpe", "Boxer beim Training", "Boxer Senior"],
         description: "Der Boxer ist ein muskulöser, energiegeladener Hund mit einem freundlichen, verspieltem Wesen. Er ist bekannt für seine Treue und seinen Schutzinstinkt. Boxer sind hervorragende Familienhunde, die gut mit Kindern umgehen.",

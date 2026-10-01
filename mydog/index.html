@@ -16,6 +16,13 @@
             <h1>🐾 Find deinen perfekten Hund 🐶</h1>
             <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
             <button id="start-test-btn" class="btn-primary">Test starten</button>
+            <div id="saved-result-panel" class="saved-result-panel" hidden>
+                <p><strong>Dein Ergebnis ist gespeichert.</strong><span id="saved-result-text">Du kannst es wieder öffnen oder den Test neu machen.</span></p>
+                <div class="saved-result-actions">
+                    <button id="resume-result-btn" class="btn-secondary" type="button">Ergebnis anzeigen</button>
+                    <button id="retake-test-btn" class="btn-outline" type="button">Test neu machen</button>
+                </div>
+            </div>
             <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
         </div>
 
@@ -115,9 +122,8 @@
             </div>
             
             <div class="action-buttons">
-                <button id="interest-btn" class="btn-primary">✅ Interesse - Mehr erfahren</button>
-                <button id="no-interest-btn" class="btn-secondary">❌ Kein Interesse - Nächster Vorschlag</button>
-                <button id="favorite-btn" class="btn-favorite">❤️ Zu Favoriten hinzufügen</button>
+                <button id="favorite-btn" class="btn-favorite">❤️ Zu Favoriten speichern</button>
+                <button id="next-dog-btn" class="btn-secondary">Nächster Hund</button>
                 <button id="share-btn" class="btn-share">📤 Teilen</button>
             </div>
         </div>
@@ -159,7 +165,10 @@
         <div id="favorites-screen" class="screen">
             <div class="favorites-header">
                 <button id="back-from-favorites-btn" class="back-btn">← Zurück</button>
-                <h2>📚 Meine Favoriten</h2>
+                <div>
+                    <h2>📚 Meine Favoriten <span id="favorites-count" class="favorites-count" aria-live="polite">0</span></h2>
+                    <p id="favorites-summary" class="favorites-summary">Noch keine gespeicherten Hunde.</p>
+                </div>
             </div>
             <div id="favorites-list" class="favorites-list">
                 <!-- Favorites will be inserted by JS -->
