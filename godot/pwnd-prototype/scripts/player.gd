@@ -6,13 +6,13 @@ extends CharacterBody3D
 @export var mouse_sensitivity := 0.0025
 var camera: Camera3D
 var pitch := -0.18
-var pond_root: Node3D
+var water_surface: MeshInstance3D
 var mobile_move := Vector2.ZERO
 var boot_nodes: Array[Node3D] = []
 var boot_time := 0.0
 
-func setup(world: Node3D) -> void:
-	pond_root = world
+func setup(water_mesh: MeshInstance3D) -> void:
+	water_surface = water_mesh
 	camera = Camera3D.new()
 	camera.name = "FirstPersonCamera"
 	camera.position = Vector3(0, 1.58, 0)
@@ -66,7 +66,13 @@ func apply_touch_look(delta: Vector2) -> void:
 	camera.rotation.x = pitch
 
 func is_in_water() -> bool:
-	return global_position.z < 1.2 and global_position.z > -2.8 and global_position.x > -5.5 and global_position.x < 5.5
+	if water_surface == null or water_surface.mesh == null:
+		return false
+	# Detect wading in the visible footprint; its thin surface is not a solid floor.
+	var bounds: AABB = water_surface.mesh.get_aabb()
+	var local_position: Vector3 = water_surface.to_local(global_position)
+	return local_position.x >= bounds.position.x and local_position.x <= bounds.end.x \
+		and local_position.z >= bounds.position.z and local_position.z <= bounds.end.z
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:

@@ -155,7 +155,7 @@ func _build_player() -> void:
 	collision.position.y = 0.6
 	player.add_child(collision)
 	add_child(player)
-	player.setup(self)
+	player.setup(water_surface)
 
 func _spawn_animals() -> void:
 	_spawn_animal("frog", Vector3(-2.5, 0, -0.8))

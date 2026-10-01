@@ -32,6 +32,7 @@ func _run() -> void:
 	_test_habitat_requirement(main)
 	await _test_touch_reset(main)
 	_test_animal_stays_on_plane(main)
+	_test_wading_matches_surface(main)
 	await _test_quiz_layout(main)
 
 	print("")
@@ -161,6 +162,24 @@ func _test_animal_stays_on_plane(main: Node3D) -> void:
 			animal._process(0.1)
 		var drift: float = absf(animal.global_position.y - start_y)
 		_check(drift < 0.001, "%s bleibt auf seiner Ebene" % animal.species, "abweichung=%.3f" % drift)
+
+func _test_wading_matches_surface(main: Node3D) -> void:
+	print("Sichtbares Wasser / Waten")
+	var player: PwndPlayer = main.player
+	_check(player.water_surface == main.water_surface, "Spieler benutzt die sichtbare Wasserfläche")
+	for point in [Vector2(0, -4.6), Vector2(0, 2.0), Vector2(5.4, -1.3)]:
+		player.global_position = Vector3(point.x, 0.65, point.y)
+		_check(player.is_in_water(), "Im sichtbaren Wasser wird gewatet", "position=%s" % point)
+	for point in [Vector2(0, 2.4), Vector2(5.7, -1.3), Vector2(0, 5.8)]:
+		player.global_position = Vector3(point.x, 0.65, point.y)
+		_check(not player.is_in_water(), "Außerhalb des Wassers kein Waten", "position=%s" % point)
+	# Die leichte Wasseranimation rotiert die Fläche; die Abfrage muss mitrotieren.
+	var bounds: AABB = main.water_surface.mesh.get_aabb()
+	main.water_surface.rotation.y = 0.2
+	var sample: Vector3 = main.water_surface.to_global(Vector3(bounds.end.x - 0.3, 0, bounds.end.z - 0.3))
+	player.global_position = Vector3(sample.x, 0.65, sample.z)
+	_check(player.is_in_water(), "Wassergrenze berücksichtigt die Mesh-Rotation")
+	main.water_surface.rotation.y = 0.0
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")

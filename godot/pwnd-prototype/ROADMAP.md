@@ -47,7 +47,8 @@
 - [ ] **P1:** Weltkollision und Waten-Höhe korrigieren
 - [x] **P1:** Portrait-Quiz und Touchziele im simulierten 720×1280-Fenster geprüft
 - [ ] **P1:** Safe Area/Notch und Touch-Bedienung auf einem realen Gerät prüfen
-- [ ] **P2:** Bau-Reichweite, Wasserbereich und Save-Validierung konsistent machen
+- [x] **P2:** Sichtbare Wasserfläche ist die gemeinsame Grenze für Waten, Fischreaktion und Ripples (inklusive Rotationstest)
+- [ ] **P2:** Bau-Reichweite und Save-Validierung konsistent machen
 
 Siehe [REVIEW.md](REVIEW.md) für reproduzierte Befunde und Testgrenzen.
 
