@@ -66,7 +66,8 @@
       await wait(1800);
       assert(active() === 'results-screen', `complete test opens results (active=${active()}, progress=${page.querySelector('#progress-text')?.textContent})`);
       assert(page.querySelector('.ratings-overview h4')?.textContent === 'Eignung für dich:', 'overall stars are labeled as suitability');
-      assert(page.querySelector('.rating-caption')?.textContent.includes('zu deinen Antworten passt'), 'suitability explanation renders');
+      assert(page.querySelector('.profile-section-title')?.textContent === 'Rasse-Eigenschaften', 'attribute stars are grouped separately');
+      assert(page.querySelector('.rating-caption')?.textContent.includes('5 Sterne = passt sehr gut'), 'suitability explanation renders');
       const completed = state();
       assert(completed.lastResult?.dogIds?.length > 0, 'completed result persists dog ids');
       assert(Object.values(completed.lastResult.userPersonality).every(Number.isFinite), 'personality scores are numeric');
