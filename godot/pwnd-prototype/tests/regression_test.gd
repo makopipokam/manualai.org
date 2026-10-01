@@ -34,6 +34,7 @@ func _run() -> void:
 	_test_animal_stays_on_plane(main)
 	_test_wading_matches_surface(main)
 	_test_boot_height(main)
+	_test_build_and_save_consistency(main)
 	await _test_world_collisions(main)
 	await _test_quiz_layout(main)
 
@@ -202,6 +203,7 @@ func _test_world_collisions(main: Node3D) -> void:
 	_check(static_bodies.size() >= 4, "Boden, Ufer und Steine haben Kollisionen", "körper=%d" % static_bodies.size())
 	main.energy = 999
 	main.dock_built = false
+	main.player.global_position = Vector3(5.0, 0.0, 1.0)
 	main._build_dock()
 	var with_dock := 0
 	for child in main.get_children():
@@ -216,6 +218,29 @@ func _test_world_collisions(main: Node3D) -> void:
 	main.player.set_mobile_move(Vector2.ZERO)
 	_check(main.player.global_position.x > -5.95, "Spieler wird vom Uferstein gestoppt", "x=%.2f" % main.player.global_position.x)
 	main.player.rotation.y = 0.0
+
+func _test_build_and_save_consistency(main: Node3D) -> void:
+	print("Bau-Reichweite / Save-Validierung")
+	main.dock_built = false
+	main.energy = 180
+	main.player.global_position = Vector3(-8.0, 0.0, 6.0)
+	main._build_dock()
+	_check(not main.dock_built, "Bau außerhalb der Reichweite wird verhindert")
+	_check(main.energy == 180, "Bau außerhalb der Reichweite kostet keine Energie", "energie=%d" % main.energy)
+	main.player.global_position = Vector3(5.0, 0.0, 1.0)
+	main._build_dock()
+	_check(main.dock_built, "Bau innerhalb der Reichweite ist erlaubt")
+	_check(main.energy == 120, "Bau innerhalb der Reichweite zieht die Strukturkosten ab", "energie=%d" % main.energy)
+	var safe: Dictionary = main._validated_save_data({
+		"energy": -50,
+		"water": 999999,
+		"dock_built": "yes",
+		"audio_enabled": "no",
+		"animals": {"frog": 99, "duck": -4, "unknown": 99}
+	})
+	_check(safe["energy"] == 0 and safe["water"] == 9999, "Gespeicherte Ressourcen werden begrenzt", "energy=%s water=%s" % [safe["energy"], safe["water"]])
+	_check(safe["dock_built"] == false and safe["audio_enabled"] == true, "Ungültige Save-Typen fallen auf sichere Werte zurück")
+	_check(safe["animals"]["frog"] == 2 and safe["animals"]["duck"] == 0 and not safe["animals"].has("unknown"), "Tierstufen werden begrenzt und unbekannte Arten ignoriert")
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")

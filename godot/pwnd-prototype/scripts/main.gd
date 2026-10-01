@@ -10,11 +10,14 @@ const ECONOMY_RULES := {
 	"quiz_correct_water": 12,
 	"quiz_wrong_energy": 8,
 	"animal_upgrade_water": 20,
-	"animal_max_stage": 2
+	"animal_max_stage": 2,
+	"max_saved_resource": 9999
 }
+const ANIMAL_SPECIES := ["frog", "fish", "duck"]
 const STRUCTURE_DEFINITIONS := {
 	"duck_dock": {
 		"energy_cost": 60,
+		"build_range": 3.0,
 		"platform_size": Vector3(2.2, 0.16, 0.8),
 		"platform_position": Vector3(5.0, 0.48, -1.6),
 		"platform_color": Color("#a4774e"),
@@ -414,6 +417,9 @@ func _build_dock() -> void:
 	if dock_built:
 		_update_hud("Der Entensteg steht bereits.")
 		return
+	if _distance_to_structure("duck_dock") > float(definition["build_range"]):
+		_update_hud("Geh näher an die Uferstelle, um den Entensteg zu bauen.")
+		return
 	if energy < energy_cost:
 		_update_hud("Nicht genug Energie. Drücke Q für eine Quizrunde.")
 		return
@@ -547,10 +553,15 @@ func _update_interaction_hint() -> void:
 			interaction_hint.text = "F / TIER: " + nearest.species.capitalize() + " mit Wasser entwickeln"
 		else:
 			interaction_hint.text = nearest.species.capitalize() + " · vollständig entwickelt"
-	elif not dock_built and player.global_position.distance_to(Vector3(5.0, 0.5, -1.6)) < 3.0:
+	elif not dock_built and _distance_to_structure("duck_dock") <= float(STRUCTURE_DEFINITIONS["duck_dock"]["build_range"]):
 		interaction_hint.text = "E / BAUEN: Entensteg für %d Energie" % int(STRUCTURE_DEFINITIONS["duck_dock"]["energy_cost"])
 	else:
 		interaction_hint.text = ""
+
+func _distance_to_structure(structure_id: String) -> float:
+	var target: Vector3 = STRUCTURE_DEFINITIONS[structure_id]["platform_position"]
+	var player_plane := Vector3(player.global_position.x, target.y, player.global_position.z)
+	return player_plane.distance_to(target)
 
 func _vibrate(duration_ms: int) -> void:
 	if DisplayServer.is_touchscreen_available():
@@ -574,14 +585,45 @@ func _load_game() -> void:
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
 	if not file:
 		return
-	var parsed = JSON.parse_string(file.get_as_text())
+	var parsed: Variant = JSON.parse_string(file.get_as_text())
 	file.close()
-	if parsed is Dictionary:
-		energy = int(parsed.get("energy", energy))
-		water = int(parsed.get("water", water))
-		dock_built = bool(parsed.get("dock_built", false))
-		audio_enabled = bool(parsed.get("audio_enabled", true))
-		_loaded_animals = parsed.get("animals", {})
+	var safe_data: Dictionary = _validated_save_data(parsed)
+	energy = int(safe_data["energy"])
+	water = int(safe_data["water"])
+	dock_built = bool(safe_data["dock_built"])
+	audio_enabled = bool(safe_data["audio_enabled"])
+	_loaded_animals = safe_data["animals"]
+
+func _validated_save_data(parsed: Variant) -> Dictionary:
+	var safe := {
+		"energy": energy,
+		"water": water,
+		"dock_built": false,
+		"audio_enabled": true,
+		"animals": {}
+	}
+	if not parsed is Dictionary:
+		return safe
+	var data: Dictionary = parsed
+	var max_resource: int = int(ECONOMY_RULES["max_saved_resource"])
+	safe["energy"] = clampi(_safe_int(data.get("energy", energy), energy), 0, max_resource)
+	safe["water"] = clampi(_safe_int(data.get("water", water), water), 0, max_resource)
+	var dock_value: Variant = data.get("dock_built", false)
+	var audio_value: Variant = data.get("audio_enabled", true)
+	safe["dock_built"] = dock_value if dock_value is bool else false
+	safe["audio_enabled"] = audio_value if audio_value is bool else true
+	var saved_animals: Variant = data.get("animals", {})
+	if saved_animals is Dictionary:
+		var animal_data: Dictionary = {}
+		for species in ANIMAL_SPECIES:
+			animal_data[species] = clampi(_safe_int(saved_animals.get(species, 0), 0), 0, int(ECONOMY_RULES["animal_max_stage"]))
+		safe["animals"] = animal_data
+	return safe
+
+func _safe_int(value: Variant, fallback: int) -> int:
+	if value is bool or not (value is int or value is float):
+		return fallback
+	return int(value)
 
 var _loaded_animals: Dictionary = {}
 
