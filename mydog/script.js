@@ -295,8 +295,7 @@ function loadQuestion() {
         btn.type = 'button';
         btn.className = 'option-btn likert-option';
         btn.textContent = String(index + 1);
-        btn.title = scalePoint.label;
-        btn.setAttribute('aria-label', `${index + 1}: ${scalePoint.label}`);
+        btn.setAttribute('aria-label', `Antwort ${index + 1} von 5`);
         btn.setAttribute('role', 'radio');
         btn.setAttribute('aria-checked', String(savedAnswer?.optionIndex === index));
         btn.dataset.index = index;
@@ -305,11 +304,6 @@ function loadQuestion() {
         buttons.appendChild(btn);
     });
     scale.appendChild(buttons);
-
-    const labels = document.createElement('div');
-    labels.className = 'likert-labels';
-    labels.innerHTML = likertScale.map(point => `<span>${point.label}</span>`).join('');
-    scale.appendChild(labels);
     elements.optionsContainer.appendChild(scale);
     // Update progress
     updateProgress();
@@ -334,11 +328,11 @@ function selectOption(optionIndex) {
     // Store the normalized Likert value so scoring remains explicit and replayable.
     appState.userAnswers[appState.currentQuestion] = {
         question: question.text,
-        option: scalePoint.label,
+        option: String(optionIndex + 1),
         dimension: question.dimension,
         reverse: question.reverse,
         optionIndex: optionIndex,
-        likertValue: scalePoint.value
+        likertValue: scalePoint
     };
     // Save progress
     saveState();

@@ -291,8 +291,7 @@ body {
     gap: 12px;
 }
 
-.likert-anchors,
-.likert-labels {
+.likert-anchors {
     display: flex;
     justify-content: space-between;
     gap: 16px;
@@ -316,18 +315,6 @@ body {
     max-width: 520px;
     width: 100%;
     margin: 0 auto;
-}
-
-.likert-labels {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: 8px;
-    font-size: 0.72rem;
-    font-weight: 400;
-    text-align: center;
-}
-
-.likert-labels span {
-    overflow-wrap: anywhere;
 }
 
 .option-btn {
@@ -1092,11 +1079,6 @@ body {
 
     .likert-anchors {
         font-size: 0.78rem;
-    }
-
-    .likert-labels {
-        font-size: 0.62rem;
-        gap: 4px;
     }
 
     .test-navigation {

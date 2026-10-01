@@ -7,7 +7,7 @@ Eine interaktive Web-App, bei der du einen Big Five Persönlichkeitstest machst,
 ### ✅ Persönlichkeitstest
 - Big Five Persönlichkeitstest mit 30 Fragen
 - 5 Dimensionen: Offenheit, Gewissenhaftigkeit, Extraversion, Verträglichkeit, Neurotizismus
-- Fünfstufige persönliche Skala von „Passt überhaupt nicht zu mir“ bis „Passt genau zu mir“
+- Fünfstufige numerische Antwortskala von 1 bis 5
 - Antwortwerte werden als 0, 25, 50, 75 oder 100 Prozent in die Auswertung übernommen
 - Individuelle Auswertung und Hundematching
 

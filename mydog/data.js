@@ -1,12 +1,6 @@
 // Big Five Personality Test Questions
 // Shared five-point Likert scale used by every personality question.
-const likertScale = [
-    { value: 0, label: "Passt überhaupt nicht zu mir" },
-    { value: 25, label: "Passt eher nicht zu mir" },
-    { value: 50, label: "Teils / teils" },
-    { value: 75, label: "Passt eher zu mir" },
-    { value: 100, label: "Passt genau zu mir" }
-];
+const likertScale = [0, 25, 50, 75, 100];
 
 // Each question maps to one of the OCEAN dimensions:
 // O = Openness (Offenheit)
