@@ -22,7 +22,8 @@ let appState = {
         trainability: [],
         grooming: []
     },
-    darkMode: false
+    darkMode: false,
+    lastResult: null
 };
 
 // DOM Elements
@@ -38,6 +39,10 @@ const screens = {
 
 const elements = {
     startTestBtn: document.getElementById('start-test-btn'),
+    savedResultPanel: document.getElementById('saved-result-panel'),
+    savedResultText: document.getElementById('saved-result-text'),
+    resumeResultBtn: document.getElementById('resume-result-btn'),
+    retakeTestBtn: document.getElementById('retake-test-btn'),
     viewFavoritesBtn: document.getElementById('view-favorites-btn'),
     backFromFavoritesBtn: document.getElementById('back-from-favorites-btn'),
     questionText: document.getElementById('question-text'),
@@ -94,6 +99,7 @@ function init() {
     loadState();
     setupEventListeners();
     updateDarkMode();
+    renderSavedResult();
     showScreen('start');
 }
 
@@ -107,6 +113,7 @@ function loadState() {
             appState.darkMode = state.darkMode || false;
             appState.userAnswers = state.userAnswers || [];
             appState.currentQuestion = state.currentQuestion || 0;
+            appState.lastResult = state.lastResult || null;
         } catch (e) {
             console.error('Error loading state:', e);
         }
@@ -119,7 +126,8 @@ function saveState() {
         favorites: appState.favorites,
         darkMode: appState.darkMode,
         userAnswers: appState.userAnswers,
-        currentQuestion: appState.currentQuestion
+        currentQuestion: appState.currentQuestion,
+        lastResult: appState.lastResult
     };
     localStorage.setItem('mydog_appState', JSON.stringify(state));
 }
@@ -128,6 +136,8 @@ function saveState() {
 function setupEventListeners() {
     // Start test button
     elements.startTestBtn.addEventListener('click', startTest);
+    elements.resumeResultBtn.addEventListener('click', restoreLastResult);
+    elements.retakeTestBtn.addEventListener('click', startNewTest);
     elements.viewFavoritesBtn.addEventListener('click', showFavorites);
     
     // Navigation buttons
@@ -191,6 +201,53 @@ function showScreen(screenName) {
     
     // Scroll to top
     window.scrollTo(0, 0);
+}
+
+// Render the saved-result affordance on the start screen.
+function renderSavedResult() {
+    if (!elements.savedResultPanel) return;
+    const result = appState.lastResult;
+    const firstDog = result && result.dogIds ? dogDatabase.find(dog => dog.id === result.dogIds[0]) : null;
+    const hasResult = Boolean(firstDog);
+    elements.savedResultPanel.hidden = !hasResult;
+    if (hasResult) {
+        elements.savedResultText.textContent = `Zuletzt: ${firstDog.name}. Das Ergebnis bleibt auf diesem Gerät gespeichert.`;
+    }
+}
+
+function persistCompletedResult() {
+    appState.lastResult = {
+        dogIds: appState.matchingDogs.map(dog => dog.id),
+        userPersonality: { ...appState.userPersonality },
+        completedAt: new Date().toISOString(),
+        currentDogIndex: 0
+    };
+    saveState();
+    renderSavedResult();
+}
+
+function restoreLastResult() {
+    const result = appState.lastResult;
+    if (!result || !Array.isArray(result.dogIds)) {
+        startNewTest();
+        return;
+    }
+    const restoredDogs = result.dogIds.map(id => dogDatabase.find(dog => dog.id === id)).filter(Boolean);
+    if (!restoredDogs.length) {
+        startNewTest();
+        return;
+    }
+    appState.matchingDogs = restoredDogs;
+    appState.userPersonality = result.userPersonality || appState.userPersonality;
+    appState.currentDogIndex = Math.min(result.currentDogIndex || 0, restoredDogs.length - 1);
+    showDogResult();
+}
+
+function startNewTest() {
+    appState.lastResult = null;
+    saveState();
+    renderSavedResult();
+    startTest();
 }
 
 // Start the personality test
@@ -323,6 +380,7 @@ function findMatchingDogs() {
     setTimeout(() => {
         appState.matchingDogs = getMatchingDogs(appState.userPersonality, 10);
         appState.currentDogIndex = 0;
+        persistCompletedResult();
         
         if (appState.matchingDogs.length > 0) {
             showDogResult();
@@ -366,7 +424,7 @@ function showDogResult() {
 
 // Load dog images with fallback and labels
 function loadDogImages(imageUrls, labels) {
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
+    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     const dog = appState.currentDog;
     
     // Set main image
@@ -375,6 +433,7 @@ function loadDogImages(imageUrls, labels) {
     };
     elements.dogImageMain.src = imageUrls[0] || fallbackImage;
     elements.dogImageMain.alt = dog.name;
+    elements.dogImageMain.loading = "eager";
     
     // Set thumbnail images
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
@@ -385,7 +444,8 @@ function loadDogImages(imageUrls, labels) {
                 this.src = fallbackImage;
             };
             imgElement.src = imageUrls[index] || imageUrls[0] || fallbackImage;
-            imgElement.alt = labels ? labels[index] || dog.name : dog.name;
+            imgElement.alt = `${dog.name} — Bild ${index + 1}`;
+            imgElement.loading = "lazy";
             imgElement.addEventListener('click', () => {
                 selectThumbnail(index, imageUrls, labels);
             });
@@ -399,15 +459,15 @@ function loadDogImages(imageUrls, labels) {
 // Select a thumbnail image
 function selectThumbnail(index, imageUrls, labels) {
     const dog = appState.currentDog;
-    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
+    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82";
     
     // Update main image
     elements.dogImageMain.src = imageUrls[index] || fallbackImage;
-    elements.dogImageMain.alt = labels ? labels[index] || dog.name : dog.name;
+    elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
     
     // Update label
     if (elements.imageLabel && labels && labels[index]) {
-        elements.imageLabel.textContent = labels[index];
+        elements.imageLabel.textContent = `${dog.name} · Bild ${index + 1}`;
     }
     
     // Update thumbnail selection
@@ -493,6 +553,10 @@ function showChat() {
 // Show next dog
 function showNextDog() {
     appState.currentDogIndex++;
+    if (appState.lastResult) {
+        appState.lastResult.currentDogIndex = appState.currentDogIndex;
+        saveState();
+    }
     
     if (appState.currentDogIndex < appState.matchingDogs.length) {
         showDogResult();
@@ -533,7 +597,7 @@ function renderFavorites() {
         const card = document.createElement('div');
         card.className = 'favorite-card';
         card.innerHTML = `
-            <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop'}" alt="${dog.name}">
+            <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'}" alt="${dog.name}" onerror="this.src='https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'">
             <h3>${dog.name}</h3>
             <p class="breed">${dog.breed}</p>
             <p>${dog.description.substring(0, 100)}...</p>

@@ -16,6 +16,13 @@
             <h1>🐾 Find deinen perfekten Hund 🐶</h1>
             <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
             <button id="start-test-btn" class="btn-primary">Test starten</button>
+            <div id="saved-result-panel" class="saved-result-panel" hidden>
+                <p><strong>Dein Ergebnis ist gespeichert.</strong><span id="saved-result-text">Du kannst es wieder öffnen oder den Test neu machen.</span></p>
+                <div class="saved-result-actions">
+                    <button id="resume-result-btn" class="btn-secondary" type="button">Ergebnis anzeigen</button>
+                    <button id="retake-test-btn" class="btn-outline" type="button">Test neu machen</button>
+                </div>
+            </div>
             <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
         </div>
 
