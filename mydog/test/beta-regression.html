@@ -80,12 +80,14 @@
       assert(page.querySelectorAll('.favorite-card').length === 1, 'favorite card renders');
       assert(page.querySelector('#favorites-count').textContent === '1', 'favorite count renders');
       assert(page.querySelector('.favorite-card .rating')?.textContent.includes('Eignung'), 'favorite stars are labeled as suitability');
+      assert(getComputedStyle(page.querySelector('.favorites-header h2')).color !== 'rgb(76, 175, 80)', 'favorites overview has its own color');
       assert(getComputedStyle(page.querySelector('.remove-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites remove action is not red');
       click('.remove-btn');
       assert(state().favorites.length === 0, 'favorite removal persists');
 
       app.showScreen('start');
       assert(getComputedStyle(page.querySelector('#resume-result-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'Ergebnis anzeigen is not red');
+      assert(page.querySelector('#resume-result-btn').textContent === 'Vorschläge ansehen', 'saved action uses suggestion wording');
       click('#resume-result-btn');
       assert(active() === 'results-screen', 'saved result restores');
       app.startNewTest();

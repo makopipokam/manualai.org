@@ -10,6 +10,8 @@
     --primary-hover: #45a049;
     --secondary-color: #607d8b;
     --secondary-hover: #455a64;
+    --favorite-color: #8c5a00;
+    --favorite-hover: #6f4700;
     --background-color: #f5f5f5;
     --card-background: #ffffff;
     --text-color: #333333;
@@ -183,7 +185,7 @@ body {
 }
 
 .btn-favorite {
-    background-color: #9C27B0;
+    background-color: var(--favorite-color);
     color: white;
     border: none;
     padding: 14px 28px;
@@ -196,12 +198,12 @@ body {
 }
 
 .btn-favorite:hover {
-    background-color: #7B1FA2;
+    background-color: var(--favorite-hover);
     transform: translateY(-2px);
 }
 
 .btn-favorite.favorited {
-    background-color: #6A1B9A;
+    background-color: var(--favorite-hover);
 }
 
 .btn-share {
@@ -788,7 +790,7 @@ body {
 }
 
 .favorites-header h2 {
-    color: var(--primary-color);
+    color: var(--favorite-color);
     margin: 0;
 }
 .favorites-count {
@@ -800,7 +802,7 @@ body {
     margin-left: 6px;
     padding: 0 9px;
     border-radius: 999px;
-    background: var(--primary-color);
+    background: var(--favorite-color);
     color: white;
     font-size: 0.85rem;
     vertical-align: middle;
