@@ -45,6 +45,8 @@ var quiz_panel: PwndQuizPanel
 var mobile_controls: PwndMobileControls
 var save_hint: Label
 var pause_overlay: Control
+var pause_panel: Panel
+var pause_resume_button: Button
 var performance_label: Label
 var paused := false
 var water_surface: MeshInstance3D
@@ -216,7 +218,9 @@ func _build_hud() -> void:
 	quiz_panel.completed.connect(_on_quiz_completed)
 	quiz_panel.closed.connect(_on_quiz_closed)
 	get_viewport().size_changed.connect(_layout_hud)
+	get_viewport().size_changed.connect(_layout_pause_overlay)
 	_layout_hud()
+	_layout_pause_overlay()
 
 func _layout_hud() -> void:
 	if not hud_panel or not get_viewport():
@@ -267,16 +271,18 @@ func _build_pause_overlay(layer: CanvasLayer) -> void:
 	shade.color = Color(0.015, 0.04, 0.035, 0.88)
 	shade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	pause_overlay.add_child(shade)
-	var panel := PanelContainer.new()
-	panel.anchor_left = 0.16
-	panel.anchor_top = 0.28
-	panel.anchor_right = 0.84
-	panel.anchor_bottom = 0.72
-	panel.add_theme_stylebox_override("panel", _pause_style())
-	pause_overlay.add_child(panel)
+	pause_panel = Panel.new()
+	pause_panel.set_anchors_preset(Control.PRESET_TOP_LEFT)
+	pause_panel.add_theme_stylebox_override("panel", _pause_style())
+	pause_overlay.add_child(pause_panel)
 	var column := VBoxContainer.new()
 	column.add_theme_constant_override("separation", 16)
-	panel.add_child(column)
+	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	column.offset_left = 22.0
+	column.offset_top = 18.0
+	column.offset_right = -22.0
+	column.offset_bottom = -18.0
+	pause_panel.add_child(column)
 	var title := Label.new()
 	title.text = "TEICH PAUSIERT"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -295,13 +301,23 @@ func _build_pause_overlay(layer: CanvasLayer) -> void:
 	performance_label.add_theme_font_size_override("font_size", 13)
 	performance_label.add_theme_color_override("font_color", Color("#a8c8b0"))
 	column.add_child(performance_label)
-	var resume := Button.new()
-	resume.text = "WEITER"
-	resume.custom_minimum_size = Vector2(0, 58)
-	resume.add_theme_font_size_override("font_size", 20)
-	resume.add_theme_stylebox_override("normal", _pause_style(Color("#d9c477"), Color("#10251f")))
-	resume.pressed.connect(_toggle_pause)
-	column.add_child(resume)
+	pause_resume_button = Button.new()
+	pause_resume_button.text = "WEITER"
+	pause_resume_button.custom_minimum_size = Vector2(0, 58)
+	pause_resume_button.add_theme_font_size_override("font_size", 20)
+	pause_resume_button.add_theme_stylebox_override("normal", _pause_style(Color("#d9c477"), Color("#10251f")))
+	pause_resume_button.pressed.connect(_toggle_pause)
+	column.add_child(pause_resume_button)
+	_layout_pause_overlay()
+
+func _layout_pause_overlay() -> void:
+	if not pause_panel or not get_viewport():
+		return
+	var view_size: Vector2 = get_viewport().get_visible_rect().size
+	var safe_rect: Rect2 = _get_safe_view_rect(view_size)
+	var panel_size := Vector2(minf(560.0, maxf(280.0, safe_rect.size.x - 32.0)), minf(430.0, maxf(250.0, safe_rect.size.y - 32.0)))
+	pause_panel.size = panel_size
+	pause_panel.position = safe_rect.position + (safe_rect.size - panel_size) * 0.5
 
 func _pause_style(background := Color("#10251f"), border := Color("#6b9c78")) -> StyleBoxFlat:
 	var style := StyleBoxFlat.new()

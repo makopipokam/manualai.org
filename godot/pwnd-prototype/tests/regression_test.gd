@@ -269,6 +269,10 @@ func _test_safe_area_layout(main: Node3D) -> void:
 	unsafe_touch.pressed = true
 	controls._handle_touch(unsafe_touch)
 	_check(controls.joystick_touch == -1 and controls.look_touch == -1, "Touch-Start außerhalb der Safe-Area wird ignoriert")
+	main._layout_pause_overlay()
+	_check(main.pause_panel.get_global_rect().position.x >= safe_rect.position.x and main.pause_panel.get_global_rect().position.y >= safe_rect.position.y, "Pause-Panel beginnt innerhalb der Safe-Area")
+	_check(main.pause_panel.get_global_rect().end.x <= safe_rect.end.x + 1.0 and main.pause_panel.get_global_rect().end.y <= safe_rect.end.y + 1.0, "Pause-Panel endet innerhalb der Safe-Area")
+	_check(main.pause_resume_button.get_global_rect().size.y >= 58.0, "Pause-Weiter-Button bleibt groß genug")
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")

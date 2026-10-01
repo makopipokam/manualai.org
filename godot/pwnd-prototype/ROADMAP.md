@@ -52,6 +52,7 @@
 - [x] **P1:** HUD nutzt Display-Safe-Area mit Vollviewport-Fallback; simulierte Randprüfung ergänzt
 - [x] **P1:** Mobile Pause-, Sound-, Aktions- und Bewegungshinweis-Elemente folgen derselben Safe-Area
 - [x] **P1:** Joystick-Ruheposition und neue Touch-Starts werden gegen dieselbe Safe-Area geprüft
+- [x] **P1:** Pause-Overlay und „WEITER“-Button bleiben auch im simulierten Hochformat innerhalb der Safe-Area
 - [ ] **P1:** Safe Area/Notch und Touch-Bedienung auf einem realen Gerät prüfen
 - [x] **P2:** Sichtbare Wasserfläche ist die gemeinsame Grenze für Waten, Fischreaktion und Ripples (inklusive Rotationstest)
 - [x] **P2:** Bau-Reichweite und Save-Validierung konsistent machen
