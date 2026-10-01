@@ -37,6 +37,7 @@ func _run() -> void:
 	_test_build_and_save_consistency(main)
 	await _test_world_collisions(main)
 	_test_safe_area_layout(main)
+	_test_pause_resume(main)
 	await _test_quiz_layout(main)
 
 	print("")
@@ -273,6 +274,19 @@ func _test_safe_area_layout(main: Node3D) -> void:
 	_check(main.pause_panel.get_global_rect().position.x >= safe_rect.position.x and main.pause_panel.get_global_rect().position.y >= safe_rect.position.y, "Pause-Panel beginnt innerhalb der Safe-Area")
 	_check(main.pause_panel.get_global_rect().end.x <= safe_rect.end.x + 1.0 and main.pause_panel.get_global_rect().end.y <= safe_rect.end.y + 1.0, "Pause-Panel endet innerhalb der Safe-Area")
 	_check(main.pause_resume_button.get_global_rect().size.y >= 58.0, "Pause-Weiter-Button bleibt groß genug")
+
+func _test_pause_resume(main: Node3D) -> void:
+	print("Pause / Resume")
+	main.player.set_mobile_move(Vector2(1.0, 0.0))
+	main._toggle_pause()
+	_check(main.paused and root.paused, "Pause setzt den globalen Pausenstatus")
+	_check(not main.player.is_physics_processing(), "Pause stoppt die Spielerphysik")
+	_check(not main.mobile_controls.visible and main.pause_overlay.visible, "Pause blendet Controls aus und Overlay ein")
+	main._toggle_pause()
+	_check(not main.paused and not root.paused, "Resume hebt den globalen Pausenstatus auf")
+	_check(main.player.is_physics_processing(), "Resume aktiviert die Spielerphysik")
+	_check(main.mobile_controls.visible and not main.pause_overlay.visible, "Resume blendet Controls ein und Overlay aus")
+	main.player.set_mobile_move(Vector2.ZERO)
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")

@@ -30,6 +30,7 @@
 - [x] desktop keyboard/mouse fallback
 - [x] optional haptic feedback on supported touch devices
 - [x] large mobile pause button with deterministic resume
+- [x] regression coverage for global pause state, player physics, controls, and overlay visibility
 - [x] local mobile sound toggle with persisted preference
 - [x] responsive HUD with viewport-safe margins
 - [x] pause-overlay FPS and object-count snapshot

@@ -26,6 +26,8 @@ Auch die visuelle Ruheposition des Joysticks wird aus derselben Safe-Area berech
 
 Das Pause-Overlay verwendet ebenfalls ein festes, responsives Panel innerhalb der Safe-Area. Dadurch kann die Inhaltsgröße im Hochformat den **WEITER**-Button nicht mehr aus dem sichtbaren Bereich drücken; der Button bleibt mindestens 58 Pixel hoch.
 
+Der Regressionstest prüft zusätzlich den kompletten Zustandswechsel: globale SceneTree-Pause, Spielerphysik, mobile Controls und Overlay-Sichtbarkeit werden gemeinsam pausiert und beim Resume wiederhergestellt.
+
 Die Desktop-Steuerung bleibt als Entwicklungsfallback erhalten: **WASD** bewegt, die Maus blickt, **E** baut, **F** entwickelt, **Q** öffnet das Quiz und **Esc** löst beziehungsweise fängt die Maus wieder ein.
 
 Auf Touch-Geräten gibt es bei Aktionen zusätzlich einen kurzen Vibrationsimpuls, sofern das Gerät und die Plattform haptisches Feedback unterstützen. Die Anwendung funktioniert auch vollständig ohne diese Funktion. Der Teich hat außerdem einen sehr leisen, lokal mitgelieferten Ambient-Loop; er wird nach jedem Loop automatisch neu gestartet und belastet keine Netzwerkverbindung.
