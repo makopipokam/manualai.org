@@ -40,10 +40,11 @@
 
 ## Stabilisierung vor weiterer Inhaltserweiterung — Priorität laut unabhängiger Zweitprüfung
 
-- [ ] **P0:** „Nächste Frage“ wechselt wirklich zur nächsten Frage; Regressionstest ergänzen
-- [ ] **P0:** Enten-Habitatregel entscheiden und Hinweis/Upgrade-Verhalten konsistent machen
-- [ ] **P1:** Touch-/Joystick-Zustand beim Verstecken, Pausieren und Quizstart zurücksetzen
-- [ ] **P1:** Weltkollision, Waten-Höhe und vertikale Tierbewegung korrigieren
+- [x] **P0:** „Nächste Frage“ wechselt wirklich zur nächsten Frage; Regressionstest ergänzt
+- [x] **P0:** Enten-Habitatregel ist eine echte Voraussetzung; ohne Steg wird kein Wasser verbraucht
+- [x] **P1:** Touch-/Joystick-Zustand beim Verstecken, Pausieren und Quizstart zurückgesetzt
+- [x] **P1:** Vertikale Tierbewegung gestoppt; horizontale Reaktionen getestet
+- [ ] **P1:** Weltkollision und Waten-Höhe korrigieren
 - [ ] **P1:** Portrait-Quiz, Safe Area und Touchziele vor Geräteexport prüfen
 - [ ] **P2:** Bau-Reichweite, Wasserbereich und Save-Validierung konsistent machen
 

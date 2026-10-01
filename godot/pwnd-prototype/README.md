@@ -2,7 +2,7 @@
 
 Der erste Proof-of-Fun für den begehbaren Teichgarten. Die Anwendung wird **mobile first** entwickelt und im Querformat als First-Person-Spiel gedacht.
 
-> **Stand der Zweitprüfung:** Dies ist eine technische Rohfassung, kein auf Smartphone getesteter Build. „Nächste Frage“ wechselt aktuell nicht zur nächsten Frage; die Habitat-Voraussetzung der Ente ist bislang nur ein Hinweis; Weltkollision und Touch-Reset sind offen. Das simulierte Hochformat zeigt zu kleine Quiz-Bedienelemente. Details und Reproduktionen: [REVIEW.md](REVIEW.md).
+> **Stand nach der Zweitprüfung:** Dies ist eine technische Rohfassung, kein auf Smartphone getesteter Build. Quiz-Fortschritt, Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung sind inzwischen behoben und durch [Regressionstests](tests/regression_test.gd) abgedeckt. Weltkollision und Hochformat-Quiz bleiben offen. Ursprüngliche Befunde: [REVIEW.md](REVIEW.md).
 
 ## Starten
 
@@ -15,6 +15,7 @@ Für eine reine Parser-/Editor-Prüfung:
 ```bash
 godot --headless --path godot/pwnd-prototype --editor --quit
 godot --headless --path godot/pwnd-prototype --quit-after 120
+godot --headless --path godot/pwnd-prototype --script res://tests/regression_test.gd
 ```
 
 ## Mobile-Steuerung
@@ -41,8 +42,8 @@ Das Quiz ist lokal und fest im Prototypen hinterlegt; die Quiz-Engine und ein gr
 
 Der Spielstand wird lokal im Godot-Benutzerverzeichnis gespeichert. Es gibt bewusst noch keinen Cloud-Spielstand und keine Kontoanbindung. Zum Zurücksetzen des lokalen Prototypen kann die Datei `user://pwnd_save.json` gelöscht werden.
 
-Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing und einen Headless-Runtime-Smoke-Test. Ein echter Test auf Android/iOS-Hardware steht noch aus; dafür werden im nächsten Schritt Exportprofil, Safe-Area-Prüfung und Performance-Messung ergänzt.
+Die aktuelle automatisierte Prüfung umfasst Godot-Editor-Parsing, einen Headless-Runtime-Smoke-Test und gezielte Regressionstests für Quiz-Fortschritt, Antwortzuordnung, Enten-Habitat, Touch-Reset und die horizontale Tierbewegung. Ein echter Test auf Android/iOS-Hardware steht noch aus; dafür werden im nächsten Schritt Exportprofil, Safe-Area-Prüfung und Performance-Messung ergänzt.
 
 ## Nächster Meilenstein
 
-Als Nächstes werden die in [REVIEW.md](REVIEW.md) reproduzierten Kernloop- und Mobile-Regressionsfehler behoben. Erst danach folgen Android-Testbuild, Safe-Area-Prüfung und Performance-Messung auf einem realen Telefon.
+Als Nächstes werden Weltkollision, sichtbarer Wasserbereich und Hochformat-Bedienbarkeit stabilisiert. Erst danach folgen Android-Testbuild, Safe-Area-Prüfung und Performance-Messung auf einem realen Telefon.

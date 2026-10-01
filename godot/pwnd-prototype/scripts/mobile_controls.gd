@@ -23,6 +23,20 @@ func _ready() -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		queue_redraw()
+	elif what == NOTIFICATION_VISIBILITY_CHANGED and not visible:
+		reset_input_state()
+	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		reset_input_state()
+
+func reset_input_state() -> void:
+	var had_joystick := joystick_touch != -1
+	joystick_touch = -1
+	look_touch = -1
+	joystick_knob = joystick_center
+	last_look_position = Vector2.ZERO
+	if had_joystick:
+		queue_redraw()
+	move_changed.emit(Vector2.ZERO)
 
 func _build_action_buttons() -> void:
 	var pause_button := Button.new()

@@ -109,28 +109,37 @@ func _process(delta: float) -> void:
 		if species == "frog":
 			state = "beobachtet" if development > 0 else "flieht"
 			if development == 0 and reaction_cooldown <= 0:
-				velocity = (global_position - player.global_position).normalized() * float(_definition().get("flee_speed", 1.0))
+				velocity = _horizontal_direction(global_position - player.global_position) * float(_definition().get("flee_speed", 1.0))
 				reaction_cooldown = 1.2
 		elif species == "fish":
 			state = "flieht" if _player_is_wading() else "beobachtet"
-			velocity = (global_position - player.global_position).normalized() * (0.5 if development > 0 else float(_definition().get("flee_speed", 1.0)))
+			velocity = _horizontal_direction(global_position - player.global_position) * (0.5 if development > 0 else float(_definition().get("flee_speed", 1.0)))
 		else:
 			state = "neugierig" if development > 0 else "beobachtet"
-			velocity = (player.global_position - global_position).normalized() * (0.28 if development > 1 else -0.18)
+			velocity = _horizontal_direction(player.global_position - global_position) * (0.28 if development > 1 else -0.18)
 	elif species == "duck" and has_dock_target and distance_to_target() > 0.7:
 		state = "geht zum Steg"
-		velocity = (dock_target - global_position).normalized() * 0.3
+		velocity = _horizontal_direction(dock_target - global_position) * 0.3
 	else:
 		state = "ruhig"
 		velocity = velocity.move_toward(Vector3.ZERO, delta * 1.5)
 	global_position += velocity * delta
 	global_position.x = clamp(global_position.x, -7.0, 7.0)
 	global_position.z = clamp(global_position.z, -5.0, 5.0)
+	global_position.y = home_position.y
 	if label:
 		label.text = species.capitalize() + " · " + state
 
+func _horizontal_direction(offset: Vector3) -> Vector3:
+	var flat := Vector3(offset.x, 0.0, offset.z)
+	if flat.length() < 0.001:
+		return Vector3.ZERO
+	return flat.normalized()
+
 func distance_to_target() -> float:
-	return global_position.distance_to(dock_target)
+	var flat_self := Vector3(global_position.x, 0.0, global_position.z)
+	var flat_target := Vector3(dock_target.x, 0.0, dock_target.z)
+	return flat_self.distance_to(flat_target)
 
 func _player_is_wading() -> bool:
 	return player.has_method("is_in_water") and player.is_in_water()

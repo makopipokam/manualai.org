@@ -2,6 +2,8 @@
 
 Stand: Godot 4.7.2, Branch `feat/pwnd-godot-vertical-slice`, Ausgangscommit `3fe2999`. Prüfung: Quellcode, isolierte Gameplay-Reproduktionen, Editor-/Runtime-Smoke-Test und gerenderte Fenster in 1280×720 sowie simuliertem 720×1280. Keine Änderung an der Web-Beta.
 
+> **Historischer Prüfstand:** Diese Tabelle beschreibt den Zustand bei Commit `3fe2999`, nicht automatisch den aktuellen Branch. Quiz-Fortschritt, durchgesetzte Enten-Habitatregel, Touch-Reset und vertikale Tierbewegung wurden anschließend korrigiert und in `tests/regression_test.gd` abgesichert. Weltkollision, Hochformat-UI und echter Gerätetest bleiben offen; aktuelle Prioritäten stehen in [ROADMAP.md](ROADMAP.md).
+
 ## Kurzurteil
 
 **Als technische Rohfassung lauffähig, als belastbarer „Proof of Fun“ noch nicht ausreichend verifiziert.** Die Engine startet und rendert eine erkennbare Teichszene. Die bisherigen Headless-Smoke-Tests prüfen aber keine Interaktionen; gezielte Tests reproduzieren Defekte im Quiz, bei Habitat und Bewegung. Ein echter Smartphone-Test fehlt weiterhin. Die frühere Bewertung „technisch stabil“ war zu optimistisch.

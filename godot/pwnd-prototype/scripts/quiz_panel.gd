@@ -10,6 +10,8 @@ var questions: Array[Dictionary] = [
 	{"question": "Wofür wird Wasser im pwnd-Prototyp eingesetzt?", "options": ["Für die Entwicklung von Tieren", "Für die Kamera", "Für das Menüdesign"], "answer": 0}
 ]
 var question_index := 0
+var option_order: Array[int] = []
+var correct_reward_text := "Richtig. Dein Teich profitiert."
 var question_label: Label
 var feedback_label: Label
 var answer_buttons: Array[Button] = []
@@ -105,16 +107,24 @@ func _panel_style() -> StyleBoxFlat:
 	return style
 
 func open_quiz() -> void:
-	question_index = (question_index + 1) % questions.size()
+	if answered:
+		question_index = (question_index + 1) % questions.size()
 	show()
 	_render_question()
+
+func set_reward_text(text: String) -> void:
+	correct_reward_text = text
 
 func _render_question() -> void:
 	var item: Dictionary = questions[question_index]
 	question_label.text = item["question"]
 	var options: Array = item["options"]
+	option_order = []
+	for index in range(options.size()):
+		option_order.append(index)
+	option_order.shuffle()
 	for index in range(answer_buttons.size()):
-		answer_buttons[index].text = str(options[index])
+		answer_buttons[index].text = str(options[option_order[index]])
 		answer_buttons[index].disabled = false
 		answer_buttons[index].modulate = Color.WHITE
 	feedback_label.text = ""
@@ -127,11 +137,12 @@ func _answer(index: int) -> void:
 		return
 	answered = true
 	var item: Dictionary = questions[question_index]
-	var correct := index == int(item["answer"])
+	var chosen_option: int = option_order[index] if index < option_order.size() else index
+	var correct := chosen_option == int(item["answer"])
 	for button in answer_buttons:
 		button.disabled = true
 	if correct:
-		feedback_label.text = "Richtig. Dein Teich profitiert: +28 Energie, +12 Wasser."
+		feedback_label.text = correct_reward_text
 		feedback_label.add_theme_color_override("font_color", Color("#9bd18d"))
 	else:
 		feedback_label.text = "Noch nicht. Die richtige Antwort war: " + str(item["options"][int(item["answer"])])
@@ -140,6 +151,7 @@ func _answer(index: int) -> void:
 	completed.emit(correct, feedback_label.text)
 
 func _next_question() -> void:
+	question_index = (question_index + 1) % questions.size()
 	_render_question()
 
 func _close_quiz() -> void:

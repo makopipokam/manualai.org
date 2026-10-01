@@ -305,6 +305,10 @@ func _process(_delta: float) -> void:
 		_upgrade_nearest_animal()
 
 func _open_quiz() -> void:
+	quiz_panel.set_reward_text("Richtig. Dein Teich profitiert: +%d Energie, +%d Wasser." % [
+		int(ECONOMY_RULES["quiz_correct_energy"]),
+		int(ECONOMY_RULES["quiz_correct_water"])
+	])
 	quiz_panel.open_quiz()
 	mobile_controls.hide()
 	player.set_physics_process(false)
@@ -491,6 +495,10 @@ func _upgrade_nearest_animal() -> void:
 		return
 	var water_cost: int = int(ECONOMY_RULES["animal_upgrade_water"])
 	var max_stage: int = int(ECONOMY_RULES["animal_max_stage"])
+	var required_structure: String = nearest.required_structure()
+	if required_structure == "duck_dock" and not dock_built:
+		_update_hud("%s braucht zuerst den Entensteg. Baue ihn mit E / BAUEN." % nearest.species.capitalize())
+		return
 	if water < water_cost:
 		_update_hud("Nicht genug Wasser. Drücke Q für eine Quizrunde.")
 		return
