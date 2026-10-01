@@ -13,11 +13,16 @@ var look_touch := -1
 var last_look_position := Vector2.ZERO
 var action_buttons: Array[Button] = []
 var sound_button: Button
+var pause_button: Button
+var action_column: VBoxContainer
+var movement_hint: Label
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	_build_action_buttons()
+	get_viewport().size_changed.connect(_layout_safe_area_controls)
+	call_deferred("_layout_safe_area_controls")
 	queue_redraw()
 
 func _notification(what: int) -> void:
@@ -39,7 +44,7 @@ func reset_input_state() -> void:
 	move_changed.emit(Vector2.ZERO)
 
 func _build_action_buttons() -> void:
-	var pause_button := Button.new()
+	pause_button = Button.new()
 	pause_button.text = "Ⅱ"
 	pause_button.tooltip_text = "Pause"
 	pause_button.set_anchors_preset(Control.PRESET_TOP_RIGHT)
@@ -63,24 +68,43 @@ func _build_action_buttons() -> void:
 	sound_button.add_theme_stylebox_override("pressed", _button_style(Color("#9dbb83")))
 	sound_button.pressed.connect(action_pressed.emit.bind("sound"))
 	add_child(sound_button)
-	var column := VBoxContainer.new()
-	column.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	column.position = Vector2(-210, -224)
-	column.size = Vector2(180, 204)
-	column.add_theme_constant_override("separation", 10)
-	add_child(column)
-	_add_action_button(column, "QUIZ  ·  Q", "quiz")
-	_add_action_button(column, "BAUEN  ·  E", "build")
-	_add_action_button(column, "TIER  ·  F", "develop")
-	var hint := Label.new()
-	hint.text = "Tippen und halten: bewegen / umsehen"
-	hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hint.add_theme_font_size_override("font_size", 12)
-	hint.add_theme_color_override("font_color", Color(0.9, 0.95, 0.84, 0.82))
-	hint.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
-	hint.position = Vector2(28, -42)
-	hint.size = Vector2(260, 28)
-	add_child(hint)
+	action_column = VBoxContainer.new()
+	action_column.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	action_column.size = Vector2(180, 204)
+	action_column.add_theme_constant_override("separation", 10)
+	add_child(action_column)
+	_add_action_button(action_column, "QUIZ  ·  Q", "quiz")
+	_add_action_button(action_column, "BAUEN  ·  E", "build")
+	_add_action_button(action_column, "TIER  ·  F", "develop")
+	movement_hint = Label.new()
+	movement_hint.text = "Tippen und halten: bewegen / umsehen"
+	movement_hint.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	movement_hint.add_theme_font_size_override("font_size", 12)
+	movement_hint.add_theme_color_override("font_color", Color(0.9, 0.95, 0.84, 0.82))
+	movement_hint.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	movement_hint.size = Vector2(260, 28)
+	add_child(movement_hint)
+
+func _layout_safe_area_controls() -> void:
+	if not get_viewport() or not pause_button or not action_column or not movement_hint:
+		return
+	var view_size: Vector2 = get_viewport().get_visible_rect().size
+	var safe_rect: Rect2 = _get_safe_view_rect(view_size)
+	pause_button.position = Vector2(safe_rect.end.x - 96.0, safe_rect.position.y + 22.0)
+	sound_button.position = Vector2(safe_rect.end.x - 190.0, safe_rect.position.y + 22.0)
+	action_column.position = Vector2(safe_rect.end.x - 210.0, safe_rect.end.y - 224.0)
+	movement_hint.position = Vector2(safe_rect.position.x + 28.0, safe_rect.end.y - 42.0)
+
+func _get_safe_view_rect(view_size: Vector2) -> Rect2:
+	var safe_area: Rect2i = DisplayServer.get_display_safe_area()
+	var screen_size: Vector2i = DisplayServer.screen_get_size()
+	if safe_area.size.x <= 0 or safe_area.size.y <= 0 or screen_size.x <= 0 or screen_size.y <= 0:
+		return Rect2(Vector2.ZERO, view_size)
+	var left_ratio: float = clampf(float(safe_area.position.x) / float(screen_size.x), 0.0, 1.0)
+	var top_ratio: float = clampf(float(safe_area.position.y) / float(screen_size.y), 0.0, 1.0)
+	var right_ratio: float = clampf(float(safe_area.end.x) / float(screen_size.x), left_ratio, 1.0)
+	var bottom_ratio: float = clampf(float(safe_area.end.y) / float(screen_size.y), top_ratio, 1.0)
+	return Rect2(Vector2(view_size.x * left_ratio, view_size.y * top_ratio), Vector2(view_size.x * (right_ratio - left_ratio), view_size.y * (bottom_ratio - top_ratio)))
 
 func set_audio_enabled(enabled: bool) -> void:
 	if sound_button:

@@ -255,6 +255,13 @@ func _test_safe_area_layout(main: Node3D) -> void:
 	_check(main.save_hint.get_global_rect().end.x <= safe_rect.end.x + 1.0, "Autosave-Hinweis respektiert den rechten Safe-Area-Rand")
 	var crosshair_center: Vector2 = main.crosshair.position + Vector2(10.0, 10.0)
 	_check(safe_rect.has_point(crosshair_center), "Fadenkreuz bleibt im Safe-Area-Zentrum")
+	var controls: PwndMobileControls = main.mobile_controls
+	controls._layout_safe_area_controls()
+	var controls_safe: Rect2 = controls._get_safe_view_rect(view_size)
+	_check(controls.pause_button.get_global_rect().end.x <= controls_safe.end.x + 1.0 and controls.pause_button.position.y >= controls_safe.position.y, "Pause-Button bleibt in der Safe-Area")
+	_check(controls.sound_button.get_global_rect().end.x <= controls_safe.end.x + 1.0, "Sound-Button bleibt am sicheren rechten Rand")
+	_check(controls.action_column.get_global_rect().end.x <= controls_safe.end.x + 1.0 and controls.action_column.get_global_rect().end.y <= controls_safe.end.y + 1.0, "Aktionsbuttons bleiben am sicheren unteren Rand")
+	_check(controls.movement_hint.get_global_rect().position.x >= controls_safe.position.x and controls.movement_hint.get_global_rect().end.y <= controls_safe.end.y + 1.0, "Bewegungshinweis bleibt innerhalb der Safe-Area")
 
 func _test_quiz_layout(main: Node3D) -> void:
 	print("Quiz-Layout")
