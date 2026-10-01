@@ -66,7 +66,6 @@ const elements = {
     dogImage4: document.getElementById('dog-image-4'),
     dogImage5: document.getElementById('dog-image-5'),
     dogImage6: document.getElementById('dog-image-6'),
-    imageLabel: document.getElementById('image-label'),
     matchReason: document.getElementById('match-reason'),
     nextDogBtn: document.getElementById('next-dog-btn'),
     favoriteBtn: document.getElementById('favorite-btn'),
@@ -488,11 +487,6 @@ function selectThumbnail(index, imageUrls, labels) {
     // Update main image
     elements.dogImageMain.src = imageUrls[index] || imageUrls[0] || '';
     elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
-    
-    // Update label
-    if (elements.imageLabel && labels && labels[index]) {
-        elements.imageLabel.textContent = `${dog.name} · Bild ${index + 1}`;
-    }
     
     // Update thumbnail selection
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
