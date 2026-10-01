@@ -188,6 +188,21 @@ Der Bau und Ausbau kostet Energie. Wasser wird nicht in Gebäude gesteckt. Die S
 | **Biberwerkstatt** | Strukturen umleiten und umbauen | Energie investieren, Wasserproduktion verbessern |
 | **Teichkarte** | neue Bereiche und Mini-Biome entdecken | Exploration als dritter späterer Wasserweg |
 
+### 5.3 Schlangen-Gegner im Quiz-Modul
+
+Schlangen sind **Quiz-Gegner**, nicht automatisch Bewohner des Teichs. Jede Gegnerdefinition ist datengetrieben und enthält mindestens: `id`, `name`, `difficulty`, `topics`, `answer_speed`, `mistake_tolerance` und `reward_profile`. So können neue Schlangen ergänzt werden, ohne die Quizlogik zu duplizieren.
+
+| Gegner | Schwierigkeit | Themenprofil | Spielverhalten |
+|---|---|---|---|
+| **Wassernatter** | Einstieg | Teich, Natur, Alltagswissen | großzügiges Antwortfenster, klare Hinweise |
+| **Ringelnatter** | Leicht–mittel | Biologie, Ökologie, Beobachtung | solide Grundlagen, gelegentliche Fangfrage |
+| **Kreuzotter** | Mittel | Kausalität, Logik, Risikoentscheidungen | bestraft hektische Antworten, bleibt berechenbar |
+| **Kobra** | Schwer | Wissenschaft, Geschichte, gemischte Wissensgebiete | schnelleres Tempo, kleinere Fehlertoleranz |
+| **Python** | Sehr schwer | Mathematik, Algorithmen, Technik | komplexe Fragen und kurze Entscheidungsfenster |
+| **Anakonda** | Meisterstufe | wechselnde Themen, Serien und Zeitdruck | lange Frageserien, hohe Belohnung, hoher Druck |
+
+Die Schwierigkeit darf nur Frageauswahl, Tempo, Serienlänge und Fehlertoleranz verändern. Die korrekte Antwort bleibt für jede Schlange deterministisch und fair. Belohnungen werden weiterhin von der Engine berechnet; die AI liefert Charakter und Gegnerstimme, nicht die Spielökonomie.
+
 ## 6. Freischaltlogik
 
 ### Phase 0 — Ein lebendiger Anfang

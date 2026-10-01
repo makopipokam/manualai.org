@@ -83,6 +83,7 @@ Siehe [REVIEW.md](REVIEW.md) für reproduzierte Befunde und Testgrenzen.
 - [x] centralized deterministic economy rules with explicit reward feedback
 - [ ] deterministic reward engine shared with the web beta
 - [ ] first three quiz activity types
+- [ ] data-driven snake quiz opponents with difficulty and topic profiles
 
 ## Out of scope until the core loop is proven
 

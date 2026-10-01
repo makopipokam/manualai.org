@@ -24,6 +24,21 @@ Wasser verschwindet auch ohne direkte Spieleraktion: Ein Teil versickert im Bode
 
 Jede Aktivität kann beide Ressourcen in unterschiedlicher Mischung liefern; Quizduelle und freies Quizzen sind die ersten spielbaren Wege.
 
+### Schlangen als Quiz-Gegner
+
+Im Quiz-Modul tritt der Spieler gegen Schlangen an. Die Schlangen sind keine zusätzlichen Teichbewohner, sondern klar erkennbare AI-Gegner mit eigener Persönlichkeit, Schwierigkeit und Themenausrichtung. Das Grundgerüst bleibt datengetrieben: Jede Schlange definiert mindestens **Schwierigkeitsstufe**, **Themenpool**, **Antworttempo**, **Fehlerneigung** und **Belohnungsprofil**.
+
+Beispiele für die erste Gegnerfamilie:
+
+- **Wassernatter:** Einstieg; Teich, Natur und Alltagswissen.
+- **Ringelnatter:** leicht bis mittel; Biologie, Ökologie und Beobachtung.
+- **Kreuzotter:** mittel; Kausalität, Logik und Risikoentscheidungen.
+- **Kobra:** schwer; Wissenschaft, Geschichte und anspruchsvolle Mischfragen.
+- **Python:** sehr schwer; Mathematik, Algorithmen und Technik.
+- **Anakonda:** Meisterstufe; wechselnde Themen, Zeitdruck und lange Frageserien.
+
+Die Schlange soll den Spieler fordern, nicht beleidigen. Schwierigkeit verändert Frageauswahl, Tempo und Fehlertoleranz — nicht die Fairness der richtigen Antwort. Neue Schlangen können später über Themen, Biome oder Quizserien freigeschaltet werden.
+
 ### Der Kernkreislauf
 
 ```text
