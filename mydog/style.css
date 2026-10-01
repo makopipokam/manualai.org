@@ -471,6 +471,7 @@ body {
     margin: 0;
     color: var(--text-color);
     font-size: 1rem;
+    text-align: center;
 }
 
 .info-item {
@@ -535,12 +536,14 @@ body {
 .ratings-overview h4 {
     color: var(--primary-color);
     margin-bottom: 4px;
+    text-align: center;
 }
 
 .rating-caption {
     color: var(--text-light);
     font-size: 0.9rem;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 .rating-text {
