@@ -1,4 +1,7 @@
 // Big Five Personality Test Questions
+// Shared five-point Likert scale used by every personality question.
+const likertScale = [0, 25, 50, 75, 100];
+
 // Each question maps to one of the OCEAN dimensions:
 // O = Openness (Offenheit)
 // C = Conscientiousness (Gewissenhaftigkeit)

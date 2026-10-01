@@ -283,10 +283,45 @@ body {
 }
 
 .options-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
     margin-bottom: 20px;
+}
+
+.likert-scale {
+    display: grid;
+    gap: 12px;
+}
+
+.likert-anchors {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: var(--text-light);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.likert-anchors span {
+    width: 45%;
+}
+
+.likert-anchors span:last-child {
+    text-align: right;
+}
+
+.likert-hint {
+    margin: -4px 0 0;
+    color: var(--text-light);
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.likert-options {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(52px, 1fr));
+    gap: 10px;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
 }
 
 .option-btn {
@@ -1041,8 +1076,16 @@ body {
         grid-template-columns: 1fr;
     }
 
-    .options-container {
-        grid-template-columns: 1fr;
+    .likert-options {
+        gap: 6px;
+    }
+
+    .likert-option {
+        padding: 14px 8px;
+    }
+
+    .likert-anchors {
+        font-size: 0.78rem;
     }
 
     .test-navigation {
