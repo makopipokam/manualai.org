@@ -99,6 +99,7 @@
       assert(transitionImage?.style.visibility === 'hidden' || transitionImage?.getAttribute('src') !== firstDogImage, 'next dog never shows the previous image during transition');
       await wait(1200);
       assert(transitionImage?.style.visibility === 'hidden' || transitionImage?.getAttribute('src') !== firstDogImage, 'next dog does not retain the previous image');
+      assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.style.visibility !== 'hidden' || image.style.display === 'none'), 'deferred thumbnails do not reserve blank layout space');
 
       click('#chat-btn');
       assert(active() === 'chat-screen', 'chat opens from a result profile');

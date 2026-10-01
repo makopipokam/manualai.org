@@ -1,6 +1,6 @@
 // Service Worker for PWA - MyDog
 // Only caches owned by the /mydog/ app are managed here.
-const STATIC_CACHE = 'mydog-static-v2';
+const STATIC_CACHE = 'mydog-static-v3';
 const IMAGE_CACHE = 'mydog-images-v1';
 const OWNED_CACHE_PREFIX = 'mydog-';
 const APP_SHELL = [
