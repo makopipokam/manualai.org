@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Find deinen perfekten Hund - Persönlichkeitstest</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <h1>🐾 Find deinen perfekten Hund 🐶</h1>
+            <p class="subtitle">Mache einen kurzen Persönlichkeitstest und wir finden den Hund, der perfekt zu dir passt!</p>
+            <button id="start-test-btn" class="btn-primary">Test starten</button>
+        </div>
+
+        <!-- Personality Test Screen -->
+        <div id="test-screen" class="screen">
+            <div class="test-header">
+                <h2>Persönlichkeitstest</h2>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+                <span id="progress-text" class="progress-text">Frage 1 von 30</span>
+            </div>
+            
+            <div class="question-container">
+                <h3 id="question-text">Ich bin eher...</h3>
+                <div id="options-container" class="options-container">
+                    <!-- Options will be inserted by JS -->
+                </div>
+            </div>
+            
+            <div class="test-navigation">
+                <button id="prev-question-btn" class="btn-secondary" disabled>Zurück</button>
+                <button id="next-question-btn" class="btn-primary" disabled>Weiter</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen">
+            <div class="loading-spinner"></div>
+            <h2>Wir finden deinen perfekten Hund...</h2>
+            <p>Basierend auf deinen Antworten analysieren wir, welcher Hund am besten zu dir passt.</p>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen">
+            <h2>Dein perfekter Match: <span id="dog-name"></span> 🐕</h2>
+            
+            <div class="dog-profile">
+                <div class="dog-images">
+                    <img id="dog-image-1" class="dog-image main-image" src="" alt="">
+                    <img id="dog-image-2" class="dog-image thumbnail" src="" alt="">
+                    <img id="dog-image-3" class="dog-image thumbnail" src="" alt="">
+                </div>
+                
+                <div class="dog-info">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Rasse:</span>
+                            <span id="dog-breed" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Größe:</span>
+                            <span id="dog-size" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Energielevel:</span>
+                            <span id="dog-energy" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Pflegebedarf:</span>
+                            <span id="dog-grooming" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Familientauglich:</span>
+                            <span id="dog-family" class="info-value"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Trainierbarkeit:</span>
+                            <span id="dog-trainability" class="info-value"></span>
+                        </div>
+                    </div>
+                    
+                    <p id="dog-description" class="dog-description"></p>
+                </div>
+            </div>
+            
+            <div class="match-explanation">
+                <h3>Warum dieser Hund zu dir passt:</h3>
+                <p id="match-reason"></p>
+            </div>
+            
+            <div class="action-buttons">
+                <button id="interest-btn" class="btn-primary">✅ Interesse - Mehr erfahren</button>
+                <button id="no-interest-btn" class="btn-secondary">❌ Kein Interesse - Nächster Vorschlag</button>
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <button id="back-to-results-btn" class="back-btn">← Zurück</button>
+                    <h2>Chat mit <span id="chat-dog-name"></span></h2>
+                </div>
+                
+                <div id="chat-messages" class="chat-messages">
+                    <div class="chat-message assistant">
+                        <p>Hallo! Ich bin <span id="chat-dog-name-msg"></span>. 🐶 Wie kann ich dir helfen?</p>
+                    </div>
+                </div>
+                
+                <div class="quick-replies">
+                    <h4>Schnellauswahl:</h4>
+                    <div class="quick-reply-buttons">
+                        <button class="quick-reply-btn" data-message="Wie viel Bewegung brauchst du täglich?">🏃‍♂️ Bewegung</button>
+                        <button class="quick-reply-btn" data-message="Was frisst du am liebsten?">🍖 Ernährung</button>
+                        <button class="quick-reply-btn" data-message="Wie verhältst du dich mit Kindern?">👶 Kinder</button>
+                        <button class="quick-reply-btn" data-message="Brauchst du viel Pflege?">💇 Pflege</button>
+                        <button class="quick-reply-btn" data-message="Wie lange lebst du durchschnittlich?">⏳ Lebenserwartung</button>
+                        <button class="quick-reply-btn" data-message="Bist du leicht zu erziehen?">🎓 Erziehung</button>
+                    </div>
+                </div>
+                
+                <div class="chat-input">
+                    <input type="text" id="user-message-input" placeholder="Schreibe eine Nachricht..." autocomplete="off">
+                    <button id="send-message-btn" class="send-btn">→</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- No More Dogs Screen -->
+        <div id="no-more-screen" class="screen">
+            <h2>Keine weiteren Hunde mehr</h2>
+            <p>Du hast alle passenden Hunde gesehen. Möchtest du den Test noch einmal machen?</p>
+            <button id="restart-test-btn" class="btn-primary">Test neu starten</button>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
