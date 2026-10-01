@@ -23,6 +23,10 @@
                     <button id="retake-test-btn" class="btn-outline" type="button">Test neu machen</button>
                 </div>
             </div>
+            <div id="saved-progress-panel" class="saved-result-panel" hidden>
+                <p><strong>Dein Test ist noch nicht abgeschlossen.</strong><span id="saved-progress-text"></span></p>
+                <button id="resume-test-btn" class="btn-secondary" type="button">Test fortsetzen</button>
+            </div>
             <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
         </div>
 
@@ -125,6 +129,7 @@
             <div class="action-buttons">
                 <button id="favorite-btn" class="btn-favorite">❤️ Zu Favoriten speichern</button>
                 <button id="next-dog-btn" class="btn-secondary">Nächster Hund</button>
+                <button id="chat-btn" class="btn-secondary">💬 Hund fragen</button>
                 <button id="share-btn" class="btn-share">📤 Teilen</button>
             </div>
         </div>
@@ -187,7 +192,7 @@
     <!-- Share Modal -->
     <div id="share-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
+            <button class="close-btn" type="button" aria-label="Teilen schließen">&times;</button>
             <h3>Teilen</h3>
             <p>Kopiere diesen Link, um deinen Hund mit Freunden zu teilen:</p>
             <input type="text" id="share-link-input" readonly>

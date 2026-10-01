@@ -50,6 +50,30 @@ for breed, urls in breed_images.items():
 print(f'catalogue: PASS | {len(entries)} breeds | 6 non-shared image references each')
 PY
 
+if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/sw.js"; then
+  echo 'service-worker: FAIL | stale external precache entries remain' >&2
+  exit 1
+fi
+grep -q "const STATIC_CACHE = 'mydog-static-v2'" "$ROOT/mydog/sw.js"
+grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
+echo 'service-worker: PASS | versioned MyDog-only app-shell cache'
+
+direct_output="$TMP_DIR/direct-profile.html"
+chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
+  --no-first-run --user-data-dir="$TMP_DIR/chromium-direct" \
+  --virtual-time-budget=4000 --dump-dom "http://127.0.0.1:${PORT}/mydog/?dog=1" \
+  >"$direct_output" 2>"$TMP_DIR/direct.log"
+python3 - "$direct_output" <<'PY'
+from pathlib import Path
+import sys
+html = Path(sys.argv[1]).read_text()
+if 'id="results-screen" class="screen active"' not in html:
+    raise SystemExit('direct dog profile did not activate results screen')
+if 'Kein persönlicher Test' not in html:
+    raise SystemExit('direct dog profile did not render neutral score state')
+print('direct-profile: PASS | shared dog profile renders without personal score')
+PY
+
 for mode in desktop mobile; do
   if [[ "$mode" == desktop ]]; then
     size='1280,900'

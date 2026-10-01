@@ -1,7 +1,7 @@
 {
-  "name": "Find deinen perfekten Hund",
-  "short_name": "Hundefinder",
-  "description": "Mache einen Persönlichkeitstest und finde den Hund, der perfekt zu dir passt!",
+  "name": "Finde passende Hundevorschläge",
+  "short_name": "MyDog",
+  "description": "Experimenteller Persönlichkeitstest mit passenden Hundevorschlägen.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#4CAF50",
