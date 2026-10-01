@@ -54,9 +54,14 @@ const elements = {
     dogFamily: document.getElementById('dog-family'),
     dogTrainability: document.getElementById('dog-trainability'),
     dogDescription: document.getElementById('dog-description'),
+    dogImageMain: document.getElementById('dog-image-main'),
     dogImage1: document.getElementById('dog-image-1'),
     dogImage2: document.getElementById('dog-image-2'),
     dogImage3: document.getElementById('dog-image-3'),
+    dogImage4: document.getElementById('dog-image-4'),
+    dogImage5: document.getElementById('dog-image-5'),
+    dogImage6: document.getElementById('dog-image-6'),
+    imageLabel: document.getElementById('image-label'),
     matchReason: document.getElementById('match-reason'),
     interestBtn: document.getElementById('interest-btn'),
     noInterestBtn: document.getElementById('no-interest-btn'),
@@ -342,8 +347,8 @@ function showDogResult() {
     elements.dogTrainability.textContent = dog.trainability;
     elements.dogDescription.textContent = dog.description;
     
-    // Load images with fallback
-    loadDogImages(dog.images);
+    // Load images with fallback and labels
+    loadDogImages(dog.images, dog.imagesLabels);
     
     // Update ratings
     updateRatings(dog.ratings);
@@ -359,37 +364,77 @@ function showDogResult() {
     showScreen('results');
 }
 
-// Load dog images with fallback
-function loadDogImages(imageUrls) {
+// Load dog images with fallback and labels
+function loadDogImages(imageUrls, labels) {
+    const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
+    const dog = appState.currentDog;
+    
+    // Set main image
+    elements.dogImageMain.onerror = function() {
+        this.src = fallbackImage;
+    };
+    elements.dogImageMain.src = imageUrls[0] || fallbackImage;
+    elements.dogImageMain.alt = dog.name;
+    
+    // Set thumbnail images
+    const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
+    thumbnailIds.forEach((id, index) => {
+        const imgElement = document.getElementById(id);
+        if (imgElement) {
+            imgElement.onerror = function() {
+                this.src = fallbackImage;
+            };
+            imgElement.src = imageUrls[index] || imageUrls[0] || fallbackImage;
+            imgElement.alt = labels ? labels[index] || dog.name : dog.name;
+            imgElement.addEventListener('click', () => {
+                selectThumbnail(index, imageUrls, labels);
+            });
+        }
+    });
+    
+    // Select first thumbnail by default
+    selectThumbnail(0, imageUrls, labels);
+}
+
+// Select a thumbnail image
+function selectThumbnail(index, imageUrls, labels) {
+    const dog = appState.currentDog;
     const fallbackImage = "https://images.unsplash.com/photo-1551717743-49959800b1f6?w=400&h=300&fit=crop";
     
-    elements.dogImage1.onerror = function() { this.src = fallbackImage; };
-    elements.dogImage1.src = imageUrls[0] || fallbackImage;
-    elements.dogImage1.alt = appState.currentDog.name;
+    // Update main image
+    elements.dogImageMain.src = imageUrls[index] || fallbackImage;
+    elements.dogImageMain.alt = labels ? labels[index] || dog.name : dog.name;
     
-    elements.dogImage2.onerror = function() { this.src = fallbackImage; };
-    elements.dogImage2.src = imageUrls[1] || imageUrls[0] || fallbackImage;
-    elements.dogImage2.alt = appState.currentDog.name;
+    // Update label
+    if (elements.imageLabel && labels && labels[index]) {
+        elements.imageLabel.textContent = labels[index];
+    }
     
-    elements.dogImage3.onerror = function() { this.src = fallbackImage; };
-    elements.dogImage3.src = imageUrls[2] || imageUrls[0] || fallbackImage;
-    elements.dogImage3.alt = appState.currentDog.name;
+    // Update thumbnail selection
+    const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
+    thumbnailIds.forEach((id, i) => {
+        const imgElement = document.getElementById(id);
+        if (imgElement) {
+            if (i === index) {
+                imgElement.classList.add('selected');
+            } else {
+                imgElement.classList.remove('selected');
+            }
+        }
+    });
 }
 
 // Update star ratings
 function updateRatings(ratings) {
     if (!ratings) {
-        // Default ratings if not provided
         ratings = { family: 3, energy: 3, trainability: 3, grooming: 3, health: 3 };
     }
     
-    // Update individual ratings
     elements.energyRating.innerHTML = generateStarRating(ratings.energy || 3);
     elements.groomingRating.innerHTML = generateStarRating(ratings.grooming || 3);
     elements.familyRating.innerHTML = generateStarRating(ratings.family || 3);
     elements.trainabilityRating.innerHTML = generateStarRating(ratings.trainability || 3);
     
-    // Calculate overall rating
     const overall = calculateOverallRating(ratings);
     elements.overallRating.innerHTML = generateStarRating(overall);
     elements.overallRatingText.textContent = `${overall.toFixed(1)}/5`;
@@ -499,7 +544,6 @@ function renderFavorites() {
         `;
         
         card.addEventListener('click', () => {
-            // Find the dog in the full database
             const fullDog = dogDatabase.find(d => d.id === dog.id);
             if (fullDog) {
                 appState.matchingDogs = [fullDog];
@@ -574,7 +618,6 @@ function openShareModal() {
     const dog = appState.currentDog;
     if (!dog) return;
     
-    const shareText = `Schau mal, ich habe meinen perfekten Hund gefunden: ${dog.name}! Teste auch du auf `;
     const shareUrl = `${window.location.origin}${window.location.pathname}?dog=${dog.id}`;
     
     elements.shareLinkInput.value = shareUrl;
@@ -604,9 +647,6 @@ function shareOnTwitter() {
 }
 
 function shareOnFacebook() {
-    const dog = appState.currentDog;
-    if (!dog) return;
-    
     const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`;
     window.open(url, '_blank');
 }
@@ -762,7 +802,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dog) {
             appState.matchingDogs = [dog];
             appState.currentDogIndex = 0;
-            // Wait for DOM to be fully ready
             setTimeout(() => {
                 showDogResult();
                 showScreen('results');

@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#4CAF50">
     <title>Find deinen perfekten Hund - Persönlichkeitstest</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="/mydog/style.css">
+    <link rel="manifest" href="/mydog/manifest.json">
+    <base href="/mydog/">
 </head>
 <body>
     <div class="app-container">
@@ -54,9 +55,16 @@
             
             <div class="dog-profile">
                 <div class="dog-images">
-                    <img id="dog-image-1" class="dog-image main-image" src="" alt="">
-                    <img id="dog-image-2" class="dog-image thumbnail" src="" alt="">
-                    <img id="dog-image-3" class="dog-image thumbnail" src="" alt="">
+                    <img id="dog-image-main" class="dog-image main-image" src="" alt="">
+                    <div class="thumbnail-gallery">
+                        <img id="dog-image-1" class="dog-image thumbnail" src="" alt="" data-index="0">
+                        <img id="dog-image-2" class="dog-image thumbnail" src="" alt="" data-index="1">
+                        <img id="dog-image-3" class="dog-image thumbnail" src="" alt="" data-index="2">
+                        <img id="dog-image-4" class="dog-image thumbnail" src="" alt="" data-index="3">
+                        <img id="dog-image-5" class="dog-image thumbnail" src="" alt="" data-index="4">
+                        <img id="dog-image-6" class="dog-image thumbnail" src="" alt="" data-index="5">
+                    </div>
+                    <p id="image-label" class="image-label"></p>
                 </div>
                 
                 <div class="dog-info">
@@ -185,7 +193,7 @@
     <!-- Dark Mode Toggle -->
     <button id="dark-mode-toggle" class="dark-mode-toggle" title="Dark Mode">🌓</button>
 
-    <script src="data.js"></script>
-    <script src="script.js"></script>
+    <script src="/mydog/data.js"></script>
+    <script src="/mydog/script.js"></script>
 </body>
 </html>

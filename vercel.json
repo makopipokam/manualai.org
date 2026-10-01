@@ -3,6 +3,10 @@
     {
       "source": "/pwnd",
       "destination": "/pwnd.html"
+    },
+    {
+      "source": "/mydog(/*)?",
+      "destination": "/mydog/index.html"
     }
   ],
   "functions": {

@@ -360,12 +360,19 @@ body {
     border-radius: var(--border-radius);
     object-fit: cover;
     transition: var(--transition);
+    cursor: pointer;
 }
 
 .dog-image.main-image {
     width: 100%;
     height: 300px;
     border: 4px solid var(--primary-color);
+}
+
+.thumbnail-gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
 }
 
 .dog-image.thumbnail {
@@ -377,6 +384,18 @@ body {
 .dog-image.thumbnail:hover {
     border-color: var(--primary-color);
     transform: scale(1.05);
+}
+
+.dog-image.thumbnail.selected {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+.image-label {
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 5px;
 }
 
 .dog-info {
@@ -931,6 +950,10 @@ body {
 
     .dog-image.main-image {
         height: 250px;
+    }
+
+    .thumbnail-gallery {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     .info-grid {
