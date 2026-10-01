@@ -748,6 +748,25 @@ body {
     color: var(--primary-color);
     margin: 0;
 }
+.favorites-count {
+    display: inline-flex;
+    min-width: 32px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    padding: 0 9px;
+    border-radius: 999px;
+    background: var(--primary-color);
+    color: white;
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+.favorites-summary {
+    margin: 5px 0 0;
+    color: var(--text-light);
+    font-size: 0.95rem;
+}
 
 .favorites-list {
     display: grid;
@@ -799,17 +818,32 @@ body {
     gap: 10px;
     margin-top: 10px;
 }
-
+.favorite-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+}
+.favorite-card .view-btn,
+.favorite-card .remove-btn {
+    flex: 1 1 120px;
+    min-height: 40px;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 20px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+}
+.favorite-card .view-btn {
+    background-color: var(--primary-color);
+}
+.favorite-card .view-btn:hover {
+    background-color: var(--primary-hover);
+}
 .favorite-card .remove-btn {
     background-color: var(--secondary-color);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: var(--transition);
-    font-size: 0.8rem;
-    margin-top: 10px;
 }
 
 .favorite-card .remove-btn:hover {
@@ -821,6 +855,23 @@ body {
     padding: 40px;
     color: var(--text-light);
     font-size: 1.1rem;
+}
+.empty-favorites-icon {
+    display: block;
+    margin-bottom: 12px;
+    font-size: 2.5rem;
+}
+.empty-favorites h3 {
+    margin: 0 0 8px;
+    color: var(--text-color);
+}
+.empty-favorites p {
+    max-width: 480px;
+    margin: 0 auto 20px;
+    line-height: 1.6;
+}
+.empty-favorites-action {
+    margin-top: 4px;
 }
 
 /* No More Dogs Screen */

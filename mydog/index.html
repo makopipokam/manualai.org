@@ -165,7 +165,10 @@
         <div id="favorites-screen" class="screen">
             <div class="favorites-header">
                 <button id="back-from-favorites-btn" class="back-btn">← Zurück</button>
-                <h2>📚 Meine Favoriten</h2>
+                <div>
+                    <h2>📚 Meine Favoriten <span id="favorites-count" class="favorites-count" aria-live="polite">0</span></h2>
+                    <p id="favorites-summary" class="favorites-summary">Noch keine gespeicherten Hunde.</p>
+                </div>
             </div>
             <div id="favorites-list" class="favorites-list">
                 <!-- Favorites will be inserted by JS -->

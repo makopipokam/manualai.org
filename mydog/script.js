@@ -80,6 +80,8 @@ const elements = {
     restartTestBtn: document.getElementById('restart-test-btn'),
     quickReplyBtns: document.querySelectorAll('.quick-reply-btn'),
     favoritesList: document.getElementById('favorites-list'),
+    favoritesCount: document.getElementById('favorites-count'),
+    favoritesSummary: document.getElementById('favorites-summary'),
     energyRating: document.getElementById('energy-rating'),
     groomingRating: document.getElementById('grooming-rating'),
     familyRating: document.getElementById('family-rating'),
@@ -591,8 +593,24 @@ function showFavorites() {
 
 // Render favorites list
 function renderFavorites() {
+    const favoriteCount = appState.favorites.length;
+    if (elements.favoritesCount) {
+        elements.favoritesCount.textContent = favoriteCount;
+    }
+    if (elements.favoritesSummary) {
+        elements.favoritesSummary.textContent = favoriteCount === 0
+            ? 'Noch keine gespeicherten Hunde.'
+            : `${favoriteCount} ${favoriteCount === 1 ? 'Hund' : 'Hunde'} gespeichert — wähle einen Hund aus, um sein Profil zu öffnen.`;
+    }
     if (appState.favorites.length === 0) {
-        elements.favoritesList.innerHTML = '<div class="empty-favorites">Du hast noch keine Favoriten. Füge Hunde zu deinen Favoriten hinzu, indem du auf den ❤️-Button klickst!</div>';
+        elements.favoritesList.innerHTML = `
+            <div class="empty-favorites">
+                <span class="empty-favorites-icon" aria-hidden="true">🐾</span>
+                <h3>Noch keine Favoriten</h3>
+                <p>Speichere Hunde aus deinen Testergebnissen, damit du sie hier jederzeit wiederfindest.</p>
+                <button class="btn-primary empty-favorites-action" type="button">Test starten</button>
+            </div>`;
+        elements.favoritesList.querySelector('.empty-favorites-action').addEventListener('click', startTest);
         return;
     }
     
@@ -601,6 +619,8 @@ function renderFavorites() {
     appState.favorites.forEach((dog, index) => {
         const card = document.createElement('div');
         card.className = 'favorite-card';
+        card.setAttribute('role', 'group');
+        card.dataset.dogId = dog.id;
         card.innerHTML = `
             <img src="${dog.images[0] || 'https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'}" alt="${dog.name}" onerror="this.src='https://images.unsplash.com/photo-1551717743-49959800b1f6?auto=format&fit=crop&w=800&q=82'">
             <h3>${dog.name}</h3>
@@ -609,19 +629,26 @@ function renderFavorites() {
             <div class="rating">
                 <span>⭐ ${calculateOverallRating(dog.ratings).toFixed(1)}/5</span>
             </div>
-            <button class="remove-btn" data-index="${index}">Entfernen</button>
+            <div class="favorite-card-actions">
+                <button class="view-btn" type="button">Profil ansehen</button>
+                <button class="remove-btn" type="button" data-index="${index}">Entfernen</button>
+            </div>
         `;
-        
-        card.addEventListener('click', () => {
+
+        const viewFavorite = () => {
             const fullDog = dogDatabase.find(d => d.id === dog.id);
             if (fullDog) {
-                appState.matchingDogs = [fullDog];
+                appState.matchingDogs = [{ ...fullDog, matchScore: dog.matchScore || 0 }];
                 appState.currentDogIndex = 0;
                 showDogResult();
                 showScreen('results');
             }
+        };
+        card.querySelector('.view-btn').addEventListener('click', viewFavorite);
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('button')) viewFavorite();
         });
-        
+
         const removeBtn = card.querySelector('.remove-btn');
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
