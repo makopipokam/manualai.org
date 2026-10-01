@@ -265,6 +265,7 @@ function startTest() {
     appState.matchingDogs = [];
     appState.currentDogIndex = 0;
     appState.chatHistory = [];
+    saveState();
     
     loadQuestion();
     showScreen('test');
@@ -286,6 +287,11 @@ function loadQuestion() {
     anchors.className = 'likert-anchors';
     anchors.innerHTML = `<span>${question.options[0]}</span><span>${question.options[1]}</span>`;
     scale.appendChild(anchors);
+
+    const hint = document.createElement('p');
+    hint.className = 'likert-hint';
+    hint.textContent = '1 = eher links · 5 = eher rechts';
+    scale.appendChild(hint);
 
     const buttons = document.createElement('div');
     buttons.className = 'likert-options';

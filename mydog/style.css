@@ -308,6 +308,13 @@ body {
     text-align: right;
 }
 
+.likert-hint {
+    margin: -4px 0 0;
+    color: var(--text-light);
+    font-size: 0.78rem;
+    text-align: center;
+}
+
 .likert-options {
     display: grid;
     grid-template-columns: repeat(5, minmax(52px, 1fr));

@@ -91,6 +91,31 @@ python3 -m http.server 3000
 
 Danach ist die App unter `http://localhost:3000/mydog/` erreichbar.
 
+### Beta-Test-Checkliste
+
+Automatisierter Browser-Regressionstest für Desktop und mobiles Portrait:
+
+```bash
+npm run test:mydog:beta
+```
+
+Der Test prüft reproduzierbar:
+
+- alle 30 Fragen mit allen fünf Likert-Werten (1–5)
+- numerische Auswahl, Fortschritt sowie Zurück/Weiter
+- gespeicherte Antworten und Wiederherstellung nach einem Reload
+- Ergebnisberechnung und Ergebnisdarstellung
+- Favoriten speichern, entfernen und Favoritenübersicht
+- „Test neu machen“ inklusive Löschen der alten Antworten
+- mobile Portrait- und Desktop-Viewport-Ausführung
+
+Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
+
+- Safe Area/Notch, Scrollverhalten und Touch-Ziele in iOS Safari und Android Chrome
+- Haptik-Unterstützung und Verhalten bei deaktivierter Vibration
+- PWA-Installation, Offline-Start und Browser-Zurück-Navigation
+- lokale Speicherung nach App-Neustart sowie Verhalten bei privatem Browsing
+
 ### PWA Installation
 1. Öffne die App in Chrome auf einem Mobilgerät
 2. Tippe auf "Zum Startbildschirm hinzufügen"
