@@ -275,19 +275,42 @@ function loadQuestion() {
     const question = bigFiveQuestions[appState.currentQuestion];
     elements.questionText.textContent = question.text;
     
-    // Clear previous options
+    // Render the two question anchors with a five-point Likert scale between them.
     elements.optionsContainer.innerHTML = '';
-    
-    // Create option buttons
-    question.options.forEach((option, index) => {
+    const scale = document.createElement('div');
+    scale.className = 'likert-scale';
+    scale.setAttribute('role', 'radiogroup');
+    scale.setAttribute('aria-label', 'Antwortskala');
+
+    const anchors = document.createElement('div');
+    anchors.className = 'likert-anchors';
+    anchors.innerHTML = `<span>${question.options[0]}</span><span>${question.options[1]}</span>`;
+    scale.appendChild(anchors);
+
+    const buttons = document.createElement('div');
+    buttons.className = 'likert-options';
+    const savedAnswer = appState.userAnswers[appState.currentQuestion];
+    likertScale.forEach((scalePoint, index) => {
         const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.textContent = option;
+        btn.type = 'button';
+        btn.className = 'option-btn likert-option';
+        btn.textContent = String(index + 1);
+        btn.title = scalePoint.label;
+        btn.setAttribute('aria-label', `${index + 1}: ${scalePoint.label}`);
+        btn.setAttribute('role', 'radio');
+        btn.setAttribute('aria-checked', String(savedAnswer?.optionIndex === index));
         btn.dataset.index = index;
+        if (savedAnswer?.optionIndex === index) btn.classList.add('selected');
         btn.addEventListener('click', () => selectOption(index));
-        elements.optionsContainer.appendChild(btn);
+        buttons.appendChild(btn);
     });
-    
+    scale.appendChild(buttons);
+
+    const labels = document.createElement('div');
+    labels.className = 'likert-labels';
+    labels.innerHTML = likertScale.map(point => `<span>${point.label}</span>`).join('');
+    scale.appendChild(labels);
+    elements.optionsContainer.appendChild(scale);
     // Update progress
     updateProgress();
     
@@ -300,22 +323,23 @@ function loadQuestion() {
 function selectOption(optionIndex) {
     const question = bigFiveQuestions[appState.currentQuestion];
     
-    // Remove selected class from all options
-    const options = elements.optionsContainer.querySelectorAll('.option-btn');
-    options.forEach(opt => opt.classList.remove('selected'));
-    
-    // Add selected class to clicked option
-    options[optionIndex].classList.add('selected');
-    
-    // Store the answer
+    // Update the selected radio-style button.
+    const options = elements.optionsContainer.querySelectorAll('.likert-option');
+    options.forEach((opt, index) => {
+        const selected = index === optionIndex;
+        opt.classList.toggle('selected', selected);
+        opt.setAttribute('aria-checked', String(selected));
+    });
+    const scalePoint = likertScale[optionIndex];
+    // Store the normalized Likert value so scoring remains explicit and replayable.
     appState.userAnswers[appState.currentQuestion] = {
         question: question.text,
-        option: question.options[optionIndex],
+        option: scalePoint.label,
         dimension: question.dimension,
         reverse: question.reverse,
-        optionIndex: optionIndex
+        optionIndex: optionIndex,
+        likertValue: scalePoint.value
     };
-    
     // Save progress
     saveState();
     
@@ -364,11 +388,11 @@ function calculatePersonality() {
         if (answer) {
             const dimension = answer.dimension;
             const isReverse = answer.reverse;
-            const optionIndex = answer.optionIndex;
-            
-            const score = isReverse ? (optionIndex === 0 ? 100 : 0) : (optionIndex === 1 ? 100 : 0);
-            
-            dimensionScores[dimension] += score;
+            const score = Number.isFinite(answer.likertValue)
+                ? answer.likertValue
+                : (answer.optionIndex === 1 ? 100 : 0);
+            const normalizedScore = isReverse ? 100 - score : score;
+            dimensionScores[dimension] += normalizedScore;
             dimensionCounts[dimension]++;
         }
     });
