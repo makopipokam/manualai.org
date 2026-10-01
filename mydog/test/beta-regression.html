@@ -65,6 +65,8 @@
       }
       await wait(1800);
       assert(active() === 'results-screen', `complete test opens results (active=${active()}, progress=${page.querySelector('#progress-text')?.textContent})`);
+      assert(page.querySelector('.ratings-overview h4')?.textContent === 'Eignung für dich:', 'overall stars are labeled as suitability');
+      assert(page.querySelector('.rating-caption')?.textContent.includes('zu deinen Antworten passt'), 'suitability explanation renders');
       const completed = state();
       assert(completed.lastResult?.dogIds?.length > 0, 'completed result persists dog ids');
       assert(Object.values(completed.lastResult.userPersonality).every(Number.isFinite), 'personality scores are numeric');
@@ -76,6 +78,7 @@
       assert(active() === 'favorites-screen', 'favorites overview opens');
       assert(page.querySelectorAll('.favorite-card').length === 1, 'favorite card renders');
       assert(page.querySelector('#favorites-count').textContent === '1', 'favorite count renders');
+      assert(page.querySelector('.favorite-card .rating')?.textContent.includes('Eignung'), 'favorite stars are labeled as suitability');
       assert(getComputedStyle(page.querySelector('.remove-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites remove action is not red');
       click('.remove-btn');
       assert(state().favorites.length === 0, 'favorite removal persists');

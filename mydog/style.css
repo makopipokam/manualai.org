@@ -528,6 +528,12 @@ body {
 
 .ratings-overview h4 {
     color: var(--primary-color);
+    margin-bottom: 4px;
+}
+
+.rating-caption {
+    color: var(--text-light);
+    font-size: 0.9rem;
     margin-bottom: 10px;
 }
 
