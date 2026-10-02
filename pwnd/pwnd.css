@@ -82,3 +82,45 @@ body{background:linear-gradient(180deg,#d9ebd8 0%,#edf1df 45%,#e4d7b7 100%);colo
 .ai-avatar{width:47px;height:47px;flex:none;overflow:hidden;padding:2px}
 @media(max-width:430px){.duel-opponent-option .fox-mark{width:62px;height:62px}.ai-fighter .avatar{width:42px;height:42px}}
 @media(max-width:410px){.unlock-panel .activity-heading{flex-wrap:wrap}.unlock-panel .activity-heading .growth-resource-legend{margin-left:0}}
+
+/* --- living pond: each growth-map unlock inhabits the scene --- */
+.pond-feature{position:absolute;z-index:2;visibility:hidden;opacity:0;pointer-events:none;will-change:transform}
+.pond-feature.unlocked{visibility:visible;opacity:1}
+.pond-feature.arriving{animation:pondArrive 1.15s cubic-bezier(.2,.8,.25,1.2) both!important}
+.pond-frog{left:21%;bottom:28%;font-size:29px;filter:drop-shadow(0 3px 4px #1e5363a0)}
+.pond-frog.unlocked:not(.arriving){animation:pondBreathe 3.4s ease-in-out infinite}
+.pond-reeds{right:7%;bottom:-4px;display:flex;align-items:flex-end;gap:7px;height:105px;transform-origin:bottom center}
+.pond-reeds i{display:block;width:7px;height:91px;border-radius:70% 70% 20% 20%;background:linear-gradient(90deg,#255d43,#7dbd69,#346e4d);box-shadow:0 2px 3px #144a5244;transform:rotate(-9deg)}
+.pond-reeds i:nth-child(2){height:74px;transform:rotate(13deg)}.pond-reeds i:nth-child(3){height:104px;transform:rotate(5deg)}.pond-reeds i:nth-child(4){height:65px;transform:rotate(-18deg)}
+.pond-reeds.unlocked:not(.arriving){animation:pondReedSway 4.5s ease-in-out infinite alternate}
+.pond-dragonfly{left:32%;top:25%;width:47px;height:32px;filter:drop-shadow(0 2px 3px #153b4388)}
+.pond-dragonfly i,.pond-dragonfly i:before,.pond-dragonfly i:after{position:absolute;display:block;content:"";width:20px;height:10px;border-radius:100% 25% 100% 25%;background:#c9faf4c9;border:1px solid #b7edebe0}
+.pond-dragonfly i{left:2px;top:3px;transform:rotate(28deg)}.pond-dragonfly i:before{left:19px;top:-7px;transform:rotate(-47deg)}.pond-dragonfly i:after{left:22px;top:7px;transform:rotate(35deg)}
+.pond-dragonfly b{position:absolute;left:22px;top:5px;width:5px;height:25px;border-radius:6px;background:linear-gradient(#135969,#60c9bf,#10566d);transform:rotate(-15deg)}
+.pond-dragonfly.unlocked:not(.arriving){animation:pondDragonfly 7s ease-in-out infinite}
+.pond-fish{left:59%;bottom:21%;font-size:34px;filter:drop-shadow(0 5px 3px #20566588)}
+.pond-fish.unlocked:not(.arriving){animation:pondSwim 8s ease-in-out infinite}
+.pond-lilies{left:12%;bottom:10%;width:100px;height:59px}
+.pond-lilies i{position:absolute;left:0;bottom:4px;width:64px;height:34px;border-radius:100% 0 100% 0;background:#90c776;border-bottom:4px solid #5b9d70;transform:rotate(-8deg);box-shadow:0 4px 6px #20576966}
+.pond-lilies i:nth-child(2){left:37px;bottom:23px;width:45px;height:24px;transform:rotate(18deg);background:#aed394}
+.pond-lilies b{position:absolute;left:30px;top:0;color:#ffc5d9;font-size:28px;text-shadow:0 2px 4px #513a5355}
+.pond-lilies.unlocked:not(.arriving){animation:pondLilyFloat 5.5s ease-in-out infinite}
+.pond-stream{left:-3%;top:-4%;width:36%;height:116%;z-index:1;clip-path:polygon(0 0,55% 0,45% 17%,66% 42%,48% 59%,61% 82%,43% 100%,0 100%,33% 74%,21% 52%,42% 32%,18% 13%);background:linear-gradient(135deg,#c7fbebb0,#7dd9d7a0 50%,#f2fff4b0);filter:blur(4px)}
+.pond-stream i{display:block;width:100%;height:100%;background:repeating-linear-gradient(145deg,transparent 0 19px,#f0fff34d 21px 23px,transparent 25px 39px)}
+.pond-stream.unlocked:not(.arriving) i{animation:pondCurrent 5s linear infinite}
+.pond-scene-toast{position:absolute;z-index:5;left:50%;bottom:12px;max-width:calc(100% - 36px);transform:translate(-50%,10px);padding:8px 14px;background:#f6f1dcf0;color:#2a6a50;border:1px solid #c1d4ac;border-radius:999px;font-size:12px;font-weight:800;text-align:center;opacity:0;visibility:hidden;transition:opacity .35s,transform .35s;pointer-events:none;white-space:nowrap}
+.pond-scene-toast.visible{opacity:1;visibility:visible;transform:translate(-50%,0)}
+@keyframes pondArrive{from{opacity:0;transform:translateY(-55px) scale(.4) rotate(-16deg)}65%{opacity:1;transform:translateY(8px) scale(1.16) rotate(5deg)}to{opacity:1;transform:none}}
+@keyframes pondBreathe{50%{transform:translateY(-6px) rotate(3deg)}}
+@keyframes pondReedSway{from{transform:rotate(-4deg)}to{transform:rotate(6deg)}}
+@keyframes pondDragonfly{0%,100%{transform:translate(0,0) rotate(-6deg)}28%{transform:translate(42px,-16px) rotate(7deg)}60%{transform:translate(60px,8px) rotate(-10deg)}80%{transform:translate(18px,-8px) rotate(3deg)}}
+@keyframes pondSwim{0%,100%{transform:translate(0,0) scaleX(1)}45%{transform:translate(49px,-8px) scaleX(1)}50%{transform:translate(49px,-8px) scaleX(-1)}90%{transform:translate(0,0) scaleX(-1)}}
+@keyframes pondLilyFloat{50%{transform:translate(5px,-5px) rotate(3deg)}}
+@keyframes pondCurrent{to{transform:translateY(20px)}}
+@media(max-width:410px){.pond-scene-toast{font-size:11px;white-space:normal;width:max-content}.pond-lilies{left:8%}.pond-dragonfly{left:30%}}
+@media(prefers-reduced-motion:reduce){.pond-feature.arriving,.pond-feature.unlocked,.pond-stream.unlocked i{animation:none!important}.pond-scene-toast{transition:none}}
+
+/* --- responsive fox analysis dialogue --- */
+body:not(.free-mode) .ai-comment{margin:18px 0;padding:13px 15px;border:1px solid #dab9a1;border-left:4px solid #b56c46;border-radius:14px;background:#fff2e5;color:#624932;font-size:14px;font-weight:700;line-height:1.45}
+body[data-duel-opponent="arcticfox"] .ai-comment{background:#eaf7f8;color:#2d6774;border-color:#afd2da;border-left-color:#368c9b}
+body[data-duel-opponent="fennec"] .ai-comment{background:#fff3d9;color:#755527;border-color:#e4c98e;border-left-color:#ba8e38}

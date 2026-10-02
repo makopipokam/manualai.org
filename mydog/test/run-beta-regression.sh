@@ -79,7 +79,7 @@ if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v6'" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v8'" "$ROOT/mydog/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
 # App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
 if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
