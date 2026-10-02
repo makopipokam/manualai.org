@@ -25,6 +25,8 @@
         <span class="pond-feature pond-dragonfly" data-feature="dragonfly"><i></i><b></b></span>
         <span class="pond-feature pond-frog" data-feature="frog">🐸</span>
         <span class="pond-built-solar" id="pondBuiltSolar"><i></i><b>☀</b></span>
+        <span class="pond-built-spring" id="pondBuiltSpring"><i></i><b>✦</b></span>
+        <span class="pond-built-reed" id="pondBuiltReed"><i></i><b>✺</b></span>
         <span class="pond-scene-toast" id="pondSceneToast"></span>
       </div>
       <p class="sr-only" role="status" id="pondUnlockStatus"></p>
@@ -39,18 +41,20 @@
       </div>
       <section class="pond-build-panel" id="pondBuildPanel" aria-labelledby="pondBuildTitle">
         <p class="eyebrow">DEIN BAUPLATZ · 10 × 10</p>
-        <h2 id="pondBuildTitle">Gib deinem Teich Energie.</h2>
-        <p class="build-lead">Setze eine Solar-Seerose in den Teich. Der Kern in der Mitte bleibt frei.</p>
+        <h2 id="pondBuildTitle">Ein Teich, drei Kräfte.</h2>
+        <p class="build-lead">Baue Energie, Wasser und Luft auf. Der Kern in der Mitte bleibt frei; Nähe zur Quelle verstärkt deine Produktion.</p>
+        <div class="build-choice-list" id="buildChoiceList" aria-label="Produktionsgebäude"></div>
         <p class="board-scroll-hint">← Raster seitlich wischen →</p>
         <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster; auf kleinen Bildschirmen seitlich verschieben">
           <div class="pond-build-grid" id="pondBuildGrid" aria-label="Teichraster mit zehn mal zehn Feldern"></div>
         </div>
         <div class="build-actions">
-          <button class="build-primary" id="selectSolarBtn" type="button">Solar-Seerose bauen</button>
-          <button class="build-collect" id="claimSolarBtn" type="button" hidden>Energie abholen <span id="pendingSolarEnergy"></span></button>
+          <button class="build-primary" id="cancelBuildBtn" type="button" hidden>Platzwahl abbrechen</button>
+          <button class="build-collect" id="claimProductionBtn" type="button" hidden>Produktion abholen <span id="pendingProduction"></span></button>
         </div>
-        <p class="build-cost" id="solarBuildCost">Baukosten: ⚡ 120 · 💧 80 · 🌬️ 20 · ❤️ 10. Danach +120 ⚡ pro Stunde, höchstens 8 Stunden nachholbar. Solarernte stoppt bei 2.000 ⚡.</p>
-        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Wähle „Solar-Seerose bauen“ und dann ihren Platz im Raster.</p>
+        <p class="build-bonus" id="buildBonusPreview" role="status" aria-live="polite">☀ + 💧: +300 ⚡/h bei höchstens 2 Feldern Abstand. ✺ + 💧: +120 🌬️/h bei höchstens 3 Feldern.</p>
+        <p class="build-cost">Produktion nach bis zu 8 Stunden abholen; Ernte stoppt je Ressource bei 2.000. Bestehende Quizressourcen bleiben erhalten.</p>
+        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Wähle ein Gebäude und dann seinen Platz im Raster.</p>
       </section>
       <div class="pond-status"><div><small>ENTDECKT</small><strong id="pondResidentCount">1 / 6</strong><span id="pondProgressLabel">Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
       <div class="pond-residents" id="pondResidents" aria-label="Freigeschaltete Teichelemente"></div>

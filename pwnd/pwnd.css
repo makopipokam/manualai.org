@@ -162,3 +162,41 @@ body[data-duel-opponent="fennec"] .ai-comment{background:#fff3d9;color:#755527;b
 @media(max-width:520px){.board-scroll-hint{display:block}}
 .save-warning{padding:13px 15px;margin:8px 0 18px;border:2px solid #bb7761;border-radius:12px;background:#fff0dc;color:#663928;font-size:15px;font-weight:800;line-height:1.45}
 .save-warning[hidden]{display:none}
+
+/* --- three production buildings and spatial strategy --- */
+.build-choice-list{display:grid;gap:9px;margin:12px 0 16px}
+.build-choice{display:flex;align-items:center;gap:12px;min-height:76px;width:100%;padding:11px 13px;border:2px solid #b9d0af;border-radius:15px;background:#fffdf4;color:#294b39;text-align:left;cursor:pointer;box-shadow:0 3px 0 #afc5a351}
+.build-choice.built{background:#edf4e5}
+.build-choice.selected{border-color:#d6aa4a;box-shadow:0 0 0 3px #efd48988;background:#fffae5}
+.build-choice:disabled{opacity:.62;cursor:not-allowed}
+.build-choice:focus-visible{outline:3px solid #355c7c;outline-offset:2px}
+.build-choice>strong{margin-left:auto;font-size:23px;color:#49755c}
+.building-mark{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:13px;font-size:27px;font-weight:900;color:#5e8b46;background:#e1eeb9}
+.building-mark.spring_pool{color:#257b99;background:#dcf2f2}
+.building-mark.reed_windmill{color:#577c70;background:#e2efe9}
+.building-detail{display:grid;gap:1px;min-width:0}
+.building-detail>b{font-size:16px;line-height:1.2}
+.building-detail>span{font-size:14px;font-weight:800;color:#356d60}
+.building-detail>small{font-size:13px;font-weight:700;color:#4d684f}
+.building-detail .unlock-costs{display:flex;flex-wrap:wrap;gap:4px 9px}
+.building-detail .unlock-cost{white-space:nowrap}
+.build-bonus{margin:12px 0 0;padding:10px 12px;border:1px solid #d1bb72;border-radius:11px;background:#faf0c9;color:#565020;font-size:14px;font-weight:800;line-height:1.4}
+.build-primary[hidden],.build-collect[hidden]{display:none}
+.build-cell.spring_pool{background:#7dd4d6;border-color:#b8eff2;box-shadow:inset 0 0 0 3px #a9e9e5}
+.build-cell.reed_windmill{background:#81ae84;border-color:#bfd9a8;box-shadow:inset 0 0 0 3px #a0c49b}
+.build-cell.solar_lily{background:#a0c971;border-color:#cee99f;box-shadow:inset 0 0 0 3px #c8df89}
+.build-cell.building-head{font-size:26px;color:#fff7d7;text-shadow:0 2px 3px #236279}
+.build-cell.allowed.boosted{background:#efce72;border-color:#fff0ac;color:#664d1f;box-shadow:inset 0 0 0 2px #a87936;z-index:1}
+.build-cell.allowed.boosted:hover,.build-cell.allowed.boosted:focus-visible{background:#ffe39a;outline:3px solid #b4803d;outline-offset:-1px}
+.pond-built-spring,.pond-built-reed{position:absolute;z-index:3;display:grid;place-items:center;width:56px;height:48px;visibility:hidden;opacity:0;filter:drop-shadow(0 5px 4px #155e6477)}
+.pond-built-spring.visible,.pond-built-reed.visible{visibility:visible;opacity:1}
+.pond-built-spring i{position:absolute;bottom:4px;width:54px;height:35px;border:3px solid #a7ede4;border-radius:50%;background:radial-gradient(ellipse at 40% 30%,#def9dc,#56bac2 38%,#137d9e 90%)}
+.pond-built-spring b{position:relative;top:-7px;font-size:30px;color:#f0fcf5;text-shadow:0 0 9px #dbfffd}
+.pond-built-reed i{position:absolute;bottom:3px;width:13px;height:33px;border-radius:8px 8px 3px 3px;background:linear-gradient(90deg,#a5d096,#3d796d)}
+.pond-built-reed b{position:relative;top:-10px;font-size:35px;color:#dceab5;text-shadow:0 2px 4px #165b57}
+.pond-built-spring.visible:not(.arriving){animation:solarLilyFloat 5s ease-in-out infinite}
+.pond-built-reed.visible:not(.arriving) b{animation:reedRotor 6s linear infinite}
+.pond-built-spring.arriving,.pond-built-reed.arriving{animation:pondArrive 1.15s cubic-bezier(.2,.8,.25,1.2) both}
+@keyframes reedRotor{to{transform:rotate(360deg)}}
+@media(min-width:650px){.build-choice-list{grid-template-columns:repeat(3,minmax(0,1fr))}.build-choice{align-items:flex-start;flex-direction:column}.build-choice>strong{margin-top:auto}}
+@media(prefers-reduced-motion:reduce){.pond-built-spring.visible,.pond-built-reed.visible,.pond-built-reed.visible b{animation:none!important}}

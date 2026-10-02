@@ -118,7 +118,7 @@ const state = {
   upgrades: Array.isArray(saved?.upgrades) ? [...new Set(saved.upgrades.filter(id => UPGRADES.some(upgrade => upgrade.id === id)))] : [],
   unlocked: Array.isArray(saved?.unlocked) ? [...new Set(['frog', ...saved.unlocked.filter(id => POND_UNLOCKS.some(item => item.id === id))])] : ['frog'],
   pondDemo: PwndPondDemo.normalizePondDemo(saved?.pondDemo),
-  placingSolar: false,
+  buildChoice: null,
   opponentId: 'redfox',
   selectedTopicId: null,
   pendingTopicIds: [],
@@ -502,7 +502,7 @@ function finishMatch(){
   if (settled) {
     const previousPond = { ...state.pondDemo, buildings: [...state.pondDemo.buildings] };
     const previousCalibration = state.calibration;
-    resetCappedSolarClock();
+    freezeProductionClocks();
     Object.assign(state, settled.resources);
     state.pondDemo.completedAttempts = settled.completedAttempts;
     if (!free) state.calibration = Math.min(1, state.calibration + 1);
@@ -548,24 +548,32 @@ function renderPondScene(arrivingId = null){
     feature.classList.toggle('arriving', active && feature.dataset.feature === arrivingId);
     if (active && feature.dataset.feature === arrivingId) setTimeout(() => feature.classList.remove('arriving'), 1200);
   });
-  const solar = $('pondBuiltSolar');
-  const hasSolar = state.pondDemo.buildings.length > 0;
-  solar.classList.toggle('visible', hasSolar);
-  solar.classList.toggle('arriving', hasSolar && arrivingId === 'solar');
-  if (hasSolar && arrivingId === 'solar') setTimeout(() => solar.classList.remove('arriving'), 1200);
+  const sceneBuildings = {
+    solar_lily: $('pondBuiltSolar'), spring_pool: $('pondBuiltSpring'), reed_windmill: $('pondBuiltReed'),
+  };
+  Object.entries(sceneBuildings).forEach(([type, element]) => {
+    const building = state.pondDemo.buildings.find(item => item.type === type);
+    element.classList.toggle('visible', Boolean(building));
+    element.classList.toggle('arriving', Boolean(building && arrivingId === type));
+    if (building) {
+      element.style.left = `${12 + building.x * 8}%`;
+      element.style.top = `${10 + building.y * 7}%`;
+    }
+    if (building && arrivingId === type) setTimeout(() => element.classList.remove('arriving'), 1200);
+  });
   setText('pondResidentCount', `${state.unlocked.length} / ${POND_UNLOCKS.length}`);
   setText('pondProgressLabel', state.unlocked.length === 1 ? 'Der Teich ist noch jung' : `${state.unlocked.length} Entdeckungen beleben deinen Teich`);
   $('pondResidents').innerHTML = POND_UNLOCKS.map(item => state.unlocked.includes(item.id)
     ? `<span class="resident" role="img" aria-label="${item.name}" title="${item.name}">${item.symbol}</span>`
     : '<span class="resident empty" aria-hidden="true">+</span>').join('');
   if (arrivingId){
-    const item = arrivingId === 'solar'
-      ? { name: 'Solar-Seerose', symbol: '☀️' }
-      : POND_UNLOCKS.find(entry => entry.id === arrivingId);
+    const building = PwndPondDemo.BUILDINGS[arrivingId];
+    const item = building || POND_UNLOCKS.find(entry => entry.id === arrivingId);
     if (!item) return;
     setText('pondUnlockStatus', `${item.name} ist jetzt in deinem Teich zu sehen.`);
     const toast = $('pondSceneToast');
-    toast.textContent = arrivingId === 'solar' ? '☀️ Solar-Seerose erblüht' : `${item.symbol} ${item.name} ist eingezogen`;
+    const arrival = { solar_lily: 'erblüht', spring_pool: 'sprudelt', reed_windmill: 'dreht sich' };
+    toast.textContent = building ? `${item.symbol} ${item.name} ${arrival[arrivingId]}` : `${item.symbol} ${item.name} ist eingezogen`;
     toast.classList.add('visible');
     clearTimeout(state.pondToastTimer);
     state.pondToastTimer = setTimeout(() => toast.classList.remove('visible'), 3200);
@@ -577,7 +585,7 @@ function unlockPond(id){
   const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
   const previousUnlocked = state.unlocked;
   const previousBuildings = state.pondDemo.buildings;
-  resetCappedSolarClock();
+  freezeProductionClocks();
   Object.entries(item.cost).forEach(([resource, value]) => { state[resource] -= value; });
   state.unlocked = [...state.unlocked, id];
   if (!save()) {
@@ -590,86 +598,127 @@ function unlockPond(id){
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   setTimeout(() => renderPondScene(id), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
 }
-function resetCappedSolarClock(){
-  const building = state.pondDemo.buildings[0];
-  if (building && state.energy >= PwndPondDemo.ENERGY_CAP) {
-    state.pondDemo.buildings = [{ ...building, lastClaimAt: Date.now() }];
-  }
+function freezeProductionClocks(){
+  state.pondDemo.buildings = PwndPondDemo.accruedBuildings(state.pondDemo.buildings, state, Date.now());
 }
 function renderBuildPanel(){
-  const building = state.pondDemo.buildings[0];
-  const affordable = canAfford(PwndPondDemo.SOLAR.cost);
-  const action = $('selectSolarBtn');
-  action.disabled = Boolean(building) || !affordable;
-  action.textContent = building ? 'Solar-Seerose gebaut' : state.placingSolar ? 'Platzwahl abbrechen' : 'Solar-Seerose bauen';
-  setText('pondBuildStatus', building
-    ? 'Deine Solar-Seerose versorgt den Teich mit Energie.'
-    : !affordable ? 'Für die Solar-Seerose fehlen noch Ressourcen. Sammle sie im Quiz.'
-    : state.placingSolar ? 'Wähle ein freies Feld für die 2 × 2 Solar-Seerose.'
-    : 'Wähle „Solar-Seerose bauen“ und dann ihren Platz im Raster.');
+  const buildings = state.pondDemo.buildings;
+  if (state.buildChoice && !buildings.some(item => item.type === state.buildChoice) &&
+    !canAfford(PwndPondDemo.BUILDINGS[state.buildChoice].cost)) state.buildChoice = null;
+  const summary = PwndPondDemo.productionSummary(buildings, state, Date.now());
+  $('buildChoiceList').innerHTML = Object.values(PwndPondDemo.BUILDINGS).map(spec => {
+    const owned = buildings.some(item => item.type === spec.type);
+    const affordable = canAfford(spec.cost);
+    const selected = state.buildChoice === spec.type;
+    return `<button type="button" class="build-choice${selected ? ' selected' : ''}${owned ? ' built' : ''}" data-building="${spec.type}" aria-pressed="${selected}" ${!owned && !affordable ? 'disabled' : ''}>
+      <span class="building-mark ${spec.type}" aria-hidden="true">${spec.symbol}</span>
+      <span class="building-detail"><b>${spec.name}</b><span>+${summary.rates[spec.type] || spec.perHour} ${RESOURCE_SYMBOLS[spec.resource]}/h</span>
+        <small>${owned ? 'Gebaut · kostenlos umsetzen' : formatCost(spec.cost)}</small></span>
+      <strong>${selected ? '✓' : owned ? '↗' : '→'}</strong></button>`;
+  }).join('');
+  const choice = state.buildChoice && PwndPondDemo.BUILDINGS[state.buildChoice];
+  $('cancelBuildBtn').hidden = !choice;
+  setText('pondBuildStatus', choice
+    ? `Wähle einen freien Platz für ${choice.name} im Raster. Goldene Felder aktivieren einen Bonus.`
+    : 'Wähle ein Gebäude. Bereits gebaute Gebäude kannst du kostenlos umsetzen.');
+  const active = summary.bonuses;
+  setText('buildBonusPreview', active.length
+    ? `Aktiv: ${active.map(bonus => `${bonus.label} +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ')}. Weitere Positionen prüfen? Gebäude umsetzen.`
+    : '☀ + 💧: +300 ⚡/h bis 2 Felder. ✺ + 💧: +120 🌬️/h bis 3 Felder. Goldene Bauplätze zeigen Boni.');
+  $('buildBonusPreview').dataset.baseline = $('buildBonusPreview').textContent;
   $('pondBuildGrid').innerHTML = Array.from({ length: PwndPondDemo.GRID_SIZE ** 2 }, (_, index) => {
     const x = index % PwndPondDemo.GRID_SIZE;
     const y = Math.floor(index / PwndPondDemo.GRID_SIZE);
     const core = x >= 4 && x <= 5 && y >= 4 && y <= 5;
-    const solar = building && x >= building.x && x < building.x + 2 && y >= building.y && y < building.y + 2;
-    const allowed = state.placingSolar && PwndPondDemo.canPlace(state.pondDemo.buildings, state, x, y);
-    const label = solar ? `Solar-Seerose auf Feld ${x + 1}, ${y + 1}`
+    const building = buildings.find(item => x >= item.x && x < item.x + 2 && y >= item.y && y < item.y + 2);
+    const own = building && PwndPondDemo.BUILDINGS[building.type];
+    const allowed = choice && PwndPondDemo.canPlace(buildings, state, choice.type, x, y,
+      buildings.some(item => item.type === choice.type));
+    const previewBonuses = allowed ? PwndPondDemo.activeBonuses([
+      ...buildings.filter(item => item.type !== choice.type), { type: choice.type, x, y },
+    ]).filter(bonus => bonus.first === choice.type || bonus.second === choice.type) : [];
+    const boosted = previewBonuses.length > 0;
+    const label = own ? `${own.name} auf Feld ${x + 1}, ${y + 1}`
       : core ? `Teichkern auf Feld ${x + 1}, ${y + 1}`
-        : allowed ? `Solar-Seerose ab Feld ${x + 1}, ${y + 1} bauen` : `Wasserfeld ${x + 1}, ${y + 1}`;
-    const symbol = core && x === 4 && y === 4 ? '◆' : solar && x === building.x && y === building.y ? '☀' : allowed ? '+' : '';
-    return `<button type="button" class="build-cell${core ? ' core' : ''}${core && x === 4 && y === 4 ? ' core-head' : ''}${solar ? ' solar' : ''}${solar && x === building.x && y === building.y ? ' solar-head' : ''}${allowed ? ' allowed' : ''}" data-x="${x}" data-y="${y}" aria-label="${label}" ${allowed ? '' : 'disabled'}>${symbol}</button>`;
+        : allowed ? `${choice.name} ab Feld ${x + 1}, ${y + 1} ${buildings.some(item => item.type === choice.type) ? 'umsetzen' : 'bauen'}${boosted ? `; Bonus ${previewBonuses.map(bonus => bonus.label).join(' und ')}` : ''}`
+          : `Wasserfeld ${x + 1}, ${y + 1}`;
+    const symbol = core && x === 4 && y === 4 ? '◆'
+      : own && x === building.x && y === building.y ? own.symbol : allowed ? boosted ? '✦' : '+' : '';
+    return `<button type="button" class="build-cell${core ? ' core' : ''}${core && x === 4 && y === 4 ? ' core-head' : ''}${own ? ` ${own.type}` : ''}${own && x === building.x && y === building.y ? ' building-head' : ''}${allowed ? ' allowed' : ''}${boosted ? ' boosted' : ''}" data-x="${x}" data-y="${y}" data-bonus="${boosted ? previewBonuses.map(bonus => `${bonus.label}: +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ') : ''}" aria-label="${label}" ${allowed ? '' : 'disabled'}>${symbol}</button>`;
   }).join('');
-  renderSolarProduction();
+  renderProduction();
 }
-function renderSolarProduction(){
-  const building = state.pondDemo.buildings[0];
-  const collect = $('claimSolarBtn');
-  collect.hidden = !building;
-  if (!building) return;
-  const pending = PwndPondDemo.pendingEnergy(building, state.energy, Date.now());
-  setText('pendingSolarEnergy', `+${pending} ⚡`);
-  collect.disabled = pending === 0;
-  collect.setAttribute('aria-label', pending ? `${pending} Energie von der Solar-Seerose abholen` : 'Noch keine Energie zum Abholen');
+function renderProduction(){
+  const buildings = state.pondDemo.buildings;
+  const collect = $('claimProductionBtn');
+  collect.hidden = !buildings.length;
+  if (!buildings.length) return;
+  const { pending } = PwndPondDemo.productionSummary(buildings, state, Date.now());
+  const parts = ['energy', 'water', 'air'].filter(resource => buildings.some(item =>
+    PwndPondDemo.BUILDINGS[item.type].resource === resource)).map(resource =>
+    `+${pending[resource]} ${RESOURCE_SYMBOLS[resource]}`);
+  setText('pendingProduction', parts.join(' · '));
+  collect.disabled = !['energy', 'water', 'air'].some(resource => pending[resource] > 0);
+  collect.setAttribute('aria-label', collect.disabled ? 'Noch keine Ressourcen zum Abholen'
+    : `Produktion abholen: ${parts.join(', ')}`);
 }
-function placeSolarAt(x, y){
-  if (!state.placingSolar) return;
-  const built = PwndPondDemo.placeSolarLily({
-    buildings: state.pondDemo.buildings, resources: state, x, y, nowMs: Date.now(),
-  });
+function selectBuildChoice(type){
+  const spec = PwndPondDemo.BUILDINGS[type];
+  if (!spec) return;
+  const owned = state.pondDemo.buildings.some(item => item.type === type);
+  if (!owned && !canAfford(spec.cost)) return;
+  state.buildChoice = state.buildChoice === type ? null : type;
+  renderBuildPanel();
+  if (state.buildChoice) $('pondBuildGrid').querySelector('.build-cell.allowed')?.focus();
+}
+function placeChoiceAt(x, y){
+  const type = state.buildChoice;
+  if (!type) return;
+  const moving = state.pondDemo.buildings.some(item => item.type === type);
+  const action = { buildings: state.pondDemo.buildings, resources: state, type, x, y, nowMs: Date.now() };
+  const built = moving ? PwndPondDemo.moveBuilding(action) : PwndPondDemo.placeBuilding(action);
   if (!built) return;
   const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
   const previousBuildings = state.pondDemo.buildings;
-  Object.assign(state, built.resources);
+  if (!moving) Object.assign(state, built.resources);
   state.pondDemo.buildings = built.buildings;
   if (!save()) {
     Object.assign(state, before);
     state.pondDemo.buildings = previousBuildings;
     return;
   }
-  state.placingSolar = false;
+  state.buildChoice = null;
   updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel();
-  setText('pondBuildStatus', 'Die Solar-Seerose steht. Deine erste Produktionsquelle wächst jetzt im Teich.');
+  const bonuses = PwndPondDemo.activeBonuses(state.pondDemo.buildings).filter(bonus =>
+    bonus.first === type || bonus.second === type);
+  setText('pondBuildStatus', `${PwndPondDemo.BUILDINGS[type].name} ${moving ? 'umgesetzt' : 'gebaut'}. ${bonuses.length
+    ? bonuses.map(bonus => `${bonus.label}: +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ')
+    : 'Du kannst die Position später kostenlos ändern.'}`);
+  if (moving) { renderPondScene(); return; }
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
-  setTimeout(() => renderPondScene('solar'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
+  setTimeout(() => renderPondScene(type), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
 }
-function claimSolarEnergy(){
-  const result = PwndPondDemo.claimSolarEnergy({ building: state.pondDemo.buildings[0], energy: state.energy, nowMs: Date.now() });
+function claimAllProduction(){
+  const result = PwndPondDemo.claimProduction({ buildings: state.pondDemo.buildings, resources: state, nowMs: Date.now() });
   if (!result) return;
-  const previousEnergy = state.energy;
+  const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
   const previousBuildings = state.pondDemo.buildings;
-  state.energy = result.energy;
-  state.pondDemo.buildings = [result.building];
+  Object.assign(state, result.resources);
+  state.pondDemo.buildings = result.buildings;
   if (!save()) {
-    state.energy = previousEnergy;
+    Object.assign(state, before);
     state.pondDemo.buildings = previousBuildings;
     return;
   }
   updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel();
-  setText('pondBuildStatus', `+${result.gained} ⚡ abgeholt. Die Seerose sammelt weiter Sonnenenergie.`);
+  setText('pondBuildStatus', `Abgeholt: ${['energy', 'water', 'air'].filter(resource => result.gained[resource] > 0)
+    .map(resource => `+${result.gained[resource]} ${RESOURCE_SYMBOLS[resource]}`).join(' · ')}. Dein Teich wächst weiter.`);
 }
 function showPondFromQuiz(){
   show('screenStart');
-  if (!state.pondDemo.buildings.length && canAfford(PwndPondDemo.SOLAR.cost)) state.placingSolar = true;
+  const next = Object.values(PwndPondDemo.BUILDINGS).find(spec =>
+    !state.pondDemo.buildings.some(item => item.type === spec.type) && canAfford(spec.cost));
+  state.buildChoice = next?.type || null;
   renderBuildPanel();
   const title = $('pondBuildTitle');
   title.tabIndex = -1;
@@ -694,18 +743,32 @@ updateResourceDisplays();
 renderPondScene();
 renderPondUnlocks();
 renderBuildPanel();
-$('selectSolarBtn').addEventListener('click', () => {
-  if (state.pondDemo.buildings.length || !canAfford(PwndPondDemo.SOLAR.cost)) return;
-  state.placingSolar = !state.placingSolar;
+$('buildChoiceList').addEventListener('click', event => {
+  const button = event.target.closest('[data-building]');
+  if (button) selectBuildChoice(button.dataset.building);
+});
+$('cancelBuildBtn').addEventListener('click', () => {
+  state.buildChoice = null;
   renderBuildPanel();
-  if (state.placingSolar) $('pondBuildGrid').querySelector('.build-cell.allowed')?.focus();
+  $('pondBuildTitle').focus({ preventScroll: true });
 });
 $('pondBuildGrid').addEventListener('click', event => {
   const button = event.target.closest('.build-cell.allowed');
-  if (button) placeSolarAt(Number(button.dataset.x), Number(button.dataset.y));
+  if (button) placeChoiceAt(Number(button.dataset.x), Number(button.dataset.y));
 });
-$('claimSolarBtn').addEventListener('click', claimSolarEnergy);
-setInterval(() => { if ($('screenStart').classList.contains('active')) renderSolarProduction(); }, 30000);
+$('pondBuildGrid').addEventListener('mouseover', event => {
+  const button = event.target.closest('.build-cell.allowed');
+  if (button) setText('buildBonusPreview', button.dataset.bonus || $('buildBonusPreview').dataset.baseline);
+});
+$('pondBuildGrid').addEventListener('focusin', event => {
+  const button = event.target.closest('.build-cell.allowed');
+  if (button) setText('buildBonusPreview', button.dataset.bonus || $('buildBonusPreview').dataset.baseline);
+});
+$('pondBuildGrid').addEventListener('mouseleave', () => {
+  setText('buildBonusPreview', $('buildBonusPreview').dataset.baseline);
+});
+$('claimProductionBtn').addEventListener('click', claimAllProduction);
+setInterval(() => { if ($('screenStart').classList.contains('active')) renderProduction(); }, 30000);
 $('startBtn').addEventListener('click', enterDuelSetup);
 $('freeQuizBtn').addEventListener('click', enterFreeTopicSetup);
 $('backToPondBtn').addEventListener('click', () => show('screenStart'));
