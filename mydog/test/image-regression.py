@@ -82,6 +82,41 @@ def main():
             assert not external_images, f'third-party photo requests remain: {external_images[:3]}'
             print('all breeds: PASS | 18 main photos, 108 decoded local thumbnails, no cross-breed sources')
 
+            # The same question should sound different for contrasting catalogue
+            # personalities without inventing different medical facts for each breed.
+            voices = {
+                1: ('offen und gesellig', 'Wuff, gerne:'),
+                3: ('neugierig und konzentriert', 'Gute Frage – schauen wir genau hin:'),
+                15: ('eigenständig und gelassen', 'Ganz in Ruhe:'),
+            }
+            greetings, toilet_answers = set(), set()
+            for dog_id, (traits, lead) in voices.items():
+                page.goto(f'{base}?dog={dog_id}', wait_until='domcontentloaded')
+                page.locator('#results-screen.active').wait_for(timeout=7000)
+                page.locator('#chat-btn').click()
+                page.locator('#chat-screen.active').wait_for(timeout=7000)
+                greeting = page.locator('.chat-message.assistant').first.inner_text()
+                assert traits in greeting, f'{dog_id}: greeting ignores its profile personality'
+                greetings.add(greeting)
+
+                page.locator('#user-message-input').fill('Wie bist du vom Charakter?')
+                page.locator('#send-message-btn').click()
+                character = page.locator('.chat-message.assistant').last.inner_text()
+                assert traits in character and 'Einzelne Hunde können ganz anders sein' in character, f'{dog_id}: character answer invents individual traits'
+
+                page.locator('#user-message-input').fill('Wie oft musst du kacken?')
+                page.locator('#send-message-btn').click()
+                toilet = page.locator('.chat-message.assistant').last.inner_text()
+                assert toilet.startswith(lead) and 'ein- bis dreimal täglich' in toilet and 'Tierarztpraxis' in toilet, f'{dog_id}: voice or common veterinary caveat missing'
+                toilet_answers.add(toilet)
+
+                page.locator('#user-message-input').fill('Blut im Kot')
+                page.locator('#send-message-btn').click()
+                urgent = page.locator('.chat-message.assistant').last.inner_text()
+                assert urgent.startswith('Bei Blut im Kot') and 'Tierarztpraxis' in urgent, f'{dog_id}: urgent health reply must remain neutral'
+            assert len(greetings) == len(voices) and len(toilet_answers) == len(voices), 'different breed personalities still give indistinguishable answers'
+            print('breed voices: PASS | three distinct greetings and answers, shared health facts and neutral urgent advice')
+
             # Fast changes used to reveal photos from the previous dog.
             page.goto(f'{base}?dog=1', wait_until='domcontentloaded')
             page.evaluate('''() => {

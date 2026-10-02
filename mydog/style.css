@@ -968,12 +968,6 @@ body {
     letter-spacing: -0.05em;
 }
 
-#no-more-screen p {
-    color: var(--text-light);
-    margin-bottom: 30px;
-    font-size: 1.1rem;
-}
-
 /* Modal */
 .modal {
     display: none;
