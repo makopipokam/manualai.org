@@ -31,39 +31,55 @@ if grep -qE 'dark-mode|darkMode|toggleDark|updateDark|data-theme|Dark Mode' \
 fi
 echo 'theme-removal: PASS | light theme is the only supported mode'
 
-python3 - "$ROOT/mydog/data.js" <<'PY'
+python3 - "$ROOT/mydog/data.js" "$ROOT/mydog/photo-sources.json" <<'PY'
 from pathlib import Path
+import json
 import re
 import sys
 
 source = Path(sys.argv[1]).read_text()
+root = Path(sys.argv[1]).parent
+manifest = json.loads(Path(sys.argv[2]).read_text())
 entries = re.findall(
-    r'\{\s*id:\s*\d+,\s*name:\s*"([^"]+)".*?images:\s*\[(.*?)\]\s*,\s*imagesLabels:',
+    r'\{\s*id:\s*(\d+),\s*name:\s*"([^"]+)".*?images:\s*\[(.*?)\]\s*,\s*imagesLabels:',
     source,
     re.S,
 )
-if len(entries) != 18:
+if len(entries) != 18 or len(manifest['breeds']) != 18:
     raise SystemExit(f'expected 18 dog entries, found {len(entries)}')
 breed_images = {}
-for breed, block in entries:
-    urls = re.findall(r'"(https?://[^"\n]+)"', block)
+for (dog_id, breed, block), record in zip(entries, manifest['breeds']):
+    dog_id = int(dog_id)
+    urls = re.findall(r'"(/mydog/images/v1/\d{2}/\d\.webp)"', block)
+    if record['id'] != dog_id or record['breed'] != breed or len(record['sources']) != 6:
+        raise SystemExit(f'{breed}: source attribution does not match the catalogue')
     if len(urls) != 6:
         raise SystemExit(f'{breed}: expected 6 image references, found {len(urls)}')
     if len(set(urls)) != 6:
         raise SystemExit(f'{breed}: the same photo is listed more than once')
+    featured = record['featuredPhoto']
+    if urls[0] != f'/mydog/images/v1/{dog_id:02d}/{featured}.webp':
+        raise SystemExit(f'{breed}: featured photo does not match its source record')
+    for url in urls:
+        if not url.startswith(f'/mydog/images/v1/{dog_id:02d}/'):
+            raise SystemExit(f'{breed}: photo belongs to another breed')
+        file = root / url.removeprefix('/mydog/')
+        data = file.read_bytes()
+        if len(data) < 2000 or data[:4] != b'RIFF' or data[8:12] != b'WEBP':
+            raise SystemExit(f'{breed}: invalid or missing WebP photo: {file}')
     breed_images[breed] = set(urls)
 for breed, urls in breed_images.items():
     reused_by = [other for other, other_urls in breed_images.items() if other != breed and urls & other_urls]
     if reused_by:
         raise SystemExit(f'{breed}: image URLs reused by {reused_by}')
-print(f'catalogue: PASS | {len(entries)} breeds | 6 distinct, non-shared photos each')
+print(f'catalogue: PASS | {len(entries)} breeds | 108 local WebP photos with recorded source URLs')
 PY
 
 if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/sw.js"; then
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v4'" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v5'" "$ROOT/mydog/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
 # App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
 if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
@@ -71,6 +87,7 @@ if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
   exit 1
 fi
 grep -q "IMAGE_CACHE_LIMIT" "$ROOT/mydog/sw.js"
+grep -q "url.pathname.startsWith('/mydog/images/v1/')" "$ROOT/mydog/sw.js"
 python3 - "$ROOT/mydog/index.html" <<'PY'
 import re, sys
 from pathlib import Path
