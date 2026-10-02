@@ -1937,3 +1937,104 @@ input:focus-visible,
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* Dark-mode readability hardening: keep light accents, switch their foreground to ink. */
+:root {
+    --button-text: #fffdf8;
+    --dark-surface: #1b2b22;
+    --dark-surface-raised: #253b2e;
+    --dark-surface-muted: #294334;
+}
+
+[data-theme="dark"] {
+    --button-text: #15231c;
+    --text-light: #c2d0c5;
+    --border-color: #466451;
+    --secondary-color: #294334;
+    --secondary-hover: #385843;
+    --info-color: #8bc4dc;
+    --warning-color: #f0c26d;
+}
+
+[data-theme="dark"] #start-screen::before {
+    background: rgba(27, 43, 34, 0.94);
+    box-shadow: inset 0 0 0 1px rgba(143, 201, 164, 0.12);
+}
+
+[data-theme="dark"] .hero-facts span,
+[data-theme="dark"] .saved-result-panel {
+    border-color: rgba(143, 201, 164, 0.25);
+    background: rgba(37, 59, 46, 0.92);
+}
+
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-favorite,
+[data-theme="dark"] .btn-share,
+[data-theme="dark"] .chat-header,
+[data-theme="dark"] .chat-message.user,
+[data-theme="dark"] .send-btn,
+[data-theme="dark"] .dark-mode-toggle {
+    color: var(--button-text);
+}
+
+[data-theme="dark"] .btn-primary:hover,
+[data-theme="dark"] .btn-favorite:hover,
+[data-theme="dark"] .btn-share:hover,
+[data-theme="dark"] .send-btn:hover,
+[data-theme="dark"] .dark-mode-toggle:hover {
+    color: var(--button-text);
+}
+
+[data-theme="dark"] .option-btn.selected,
+[data-theme="dark"] .quick-reply-btn:hover,
+[data-theme="dark"] .favorite-card .view-btn {
+    color: var(--button-text);
+}
+
+[data-theme="dark"] .chat-messages {
+    background: var(--dark-surface);
+}
+
+[data-theme="dark"] .quick-reply-btn {
+    background: var(--dark-surface-raised);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .favorite-card {
+    background: var(--dark-surface-raised);
+    border-color: rgba(225, 161, 109, 0.42);
+}
+
+[data-theme="dark"] .favorite-card .remove-btn {
+    color: #fffdf8;
+}
+
+[data-theme="dark"] .star-rating .star.empty {
+    color: #6b8172;
+}
+
+[data-theme="dark"] .rating-caption,
+[data-theme="dark"] .progress-text,
+[data-theme="dark"] .favorites-summary,
+[data-theme="dark"] .no-more-kicker {
+    color: var(--text-light);
+}
+
+[data-theme="dark"] .ratings-overview,
+[data-theme="dark"] .match-explanation,
+[data-theme="dark"] .dog-description {
+    background: var(--dark-surface-muted);
+}
+
+[data-theme="dark"] .info-item {
+    background: var(--dark-surface-raised);
+}
+
+[data-theme="dark"] .chat-header .back-btn {
+    color: var(--button-text);
+}
+
+[data-theme="dark"] .favorites-header .back-btn {
+    color: var(--text-color);
+}
