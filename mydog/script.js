@@ -1080,24 +1080,15 @@ function getShareUrl(dog = appState.currentDog) {
 }
 
 function loadShareImage(source) {
-    return fetch(source, { mode: 'cors', credentials: 'omit' })
-        .then(response => {
-            if (!response.ok) throw new Error(`Share image request failed: ${response.status}`);
-            return response.blob();
-        })
-        .then(blob => new Promise((resolve, reject) => {
-            const objectUrl = URL.createObjectURL(blob);
-            const image = new Image();
-            image.onload = () => {
-                URL.revokeObjectURL(objectUrl);
-                resolve(image);
-            };
-            image.onerror = () => {
-                URL.revokeObjectURL(objectUrl);
-                reject(new Error('Share image could not be decoded'));
-            };
-            image.src = objectUrl;
-        }));
+    return new Promise((resolve, reject) => {
+        const image = new Image();
+        // Catalogue photos now live on our own origin. A blob: URL here is blocked by
+        // production's img-src CSP, even though the fetch itself succeeds.
+        image.crossOrigin = 'anonymous';
+        image.onload = () => resolve(image);
+        image.onerror = () => reject(new Error('Share image could not be loaded'));
+        image.src = source;
+    });
 }
 
 function drawCoverImage(context, image, x, y, width, height) {
