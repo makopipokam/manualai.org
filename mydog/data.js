@@ -865,8 +865,8 @@ function calculateMatchScore(userPersonality, dogPersonality) {
     return (score / maxScore) * 100;
 }
 
-// Function to get the best matching dogs for a user personality
-function getMatchingDogs(userPersonality, limit = 10) {
+// Function to get every breed ranked by match score.
+function getMatchingDogs(userPersonality, limit = dogDatabase.length) {
     const dogsWithScores = dogDatabase.map(dog => {
         const score = calculateMatchScore(userPersonality, dog.personality);
         return { ...dog, matchScore: score };

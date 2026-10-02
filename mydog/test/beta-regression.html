@@ -89,6 +89,7 @@
       assert(page.querySelector('.rating-caption')?.textContent.includes('5 Sterne = passt sehr gut'), 'suitability explanation renders');
       const completed = state();
       assert(completed.lastResult?.dogIds?.length > 0, 'completed result persists dog ids');
+      assert(completed.lastResult.dogIds.length === 18, 'completed result persists every catalogue breed');
       assert(Object.values(completed.lastResult.userPersonality).every(Number.isFinite), 'personality scores are numeric');
       assert(JSON.stringify(completed.lastResult.userPersonality) === JSON.stringify({ O: 50, C: 42, E: 46, A: 50, N: 88 }), 'Likert endpoints map to the intended OCEAN directions');
 
@@ -128,11 +129,29 @@
       click('.remove-btn');
       assert(state().favorites.length === 0, 'favorite removal persists');
 
+      const savedForExhaustion = state();
+      savedForExhaustion.lastResult.currentDogIndex = 0;
+      app.localStorage.setItem('mydog_appState', JSON.stringify(savedForExhaustion));
+      app.loadState();
       app.showScreen('start');
+      page = frame.contentDocument;
       assert(getComputedStyle(page.querySelector('#resume-result-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'Ergebnis anzeigen is not red');
       assert(page.querySelector('#resume-result-btn').textContent === 'Vorschläge ansehen', 'saved action uses suggestion wording');
       click('#resume-result-btn');
       assert(active() === 'results-screen', 'saved result restores');
+
+      // The ranked result must include every catalogue breed before the ending screen.
+      const seenBreeds = new Set();
+      for (let breedIndex = 0; breedIndex < 18; breedIndex += 1) {
+        seenBreeds.add(page.querySelector('#dog-breed')?.textContent);
+        if (breedIndex < 17) app.showNextDog();
+      }
+      assert(seenBreeds.size === 18, `all catalogue breeds are available (seen=${seenBreeds.size}: ${[...seenBreeds].join(', ')})`);
+      app.showNextDog();
+      assert(active() === 'no-more-screen', 'all-breed catalogue ends on the completion screen');
+      assert(page.querySelector('#no-more-screen h2')?.textContent.includes('Katzentyp'), 'cat-type ending is shown after all breeds');
+      assert(page.querySelector('#shown-breed-count')?.textContent === '18', 'completion screen shows catalogue count');
+
       app.startNewTest();
       assert(active() === 'test-screen', 'retake opens a fresh test');
       assert(state().userAnswers.length === 0, 'retake clears saved answers');
