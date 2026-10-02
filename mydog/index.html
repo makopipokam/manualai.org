@@ -198,7 +198,7 @@
 
     <!-- Share Modal -->
     <div id="share-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" aria-describedby="share-modal-description">
-        <div class="modal-content">
+        <div class="modal-content share-modal-content">
             <button class="close-btn" type="button" aria-label="Teilen schließen">&times;</button>
             <h3 id="share-modal-title">Hundevorschlag teilen</h3>
             <p id="share-modal-description">Teile dieses Hundeprofil direkt mit deinen Freunden.</p>
@@ -206,6 +206,30 @@
                 <strong id="share-dog-name"></strong>
                 <span id="share-dog-breed"></span>
             </div>
+            <section class="share-image-editor" aria-labelledby="share-image-title">
+                <div class="share-image-heading">
+                    <h4 id="share-image-title">Dein Share-Bild</h4>
+                    <span>Mit Foto und persönlichem Text</span>
+                </div>
+                <div class="share-image-preview" aria-live="polite">
+                    <img id="share-image-preview" src="" alt="">
+                    <div class="share-image-preview-shade"></div>
+                    <div class="share-image-preview-copy">
+                        <span class="share-image-brand">MYDOG · HUNDEVORSCHLAG</span>
+                        <strong id="share-card-name"></strong>
+                        <span id="share-card-breed"></span>
+                        <span id="share-card-rating"></span>
+                        <em id="share-card-caption"></em>
+                    </div>
+                </div>
+                <div class="share-image-controls">
+                    <label for="share-image-source">Foto auswählen</label>
+                    <select id="share-image-source"></select>
+                    <label for="share-image-caption">Text auf dem Bild</label>
+                    <input id="share-image-caption" type="text" maxlength="70" value="Ein Hundevorschlag für dich">
+                </div>
+                <button id="download-share-image-btn" class="btn-outline" type="button">Bild speichern</button>
+            </section>
             <div class="share-actions">
                 <button id="native-share-btn" class="btn-share" type="button" hidden>📤 Direkt teilen</button>
                 <button id="copy-link-btn" class="btn-primary" type="button">🔗 Link kopieren</button>
