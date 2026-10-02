@@ -5,9 +5,9 @@
 // - App files (HTML, JS, CSS, data, manifest, icons): network-first, cache only as offline fallback.
 //   Every online visit therefore receives the deployed version; a stale script can no longer be
 //   combined with newer HTML (that mismatch broke returning visitors after the share-image release).
-// - Dog photos from the allowed image hosts: cache-first with a bounded entry count.
-const STATIC_CACHE = 'mydog-static-v4';
-const IMAGE_CACHE = 'mydog-images-v2';
+// - Versioned, locally hosted dog photos: cache-first with a bounded entry count.
+const STATIC_CACHE = 'mydog-static-v5';
+const IMAGE_CACHE = 'mydog-images-v3';
 const IMAGE_CACHE_LIMIT = 160;
 const OWNED_CACHE_PREFIX = 'mydog-';
 const APP_SHELL = [
@@ -16,6 +16,8 @@ const APP_SHELL = [
     '/mydog/style.css',
     '/mydog/script.js',
     '/mydog/data.js',
+    '/mydog/legal/attribution.html',
+    '/mydog/photo-sources.json',
     '/mydog/manifest.json',
     '/mydog/icon-192x192.png',
     '/mydog/icon-512x512.png'
@@ -56,7 +58,10 @@ function isDocumentRequest(request, url) {
 }
 
 function isAllowedImageRequest(request, url) {
-    return request.destination === 'image' && IMAGE_HOSTS.has(url.host);
+    return request.destination === 'image' && (
+        (url.origin === self.location.origin && url.pathname.startsWith('/mydog/images/v1/'))
+        || IMAGE_HOSTS.has(url.host)
+    );
 }
 
 // Cache app files under their path only, so versioned URLs (?v=…) and profile links (?dog=…)
@@ -112,10 +117,10 @@ self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
     const url = new URL(event.request.url);
-    if (isAppRequest(url)) {
-        event.respondWith(appRequest(event, url));
-    } else if (isAllowedImageRequest(event.request, url)) {
+    if (isAllowedImageRequest(event.request, url)) {
         event.respondWith(imageRequest(event));
+    } else if (isAppRequest(url)) {
+        event.respondWith(appRequest(event, url));
     }
 });
 

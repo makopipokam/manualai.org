@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/mydog/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
-    <link rel="stylesheet" href="/mydog/style.css?v=20261002">
+    <link rel="stylesheet" href="/mydog/style.css?v=20261002-photos">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
@@ -75,6 +75,7 @@
             
             <div class="dog-profile">
                 <div class="dog-images">
+                    <div id="dog-image-status" class="dog-image-status" role="status">Foto wird geladen …</div>
                     <img id="dog-image-main" class="dog-image main-image" src="" alt="">
                     <div class="thumbnail-gallery">
                         <img id="dog-image-1" class="dog-image thumbnail" src="" alt="" data-index="0">
@@ -84,6 +85,7 @@
                     <img id="dog-image-5" class="dog-image thumbnail" src="" alt="" data-index="4">
                     <img id="dog-image-6" class="dog-image thumbnail" src="" alt="" data-index="5">
                     </div>
+                    <a class="dog-photo-credits" href="/mydog/legal/attribution.html">Fotoquellen und Bildnachweise</a>
                 </div>
                 
                 <div class="dog-info">
@@ -247,7 +249,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261002"></script>
-    <script src="script.js?v=20261002"></script>
+    <script src="data.js?v=20261002-photos"></script>
+    <script src="script.js?v=20261002-photos"></script>
 </body>
 </html>

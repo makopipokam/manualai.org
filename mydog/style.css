@@ -399,6 +399,21 @@ body {
     gap: 10px;
 }
 
+.dog-image-status {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    padding: 20px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #e6f0e8, #faf7ef);
+    color: var(--primary-color);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.dog-image-status[hidden] { display: none; }
+
 .dog-image {
     border-radius: var(--border-radius);
     object-fit: cover;
@@ -1710,6 +1725,18 @@ input:focus-visible,
 .dog-image.thumbnail.selected {
     border-color: var(--favorite-color);
     box-shadow: 0 0 0 3px rgba(184, 111, 63, 0.18);
+}
+
+.dog-photo-credits {
+    align-self: center;
+    color: var(--text-light);
+    font-size: 0.82rem;
+    text-underline-offset: 3px;
+}
+
+.dog-photo-credits:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 3px;
 }
 
 .dog-info {

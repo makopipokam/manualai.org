@@ -87,7 +87,11 @@
       assert(page.querySelector('.ratings-overview h4')?.textContent === 'Eignung für dich:', 'overall stars are labeled as suitability');
       assert(page.querySelector('.profile-section-title')?.textContent === 'Rasse-Eigenschaften', 'attribute stars are grouped separately');
       assert(page.querySelector('.rating-caption')?.textContent.includes('5 Sterne = passt sehr gut'), 'suitability explanation renders');
-      assert(page.querySelector('#dog-image-main')?.getAttribute('src')?.startsWith('https://images.dog.ceo/'), 'each dog suggestion has a main breed image');
+      let firstImage = page.querySelector('#dog-image-main');
+      for (let attempt = 0; attempt < 20 && !firstImage?.naturalWidth; attempt++) await wait(100);
+      assert(firstImage?.naturalWidth > 0 && firstImage.getAttribute('src')?.startsWith('/mydog/images/v1/'), 'each dog suggestion displays a decoded local breed photo');
+      assert(page.querySelector('#dog-image-status').hidden, 'successful main photo hides its loading placeholder');
+      assert(page.querySelector('.dog-photo-credits[href="/mydog/legal/attribution.html"]'), 'photo credits stay accessible from the result');
       assert(page.querySelectorAll('.dog-image.thumbnail').length === 6, 'each dog suggestion has six breed image choices');
       assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.alt.includes(page.querySelector('#dog-name')?.textContent || '')), 'suggestion gallery labels use the current dog name');
       const completed = state();
@@ -101,10 +105,11 @@
       assert(active() === 'results-screen', 'next dog stays on results screen');
       const transitionImage = page.querySelector('#dog-image-main');
       assert(transitionImage?.style.visibility === 'hidden' || transitionImage?.getAttribute('src') !== firstDogImage, 'next dog never shows the previous image during transition');
-      await wait(1200);
-      assert(transitionImage?.style.visibility === 'hidden' || transitionImage?.getAttribute('src') !== firstDogImage, 'next dog does not retain the previous image');
+      for (let attempt = 0; attempt < 25 && !transitionImage?.naturalWidth; attempt++) await wait(100);
+      assert(transitionImage?.naturalWidth > 0 && transitionImage?.getAttribute('src') !== firstDogImage, 'next dog shows its own decoded photo rather than the previous dog');
       assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.style.visibility !== 'hidden' || image.style.display === 'none'), 'deferred thumbnails do not reserve blank layout space');
       // Deferred thumbnails used to stay hidden forever because hidden images never intersect.
+      page.querySelector('.thumbnail-gallery').scrollIntoView({ block: 'center' });
       let loadedThumbs = 0;
       for (let attempt = 0; attempt < 12 && loadedThumbs < 3; attempt++) {
         await wait(200);
