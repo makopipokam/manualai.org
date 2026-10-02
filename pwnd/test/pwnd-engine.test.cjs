@@ -34,6 +34,23 @@ assert.ok(next && next.id !== 'q', 'recent questions should be avoided');
 const noRepeat = engine.chooseNextQuestion({ questions, history: [{ question: questions[0] }, { question: questions[1] }], skills: { recall: .5, logic: .5, causal: .5 }, opponent, round: 3, accuracy: .5 });
 assert.equal(noRepeat.id, 'q3', 'unused questions should be preferred before a repeat');
 
+const topicQuestions = [
+  { ...question, id: 'topic-recall', skill: 'recall', type: 'recall', difficulty: .35 },
+  { ...question, id: 'topic-recall-2', skill: 'recall', type: 'recall', difficulty: .55 },
+  { ...question, id: 'topic-logic', skill: 'logic', type: 'logic', difficulty: .4 },
+  { ...question, id: 'topic-source', skill: 'source', type: 'source', difficulty: .5 },
+];
+const owlWeaknessQuestion = engine.chooseNextQuestion({
+  questions: topicQuestions,
+  history: [{ question: topicQuestions[0], correct: false }],
+  skills: { recall: .2, logic: .8, source: .7 },
+  topicSkills: ['recall', 'logic'],
+  opponent: { focus: 'reasoning' },
+  round: 2,
+  accuracy: 0,
+});
+assert.equal(owlWeaknessQuestion.skill, 'recall', 'the owl should target the weakest skill inside the chosen topic');
+
 const score = engine.calculateMatchScore({ outcome: 1, accuracy: .8, averageDifficulty: .6, fastCorrectRate: .5 });
 assert.ok(score > .5 && score < 1);
 const energy = engine.calculateNewEnergy({ before: 1000, opponentRating: 1000, score, calibration: 0 });

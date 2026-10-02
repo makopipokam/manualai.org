@@ -39,21 +39,27 @@
     };
   }
 
-  function chooseNextQuestion({ questions, history = [], skills, opponent, round, accuracy = 0 }){
+  function chooseNextQuestion({ questions, history = [], skills, opponent, round, accuracy = 0, topicSkills = [] }){
     const recent = history.slice(-2).map(item => item.question.id);
     const used = history.map(item => item.question.id);
-    const weakest = Object.entries(skills).sort((a, b) => a[1] - b[1])[0]?.[0];
-    const focus = opponent.focus === 'pressure' ? ['recall', 'risk']
+    const skillScope = topicSkills.length ? topicSkills : Object.keys(skills);
+    const weakest = skillScope.sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0];
+    const focus = topicSkills.length ? [weakest]
+      : opponent.focus === 'pressure' ? ['recall', 'risk']
       : opponent.focus === 'reasoning' ? ['causal', 'logic', 'source']
       : [weakest];
-    let candidates = questions.filter(question =>
+    const scopedQuestions = topicSkills.length ? questions.filter(question => topicSkills.includes(question.skill)) : questions;
+    let candidates = scopedQuestions.filter(question =>
       !used.includes(question.id) &&
       (round < 2 || focus.includes(question.skill) || question.type !== history.at(-1)?.question.type)
     );
-    if (!candidates.length) candidates = questions.filter(question => !used.includes(question.id));
-    if (!candidates.length) candidates = questions.filter(question => !recent.includes(question.id));
+    if (!candidates.length) candidates = scopedQuestions.filter(question => !used.includes(question.id));
+    if (!candidates.length) candidates = scopedQuestions.filter(question => !recent.includes(question.id));
     const target = Math.min(.9, .25 + (round / 10) * .55 + (accuracy < .5 ? -.1 : 0) + (opponent.focus === 'reasoning' ? .08 : 0));
-    return [...candidates].sort((a, b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target))[0];
+    return [...candidates].sort((a, b) => {
+      const weaknessPriority = topicSkills.length ? Number(a.skill !== weakest) - Number(b.skill !== weakest) : 0;
+      return weaknessPriority || Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target);
+    })[0];
   }
 
   function calculateMatchScore({ outcome, accuracy, averageDifficulty, fastCorrectRate }){

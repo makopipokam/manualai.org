@@ -36,6 +36,16 @@
       <p class="microcopy">Demo-Slice · offline spielbar · dein Teich bleibt auf diesem Gerät</p>
     </section>
 
+    <section class="screen free-topic-screen" id="screenFreeTopicSetup" aria-labelledby="freeTopicTitle">
+      <button class="back-link" id="backToPondFromTopicsBtn" type="button">← Zum Teich</button>
+      <p class="eyebrow">FREIES QUIZZEN · 8 FRAGEN</p>
+      <h1 id="freeTopicTitle">Wähle dein<br><em>Thema.</em></h1>
+      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und legt gezielt weitere Karten zu deiner erkannten Schwäche.</p>
+      <div class="free-topic-options" id="freeTopicOptions"></div>
+      <button class="primary-btn free-start-btn" id="freeStartBtn" type="button">Mit Thema starten <span>→</span></button>
+      <p class="setup-note">Die drei Vorschläge werden bei jedem freien Quiz neu gemischt.</p>
+    </section>
+
     <section class="screen duel-setup-screen" id="screenDuelSetup" aria-labelledby="duelSetupTitle">
       <button class="back-link" id="backToPondBtn" type="button">← Zum Teich</button>
       <p class="eyebrow">QUIZDUELL · 10 RUNDEN</p>
@@ -53,7 +63,7 @@
     <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
       <div class="battle-head">
         <div class="fighter"><span class="avatar player-avatar">♧</span><div><small class="resource-readout"><span>E <b id="playerEnergy">1000</b></span><span>W <b id="playerWater">250</b></span><span>L <b id="playerAir">120</b></span><span>♥ <b id="playerLove">60</b></span></small><strong>TEICH</strong></div></div>
-        <div class="round-count"><span id="phaseLabel">QUIZDUELL</span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
+        <div class="round-count"><span id="phaseLabel">QUIZDUELL</span><span id="topicLabel" class="topic-battle-label"></span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
         <div class="fighter ai-fighter"><div><small><span id="opponentLabel">ROTFUCHS</span> · <span id="opponentSpecies">Vulpes vulpes</span></small><strong>GEGNER</strong></div><span class="avatar ai-avatar" id="opponentAvatar">🦊</span></div>
       </div>
       <div class="health-row"><div class="health-track"><span id="playerHealth"></span></div><strong id="playerHpText">100</strong><div class="vs">VS</div><strong id="aiHpText">100</strong><div class="health-track ai-track"><span id="aiHealth"></span></div></div>
