@@ -13,6 +13,7 @@
     <header class="topbar">
       <a class="brand" href="/pwnd/" aria-label="Zurück zu pwnd"><b>pwnd</b></a>
     </header>
+    <p class="save-warning" id="saveWarning" role="alert" hidden></p>
 
     <section class="screen active" id="screenStart" aria-labelledby="startTitle">
       <div class="pond-scene" id="pondScene" aria-hidden="true">
@@ -23,6 +24,7 @@
         <span class="pond-feature pond-fish" data-feature="fish">🐟</span>
         <span class="pond-feature pond-dragonfly" data-feature="dragonfly"><i></i><b></b></span>
         <span class="pond-feature pond-frog" data-feature="frog">🐸</span>
+        <span class="pond-built-solar" id="pondBuiltSolar"><i></i><b>☀</b></span>
         <span class="pond-scene-toast" id="pondSceneToast"></span>
       </div>
       <p class="sr-only" role="status" id="pondUnlockStatus"></p>
@@ -35,6 +37,21 @@
         <div class="resource-card air-resource"><div><small>LUFT</small><strong id="pondAir">120</strong><span>Raum für Bewegung</span></div><div class="resource-symbol">⌁</div></div>
         <div class="resource-card love-resource"><div><small>LIEBE</small><strong id="pondLove">60</strong><span>Bindung und Vertrauen</span></div><div class="resource-symbol">♥</div></div>
       </div>
+      <section class="pond-build-panel" id="pondBuildPanel" aria-labelledby="pondBuildTitle">
+        <p class="eyebrow">DEIN BAUPLATZ · 10 × 10</p>
+        <h2 id="pondBuildTitle">Gib deinem Teich Energie.</h2>
+        <p class="build-lead">Setze eine Solar-Seerose in den Teich. Der Kern in der Mitte bleibt frei.</p>
+        <p class="board-scroll-hint">← Raster seitlich wischen →</p>
+        <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster; auf kleinen Bildschirmen seitlich verschieben">
+          <div class="pond-build-grid" id="pondBuildGrid" aria-label="Teichraster mit zehn mal zehn Feldern"></div>
+        </div>
+        <div class="build-actions">
+          <button class="build-primary" id="selectSolarBtn" type="button">Solar-Seerose bauen</button>
+          <button class="build-collect" id="claimSolarBtn" type="button" hidden>Energie abholen <span id="pendingSolarEnergy"></span></button>
+        </div>
+        <p class="build-cost" id="solarBuildCost">Baukosten: ⚡ 120 · 💧 80 · 🌬️ 20 · ❤️ 10. Danach +120 ⚡ pro Stunde, höchstens 8 Stunden nachholbar. Solarernte stoppt bei 2.000 ⚡.</p>
+        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Wähle „Solar-Seerose bauen“ und dann ihren Platz im Raster.</p>
+      </section>
       <div class="pond-status"><div><small>ENTDECKT</small><strong id="pondResidentCount">1 / 6</strong><span id="pondProgressLabel">Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
       <div class="pond-residents" id="pondResidents" aria-label="Freigeschaltete Teichelemente"></div>
       <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season growth-resource-legend" role="img" aria-label="Energie, Wasser, Luft und Liebe"><span>⚡</span><span>💧</span><span>🌬️</span><span>❤️</span></span></div><div class="unlock-grid" id="unlockGrid"></div></div>
@@ -121,6 +138,7 @@
         <div class="resource-result love-resource"><div><small>LIEBE</small><strong id="loveValue">60</strong><span class="ip-delta" id="loveChange">+0 · Vertrauen</span></div><span>VERBINDEN</span></div>
       </div>
       <div class="profile-grid"><div><small>DEINE STÄRKE</small><strong id="strengthValue">—</strong></div><div><small>NÄCHSTER SCHRITT</small><strong id="weaknessValue">—</strong></div></div>
+      <button class="primary-btn" id="goBuildBtn" type="button">Zum Teich &amp; bauen <span>→</span></button>
       <h3>Wie soll dein Teich weiterwachsen?</h3>
       <p class="upgrade-note">Wähle eine Anpassung für dein nächstes Quizduell.</p>
       <div class="upgrade-list" id="upgrades"></div>
@@ -129,6 +147,7 @@
   </main>
   <script src="pwnd-ai-questions.js"></script>
   <script src="pwnd-engine.js"></script>
+  <script src="pond-demo.js"></script>
   <script src="pwnd.js" defer></script>
 </body>
 </html>
