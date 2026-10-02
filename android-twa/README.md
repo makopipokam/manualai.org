@@ -30,11 +30,13 @@ Vor der Einreichung muss das erzeugte Projekt gegen die aktuelle Google-Play-Anf
 
 ## Digital Asset Links
 
-Für eine verifizierte Vollbild-TWA muss die SHA-256-Zertifikatsfingerprint des **tatsächlich zum Play-Upload gehörenden** Zertifikats in
+Für eine verifizierte Vollbild-TWA muss der SHA-256-Fingerabdruck des Zertifikats, mit dem **die auf dem Gerät installierte APK signiert wurde**, in
 
 `https://app.manualai.org/.well-known/assetlinks.json`
 
-liegen. Die Vorlage befindet sich in [`assetlinks.json.template`](assetlinks.json.template). Der Fingerprint darf nicht geraten werden. Erst nach der Wahl des Play-App-Signing-/Upload-Key kann die Datei mit dem echten Wert erzeugt und in `main` veröffentlicht werden.
+liegen. **Für Installationen aus Google Play ist das der App-Signing-Fingerabdruck** aus Play Console → App-Integrität → *App signing key certificate*: Google signiert die ausgelieferten APKs erneut. Der **Upload-Key-Fingerabdruck allein genügt dafür nicht**. Bei einem direkt per ADB installierten, lokal mit dem Upload-Key signierten APK kann dessen Fingerabdruck zusätzlich eingetragen werden. Wenn Play mehrere App-Signing-Zertifikate für unterstützte Geräte verwendet, müssen die relevanten Fingerabdrücke berücksichtigt werden. [Google erläutert die Unterscheidung ausdrücklich](https://developer.chrome.com/docs/android/trusted-web-activity/android-for-web-devs#upload-vs-signing-key).
+
+Die Vorlage befindet sich in [`assetlinks.json.template`](assetlinks.json.template). Der Fingerabdruck darf nicht geraten werden. Nach Einrichtung von Play App Signing den **App-Signing**-SHA-256-Wert aus Play Console einsetzen, die JSON-Datei unter der Domainwurzel veröffentlichen und die **über Play installierte** App auf einem realen Gerät verifizieren. Eine Vorlage oder einen Platzhalter niemals öffentlich als fertige Digital Asset Links ausgeben.
 
 Für die Android-App ist die geplante Kennung `org.manualai.mydog`. Nach dem Build prüfen:
 

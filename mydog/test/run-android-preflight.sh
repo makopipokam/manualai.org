@@ -15,6 +15,7 @@ assert manifest['id'] == '/mydog/'
 assert twa['host'] == 'app.manualai.org' and twa['startUrl'] == '/mydog/'
 assert twa['packageId'] == 'org.manualai.mydog' and twa['orientation'] == 'portrait'
 text = (root / 'android-twa/assetlinks.json.template').read_text()
-assert 'REPLACE_WITH_' in text and 'org.manualai.mydog' in text
+assert 'REPLACE_WITH_THE_SHA256_FINGERPRINT_OF_THE_PLAY_APP_SIGNING_CERTIFICATE' in text
+assert 'org.manualai.mydog' in text and 'PLAY_UPLOAD_CERTIFICATE' not in text
 print('android-preflight: PASS | legal pages, PWA metadata, TWA manifest and fingerprint template')
 PY
