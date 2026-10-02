@@ -39,10 +39,7 @@
       assert(page.querySelector('.test-navigation').firstElementChild?.id === 'next-question-btn', 'Weiter is above Zurück');
       assert(page.querySelector('.test-navigation').lastElementChild?.id === 'prev-question-btn', 'Zurück is below Weiter');
       assert(getComputedStyle(page.querySelector('#view-favorites-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites overview button is not red');
-      const startGallery = page.querySelectorAll('.start-dog-gallery img');
-      assert(startGallery.length === 3, 'start screen shows three subtle dog images');
-      assert([...startGallery].map(image => image.alt).join('|') === 'Labrador Retriever|Golden Retriever|Border Collie', 'start gallery labels match the shown breeds');
-      assert([...startGallery].every(image => image.loading === 'eager' && image.decoding === 'async'), 'start gallery images load visibly without layout shifts');
+      assert(page.querySelector('.start-dog-gallery') === null, 'start screen stays free of decorative dog images');
       // A partially completed test must survive a reload and resume at its saved question.
       page.querySelectorAll('.likert-option')[0].click();
       click('#next-question-btn');
@@ -90,6 +87,9 @@
       assert(page.querySelector('.ratings-overview h4')?.textContent === 'Eignung für dich:', 'overall stars are labeled as suitability');
       assert(page.querySelector('.profile-section-title')?.textContent === 'Rasse-Eigenschaften', 'attribute stars are grouped separately');
       assert(page.querySelector('.rating-caption')?.textContent.includes('5 Sterne = passt sehr gut'), 'suitability explanation renders');
+      assert(page.querySelector('#dog-image-main')?.getAttribute('src')?.startsWith('https://images.dog.ceo/'), 'each dog suggestion has a main breed image');
+      assert(page.querySelectorAll('.dog-image.thumbnail').length === 6, 'each dog suggestion has six breed image choices');
+      assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.alt.includes(page.querySelector('#dog-name')?.textContent || '')), 'suggestion gallery labels use the current dog name');
       const completed = state();
       assert(completed.lastResult?.dogIds?.length > 0, 'completed result persists dog ids');
       assert(completed.lastResult.dogIds.length === 18, 'completed result persists every catalogue breed');
