@@ -402,6 +402,8 @@ body {
 .dog-image-status {
     display: grid;
     place-items: center;
+    align-content: center;
+    gap: 8px;
     width: 100%;
     aspect-ratio: 4 / 3;
     padding: 20px;
@@ -413,6 +415,42 @@ body {
 }
 
 .dog-image-status[hidden] { display: none; }
+
+.dog-loading-icon {
+    width: 68px;
+    height: 68px;
+    color: var(--primary-color);
+    animation: dog-photo-hop 1.35s ease-in-out infinite;
+}
+
+.dog-image-status-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.dog-image-status.is-error .dog-loading-icon { display: none; }
+.dog-image-status.is-error .dog-image-status-text {
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+}
+
+@keyframes dog-photo-hop {
+    0%, 100% { transform: translateY(2px) rotate(-5deg); }
+    50% { transform: translateY(-7px) rotate(5deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dog-loading-icon { animation: none; }
+}
 
 .dog-image {
     border-radius: var(--border-radius);
@@ -628,6 +666,16 @@ body {
 .chat-header h2 {
     font-size: 1.2rem;
     margin: 0;
+}
+
+.chat-note {
+    margin: 0;
+    padding: 10px 18px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    background: var(--background-color);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .chat-messages {
@@ -1733,14 +1781,20 @@ input:focus-visible,
     box-shadow: 0 0 0 3px rgba(184, 111, 63, 0.18);
 }
 
-.dog-photo-credits {
-    align-self: center;
+.mydog-footer {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 4px max(20px, env(safe-area-inset-right)) max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+    text-align: center;
+}
+
+.mydog-footer a {
     color: var(--text-light);
     font-size: 0.82rem;
     text-underline-offset: 3px;
 }
 
-.dog-photo-credits:focus-visible {
+.mydog-footer a:focus-visible {
     outline: 2px solid var(--primary-color);
     outline-offset: 3px;
 }
