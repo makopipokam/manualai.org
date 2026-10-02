@@ -4,7 +4,7 @@ Dieses Verzeichnis enthält die vorbereitete Bubblewrap-Konfiguration für eine 
 
 ## Status
 
-Die Konfiguration ist vorbereitet, aber noch **kein signiertes APK/AAB und keine Play-Einreichung**. Das Android SDK wurde in dieser Session nicht installiert, weil dafür die Android-SDK-Lizenz aktiv akzeptiert werden müsste. Das muss der Kontoinhaber selbst auf seiner Build-Umgebung tun.
+Die Konfiguration ist vorbereitet. Am 02.10.2026 wurde nach Zustimmung zur Android-SDK-Lizenz ein **signiertes AAB (Version Code 1, Target API 36)** und ein Test-APK erzeugt und geprüft. Diese Dateien sowie der Upload-Key liegen privat **außerhalb des Repositorys**; der Android-Quellstand des AAB ist Commit `cdd557d`. **Noch nicht erfolgt:** Play-Console-Upload, Einrichtung des Play-App-Signing-Zertifikats in den Digital Asset Links und Test auf einem echten Android-Gerät. Wer den Build auf einer anderen Maschine reproduziert, muss die SDK-Lizenz dort selbst akzeptieren und den privaten Upload-Key sicher bereitstellen.
 
 ## Einmalige Vorbereitung auf einer Android-Build-Maschine
 

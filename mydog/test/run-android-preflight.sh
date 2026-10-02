@@ -14,8 +14,13 @@ assert manifest['scope'] == '/mydog/'
 assert manifest['id'] == '/mydog/'
 assert twa['host'] == 'app.manualai.org' and twa['startUrl'] == '/mydog/'
 assert twa['packageId'] == 'org.manualai.mydog' and twa['orientation'] == 'portrait'
+privacy = (root / 'mydog/legal/privacy.html').read_text()
+assert '/mydog/images/v1/' in privacy, 'privacy page must describe locally served dog photos'
+assert 'bei der Anzeige direkt von' not in privacy, 'outdated third-party image claim in privacy page'
 text = (root / 'android-twa/assetlinks.json.template').read_text()
 assert 'REPLACE_WITH_THE_SHA256_FINGERPRINT_OF_THE_PLAY_APP_SIGNING_CERTIFICATE' in text
 assert 'org.manualai.mydog' in text and 'PLAY_UPLOAD_CERTIFICATE' not in text
-print('android-preflight: PASS | legal pages, PWA metadata, TWA manifest and fingerprint template')
+print('android-preflight: STRUCTURE PASS | legal-page consistency, PWA metadata, TWA manifest and fingerprint template')
+if '[vollständiger Name/Firma und Anschrift des Betreibers ergänzen]' in privacy:
+    print('android-release: PENDING | operator identity/address must be completed before Play submission')
 PY
