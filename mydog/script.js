@@ -756,6 +756,25 @@ function getBreedSubtitle(dog) {
     return breed && breed.toLowerCase() !== name.toLowerCase() ? breed : '';
 }
 
+// A playful voice derived from the catalogue's breed-profile scores, not an
+// assertion about an individual dog's behaviour or a generative AI persona.
+function getDogChatPersona(dog) {
+    const { O = 50, C = 50, E = 50, A = 50, N = 50 } = dog.personality || {};
+    if (E >= 75 && A >= 80) {
+        return { traits: 'offen und gesellig', greeting: 'Frag mich ruhig!', lead: 'Wuff, gerne:' };
+    }
+    if (C >= 85 && O >= 75) {
+        return { traits: 'neugierig und konzentriert', greeting: 'Was möchtest du genauer wissen?', lead: 'Gute Frage – schauen wir genau hin:' };
+    }
+    if (N >= 65) {
+        return { traits: 'aufmerksam und feinfühlig', greeting: 'Wir gehen das in Ruhe durch.', lead: 'Schritt für Schritt:' };
+    }
+    if (E <= 50 || A <= 55) {
+        return { traits: 'eigenständig und gelassen', greeting: 'Frag mich in deinem Tempo.', lead: 'Ganz in Ruhe:' };
+    }
+    return { traits: 'aufmerksam und freundlich', greeting: 'Was interessiert dich?', lead: 'Aus meinem Steckbrief:' };
+}
+
 // Show chat screen
 function showChat() {
     const dog = appState.matchingDogs[appState.currentDogIndex];
@@ -767,7 +786,8 @@ function showChat() {
     appState.chatHistory = [];
     elements.chatMessages.innerHTML = '';
     
-    addChatMessage('assistant', `Frag mich nach ${dog.name}: Bewegung, Pflege, Erziehung oder Alltag. Ich antworte aus dem Rasse-Steckbrief, nicht als echter Hund.`);
+    const persona = getDogChatPersona(dog);
+    addChatMessage('assistant', `${dog.name} hier – im spielerischen Rasseprofil eher ${persona.traits}. ${persona.greeting} Frag mich nach Bewegung, Pflege oder Alltag.`);
     
     elements.userMessageInput.value = '';
     
@@ -1396,6 +1416,8 @@ function generateChatResponse(message) {
     const dog = appState.currentDog;
     if (!dog) return 'Öffne zuerst einen Hundevorschlag, damit ich seinen Steckbrief erklären kann.';
     const responses = dogChatResponses[dog.name] || {};
+    const persona = getDogChatPersona(dog);
+    const inVoice = answer => `${persona.lead} ${answer}`;
     const text = message.toLocaleLowerCase('de-DE')
         .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
 
@@ -1403,42 +1425,45 @@ function generateChatResponse(message) {
         return 'Bei Blut im Kot, Schmerzen, starkem Durchfall, Erbrechen oder anhaltenden Veränderungen bitte eine Tierarztpraxis kontaktieren. Ein Rasse-Steckbrief kann keine Diagnose stellen.';
     }
     if (/(?:kack|scheiss|kot|stuhlgang|haeuf|poop|verdau|gross(?:es?|en)?\s+geschaeft)/.test(text)) {
-        return 'Erwachsene Hunde machen normalerweise etwa ein- bis dreimal täglich ihr großes Geschäft; Welpen oft häufiger. Wie oft ein bestimmter Hund muss, hängt unter anderem von Alter, Futter und seinem gewohnten Rhythmus ab. Wenn sich das plötzlich ändert oder der Hund presst, frag eine Tierarztpraxis. Quelle: PDSA (tierärztlicher Ratgeber).';
+        return inVoice('Erwachsene Hunde machen normalerweise etwa ein- bis dreimal täglich ihr großes Geschäft; Welpen oft häufiger. Wie oft ein bestimmter Hund muss, hängt unter anderem von Alter, Futter und seinem gewohnten Rhythmus ab. Wenn sich das plötzlich ändert oder der Hund presst, frag eine Tierarztpraxis. Quelle: PDSA (tierärztlicher Ratgeber).');
     }
     if (/(?:pinkel|urin|blase|kleines\s+geschaeft)/.test(text)) {
-        return 'Wie oft ein Hund pinkeln muss, ist individuell und hängt etwa von Alter, Trinken und Gesundheit ab. Regelmäßige Gelegenheiten zum Rausgehen sind wichtig; bei Schmerzen oder plötzlichen Änderungen hilft eine Tierarztpraxis.';
+        return inVoice('Wie oft ein Hund pinkeln muss, ist individuell und hängt etwa von Alter, Trinken und Gesundheit ab. Regelmäßige Gelegenheiten zum Rausgehen sind wichtig; bei Schmerzen oder plötzlichen Änderungen hilft eine Tierarztpraxis.');
     }
     if (/(?:futter|fuetter|essen|fress|friss|ernaehr|leckerli|portion)/.test(text)) {
-        return `Zur Fütterung von ${dog.name}: Die passende Menge hängt von Alter, Gewicht, Bewegung und Futter ab. Feste Grammzahlen aus einem Rasseprofil wären für deinen individuellen Hund unzuverlässig; orientiere dich an der Futterdeklaration und frage bei Unsicherheit eine Tierarztpraxis.`;
+        return inVoice(`Zur Fütterung von ${dog.name}: Die passende Menge hängt von Alter, Gewicht, Bewegung und Futter ab. Feste Grammzahlen aus einem Rasseprofil wären für deinen individuellen Hund unzuverlässig; orientiere dich an der Futterdeklaration und frage bei Unsicherheit eine Tierarztpraxis.`);
     }
     if (/(?:beweg|spazier|gassi|lauf|sport|auslast|aktiv)/.test(text)) {
-        return responses.movement || `Im Steckbrief von ${dog.name} steht zur Aktivität: ${dog.energy}`;
+        return inVoice(responses.movement || `Im Steckbrief von ${dog.name} steht zur Aktivität: ${dog.energy}`);
     }
     if (/(?:kinder|kind|familie|baby)/.test(text)) {
-        return `${dog.name}: ${dog.familyFriendly}. Kleine Kinder und Hunde sollten beim Spielen immer beaufsichtigt werden; der einzelne Hund und seine Sozialisation sind entscheidend.`;
+        return inVoice(`${dog.name}: ${dog.familyFriendly}. Kleine Kinder und Hunde sollten beim Spielen immer beaufsichtigt werden; der einzelne Hund und seine Sozialisation sind entscheidend.`);
     }
     if (/(?:pflege|buerst|fell|haar|wasch|schneid)/.test(text)) {
-        return responses.grooming || `Im Steckbrief von ${dog.name} steht zur Pflege: ${dog.grooming}`;
+        return inVoice(responses.grooming || `Im Steckbrief von ${dog.name} steht zur Pflege: ${dog.grooming}`);
     }
     if (/(?:lebenserwart|lebensdauer|wie alt|alter|jahre|lange leb)/.test(text)) {
-        return responses.lifespan || `Für ${dog.name} liegt mir keine verlässliche Angabe zur Lebenserwartung vor. Das Alter eines individuellen Hundes kann ich nicht vorhersagen.`;
+        return inVoice(responses.lifespan || `Für ${dog.name} liegt mir keine verlässliche Angabe zur Lebenserwartung vor. Das Alter eines individuellen Hundes kann ich nicht vorhersagen.`);
     }
     if (/(?:erzieh|trainier|lern|trick|gehorch)/.test(text)) {
-        return responses.training || `Im Steckbrief von ${dog.name} steht zur Erziehung: ${dog.trainability}`;
+        return inVoice(responses.training || `Im Steckbrief von ${dog.name} steht zur Erziehung: ${dog.trainability}`);
     }
     if (/(?:allein|wohnung|bell|schlaf|beschaeftig)/.test(text)) {
-        return `Ob ${dog.name} gut allein bleibt oder wie er sich zu Hause verhält, kann ich aus der Rasse allein nicht seriös vorhersagen. Training, Gesundheit und Persönlichkeit des einzelnen Hundes sind dafür wichtig.`;
+        return inVoice(`Ob ${dog.name} gut allein bleibt oder wie er sich zu Hause verhält, kann ich aus der Rasse allein nicht seriös vorhersagen. Training, Gesundheit und Persönlichkeit des einzelnen Hundes sind dafür wichtig.`);
+    }
+    if (/(?:charakter|persoenlich|temperament|wesen|wie tickst|was macht dich aus|wie bist du drauf)/.test(text)) {
+        return inVoice(`Im spielerischen Profil wirke ich ${persona.traits}. ${dog.description} Einzelne Hunde können ganz anders sein.`);
     }
     if (/(?:hallo|\bhi\b|\bhey\b|guten tag)/.test(text)) {
-        return `Hallo! Zu ${dog.name} kenne ich Infos über Bewegung, Pflege, Erziehung und Familie. Was interessiert dich?`;
+        return `${persona.greeting} Zu ${dog.name} kenne ich Infos über Bewegung, Pflege, Erziehung und Familie. Was interessiert dich?`;
     }
     if (/(?:name|heisst|bist du|welche rasse)/.test(text)) {
-        return `Hier geht es um ${dog.name} (${dog.breed}). Das sind allgemeine Rasseinformationen, kein individueller Hund.`;
+        return inVoice(`Hier geht es um ${dog.name} (${dog.breed}). Das sind allgemeine Rasseinformationen, kein individueller Hund.`);
     }
     if (/(?:danke|vielen dank)/.test(text)) return 'Gerne! Du kannst noch nach Bewegung, Pflege oder Alltag fragen.';
     if (/(?:tschuess|bye|auf wiedersehen)/.test(text)) return 'Bis bald und viel Spaß beim Entdecken der Hunde!';
 
-    return `Dazu habe ich im Steckbrief von ${dog.name} keine verlässliche Antwort. Frag mich zum Beispiel nach Bewegung, Pflege, Erziehung, Familie oder Verdauung – für individuelle Gesundheitsfragen hilft eine Tierarztpraxis.`;
+    return inVoice(`Dazu habe ich im Steckbrief von ${dog.name} keine verlässliche Antwort. Frag mich zum Beispiel nach Bewegung, Pflege, Erziehung, Familie oder Verdauung – für individuelle Gesundheitsfragen hilft eine Tierarztpraxis.`);
 }
 
 // Show toast notification

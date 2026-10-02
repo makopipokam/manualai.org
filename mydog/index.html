@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/mydog/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
-    <link rel="stylesheet" href="/mydog/style.css?v=20261002-loaderchat">
+    <link rel="stylesheet" href="/mydog/style.css?v=20261002-catvoice">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
@@ -200,9 +200,8 @@
 
         <!-- No More Dogs Screen -->
         <div id="no-more-screen" class="screen">
-            <p class="no-more-kicker">Du hast sie alle kennengelernt</p>
+            <p class="no-more-kicker">Alle <span id="shown-breed-count">18</span> Rassen entdeckt</p>
             <h2>Vielleicht doch ein Katzentyp? 🐱</h2>
-            <p>Du hast alle <span id="shown-breed-count">18</span> Rassen aus unserem Katalog gesehen. Vielleicht wartet dein perfekter Charakter ja bei den Katzen?</p>
             <button id="restart-test-btn" class="btn-primary">Hunde neu entdecken</button>
         </div>
     </div>
@@ -259,7 +258,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261002-loaderchat"></script>
-    <script src="script.js?v=20261002-loaderchat"></script>
+    <script src="data.js?v=20261002-catvoice"></script>
+    <script src="script.js?v=20261002-catvoice"></script>
 </body>
 </html>
