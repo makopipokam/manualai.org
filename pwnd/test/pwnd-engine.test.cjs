@@ -19,8 +19,9 @@ assert.match(appSource, /rating: 1000/, 'duel opponents must define a numeric ra
 assert.match(appSource, /rating: 1080/, 'the pressure fox must define a distinct rating');
 assert.match(appSource, /rating: 1160/, 'the reasoning fox must define a distinct rating');
 assert.match(appSource, /screenDuelCountdown/, 'duels must have a dedicated countdown screen');
-assert.match(appSource, /startDuelCountdown/, 'duels must start through the countdown flow');
+assert.match(appSource, /startLaunchCountdown/, 'quiz modes must start through the countdown flow');
 assert.match(appSource, /countdownNumber/, 'the countdown must expose an accessible number/status target');
+assert.match(appSource, /Die Eule erwacht/, 'free quiz must have an owl-specific launch state');
 for (const question of aiQuestions) {
   assert.equal(question.options.length, 4, 'AI questions must have four answer options');
   assert.ok(question.answer >= 0 && question.answer < 4, 'AI answer index must be valid');

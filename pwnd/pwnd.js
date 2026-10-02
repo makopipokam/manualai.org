@@ -126,9 +126,9 @@ function staticAiQuestion(match){
 }
 function showQuestionLoading(match){
   setText('questionType', 'KI-FRAGE · EULE DENKT');
-  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Karte …');
-  setText('questionHint', 'Dein Skill-Level wird berücksichtigt.');
-  setText('aiComment', 'Die Eule sucht eine neue, noch nicht gespielte Frage.');
+  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Frage …');
+  setText('questionHint', match.mode === 'free' ? '' : 'Dein Skill-Level wird berücksichtigt.');
+  setText('aiComment', 'Die Eule beobachtet deine Antworten.');
   $('answers').innerHTML = '';
   $('lockBtn').disabled = true;
   setText('roundNo', match.round);
@@ -145,7 +145,7 @@ async function requestAiQuestion(match){
     if (isUsableQuestion(payload.question, match)) { match.aiQuestionCount += 1; return payload.question; }
     throw new Error('invalid or repeated question');
   } catch (error) {
-    console.warn('KI-Frage nicht verfügbar, Offline-Karte wird verwendet:', error);
+    console.warn('KI-Frage nicht verfügbar, Offline-Frage wird verwendet:', error);
     match.aiFallbackCount += 1;
     return staticAiQuestion(match) || weightedQuestion();
   }
@@ -154,7 +154,7 @@ function selectFreeTopic(id){
   if (!TOPICS[id] || !state.pendingTopicIds.includes(id)) return;
   state.selectedTopicId = id;
   document.querySelectorAll('.free-topic-option').forEach(button => button.classList.toggle('selected', button.dataset.topic === id));
-  setText('freeStartBtn', `Mit ${TOPICS[id].name} starten →`);
+  $('freeStartBtn').setAttribute('aria-label', `Los mit ${TOPICS[id].name}`);
 }
 function renderFreeTopicOptions(){
   const options = $('freeTopicOptions');
@@ -176,16 +176,20 @@ function selectDuelOpponent(id){
   $('duelStartBtn').setAttribute('aria-label', `Los gegen ${OPPONENTS[id].name}`);
 }
 function enterDuelSetup(){ show('screenDuelSetup'); selectDuelOpponent(state.opponentId); }
-function startDuelCountdown(){
+function startLaunchCountdown(){
   const match = state.match;
   const opponent = currentOpponent();
+  const free = match.mode === 'free';
   const screen = $('screenDuelCountdown');
   screen.dataset.opponent = match.opponentId;
   document.body.dataset.duelOpponent = match.opponentId;
   setText('countdownAvatar', opponent.avatar);
   setText('countdownOpponent', opponent.name);
-  setText('countdownCopy', opponent.intro);
-  setText('countdownStatus', 'BEREIT MACHEN');
+  setText('countdownTitle', free ? 'Die Eule erwacht.' : 'Der Teich ruft.');
+  setText('countdownCopy', free ? `${opponent.intro} Thema: ${TOPICS[match.topicId].name}.` : opponent.intro);
+  setText('countdownStatus', free ? 'ARCHIV ÖFFNET' : 'BEREIT MACHEN');
+  setText('countdownHint', free ? 'Deine erste Frage wartet.' : 'Das Duell beginnt gleich.');
+  setText('cancelCountdownBtn', free ? '← Thema wählen' : '← Gegner wählen');
   setText('countdownNumber', '3');
   screen.classList.remove('countdown-go');
   clearTimeout(state.timerId);
@@ -216,11 +220,12 @@ function startDuelCountdown(){
 }
 function cancelDuelCountdown(){
   clearTimeout(state.timerId);
+  const free = state.match?.mode === 'free';
   state.match = null;
   state.mode = 'duel';
   delete document.body.dataset.duelOpponent;
-  show('screenDuelSetup');
-  selectDuelOpponent(state.opponentId);
+  show(free ? 'screenFreeTopicSetup' : 'screenDuelSetup');
+  if (!free) selectDuelOpponent(state.opponentId);
 }
 function startMatch(mode = 'duel', topicId = null){
   state.mode = mode;
@@ -235,7 +240,7 @@ function startMatch(mode = 'duel', topicId = null){
   updateOpponentHeader();
   setText('phaseLabel', mode === 'free' ? 'FREIES QUIZZEN' : 'QUIZDUELL');
   setText('topicLabel', mode === 'free' ? `· ${TOPICS[selectedTopicId].name}` : '');
-  if (mode === 'duel') return startDuelCountdown();
+  if (mode === 'duel' || mode === 'free') return startLaunchCountdown();
   show('screenBattle');
   nextQuestion();
 }
@@ -271,7 +276,7 @@ function renderBattle(){
   setText('questionType', `${aiQuestion ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
   setText('topicLabel', match.mode === 'free' ? `· ${TOPICS[match.topicId].name}` : '');
   setText('questionTitle', question.prompt);
-  setText('questionHint', match.mode === 'free' ? (aiQuestion ? 'KI-Frage · keine Wiederholung in dieser Runde.' : 'Offline-Karte · keine Wiederholung in dieser Runde.') : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
+  setText('questionHint', match.mode === 'free' ? '' : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
   setText('comboText', `COMBO ${match.combo}`);
   setText('skillProfile', `${SKILL_NAMES[weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
   $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;
@@ -281,15 +286,17 @@ function renderBattle(){
   $('lockBtn').disabled = true;
   $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
   document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
-  const fallbackNote = match.aiFallbackCount > 0 && match.mode === 'free' ? ' · Offline-Fallback aktiv' : '';
-  setText('aiComment', match.round === 1 ? currentOpponent().intro + fallbackNote : adaptiveComment(match) + fallbackNote);
+  setText('lockBtn', 'Antwort abgeben');
+  setText('aiComment', match.mode === 'free'
+    ? (match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match))
+    : currentOpponent().intro);
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
 function adaptiveComment(match){
   const topic = match.topicId ? TOPICS[match.topicId] : null;
   const weakSkill = SKILL_NAMES[weakest(match.skills, topic?.skills)];
   if (match.mode === 'free') {
-    if (match.history.at(-1)?.correct === false) return `Die Schatten-Eule markiert deine ${weakSkill}-Lücke in ${topic.name}. Die nächste Karte zielt gezielt dorthin.`;
+    if (match.history.at(-1)?.correct === false) return `Die Schatten-Eule markiert deine ${weakSkill}-Lücke in ${topic.name}. Die nächste Frage zielt gezielt dorthin.`;
     return `Die Schatten-Eule vergleicht deine Antworten in ${topic.name} und prüft weiter deine ${weakSkill}.`;
   }
   if (match.combo >= 2) return 'Interessant. Deine Sicherheit steigt — also wechsle ich die Perspektive.';
@@ -340,7 +347,7 @@ function showRoundResult(result){
   $('resultOrbit').textContent = result.correct ? '+' : '×';
   setText('roundEyebrow', free ? (result.correct ? 'WISSEN GESAMMELT' : 'DIE EULE BEOBACHTET') : (result.correct ? 'RESSOURCENFLUSS' : 'GEGENWELLE'));
   setText('roundTitle', free ? (result.correct ? 'Die Eule nickt.' : 'Die Eule schweigt.') : (result.correct ? 'Deine Entscheidung trägt.' : 'Die AI hat gekontert.'));
-  setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule legt die Karte zurück. Versuch es bei der nächsten Frage erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
+  setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule formuliert eine neue Frage. Versuch es gleich erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
   setText('resultTime', free ? 'ohne Zeitdruck' : `${(result.time / 1000).toFixed(1)} s`);
   setText('resultStatMiddleLabel', free ? 'WISSEN' : 'SCHADEN');
   setText('resultDamage', free ? (result.correct ? '+1' : '0') : (result.correct ? `+${result.damage}` : `-${result.selfDamage}`));
@@ -373,7 +380,7 @@ function finishMatch(){
   $('endResult').style.color = free ? 'var(--air)' : (outcome ? 'var(--leaf)' : 'var(--clay)');
   setText('energyChange', `${free ? '+' + rewards.energy : (energyRating.delta >= 0 ? '+' : '') + energyRating.delta} ENERGIE`);
   setText('endTitle', free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : 'Die AI hat deinen Wasserlauf gelesen.'));
-  setText('endCopy', free ? `${correctAnswers}/${match.total} Karten in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
+  setText('endCopy', free ? `${correctAnswers}/${match.total} Fragen in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
   setText('energyValue', formatResource(state.energy));
   setText('waterValue', formatResource(state.water));
   setText('airValue', formatResource(state.air));

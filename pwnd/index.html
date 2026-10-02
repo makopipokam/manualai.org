@@ -40,9 +40,9 @@
       <button class="back-link" id="backToPondFromTopicsBtn" type="button">← Zum Teich</button>
       <p class="eyebrow">FREIES QUIZZEN · 8 FRAGEN</p>
       <h1 id="freeTopicTitle">Wähle dein<br><em>Thema.</em></h1>
-      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und legt gezielt weitere Karten zu deiner erkannten Schwäche.</p>
+      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und formuliert gezielt weitere Fragen zu deiner erkannten Schwäche.</p>
       <div class="free-topic-options" id="freeTopicOptions"></div>
-      <button class="primary-btn free-start-btn" id="freeStartBtn" type="button">Mit Thema starten <span>→</span></button>
+      <button class="primary-btn free-start-btn" id="freeStartBtn" type="button" aria-label="Los mit dem gewählten Thema"><span class="duel-start-glyph" aria-hidden="true">▶</span><span>LOS</span><span aria-hidden="true">→</span></button>
       <p class="setup-note">Die drei Vorschläge werden bei jedem freien Quiz neu gemischt.</p>
     </section>
 
@@ -69,7 +69,7 @@
         <h1 id="countdownTitle">Der Teich ruft.</h1>
         <p class="countdown-copy" id="countdownCopy">Der Rotfuchs liest deine erste Entscheidung. Finde deinen Rhythmus.</p>
         <div class="countdown-number" id="countdownNumber" aria-live="assertive">3</div>
-        <p class="countdown-hint">Das Duell beginnt gleich.</p>
+        <p class="countdown-hint" id="countdownHint">Das Duell beginnt gleich.</p>
       </div>
     </section>
 
@@ -85,9 +85,9 @@
         <div class="question-meta"><span class="type-pill" id="questionType">LOGIC TRAP</span><span class="timer" id="timer">00:20</span></div>
         <h2 id="questionTitle">Frage wird geladen …</h2>
         <div class="answers" id="answers" role="group" aria-label="Antworten"></div>
-        <div class="question-foot"><span id="questionHint">Wähle eine Antwort.</span><button class="ghost-btn" id="lockBtn" type="button" disabled>Antwort sperren</button></div>
+        <div class="question-foot"><span id="questionHint">Wähle eine Antwort.</span><button class="ghost-btn" id="lockBtn" type="button" disabled>Antwort abgeben</button></div>
       </article>
-      <p class="ai-comment" id="aiComment" aria-live="polite">Der Gegner beobachtet deine erste Entscheidung.</p>
+      <p class="ai-comment" id="aiComment" aria-live="polite">Die Eule beobachtet deine Antworten.</p>
     </section>
 
     <section class="screen" id="screenRound" aria-labelledby="roundTitle">
