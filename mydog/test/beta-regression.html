@@ -39,6 +39,11 @@
       assert(page.querySelector('.test-navigation').firstElementChild?.id === 'next-question-btn', 'Weiter is above Zurück');
       assert(page.querySelector('.test-navigation').lastElementChild?.id === 'prev-question-btn', 'Zurück is below Weiter');
       assert(getComputedStyle(page.querySelector('#view-favorites-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites overview button is not red');
+      click('#dark-mode-toggle');
+      assert(page.documentElement.dataset.theme === 'dark', 'dark mode activates');
+      assert(getComputedStyle(page.querySelector('#start-test-btn')).color === 'rgb(21, 35, 28)', 'dark mode uses readable ink on the primary button');
+      click('#dark-mode-toggle');
+      assert(!page.documentElement.dataset.theme, 'dark mode can be switched off');
 
       // A partially completed test must survive a reload and resume at its saved question.
       page.querySelectorAll('.likert-option')[0].click();
@@ -87,6 +92,10 @@
       assert(page.querySelector('.ratings-overview h4')?.textContent === 'Eignung für dich:', 'overall stars are labeled as suitability');
       assert(page.querySelector('.profile-section-title')?.textContent === 'Rasse-Eigenschaften', 'attribute stars are grouped separately');
       assert(page.querySelector('.rating-caption')?.textContent.includes('5 Sterne = passt sehr gut'), 'suitability explanation renders');
+      click('#dark-mode-toggle');
+      assert(getComputedStyle(page.querySelector('#favorite-btn')).color === 'rgb(21, 35, 28)', 'dark mode keeps favorite text readable');
+      assert(getComputedStyle(page.querySelector('#share-btn')).color === 'rgb(21, 35, 28)', 'dark mode keeps share text readable');
+      click('#dark-mode-toggle');
       const completed = state();
       assert(completed.lastResult?.dogIds?.length > 0, 'completed result persists dog ids');
       assert(completed.lastResult.dogIds.length === 18, 'completed result persists every catalogue breed');
