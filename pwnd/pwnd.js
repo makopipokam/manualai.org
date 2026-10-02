@@ -7,10 +7,10 @@ const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 
 const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
 const OPPONENTS = {
-  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
-  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
-  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🦊', focus: 'reasoning', time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
-  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
+  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
+  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
+  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🦊', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
+  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
 };
 const TOPICS = {
   nature: { name: 'Natur & Erde', icon: '🌿', copy: 'Planet, Körper und Umwelt', skills: ['recall', 'causal'] },
@@ -70,12 +70,20 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
+const DEFAULT_SKILLS = Object.freeze({ recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 });
+function normalizeSkillProfile(raw){
+  return Object.fromEntries(Object.keys(DEFAULT_SKILLS).map(skill => {
+    const value = Number(raw?.[skill]);
+    return [skill, Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : DEFAULT_SKILLS[skill]];
+  }));
+}
 const state = {
   energy: saved?.energy ?? saved?.ip ?? STARTING_RESOURCES.energy,
   water: saved?.water ?? saved?.elixir ?? STARTING_RESOURCES.water,
   air: saved?.air ?? STARTING_RESOURCES.air,
   love: saved?.love ?? STARTING_RESOURCES.love,
   calibration: saved?.calibration ?? 0,
+  skillProfile: normalizeSkillProfile(saved?.skillProfile),
   upgrades: saved?.upgrades ?? [],
   unlocked: saved?.unlocked ?? ['frog'],
   opponentId: 'redfox',
@@ -92,7 +100,7 @@ const resourceIds = { energy: ['pondEnergy', 'playerEnergy'], water: ['pondWater
 function setText(id, value){ const element = $(id); if (element) element.textContent = value; }
 function formatResource(value){ return Math.round(value); }
 function save(){
-  localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, upgrades: state.upgrades, unlocked: state.unlocked }));
+  localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, skillProfile: normalizeSkillProfile(state.skillProfile), upgrades: state.upgrades, unlocked: state.unlocked }));
 }
 if (saved && !saved.resourceVersion) save();
 function updateResourceDisplays(){ Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource])))); }
@@ -173,7 +181,7 @@ function startMatch(mode = 'duel', topicId = null){
   state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
   const opponentId = mode === 'free' ? FREE_OPPONENT_ID : state.opponentId;
   const selectedTopicId = mode === 'free' ? (topicId || state.selectedTopicId || Object.keys(TOPICS)[0]) : null;
-  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
+  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
   document.body.classList.toggle('free-mode', mode === 'free');
   setText('roundTotal', state.match.total);
   updateResourceDisplays();
@@ -198,7 +206,12 @@ async function nextQuestion(){
   showQuestionLoading(match);
   show('screenBattle');
   match.current = match.mode === 'free' ? await requestAiQuestion(match) : weightedQuestion();
-  if (state.match !== match || !match.current) return;
+  if (state.match !== match) return;
+  if (!match.current) {
+    match.round -= 1;
+    match.total = match.round;
+    return finishMatch();
+  }
   renderBattle();
   startTimer(Math.round(match.current.time * currentOpponent().time) + (state.mods.time || 0));
 }
@@ -263,6 +276,8 @@ function submitAnswer(index, forcedMs = null){
   match.maxCombo = Math.max(match.maxCombo, result.combo);
   if (match.mode === 'duel') { match.aiHp = Math.max(0, match.aiHp - result.damage); match.playerHp = Math.max(0, match.playerHp - result.selfDamage); }
   match.skills[question.skill] = Math.max(0, Math.min(1, match.skills[question.skill] + result.skillDelta));
+  state.skillProfile = normalizeSkillProfile(match.skills);
+  save();
   match.history.push({ question, correct: result.correct, time, damage: result.damage, selfDamage: result.selfDamage });
   match.accuracy = match.history.filter(entry => entry.correct).length / match.history.length;
   document.querySelectorAll('.answer').forEach((button, optionIndex) => { button.disabled = true; if (optionIndex === question.answer) button.classList.add('correct'); if (optionIndex === index && optionIndex !== question.answer) button.classList.add('wrong'); });
@@ -292,7 +307,7 @@ function finishMatch(){
   const opponent = currentOpponent();
   const free = match.mode === 'free';
   const outcome = free ? 1 : (match.aiHp <= match.playerHp ? 1 : 0);
-  const averageDifficulty = match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length;
+  const averageDifficulty = match.history.length ? match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length : 0;
   const fastCorrectRate = Math.min(1, match.history.filter(entry => entry.correct && entry.time < entry.question.time * .55).length / 3);
   const score = PwndEngine.calculateMatchScore({ outcome, accuracy: match.accuracy, averageDifficulty, fastCorrectRate });
   const energyRating = free ? { delta: 0, energy: state.energy } : PwndEngine.calculateNewEnergy({ before: state.energy, opponentRating: opponent.rating, score, calibration: state.calibration });
