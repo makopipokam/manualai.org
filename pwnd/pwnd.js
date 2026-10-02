@@ -8,9 +8,9 @@ const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
 const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
 const OPPONENTS = {
-  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
-  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
-  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🦊', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
+  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🔥🦊', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
+  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '❄️🦊', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
+  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🌙🦊', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
   owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
 };
 const TOPICS = {
@@ -173,9 +173,55 @@ function selectDuelOpponent(id){
   if (!OPPONENTS[id] || id === FREE_OPPONENT_ID) return;
   state.opponentId = id;
   document.querySelectorAll('.duel-opponent-option').forEach(button => button.classList.toggle('selected', button.dataset.opponent === id));
-  setText('duelStartBtn', `Duell gegen ${OPPONENTS[id].name[0] + OPPONENTS[id].name.slice(1).toLowerCase()} starten →`);
+  $('duelStartBtn').setAttribute('aria-label', `Los gegen ${OPPONENTS[id].name}`);
 }
 function enterDuelSetup(){ show('screenDuelSetup'); selectDuelOpponent(state.opponentId); }
+function startDuelCountdown(){
+  const match = state.match;
+  const opponent = currentOpponent();
+  const screen = $('screenDuelCountdown');
+  screen.dataset.opponent = match.opponentId;
+  document.body.dataset.duelOpponent = match.opponentId;
+  setText('countdownAvatar', opponent.avatar);
+  setText('countdownOpponent', opponent.name);
+  setText('countdownCopy', opponent.intro);
+  setText('countdownStatus', 'BEREIT MACHEN');
+  setText('countdownNumber', '3');
+  screen.classList.remove('countdown-go');
+  clearTimeout(state.timerId);
+  let remaining = 3;
+  const tick = () => {
+    if (state.match !== match) return;
+    if (remaining > 0) {
+      setText('countdownNumber', remaining);
+      const number = $('countdownNumber');
+      number.classList.remove('countdown-pulse');
+      void number.offsetWidth;
+      number.classList.add('countdown-pulse');
+      remaining -= 1;
+      state.timerId = setTimeout(tick, 1000);
+      return;
+    }
+    setText('countdownStatus', 'LOS!');
+    setText('countdownNumber', 'LOS');
+    screen.classList.add('countdown-go');
+    state.timerId = setTimeout(() => {
+      if (state.match !== match) return;
+      show('screenBattle');
+      nextQuestion();
+    }, 650);
+  };
+  show('screenDuelCountdown');
+  tick();
+}
+function cancelDuelCountdown(){
+  clearTimeout(state.timerId);
+  state.match = null;
+  state.mode = 'duel';
+  delete document.body.dataset.duelOpponent;
+  show('screenDuelSetup');
+  selectDuelOpponent(state.opponentId);
+}
 function startMatch(mode = 'duel', topicId = null){
   state.mode = mode;
   state.mods = {};
@@ -189,6 +235,7 @@ function startMatch(mode = 'duel', topicId = null){
   updateOpponentHeader();
   setText('phaseLabel', mode === 'free' ? 'FREIES QUIZZEN' : 'QUIZDUELL');
   setText('topicLabel', mode === 'free' ? `· ${TOPICS[selectedTopicId].name}` : '');
+  if (mode === 'duel') return startDuelCountdown();
   show('screenBattle');
   nextQuestion();
 }
@@ -356,6 +403,7 @@ $('backToPondBtn').addEventListener('click', () => show('screenStart'));
 $('backToPondFromTopicsBtn').addEventListener('click', () => show('screenStart'));
 $('freeStartBtn').addEventListener('click', () => startMatch('free', state.selectedTopicId));
 $('duelStartBtn').addEventListener('click', () => startMatch('duel'));
+$('cancelCountdownBtn').addEventListener('click', cancelDuelCountdown);
 $('lockBtn').addEventListener('click', () => submitAnswer(state.match.selected));
 $('continueBtn').addEventListener('click', () => state.match.round >= state.match.total ? finishMatch() : (show('screenBattle'), nextQuestion()));
 $('againBtn').addEventListener('click', () => state.mode === 'free' ? enterFreeTopicSetup() : enterDuelSetup());

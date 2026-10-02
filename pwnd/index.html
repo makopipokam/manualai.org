@@ -52,12 +52,25 @@
       <h1 id="duelSetupTitle">Wähle deinen<br><em>Fuchs-Gegner.</em></h1>
       <p class="lede">Jeder Fuchs liest dein Spiel anders. Die Auswahl gilt nur für dieses Duell und beeinflusst Tempo, Fragenfokus und Belohnung.</p>
       <div class="duel-opponent-options" id="duelOpponentOptions">
-        <button class="duel-opponent-option selected" type="button" data-opponent="redfox"><span class="fox-mark">🦊</span><span><b>Rotfuchs</b><small><i>Vulpes vulpes</i> · adaptiv</small><em>Beobachtet deine Muster und wechselt geschickt die Perspektive.</em></span></button>
-        <button class="duel-opponent-option" type="button" data-opponent="arcticfox"><span class="fox-mark">🦊</span><span><b>Polarfuchs</b><small><i>Vulpes lagopus</i> · schnell</small><em>Setzt dich unter Druck und verkürzt deine sichere Denkzeit.</em></span></button>
-        <button class="duel-opponent-option" type="button" data-opponent="fennec"><span class="fox-mark">🦊</span><span><b>Fennek</b><small><i>Vulpes zerda</i> · methodisch</small><em>Hört auf Begründungslücken und bevorzugt tiefe Fragen.</em></span></button>
+        <button class="duel-opponent-option selected" type="button" data-opponent="redfox"><span class="fox-mark">🔥🦊</span><span><b>Rotfuchs</b><small><i>Vulpes vulpes</i> · adaptiv</small><em>Beobachtet deine Muster und wechselt geschickt die Perspektive.</em></span></button>
+        <button class="duel-opponent-option" type="button" data-opponent="arcticfox"><span class="fox-mark">❄️🦊</span><span><b>Polarfuchs</b><small><i>Vulpes lagopus</i> · schnell</small><em>Setzt dich unter Druck und verkürzt deine sichere Denkzeit.</em></span></button>
+        <button class="duel-opponent-option" type="button" data-opponent="fennec"><span class="fox-mark">🌙🦊</span><span><b>Fennek</b><small><i>Vulpes zerda</i> · methodisch</small><em>Hört auf Begründungslücken und bevorzugt tiefe Fragen.</em></span></button>
       </div>
-      <button class="primary-btn duel-start-btn" id="duelStartBtn" type="button">Duell gegen Rotfuchs starten <span>→</span></button>
+      <button class="primary-btn duel-start-btn" id="duelStartBtn" type="button" aria-label="Los gegen Rotfuchs"><span class="duel-start-glyph" aria-hidden="true">▶</span><span id="duelStartLabel">LOS</span><span aria-hidden="true">→</span></button>
       <p class="setup-note">Freies Quizzen bleibt davon getrennt: Dort wartet die Schatten-Eule ohne Gegnerauswahl.</p>
+    </section>
+
+    <section class="screen duel-countdown-screen" id="screenDuelCountdown" aria-labelledby="countdownTitle" data-opponent="redfox">
+      <button class="back-link" id="cancelCountdownBtn" type="button">← Gegner wählen</button>
+      <div class="countdown-stage">
+        <p class="eyebrow" id="countdownStatus">BEREIT MACHEN</p>
+        <span class="countdown-avatar" id="countdownAvatar" aria-hidden="true">🔥🦊</span>
+        <p class="countdown-opponent" id="countdownOpponent">ROTFUCHS</p>
+        <h1 id="countdownTitle">Der Teich ruft.</h1>
+        <p class="countdown-copy" id="countdownCopy">Der Rotfuchs liest deine erste Entscheidung. Finde deinen Rhythmus.</p>
+        <div class="countdown-number" id="countdownNumber" aria-live="assertive">3</div>
+        <p class="countdown-hint">Das Duell beginnt gleich.</p>
+      </div>
     </section>
 
     <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
