@@ -1270,6 +1270,41 @@ input:focus-visible,
     font-style: normal;
 }
 
+.start-dog-gallery {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: clamp(8px, 2vw, 14px);
+    margin: 2px 0 24px;
+    min-height: 78px;
+}
+
+.start-dog-gallery img {
+    width: clamp(66px, 18vw, 88px);
+    height: clamp(66px, 18vw, 88px);
+    object-fit: cover;
+    border: 4px solid rgba(255, 253, 248, 0.96);
+    border-radius: 50%;
+    box-shadow: 0 8px 18px rgba(31, 90, 69, 0.16);
+    transform: translateY(0);
+    transition: transform var(--transition), box-shadow var(--transition);
+}
+
+.start-dog-gallery img:nth-child(2) {
+    transform: translateY(-9px);
+}
+
+.start-dog-gallery img:hover,
+.start-dog-gallery img:focus-visible {
+    transform: translateY(-5px) scale(1.04);
+    box-shadow: 0 12px 24px rgba(31, 90, 69, 0.22);
+}
+
+.start-dog-gallery img:nth-child(2):hover,
+.start-dog-gallery img:nth-child(2):focus-visible {
+    transform: translateY(-14px) scale(1.04);
+}
+
 #start-screen .subtitle {
     max-width: 490px;
     margin: 0 auto 26px;
@@ -1780,6 +1815,11 @@ input:focus-visible,
 
     .hero-facts {
         margin-bottom: 24px;
+    }
+
+    .start-dog-gallery {
+        gap: 8px;
+        margin-bottom: 20px;
     }
 
     #test-screen,
