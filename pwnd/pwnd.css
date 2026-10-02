@@ -162,6 +162,7 @@ body[data-duel-opponent="fennec"] .ai-comment{background:#fff3d9;color:#755527;b
 @media(max-width:520px){.board-scroll-hint{display:block}}
 .save-warning{padding:13px 15px;margin:8px 0 18px;border:2px solid #bb7761;border-radius:12px;background:#fff0dc;color:#663928;font-size:15px;font-weight:800;line-height:1.45}
 .save-warning[hidden]{display:none}
+.online-pond-entry{text-decoration:none}.online-pond-entry:focus-visible{outline:3px solid #356d80;outline-offset:3px}
 
 /* --- three production buildings and spatial strategy --- */
 .build-choice-list{display:grid;gap:9px;margin:12px 0 16px}

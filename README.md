@@ -19,7 +19,7 @@ The applications have separate HTML, CSS, JavaScript, data, documentation, and t
 - Tests: `npm run test:pwnd`
 - Godot 4 prototype: [`godot/pwnd-prototype/`](godot/pwnd-prototype/)
 
-The existing Web Beta remains frozen. New 3D work belongs to the Godot prototype and its feature branch.
+The quiz Web Beta remains a local demo; the optional authenticated online pond at [`/pwnd/online.html`](https://app.manualai.org/pwnd/online.html) is a separate server-saved building slice. New 3D work belongs to the Godot prototype and its feature branch.
 
 ## mydog
 
