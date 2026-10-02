@@ -6,7 +6,7 @@
 //   Every online visit therefore receives the deployed version; a stale script can no longer be
 //   combined with newer HTML (that mismatch broke returning visitors after the share-image release).
 // - Dog photos from the allowed image hosts: cache-first with a bounded entry count.
-const STATIC_CACHE = 'mydog-static-v4';
+const STATIC_CACHE = 'mydog-static-v5';
 const IMAGE_CACHE = 'mydog-images-v2';
 const IMAGE_CACHE_LIMIT = 160;
 const OWNED_CACHE_PREFIX = 'mydog-';
@@ -18,7 +18,9 @@ const APP_SHELL = [
     '/mydog/data.js',
     '/mydog/manifest.json',
     '/mydog/icon-192x192.png',
-    '/mydog/icon-512x512.png'
+    '/mydog/icon-512x512.png',
+    '/mydog/legal/privacy.html',
+    '/mydog/legal/attribution.html'
 ];
 const IMAGE_HOSTS = new Set([
     'images.dog.ceo',

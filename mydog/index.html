@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/mydog/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
-    <link rel="stylesheet" href="/mydog/style.css?v=20261002">
+    <link rel="stylesheet" href="/mydog/style.css?v=20261002-android">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
@@ -19,6 +19,7 @@
             <p class="eyebrow">MyDog · Dein Hundeprofil</p>
             <h1>Finde Hunde,<br><em>die zu dir passen.</em> 🐾</h1>
             <p class="subtitle">Beantworte 30 kurze Fragen und entdecke Rassen, die zu deinem Alltag und deiner Persönlichkeit passen.</p>
+            <p class="app-disclaimer">Spielerische Orientierung, keine tiermedizinische oder verhaltensbiologische Beratung.</p>
             <div class="hero-facts" aria-label="Testinformationen">
                 <span>30 Fragen</span>
                 <span>5 Antwortstufen</span>
@@ -37,6 +38,11 @@
                 <button id="resume-test-btn" class="btn-secondary" type="button">Test fortsetzen</button>
             </div>
             <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
+            <footer class="app-footer">
+                <a href="/mydog/legal/privacy.html">Datenschutz</a>
+                <a href="/mydog/legal/attribution.html">Bildnachweise</a>
+                <a href="https://github.com/makopipokam/manualai.org/issues" target="_blank" rel="noopener">Support</a>
+            </footer>
         </div>
 
         <!-- Personality Test Screen -->
@@ -247,7 +253,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261002"></script>
-    <script src="script.js?v=20261002"></script>
+    <script src="data.js?v=20261002-android"></script>
+    <script src="script.js?v=20261002-android"></script>
 </body>
 </html>

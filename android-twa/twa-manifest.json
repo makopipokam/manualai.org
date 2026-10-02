@@ -1,0 +1,30 @@
+{
+  "generatorApp": "bubblewrap-cli",
+  "host": "app.manualai.org",
+  "startUrl": "/mydog/",
+  "name": "MyDog – Hundevorschläge",
+  "launcherName": "MyDog",
+  "packageId": "org.manualai.mydog",
+  "appVersion": "0.1.0",
+  "appVersionCode": 1,
+  "display": "standalone",
+  "orientation": "portrait",
+  "themeColor": "#1f5a45",
+  "themeColorDark": "#1f5a45",
+  "navigationColor": "#18362d",
+  "navigationColorDark": "#18362d",
+  "backgroundColor": "#f5f1e8",
+  "iconUrl": "https://app.manualai.org/mydog/icon-512x512.png",
+  "maskableIconUrl": "https://app.manualai.org/mydog/icon-512x512.png",
+  "webManifestUrl": "https://app.manualai.org/mydog/manifest.json",
+  "fallbackType": "customtabs",
+  "enableNotifications": false,
+  "enableSiteSettingsShortcut": true,
+  "minSdkVersion": 23,
+  "fingerprints": [],
+  "signingKey": {
+    "path": "../.secrets/mydog-upload-key.jks",
+    "alias": "mydog"
+  },
+  "splashScreenFadeOutDuration": 300
+}

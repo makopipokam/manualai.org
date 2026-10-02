@@ -2044,3 +2044,35 @@ input:focus-visible,
         transition-duration: 0.01ms !important;
     }
 }
+
+
+/* Legal/support links and publication disclaimer */
+.app-disclaimer {
+    max-width: 540px;
+    margin: -24px auto 22px;
+    color: var(--text-light);
+    font-size: 0.82rem;
+}
+
+.app-footer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 18px;
+    margin: 28px auto 0;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    max-width: 620px;
+    font-size: 0.82rem;
+}
+
+.app-footer a {
+    color: var(--text-light);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.app-footer a:hover,
+.app-footer a:focus-visible {
+    color: var(--primary-color);
+}

@@ -131,6 +131,18 @@ Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
 2. Tippe auf "Zum Startbildschirm hinzufügen"
 3. Die App wird wie eine native App installiert
 
+### Android / offizieller Closed Test
+
+Die PWA ist für einen Android-Closed-Test als Trusted Web Activity vorbereitet. Die Bubblewrap-Konfiguration liegt in [`../android-twa/`](../android-twa/). Vor dem ersten signierten Build müssen auf einer eigenen Android-Build-Umgebung JDK 17, Android SDK und die SDK-Lizenzen eingerichtet werden. Der produktive Upload-Key bleibt außerhalb des Repositorys.
+
+Öffentliche Pflichtseiten:
+
+- [Datenschutzerklärung](./legal/privacy.html)
+- [Bildnachweise](./legal/attribution.html)
+- [Support und Issues](https://github.com/makopipokam/manualai.org/issues)
+
+`npm run test:mydog:android` prüft PWA-Metadaten, Legal-Seiten, TWA-Konfiguration und die Fingerprint-Vorlage. Betreiberidentität, echter Play-Signing-Fingerprint und Play-Console-Eintrag müssen vor einer offiziellen Veröffentlichung ergänzt werden.
+
 ## 🐛 Bugs & Verbesserungen
 
 - [ ] Filterfunktion für Hunde nach Kriterien
