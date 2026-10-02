@@ -60,7 +60,7 @@ button:focus-visible,input:focus-visible{outline:3px solid var(--acc2);outline-o
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
 /* Feedback-Button darf Alters- und Chatzeile nicht verdecken */
 .meet #act{padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}
-</style></head><body><div id="app"></div><script src="/catsdogs/vendor/supabase.js"></script><script>
+</style><link rel="stylesheet" href="/catsdogs/manualai-theme.css"></head><body><header class="mai-bar"><a class="mai-home" href="/" aria-label="Zur manualAI Startseite"><span class="mai-mark" aria-hidden="true">✦</span><span class="mai-name">manualAI<small>.org</small></span></a><span class="mai-app"><i aria-hidden="true"></i>03 · cats&amp;dogs</span></header><div id="app"></div><script src="/catsdogs/vendor/supabase.js"></script><script>
 const SB_URL='https://raqoawgvthttcjoihqii.supabase.co',SB_KEY='sb_publishable_6KjHprkZSX2zRMisxubJfQ_M3S6uqBv',sb=window.supabase.createClient(SB_URL,SB_KEY),$=s=>document.querySelector(s),A=$('#app'),sl=ms=>new Promise(r=>setTimeout(r,ms)),esc=s=>s.replace(/[&<>"]/g,c=>'&#'+c.charCodeAt(0)+';');
 let base=Date.now(),p0=performance.now(),serverClock=false,db=null,smp=null,authUser=null,demoMode=false,uid='',U={n:0},S=0,oid=0,ref,unsub,pidS,pairChan=0,iv,bi,ph='',lc=0,tapped=0,chatDaySent=0,view,wq=Promise.resolve(),q=Promise.resolve(),bd=500+Math.random()*3000,bp=Math.random()<.9,bpend=0;
 const testParams=new URLSearchParams(location.search),testMode=true,testQuick=testMode&&testParams.get('quick')==='1',testAnimal=testParams.get('animal')==='dog'?'dog':'cat';
