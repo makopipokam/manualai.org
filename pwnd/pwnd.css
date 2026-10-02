@@ -124,3 +124,41 @@ body{background:linear-gradient(180deg,#d9ebd8 0%,#edf1df 45%,#e4d7b7 100%);colo
 body:not(.free-mode) .ai-comment{margin:18px 0;padding:13px 15px;border:1px solid #dab9a1;border-left:4px solid #b56c46;border-radius:14px;background:#fff2e5;color:#624932;font-size:14px;font-weight:700;line-height:1.45}
 body[data-duel-opponent="arcticfox"] .ai-comment{background:#eaf7f8;color:#2d6774;border-color:#afd2da;border-left-color:#368c9b}
 body[data-duel-opponent="fennec"] .ai-comment{background:#fff3d9;color:#755527;border-color:#e4c98e;border-left-color:#ba8e38}
+
+/* --- local strategy slice: a real 10 x 10 pond and one energy producer --- */
+.pond-build-panel{margin:18px 0 20px;padding:18px;border:1px solid #9fc1a5;border-radius:23px;background:linear-gradient(155deg,#f9f7e9,#e8f0d9);box-shadow:0 12px 30px #536f5b1a}
+.pond-build-panel .eyebrow{margin-bottom:5px}
+.pond-build-panel h2{font-size:clamp(23px,5vw,29px);line-height:1.1;letter-spacing:-.04em;margin:0;color:#305642}
+.build-lead{color:#496c58;font-size:14px;line-height:1.45;margin:8px 0 15px}
+.pond-board-scroll{width:100%;overflow-x:auto;overscroll-behavior-inline:contain;border-radius:16px;border:2px solid #53897c;background:#216d7e;scrollbar-color:#83baa5 #1e6371;scrollbar-width:thin}
+.pond-board-scroll:focus-visible{outline:3px solid #405e7d;outline-offset:3px}
+.pond-build-grid{display:grid;grid-template-columns:repeat(10,44px);grid-template-rows:repeat(10,44px);gap:2px;width:max-content;padding:3px;background:#276d79}
+.build-cell{position:relative;display:grid;place-items:center;padding:0;width:44px;height:44px;border:1px solid #7dc1bb77;border-radius:7px;background:linear-gradient(145deg,#58adb0,#2d8a9a);color:#dbf5de;font-size:13px;font-weight:900;cursor:default}
+.build-cell:nth-child(3n){background:linear-gradient(145deg,#50a4ad,#318191)}
+.build-cell:disabled{opacity:1}
+.build-cell.core{background:#d5dfae;border-color:#aac397;color:#3e785b;box-shadow:inset 0 0 0 3px #b2ca99}
+.build-cell.solar{background:#9ac878;border-color:#75ab70;box-shadow:inset 0 0 0 3px #bedc8e}
+.build-cell.solar-head{color:#fbefbc;font-size:26px;text-shadow:0 2px 3px #2d7746}
+.build-cell.allowed{border:2px solid #d8f8bd;box-shadow:inset 0 0 0 1px #226e72;cursor:pointer}
+.build-cell.allowed:hover,.build-cell.allowed:focus-visible{background:#e1da95;color:#244f3f;outline:2px solid #326b4d;outline-offset:0;z-index:1}
+.build-cell.core-head{font-size:21px}
+.build-actions{display:flex;align-items:stretch;gap:9px;flex-wrap:wrap;margin-top:13px}
+.build-primary,.build-collect{flex:1 1 185px;min-height:48px;border:0;border-radius:12px;background:#367d61;color:#fffdf3;padding:10px 14px;font-size:14px;font-weight:800;cursor:pointer}
+.build-collect{background:#dba849;color:#352e21}
+.build-collect[hidden]{display:none}
+.build-primary:disabled,.build-collect:disabled{opacity:.65;cursor:not-allowed}
+.build-primary:focus-visible,.build-collect:focus-visible{outline:3px solid #314d6d;outline-offset:2px}
+.build-cost{color:#45634e;font-size:13px;line-height:1.45;margin:12px 0 0;font-weight:650}
+.build-message{color:#315946;font-size:14px;font-weight:700;line-height:1.45;margin:9px 0 0}
+.pond-built-solar{position:absolute;z-index:3;left:49%;top:27%;display:grid;place-items:center;width:54px;height:47px;visibility:hidden;opacity:0;filter:drop-shadow(0 6px 4px #21566177)}
+.pond-built-solar.visible{visibility:visible;opacity:1;animation:solarLilyFloat 4s ease-in-out infinite}
+.pond-built-solar i{position:absolute;width:53px;height:32px;background:#8bc96f;border:3px solid #599b68;border-radius:100% 0 100% 5%;transform:rotate(-16deg)}
+.pond-built-solar b{position:relative;top:-9px;color:#ffe9a8;font-size:28px;text-shadow:0 0 12px #fff0ac}
+.pond-built-solar.arriving{animation:pondArrive 1.15s cubic-bezier(.2,.8,.25,1.2) both}
+@keyframes solarLilyFloat{50%{transform:translate(5px,-5px) rotate(4deg)}}
+@media(max-width:430px){.pond-build-panel{padding:14px}.pond-board-scroll{margin-right:-2px}}
+@media(prefers-reduced-motion:reduce){.pond-built-solar.visible,.pond-built-solar.arriving{animation:none}}
+.board-scroll-hint{display:none;margin:0 0 8px;color:#315946;font-size:14px;font-weight:800;text-align:center}
+@media(max-width:520px){.board-scroll-hint{display:block}}
+.save-warning{padding:13px 15px;margin:8px 0 18px;border:2px solid #bb7761;border-radius:12px;background:#fff0dc;color:#663928;font-size:15px;font-weight:800;line-height:1.45}
+.save-warning[hidden]{display:none}
