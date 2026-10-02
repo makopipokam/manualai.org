@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const dir = path.dirname(fileURLToPath(import.meta.url));
+const root = path.dirname(dir);
+const shell = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
+const app = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
+const config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+const script = app.match(/<script>([\s\S]*?)<\/script>/)?.[1];
+
+assert.ok(script, 'App-Script fehlt');
+assert.match(shell, /3 WEGE/);
+assert.match(shell, /href="\/pwnd\/"/);
+assert.match(shell, /href="\/mydog\/"/);
+assert.match(shell, /href="\/catsdogs\/"/);
+assert.match(shell, /03 · DATING/);
+assert.match(shell, /Feedback|Testphase/);
+assert.match(app, /src="\/catsdogs\/vendor\/supabase\.js"/);
+assert.doesNotMatch(app, /src="https:\/\/cdn\.jsdelivr\.net/);
+assert.match(script, /testMode=true,testQuick=/);
+assert.match(script, /U=testQuick\?/);
+assert.match(script, /function gender\(\)/);
+assert.match(script, /function orientation\(\)/);
+assert.match(script, /function quiz\(i,a\)/);
+assert.match(script, /rpc\('submit_cats_dogs_feedback'/);
+assert.match(script, /ba=testMode\?\(U\.an=='dog'\?'cat':'dog'\)/);
+assert.ok(fs.statSync(path.join(dir, 'vendor', 'supabase.js')).size > 150000);
+assert.ok(fs.statSync(path.join(dir, 'vendor', 'LICENSE')).size > 500);
+assert.ok(config.redirects.some(r => r.source === '/catsdogs' && r.destination === '/catsdogs/'));
+assert.ok(config.rewrites.some(r => r.source === '/catsdogs' && r.destination === '/catsdogs/index.html'));
+assert.ok(config.headers.some(h => h.headers.some(v => v.key === 'Content-Security-Policy' && v.value.includes("script-src 'self'"))));
+console.log('cats&dogs deployment smoke passed: third card, test-only flow, routes, CSP and vendored browser library.');
