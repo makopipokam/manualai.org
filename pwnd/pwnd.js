@@ -71,23 +71,54 @@ const QUESTIONS = [
   ...((globalThis.PWND_AI_QUESTIONS || []).filter(question => question && question.id && question.prompt)),
 ];
 
-const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
+const PROFILE_KEY = 'pwnd-profile';
+const BACKUP_KEY = 'pwnd-profile-recovery';
+let lastSavedRaw = null;
+let storageBlocked = false;
+let recoveryWarning = '';
+try { lastSavedRaw = localStorage.getItem(PROFILE_KEY); }
+catch { storageBlocked = true; recoveryWarning = 'Dein Browser blockiert den lokalen Spielstand. Fortschritt kann hier nicht gespeichert werden.'; }
+let saved = null;
+if (lastSavedRaw !== null) {
+  try {
+    const parsed = JSON.parse(lastSavedRaw);
+    if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) saved = parsed;
+    else throw new Error('Spielstand hat kein gültiges Profilformat');
+  } catch {
+    try {
+      const existingBackup = localStorage.getItem(BACKUP_KEY);
+      if (existingBackup && existingBackup !== lastSavedRaw) throw new Error('Andere Sicherung vorhanden');
+      if (!existingBackup) localStorage.setItem(BACKUP_KEY, lastSavedRaw);
+      recoveryWarning = 'Ein beschädigter Spielstand wurde separat gesichert. Die Demo startet mit einem neuen Profil.';
+    } catch {
+      storageBlocked = true;
+      recoveryWarning = 'Beschädigter Spielstand: Eine Sicherung war nicht möglich. Änderungen werden nicht überschrieben.';
+    }
+  }
+}
 const DEFAULT_SKILLS = Object.freeze({ recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 });
 function normalizeSkillProfile(raw){
   return Object.fromEntries(Object.keys(DEFAULT_SKILLS).map(skill => {
-    const value = Number(raw?.[skill]);
+    const value = raw?.[skill] == null ? NaN : Number(raw[skill]);
     return [skill, Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : DEFAULT_SKILLS[skill]];
   }));
 }
+function savedResource(value, fallback){
+  if (value === null || value === '' || typeof value === 'boolean') return fallback;
+  const number = Number(value);
+  return Number.isSafeInteger(number) && number >= 0 ? number : fallback;
+}
 const state = {
-  energy: saved?.energy ?? saved?.ip ?? STARTING_RESOURCES.energy,
-  water: saved?.water ?? saved?.elixir ?? STARTING_RESOURCES.water,
-  air: saved?.air ?? STARTING_RESOURCES.air,
-  love: saved?.love ?? STARTING_RESOURCES.love,
-  calibration: saved?.calibration ?? 0,
+  energy: savedResource(saved?.energy ?? saved?.ip, STARTING_RESOURCES.energy),
+  water: savedResource(saved?.water ?? saved?.elixir, STARTING_RESOURCES.water),
+  air: savedResource(saved?.air, STARTING_RESOURCES.air),
+  love: savedResource(saved?.love, STARTING_RESOURCES.love),
+  calibration: Number.isFinite(Number(saved?.calibration)) ? Math.max(0, Math.min(1, Number(saved.calibration))) : 0,
   skillProfile: normalizeSkillProfile(saved?.skillProfile),
-  upgrades: saved?.upgrades ?? [],
+  upgrades: Array.isArray(saved?.upgrades) ? [...new Set(saved.upgrades.filter(id => UPGRADES.some(upgrade => upgrade.id === id)))] : [],
   unlocked: Array.isArray(saved?.unlocked) ? [...new Set(['frog', ...saved.unlocked.filter(id => POND_UNLOCKS.some(item => item.id === id))])] : ['frog'],
+  pondDemo: PwndPondDemo.normalizePondDemo(saved?.pondDemo),
+  placingSolar: false,
   opponentId: 'redfox',
   selectedTopicId: null,
   pendingTopicIds: [],
@@ -110,9 +141,30 @@ function setOpponentPortrait(id, opponent){
   element.replaceChildren(image);
 }
 function formatResource(value){ return Math.round(value); }
+function showSaveWarning(message){ const notice = $('saveWarning'); notice.textContent = message; notice.hidden = false; }
 function save(){
-  localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, skillProfile: normalizeSkillProfile(state.skillProfile), upgrades: state.upgrades, unlocked: state.unlocked }));
+  if (storageBlocked) { showSaveWarning('Speichern ist hier nicht verfügbar. Dein aktueller Spielstand wurde nicht verändert.'); return false; }
+  try {
+    if (localStorage.getItem(PROFILE_KEY) !== lastSavedRaw) {
+      showSaveWarning('Dein Spielstand wurde in einem anderen Tab geändert. Lade diese Seite neu, bevor du weiterspielst.');
+      return false;
+    }
+    const next = JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, skillProfile: normalizeSkillProfile(state.skillProfile), upgrades: state.upgrades, unlocked: state.unlocked, pondDemo: state.pondDemo });
+    localStorage.setItem(PROFILE_KEY, next);
+    lastSavedRaw = next;
+    if (!recoveryWarning) $('saveWarning').hidden = true;
+    return true;
+  } catch {
+    showSaveWarning('Der Browser konnte den Spielstand nicht speichern. Die Aktion wurde nicht abgeschlossen.');
+    return false;
+  }
 }
+window.addEventListener('storage', event => {
+  if (event.key === PROFILE_KEY && event.newValue !== lastSavedRaw) {
+    showSaveWarning('Dein Spielstand wurde in einem anderen Tab geändert. Lade diese Seite neu, bevor du weiterspielst.');
+  }
+});
+if (recoveryWarning) showSaveWarning(recoveryWarning);
 if (saved && !saved.resourceVersion) save();
 function updateResourceDisplays(){ Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource])))); }
 function formatCost(cost){
@@ -121,7 +173,12 @@ function formatCost(cost){
   ).join('')}</span>`;
 }
 function canAfford(cost){ return Object.entries(cost).every(([resource, value]) => state[resource] >= value); }
-function show(id){ screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); window.scrollTo(0, 0); }
+function show(id){
+  screens.forEach(screen => screen.classList.toggle('active', screen.id === id));
+  window.scrollTo(0, 0);
+  const heading = $(id)?.querySelector('h1, h2');
+  if (heading) { heading.tabIndex = -1; heading.focus({ preventScroll: true }); }
+}
 function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
 function currentOpponent(){ return OPPONENTS[state.match?.opponentId || state.opponentId]; }
 function opponentDisplayName(opponent){ return opponent.name[0] + opponent.name.slice(1).toLocaleLowerCase('de'); }
@@ -262,7 +319,7 @@ function startMatch(mode = 'duel', topicId = null){
   state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
   const opponentId = mode === 'free' ? FREE_OPPONENT_ID : state.opponentId;
   const selectedTopicId = mode === 'free' ? (topicId || state.selectedTopicId || Object.keys(TOPICS)[0]) : null;
-  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0, challenge: null, lastFoxComment: '' };
+  state.match = { attemptId: crypto.randomUUID(), settled: false, round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0, challenge: null, lastFoxComment: '' };
   document.body.classList.toggle('free-mode', mode === 'free');
   setText('roundTotal', state.match.total);
   updateResourceDisplays();
@@ -341,7 +398,7 @@ function foxComment(match, question){
       : last.correct ? `Dein Gedanke zu ${lastSkill} trug. Begründe nun ${lastSkill === skill ? 'den nächsten Schritt' : skill} sorgfältig.`
       : `Bei ${lastSkill} fehlte ein Schritt. Suche ${lastSkill === skill ? 'diesmal' : `in ${skill}`} zuerst den entscheidenden Hinweis.`,
   };
-  let comment = question.source === 'ai' && question.opponentLine ? question.opponentLine : `${scripts[match.opponentId]} ${followup}`.trim();
+  let comment = `${scripts[match.opponentId]} ${followup}`.trim();
   if (comment === match.lastFoxComment) comment = `Frage ${match.round}: ${comment}`;
   match.lastFoxComment = comment;
   return comment;
@@ -376,6 +433,10 @@ function submitAnswer(index, forcedMs = null){
   const match = state.match;
   const question = match.current;
   if (match.submitted) return;
+  const previous = {
+    combo: match.combo, maxCombo: match.maxCombo, aiHp: match.aiHp,
+    playerHp: match.playerHp, skill: match.skills[question.skill], profile: state.skillProfile,
+  };
   match.submitted = true;
   match.selected = index;
   clearInterval(state.timerId);
@@ -386,7 +447,14 @@ function submitAnswer(index, forcedMs = null){
   if (match.mode === 'duel') { match.aiHp = Math.max(0, match.aiHp - result.damage); match.playerHp = Math.max(0, match.playerHp - result.selfDamage); }
   match.skills[question.skill] = PwndEngine.updateSkillEstimate({ before: match.skills[question.skill], correct: result.correct, difficulty: question.difficulty, responseTimeMs: time, questionTime: question.time });
   state.skillProfile = normalizeSkillProfile(match.skills);
-  save();
+  if (!save()) {
+    match.submitted = false;
+    match.combo = previous.combo; match.maxCombo = previous.maxCombo;
+    match.aiHp = previous.aiHp; match.playerHp = previous.playerHp;
+    match.skills[question.skill] = previous.skill;
+    state.skillProfile = previous.profile;
+    return;
+  }
   match.history.push({ question, correct: result.correct, pickedIndex: index, time, damage: result.damage, selfDamage: result.selfDamage });
   match.accuracy = match.history.filter(entry => entry.correct).length / match.history.length;
   document.querySelectorAll('.answer').forEach((button, optionIndex) => { button.disabled = true; if (optionIndex === question.answer) button.classList.add('correct'); if (optionIndex === index && optionIndex !== question.answer) button.classList.add('wrong'); });
@@ -412,29 +480,50 @@ function showRoundResult(result){
 }
 function finishMatch(){
   const match = state.match;
+  if (!match || match.settled) return;
+  match.settled = true;
   const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
   const opponent = currentOpponent();
   const free = match.mode === 'free';
+  const noQuestions = match.history.length === 0;
   const outcome = free ? 1 : (match.aiHp <= match.playerHp ? 1 : 0);
   const averageDifficulty = match.history.length ? match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length : 0;
   const fastCorrectRate = Math.min(1, match.history.filter(entry => entry.correct && entry.time < entry.question.time * .55).length / 3);
   const score = PwndEngine.calculateMatchScore({ outcome, accuracy: match.accuracy, averageDifficulty, fastCorrectRate });
-  const energyRating = free ? { delta: 0, energy: state.energy } : PwndEngine.calculateNewEnergy({ before: state.energy, opponentRating: opponent.rating, score, calibration: state.calibration });
+  const energyRating = free || noQuestions ? { delta: 0, energy: state.energy } : PwndEngine.calculateNewEnergy({ before: state.energy, opponentRating: opponent.rating, score, calibration: state.calibration });
   const correctAnswers = match.history.filter(entry => entry.correct).length;
-  const rewards = PwndEngine.calculateResourceRewards({ mode: match.mode, correctAnswers, totalRounds: match.total, outcome, fastCorrectRate, maxCombo: match.maxCombo });
-  state.energy = free ? state.energy + rewards.energy : energyRating.energy;
-  state.water += rewards.water;
-  state.air += rewards.air;
-  state.love += rewards.love;
-  if (!free) state.calibration = Math.min(1, state.calibration + 1);
-  save();
+  const rewards = noQuestions ? { energy: 0, water: 0, air: 0, love: 0 }
+    : PwndEngine.calculateResourceRewards({ mode: match.mode, correctAnswers, totalRounds: match.total, outcome, fastCorrectRate, maxCombo: match.maxCombo });
+  const settled = PwndPondDemo.settleQuiz({
+    resources: before, completedAttempts: state.pondDemo.completedAttempts,
+    attemptId: match.attemptId, energyAfter: free ? before.energy + rewards.energy : energyRating.energy,
+    rewards, answeredCount: match.history.length,
+  });
+  if (settled) {
+    const previousPond = { ...state.pondDemo, buildings: [...state.pondDemo.buildings] };
+    const previousCalibration = state.calibration;
+    resetCappedSolarClock();
+    Object.assign(state, settled.resources);
+    state.pondDemo.completedAttempts = settled.completedAttempts;
+    if (!free) state.calibration = Math.min(1, state.calibration + 1);
+    if (!save()) {
+      Object.assign(state, before);
+      state.pondDemo = previousPond;
+      state.calibration = previousCalibration;
+      match.settled = false;
+      return;
+    }
+  } else if (!noQuestions) {
+    showSaveWarning('Dieser Quizversuch konnte nicht abgerechnet werden. Lade den Spielstand neu.');
+    return;
+  }
   const strongest = Object.entries(match.skills).sort((a, b) => b[1] - a[1])[0][0];
   const weak = weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null);
-  setText('endResult', free ? 'ARCHIVIERT' : (outcome ? 'GEWONNEN' : 'AUS DEM FLUSS'));
+  setText('endResult', noQuestions ? 'PAUSE' : free ? 'ARCHIVIERT' : (outcome ? 'GEWONNEN' : 'AUS DEM FLUSS'));
   $('endResult').style.color = free ? 'var(--air)' : (outcome ? 'var(--leaf)' : 'var(--clay)');
   setText('energyChange', `${free ? '+' + rewards.energy : (energyRating.delta >= 0 ? '+' : '') + energyRating.delta} ENERGIE`);
-  setText('endTitle', free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : `${opponentDisplayName(opponent)} hat deinen Wasserlauf gelesen.`));
-  setText('endCopy', free ? `${correctAnswers}/${match.total} Fragen in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
+  setText('endTitle', noQuestions ? 'Zurzeit keine neue Frage.' : free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : `${opponentDisplayName(opponent)} hat deinen Wasserlauf gelesen.`));
+  setText('endCopy', noQuestions ? 'Es wurde keine Frage gestellt und nichts gutgeschrieben. Du kannst es später erneut versuchen.' : free ? `${correctAnswers}/${match.total} Fragen in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
   setText('energyValue', formatResource(state.energy));
   setText('waterValue', formatResource(state.water));
   setText('airValue', formatResource(state.air));
@@ -445,7 +534,7 @@ function finishMatch(){
   setText('loveChange', `+${rewards.love} · Vertrauen`);
   setText('strengthValue', SKILL_NAMES[strongest]);
   setText('weaknessValue', SKILL_NAMES[weak]);
-  updateResourceDisplays(); renderPondUnlocks(); renderUpgrades(); show('screenEnd');
+  updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel(); renderUpgrades(); show('screenEnd');
 }
 function renderPondUnlocks(){
   const grid = $('unlockGrid'); if (!grid) return;
@@ -459,16 +548,24 @@ function renderPondScene(arrivingId = null){
     feature.classList.toggle('arriving', active && feature.dataset.feature === arrivingId);
     if (active && feature.dataset.feature === arrivingId) setTimeout(() => feature.classList.remove('arriving'), 1200);
   });
+  const solar = $('pondBuiltSolar');
+  const hasSolar = state.pondDemo.buildings.length > 0;
+  solar.classList.toggle('visible', hasSolar);
+  solar.classList.toggle('arriving', hasSolar && arrivingId === 'solar');
+  if (hasSolar && arrivingId === 'solar') setTimeout(() => solar.classList.remove('arriving'), 1200);
   setText('pondResidentCount', `${state.unlocked.length} / ${POND_UNLOCKS.length}`);
   setText('pondProgressLabel', state.unlocked.length === 1 ? 'Der Teich ist noch jung' : `${state.unlocked.length} Entdeckungen beleben deinen Teich`);
   $('pondResidents').innerHTML = POND_UNLOCKS.map(item => state.unlocked.includes(item.id)
     ? `<span class="resident" role="img" aria-label="${item.name}" title="${item.name}">${item.symbol}</span>`
     : '<span class="resident empty" aria-hidden="true">+</span>').join('');
   if (arrivingId){
-    const item = POND_UNLOCKS.find(entry => entry.id === arrivingId);
+    const item = arrivingId === 'solar'
+      ? { name: 'Solar-Seerose', symbol: '☀️' }
+      : POND_UNLOCKS.find(entry => entry.id === arrivingId);
+    if (!item) return;
     setText('pondUnlockStatus', `${item.name} ist jetzt in deinem Teich zu sehen.`);
     const toast = $('pondSceneToast');
-    toast.textContent = `${item.symbol} ${item.name} ist eingezogen`;
+    toast.textContent = arrivingId === 'solar' ? '☀️ Solar-Seerose erblüht' : `${item.symbol} ${item.name} ist eingezogen`;
     toast.classList.add('visible');
     clearTimeout(state.pondToastTimer);
     state.pondToastTimer = setTimeout(() => toast.classList.remove('visible'), 3200);
@@ -477,18 +574,138 @@ function renderPondScene(arrivingId = null){
 function unlockPond(id){
   const item = POND_UNLOCKS.find(unlock => unlock.id === id);
   if (!item || state.unlocked.includes(id) || !canAfford(item.cost)) return;
+  const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
+  const previousUnlocked = state.unlocked;
+  const previousBuildings = state.pondDemo.buildings;
+  resetCappedSolarClock();
   Object.entries(item.cost).forEach(([resource, value]) => { state[resource] -= value; });
   state.unlocked = [...state.unlocked, id];
-  save(); updateResourceDisplays(); renderPondUnlocks();
+  if (!save()) {
+    Object.assign(state, before);
+    state.unlocked = previousUnlocked;
+    state.pondDemo.buildings = previousBuildings;
+    return;
+  }
+  updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel();
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   setTimeout(() => renderPondScene(id), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
 }
-function renderUpgrades(){ const choices = [...UPGRADES].sort(() => Math.random() - .5).slice(0, 3); $('upgrades').innerHTML = choices.map(upgrade => `<label class="upgrade"><input type="radio" name="upgrade" value="${upgrade.id}"><strong>${upgrade.name}</strong><small>${upgrade.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(option => option.addEventListener('click', () => { document.querySelectorAll('.upgrade').forEach(other => other.classList.remove('selected')); option.classList.add('selected'); const id = option.querySelector('input').value; if (!state.upgrades.includes(id)) state.upgrades = [...state.upgrades.slice(-2), id]; save(); })); }
+function resetCappedSolarClock(){
+  const building = state.pondDemo.buildings[0];
+  if (building && state.energy >= PwndPondDemo.ENERGY_CAP) {
+    state.pondDemo.buildings = [{ ...building, lastClaimAt: Date.now() }];
+  }
+}
+function renderBuildPanel(){
+  const building = state.pondDemo.buildings[0];
+  const affordable = canAfford(PwndPondDemo.SOLAR.cost);
+  const action = $('selectSolarBtn');
+  action.disabled = Boolean(building) || !affordable;
+  action.textContent = building ? 'Solar-Seerose gebaut' : state.placingSolar ? 'Platzwahl abbrechen' : 'Solar-Seerose bauen';
+  setText('pondBuildStatus', building
+    ? 'Deine Solar-Seerose versorgt den Teich mit Energie.'
+    : !affordable ? 'Für die Solar-Seerose fehlen noch Ressourcen. Sammle sie im Quiz.'
+    : state.placingSolar ? 'Wähle ein freies Feld für die 2 × 2 Solar-Seerose.'
+    : 'Wähle „Solar-Seerose bauen“ und dann ihren Platz im Raster.');
+  $('pondBuildGrid').innerHTML = Array.from({ length: PwndPondDemo.GRID_SIZE ** 2 }, (_, index) => {
+    const x = index % PwndPondDemo.GRID_SIZE;
+    const y = Math.floor(index / PwndPondDemo.GRID_SIZE);
+    const core = x >= 4 && x <= 5 && y >= 4 && y <= 5;
+    const solar = building && x >= building.x && x < building.x + 2 && y >= building.y && y < building.y + 2;
+    const allowed = state.placingSolar && PwndPondDemo.canPlace(state.pondDemo.buildings, state, x, y);
+    const label = solar ? `Solar-Seerose auf Feld ${x + 1}, ${y + 1}`
+      : core ? `Teichkern auf Feld ${x + 1}, ${y + 1}`
+        : allowed ? `Solar-Seerose ab Feld ${x + 1}, ${y + 1} bauen` : `Wasserfeld ${x + 1}, ${y + 1}`;
+    const symbol = core && x === 4 && y === 4 ? '◆' : solar && x === building.x && y === building.y ? '☀' : allowed ? '+' : '';
+    return `<button type="button" class="build-cell${core ? ' core' : ''}${core && x === 4 && y === 4 ? ' core-head' : ''}${solar ? ' solar' : ''}${solar && x === building.x && y === building.y ? ' solar-head' : ''}${allowed ? ' allowed' : ''}" data-x="${x}" data-y="${y}" aria-label="${label}" ${allowed ? '' : 'disabled'}>${symbol}</button>`;
+  }).join('');
+  renderSolarProduction();
+}
+function renderSolarProduction(){
+  const building = state.pondDemo.buildings[0];
+  const collect = $('claimSolarBtn');
+  collect.hidden = !building;
+  if (!building) return;
+  const pending = PwndPondDemo.pendingEnergy(building, state.energy, Date.now());
+  setText('pendingSolarEnergy', `+${pending} ⚡`);
+  collect.disabled = pending === 0;
+  collect.setAttribute('aria-label', pending ? `${pending} Energie von der Solar-Seerose abholen` : 'Noch keine Energie zum Abholen');
+}
+function placeSolarAt(x, y){
+  if (!state.placingSolar) return;
+  const built = PwndPondDemo.placeSolarLily({
+    buildings: state.pondDemo.buildings, resources: state, x, y, nowMs: Date.now(),
+  });
+  if (!built) return;
+  const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
+  const previousBuildings = state.pondDemo.buildings;
+  Object.assign(state, built.resources);
+  state.pondDemo.buildings = built.buildings;
+  if (!save()) {
+    Object.assign(state, before);
+    state.pondDemo.buildings = previousBuildings;
+    return;
+  }
+  state.placingSolar = false;
+  updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel();
+  setText('pondBuildStatus', 'Die Solar-Seerose steht. Deine erste Produktionsquelle wächst jetzt im Teich.');
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  setTimeout(() => renderPondScene('solar'), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
+}
+function claimSolarEnergy(){
+  const result = PwndPondDemo.claimSolarEnergy({ building: state.pondDemo.buildings[0], energy: state.energy, nowMs: Date.now() });
+  if (!result) return;
+  const previousEnergy = state.energy;
+  const previousBuildings = state.pondDemo.buildings;
+  state.energy = result.energy;
+  state.pondDemo.buildings = [result.building];
+  if (!save()) {
+    state.energy = previousEnergy;
+    state.pondDemo.buildings = previousBuildings;
+    return;
+  }
+  updateResourceDisplays(); renderPondUnlocks(); renderBuildPanel();
+  setText('pondBuildStatus', `+${result.gained} ⚡ abgeholt. Die Seerose sammelt weiter Sonnenenergie.`);
+}
+function showPondFromQuiz(){
+  show('screenStart');
+  if (!state.pondDemo.buildings.length && canAfford(PwndPondDemo.SOLAR.cost)) state.placingSolar = true;
+  renderBuildPanel();
+  const title = $('pondBuildTitle');
+  title.tabIndex = -1;
+  title.focus({ preventScroll: true });
+  $('pondBuildPanel').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}
+function renderUpgrades(){
+  const choices = [...UPGRADES].sort(() => Math.random() - .5).slice(0, 3);
+  $('upgrades').innerHTML = choices.map(upgrade => `<label class="upgrade"><input type="radio" name="upgrade" value="${upgrade.id}"><strong>${upgrade.name}</strong><small>${upgrade.text}</small></label>`).join('');
+  document.querySelectorAll('.upgrade').forEach(option => option.addEventListener('click', () => {
+    const previousUpgrades = state.upgrades;
+    const id = option.querySelector('input').value;
+    if (!state.upgrades.includes(id)) state.upgrades = [...state.upgrades.slice(-2), id];
+    if (!save()) { state.upgrades = previousUpgrades; option.querySelector('input').checked = false; return; }
+    document.querySelectorAll('.upgrade').forEach(other => other.classList.remove('selected'));
+    option.classList.add('selected');
+  }));
+}
 
 document.querySelectorAll('.duel-opponent-option').forEach(button => button.addEventListener('click', () => selectDuelOpponent(button.dataset.opponent)));
 updateResourceDisplays();
 renderPondScene();
 renderPondUnlocks();
+renderBuildPanel();
+$('selectSolarBtn').addEventListener('click', () => {
+  if (state.pondDemo.buildings.length || !canAfford(PwndPondDemo.SOLAR.cost)) return;
+  state.placingSolar = !state.placingSolar;
+  renderBuildPanel();
+  if (state.placingSolar) $('pondBuildGrid').querySelector('.build-cell.allowed')?.focus();
+});
+$('pondBuildGrid').addEventListener('click', event => {
+  const button = event.target.closest('.build-cell.allowed');
+  if (button) placeSolarAt(Number(button.dataset.x), Number(button.dataset.y));
+});
+$('claimSolarBtn').addEventListener('click', claimSolarEnergy);
+setInterval(() => { if ($('screenStart').classList.contains('active')) renderSolarProduction(); }, 30000);
 $('startBtn').addEventListener('click', enterDuelSetup);
 $('freeQuizBtn').addEventListener('click', enterFreeTopicSetup);
 $('backToPondBtn').addEventListener('click', () => show('screenStart'));
@@ -498,4 +715,5 @@ $('duelStartBtn').addEventListener('click', () => startMatch('duel'));
 $('cancelCountdownBtn').addEventListener('click', cancelDuelCountdown);
 $('lockBtn').addEventListener('click', () => submitAnswer(state.match.selected));
 $('continueBtn').addEventListener('click', () => state.match.round >= state.match.total ? finishMatch() : (show('screenBattle'), nextQuestion()));
+$('goBuildBtn').addEventListener('click', showPondFromQuiz);
 $('againBtn').addEventListener('click', () => state.mode === 'free' ? enterFreeTopicSetup() : enterDuelSetup());

@@ -92,8 +92,10 @@
       let firstImage = page.querySelector('#dog-image-main');
       for (let attempt = 0; attempt < 20 && !firstImage?.naturalWidth; attempt++) await wait(100);
       assert(firstImage?.naturalWidth > 0 && firstImage.getAttribute('src')?.startsWith('/mydog/images/v1/'), 'each dog suggestion displays a decoded local breed photo');
+      assert(page.querySelector('#dog-image-status .dog-loading-icon[aria-hidden="true"]'), 'photo placeholder contains the accessible animated dog icon');
       assert(page.querySelector('#dog-image-status').hidden, 'successful main photo hides its loading placeholder');
-      assert(page.querySelector('.dog-photo-credits[href="/mydog/legal/attribution.html"]'), 'photo credits stay accessible from the result');
+      assert(page.querySelector('.mydog-footer a[href="/mydog/legal/attribution.html"]'), 'photo credits stay accessible in the app footer');
+      assert(!page.querySelector('.dog-images .dog-photo-credits'), 'photo credits no longer sit directly below the images');
       assert(page.querySelectorAll('.dog-image.thumbnail').length === 6, 'each dog suggestion has six breed image choices');
       assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.alt.includes(page.querySelector('#dog-name')?.textContent || '')), 'suggestion gallery labels use the current dog name');
       const completed = state();
@@ -121,9 +123,22 @@
 
       click('#chat-btn');
       assert(active() === 'chat-screen', 'chat opens from a result profile');
+      assert(page.querySelector('.chat-note')?.textContent.includes('keine Live-KI'), 'profile chat is transparent about not being live AI');
+      page.querySelector('#user-message-input').value = 'Wie oft musst du kacken?';
+      click('#send-message-btn');
+      let reply = [...page.querySelectorAll('.chat-message.assistant p')].at(-1)?.textContent || '';
+      assert(reply.includes('ein- bis dreimal') && reply.includes('PDSA') && !reply.includes('toller Hund'), 'toileting question receives a useful sourced answer');
+      page.querySelector('#user-message-input').value = 'Was frisst du am liebsten?';
+      click('#send-message-btn');
+      reply = [...page.querySelectorAll('.chat-message.assistant p')].at(-1)?.textContent || '';
+      assert(reply.includes('Fütterung') && !reply.includes('g täglich'), 'food quick reply avoids arbitrary serving sizes');
+      page.querySelector('#user-message-input').value = 'Wie viele Monde gibt es auf dem Mars?';
+      click('#send-message-btn');
+      reply = [...page.querySelectorAll('.chat-message.assistant p')].at(-1)?.textContent || '';
+      assert(reply.includes('keine verlässliche Antwort') && !reply.includes('toller Hund'), 'unsupported topics are acknowledged instead of faking an answer');
       page.querySelector('#user-message-input').value = '<img src=x onerror=alert(1)>';
       click('#send-message-btn');
-      const userMessage = page.querySelector('.chat-message.user p');
+      const userMessage = [...page.querySelectorAll('.chat-message.user p')].at(-1);
       assert(userMessage?.textContent === '<img src=x onerror=alert(1)>', 'chat renders user text as text');
       assert(!userMessage?.innerHTML.includes('<img'), 'chat does not interpret user HTML');
       click('#back-to-results-btn');

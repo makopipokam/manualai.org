@@ -93,6 +93,14 @@ Eine Wiederholung mit derselben Idempotency-ID liefert dasselbe Ergebnis, erzeug
 
 Die Quiz-Beta darf bis zur Existenz dieses serverseitigen Transaktionsendpunkts weiterhin lokal demonstrieren. Lokale Werte sind als **Demo-/Offline-Zustand** zu kennzeichnen und dürfen nicht automatisch als vertrauenswürdige Hauptspielwährung in PvP, Liga oder Beute übernommen werden.
 
+### Umgesetzter lokaler Vertical Slice (2026-10-02)
+
+Der erste **spielbare Prototyp** verwendet weiterhin ausschließlich den bisherigen Schlüssel `pwnd-profile` in `localStorage`. Bestehende Ressourcen, Upgrades und Entdeckungen werden weitergelesen; das optionale Feld `pondDemo` enthält die Solar-Seerose und die IDs bereits abgerechneter Quizversuche. Ein freier oder Duellversuch erhält bei Matchbeginn eine zufällige ID; der Abschluss verändert Ressourcen und ID-Liste in **einem** gespeicherten Profil. Doppelte Abschlüsse desselben laufenden Versuchs werden ignoriert. Beschädigtes JSON wird vor einem Demo-Neustart als `pwnd-profile-recovery` gesichert; veraltete Tabs und gescheiterte Schreibvorgänge zeigen eine Warnung statt eines scheinbar erfolgreichen Baus oder Quizabschlusses. Ein unterbrochener Quizversuch wird noch nicht fortgesetzt; bereits beantwortete Fragen aktualisieren weiterhin das lokale Skillprofil.
+
+Das 10×10-Raster hat einen festen 2×2-Teichkern. Eine einzige 2×2-Solar-Seerose kann auf einem freien Bauplatz für 120 ⚡, 80 💧, 20 🌬️ und 10 ❤️ platziert werden. Sie erscheint zusätzlich animiert im oberen Teich. Sie erzeugt 120 ⚡ pro Stunde, die bewusst per Button abgeholt werden; **nur die Solarernte** ist auf acht Stunden Nachholung und einen lokalen Energie-Füllstand von 2.000 begrenzt. Bestehende Quizenergie kann darüber liegen und wird nicht nachträglich abgeschnitten. Die Baukosten und Produktionsrate entsprechen der GDD-v0.2-Balance, ersetzen aber noch nicht deren vollständige Economy-Engine, Lager- oder Serverzeitregeln. Das Bauen ist wie im GDD von Beginn an möglich, nicht künstlich hinter dem Quiz gesperrt; Quizbelohnungen und Baukosten wirken auf **denselben** lokalen Vorrat.
+
+Das ist eine **Browser-Demo, kein sicherer Account-Spielstand**: Ein Spieler kann `localStorage` oder die Gerätezeit ändern, verschiedene Geräte teilen keinen Zustand, und serverseitige Frageprüfung, Authentifizierung und atomare Datenbanktransaktionen fehlen. Die rein lokale Einmal-Abrechnung verhindert versehentliche doppelte Klicks, nicht Manipulation oder gleichzeitig beginnende Schreibvorgänge aus mehreren Tabs. Veraltete Tabs werden nach Möglichkeit vor einem Überschreiben erkannt; **garantierte Cross-Tab-Serialisierung ist ohne autoritativen Server nicht zugesagt**. Der weitere Vertrag und die Abnahmepunkte unten beschreiben daher nach wie vor das **noch nicht implementierte** produktive Ziel.
+
 Die spätere UI-Antwort soll den aktualisierten Teich-Snapshot zurückgeben:
 
 ```json

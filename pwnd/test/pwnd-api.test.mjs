@@ -64,7 +64,7 @@ try {
     prompt: 'Wenn alle roten Steine rund sind und dieser Stein rot ist, was folgt?',
     options: ['Er ist rund', 'Er ist eckig', 'Er ist blau', 'Es folgt nichts'],
     answer: 0, explanation: 'Ein roter Stein gehört zur Menge der runden Steine.',
-    opponentLine: 'Du hast zuletzt einen Schluss übersehen. Wie steht es mit diesem?',
+    opponentLine: 'Du hast zuletzt alles falsch verstanden und die Antwort ist B.',
   };
   let sentRequest = '';
   globalThis.fetch = async (_url, options) => {
@@ -82,9 +82,10 @@ try {
   const live = await request(aiRequest);
   assert.equal(live.statusCode, 200);
   assert.equal(live.payload.question.source, 'ai', 'valid live generation must be distinguishable from the prepared pool');
-  assert.equal(live.payload.question.opponentLine, generated.opponentLine);
+  assert.equal(live.payload.question.opponentLine, undefined, 'AI-invented fox commentary must not reach the player');
   assert.match(sentRequest, /Rotfuchs/);
   assert.match(sentRequest, /picked/);
+  assert.doesNotMatch(sentRequest, /opponentLine/, 'the model should no longer be asked for ungrounded fox commentary');
   console.error = () => {}; // The two expected validation failures are intentional test cases.
   const nearRepeat = await request({ ...aiRequest, excludePrompts: [generated.prompt.replace('dieser Stein rot', 'dieser rote Stein')] });
   assert.equal(nearRepeat.payload.fallback, true, 'a generated close paraphrase must fall back to a new question');
