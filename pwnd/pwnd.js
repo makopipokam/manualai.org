@@ -6,6 +6,7 @@ const STARTING_RESOURCES = Object.freeze({ energy: 1000, water: 250, air: 120, l
 const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' });
 const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
+const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
 const OPPONENTS = {
   redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
   arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
@@ -104,7 +105,7 @@ function save(){
 }
 if (saved && !saved.resourceVersion) save();
 function updateResourceDisplays(){ Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource])))); }
-function formatCost(cost){ return ['energy', 'water', 'air', 'love'].map(resource => `${cost[resource]} ${RESOURCE_NAMES[resource]}`).join(' · '); }
+function formatCost(cost){ return ['energy', 'water', 'air', 'love'].map(resource => `${RESOURCE_SYMBOLS[resource]} ${cost[resource]}`).join(' · '); }
 function canAfford(cost){ return Object.entries(cost).every(([resource, value]) => state[resource] >= value); }
 function show(id){ screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); window.scrollTo(0, 0); }
 function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
