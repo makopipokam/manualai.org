@@ -29,7 +29,7 @@ let appState = {
 
 let imageLoadToken = 0;
 let imageObserver = null;
-const SCORING_VERSION = 2;
+const SCORING_VERSION = 3;
 
 // DOM Elements
 const screens = {
@@ -86,6 +86,7 @@ const elements = {
     userMessageInput: document.getElementById('user-message-input'),
     sendMessageBtn: document.getElementById('send-message-btn'),
     restartTestBtn: document.getElementById('restart-test-btn'),
+    shownBreedCount: document.getElementById('shown-breed-count'),
     quickReplyBtns: document.querySelectorAll('.quick-reply-btn'),
     favoritesList: document.getElementById('favorites-list'),
     favoritesCount: document.getElementById('favorites-count'),
@@ -253,9 +254,11 @@ function restoreLastResult() {
         return;
     }
     const hasCompleteSavedAnswers = appState.userAnswers.filter(Boolean).length === bigFiveQuestions.length;
-    if (result.scoringVersion !== SCORING_VERSION && hasCompleteSavedAnswers) {
+    const needsFullCatalogueRefresh = result.scoringVersion !== SCORING_VERSION
+        || result.dogIds.length < dogDatabase.length;
+    if (needsFullCatalogueRefresh && hasCompleteSavedAnswers) {
         calculatePersonality();
-        appState.matchingDogs = getMatchingDogs(appState.userPersonality, 10);
+        appState.matchingDogs = getMatchingDogs(appState.userPersonality, dogDatabase.length);
         appState.currentDogIndex = 0;
         persistCompletedResult();
         showDogResult();
@@ -453,7 +456,7 @@ function findMatchingDogs() {
     showScreen('loading');
     
     setTimeout(() => {
-        appState.matchingDogs = getMatchingDogs(appState.userPersonality, 10);
+        appState.matchingDogs = getMatchingDogs(appState.userPersonality, dogDatabase.length);
         appState.currentDogIndex = 0;
         persistCompletedResult();
         
@@ -707,7 +710,10 @@ function showNextDog() {
     if (appState.currentDogIndex < appState.matchingDogs.length) {
         showDogResult();
     } else {
-        showScreen('no-more');
+        if (elements.shownBreedCount) {
+            elements.shownBreedCount.textContent = String(appState.matchingDogs.length);
+        }
+        showScreen('noMore');
     }
 }
 
