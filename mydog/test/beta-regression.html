@@ -39,6 +39,10 @@
       assert(page.querySelector('.test-navigation').firstElementChild?.id === 'next-question-btn', 'Weiter is above Zurück');
       assert(page.querySelector('.test-navigation').lastElementChild?.id === 'prev-question-btn', 'Zurück is below Weiter');
       assert(getComputedStyle(page.querySelector('#view-favorites-btn')).backgroundColor !== 'rgb(244, 67, 54)', 'favorites overview button is not red');
+      const startGallery = page.querySelectorAll('.start-dog-gallery img');
+      assert(startGallery.length === 3, 'start screen shows three subtle dog images');
+      assert([...startGallery].map(image => image.alt).join('|') === 'Labrador Retriever|Golden Retriever|Border Collie', 'start gallery labels match the shown breeds');
+      assert([...startGallery].every(image => image.loading === 'eager' && image.decoding === 'async'), 'start gallery images load visibly without layout shifts');
       // A partially completed test must survive a reload and resume at its saved question.
       page.querySelectorAll('.likert-option')[0].click();
       click('#next-question-btn');
