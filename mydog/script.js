@@ -722,12 +722,14 @@ function backToResults() {
     showScreen('results');
 }
 
-// Restart the test
+// Return to the start screen without discarding the completed test.
 function restartTest() {
-    appState.userAnswers = [];
-    appState.currentQuestion = 0;
-    saveState();
-    startTest();
+    if (appState.lastResult) {
+        appState.lastResult.currentDogIndex = 0;
+        saveState();
+    }
+    renderSavedResult();
+    showScreen('start');
 }
 
 // Show favorites screen
