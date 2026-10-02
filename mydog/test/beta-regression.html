@@ -116,7 +116,17 @@
       assert(active() === 'results-screen', 'chat returns to the result profile');
 
       click('#share-btn');
-      assert(page.querySelector('#share-link-input').value.includes('?dog='), 'share link contains the selected dog id');
+      assert(page.querySelector('#share-modal').classList.contains('active') || typeof app.navigator.share === 'function', 'share action opens native share or fallback dialog');
+      assert(typeof app.getShareData === 'function', 'share data builder is available');
+      const shareData = app.getShareData();
+      assert(shareData.url.includes('?dog='), 'share URL contains the selected dog id');
+      assert(shareData.title.includes(page.querySelector('#dog-name').textContent), 'share title contains the current dog name');
+      if (page.querySelector('#share-modal').classList.contains('active')) {
+        assert(page.querySelector('#share-dog-name').textContent === page.querySelector('#dog-name').textContent, 'share dialog identifies the current dog');
+        assert(page.querySelector('#share-link-input').value === shareData.url, 'share dialog contains the canonical dog URL');
+        assert(page.querySelectorAll('.social-share-buttons button').length === 3, 'social share fallbacks render');
+        assert(!page.querySelector('[onclick*="shareOn"]'), 'share controls use event listeners instead of inline handlers');
+      }
       click('.close-btn');
 
       click('#favorite-btn');

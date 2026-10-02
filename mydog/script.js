@@ -99,6 +99,13 @@ const elements = {
     shareModal: document.getElementById('share-modal'),
     shareLinkInput: document.getElementById('share-link-input'),
     copyLinkBtn: document.getElementById('copy-link-btn'),
+    nativeShareBtn: document.getElementById('native-share-btn'),
+    shareDogName: document.getElementById('share-dog-name'),
+    shareDogBreed: document.getElementById('share-dog-breed'),
+    shareStatus: document.getElementById('share-status'),
+    shareTwitterBtn: document.getElementById('share-twitter-btn'),
+    shareFacebookBtn: document.getElementById('share-facebook-btn'),
+    shareWhatsAppBtn: document.getElementById('share-whatsapp-btn'),
     closeModalBtn: document.querySelector('.close-btn')
 };
 
@@ -160,9 +167,13 @@ function setupEventListeners() {
     // Favorite button
     elements.favoriteBtn.addEventListener('click', toggleFavorite);
     
-    // Share button
-    elements.shareBtn.addEventListener('click', openShareModal);
+    // Share button: use the native mobile share sheet when available, otherwise open the fallback dialog.
+    elements.shareBtn.addEventListener('click', shareCurrentDog);
     elements.copyLinkBtn.addEventListener('click', copyLink);
+    elements.nativeShareBtn.addEventListener('click', shareCurrentDog);
+    elements.shareTwitterBtn.addEventListener('click', shareOnTwitter);
+    elements.shareFacebookBtn.addEventListener('click', shareOnFacebook);
+    elements.shareWhatsAppBtn.addEventListener('click', shareOnWhatsApp);
     elements.closeModalBtn.addEventListener('click', closeShareModal);
     
     // Chat input
@@ -853,12 +864,27 @@ function updateFavoriteButton() {
     elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten speichern';
 }
 
-// Open share modal
+function getShareData(dog = appState.currentDog) {
+    if (!dog) return null;
+    const url = getShareUrl(dog);
+    return {
+        title: `${dog.name} bei MyDog`,
+        text: `Schau dir dieses Hundeprofil an: ${dog.name}.`,
+        url
+    };
+}
+
+// Open share modal for browsers without the native Web Share API.
 function openShareModal() {
     const dog = appState.currentDog;
     if (!dog) return;
 
-    elements.shareLinkInput.value = getShareUrl(dog);
+    const shareData = getShareData(dog);
+    elements.shareDogName.textContent = dog.name;
+    elements.shareDogBreed.textContent = dog.breed;
+    elements.shareLinkInput.value = shareData.url;
+    elements.nativeShareBtn.hidden = typeof navigator.share !== 'function';
+    elements.shareStatus.textContent = '';
     elements.shareModal.classList.add('active');
 }
 
@@ -866,8 +892,33 @@ function getShareUrl(dog = appState.currentDog) {
     if (!dog) return window.location.href;
     const url = new URL(window.location.href);
     url.search = '';
+    url.hash = '';
     url.searchParams.set('dog', String(dog.id));
     return url.toString();
+}
+
+// Share the current dog through the device share sheet, with the dialog as a safe fallback.
+async function shareCurrentDog() {
+    const dog = appState.currentDog;
+    if (!dog) return;
+
+    const shareData = getShareData(dog);
+    if (typeof navigator.share !== 'function') {
+        openShareModal();
+        return;
+    }
+
+    closeShareModal();
+    try {
+        await navigator.share(shareData);
+        showToast('Hundeprofil geteilt!', 'success');
+    } catch (error) {
+        // Cancelling the native sheet is a normal user action, not an error.
+        if (error?.name !== 'AbortError') {
+            openShareModal();
+            setShareStatus('Direktes Teilen ist gerade nicht verfügbar. Du kannst den Link kopieren.');
+        }
+    }
 }
 
 // Close share modal
@@ -875,17 +926,28 @@ function closeShareModal() {
     elements.shareModal.classList.remove('active');
 }
 
+function setShareStatus(message) {
+    elements.shareStatus.textContent = message;
+}
+
 // Copy link to clipboard
 function copyLink() {
     const text = elements.shareLinkInput.value;
     const fallback = () => {
+        elements.shareLinkInput.focus();
         elements.shareLinkInput.select();
+        elements.shareLinkInput.setSelectionRange(0, text.length);
         const copied = document.execCommand('copy');
-        showToast(copied ? 'Link kopiert!' : 'Link markiert – bitte kopieren.', copied ? 'success' : 'error');
+        const message = copied ? 'Link kopiert!' : 'Link markiert – bitte kopieren.';
+        setShareStatus(message);
+        showToast(message, copied ? 'success' : 'error');
     };
     if (navigator.clipboard?.writeText) {
         navigator.clipboard.writeText(text).then(
-            () => showToast('Link kopiert!', 'success'),
+            () => {
+                setShareStatus('Link kopiert!');
+                showToast('Link kopiert!', 'success');
+            },
             fallback
         );
     } else {
@@ -898,24 +960,27 @@ function shareOnTwitter() {
     const dog = appState.currentDog;
     if (!dog) return;
 
-    const shareUrl = getShareUrl(dog);
-    const text = `Schau dir das Rasseprofil ${dog.name} an: ${shareUrl}`;
+    const shareData = getShareData(dog);
+    const text = `${shareData.text} ${shareData.url}`;
     const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function shareOnFacebook() {
-    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(getShareUrl())}`;
-    window.open(url, '_blank');
+    const shareData = getShareData();
+    if (!shareData) return;
+    const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareData.url)}`;
+    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 function shareOnWhatsApp() {
     const dog = appState.currentDog;
     if (!dog) return;
     
-    const text = `Schau dir das Rasseprofil ${dog.name} an: ${getShareUrl(dog)}`;
+    const shareData = getShareData(dog);
+    const text = `${shareData.text} ${shareData.url}`;
     const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-    window.open(url, '_blank');
+    window.open(url, '_blank', 'noopener,noreferrer');
 }
 
 // Add a message to the chat

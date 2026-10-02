@@ -965,6 +965,47 @@ body {
     margin-bottom: 20px;
 }
 
+.share-dog-summary {
+    display: grid;
+    gap: 3px;
+    margin: 0 0 16px;
+    padding: 12px 14px;
+    border: 1px solid rgba(31, 90, 69, 0.14);
+    border-radius: 12px;
+    background: rgba(31, 90, 69, 0.06);
+}
+
+.share-dog-summary strong {
+    color: var(--text-color);
+}
+
+.share-dog-summary span {
+    color: var(--text-light);
+    font-size: 0.88rem;
+}
+
+.share-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.share-actions button {
+    flex: 1;
+}
+
+.share-actions button[hidden] {
+    display: none;
+}
+
+.share-status {
+    min-height: 1.4em;
+    margin: 0 0 4px !important;
+    color: var(--primary-color) !important;
+    font-size: 0.88rem;
+    font-weight: 700;
+}
+
 #share-link-input {
     width: 100%;
     padding: 12px;
@@ -1839,6 +1880,10 @@ input:focus-visible,
     }
 
     .social-share-buttons {
+        flex-direction: column;
+    }
+
+    .share-actions {
         flex-direction: column;
     }
 }
