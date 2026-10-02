@@ -33,9 +33,10 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 - Favoritenliste mit Bewertungen
 
 ### 📤 Teilen
-- Teile deine Ergebnisse mit Freunden
-- Social Media Integration (Twitter, Facebook, WhatsApp)
-- Direkte Links zu einzelnen Hunden
+- Teile den aktuellen Hundevorschlag direkt über die native Web Share API auf Mobilgeräten
+- Link kopieren als Fallback für Desktop und nicht unterstützte Browser
+- Social-Media-Fallbacks für X/Twitter, Facebook und WhatsApp
+- Direkte, rassespezifische Links zu einzelnen Hunden (`?dog=<id>`)
 
 ### 📱 PWA (Progressive Web App)
 - Installierbar auf Mobilgeräten

@@ -197,17 +197,25 @@
     </div>
 
     <!-- Share Modal -->
-    <div id="share-modal" class="modal">
+    <div id="share-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="share-modal-title" aria-describedby="share-modal-description">
         <div class="modal-content">
             <button class="close-btn" type="button" aria-label="Teilen schließen">&times;</button>
-            <h3>Teilen</h3>
-            <p>Kopiere diesen Link, um deinen Hund mit Freunden zu teilen:</p>
+            <h3 id="share-modal-title">Hundevorschlag teilen</h3>
+            <p id="share-modal-description">Teile dieses Hundeprofil direkt mit deinen Freunden.</p>
+            <div class="share-dog-summary">
+                <strong id="share-dog-name"></strong>
+                <span id="share-dog-breed"></span>
+            </div>
+            <div class="share-actions">
+                <button id="native-share-btn" class="btn-share" type="button" hidden>📤 Direkt teilen</button>
+                <button id="copy-link-btn" class="btn-primary" type="button">🔗 Link kopieren</button>
+            </div>
             <input type="text" id="share-link-input" readonly>
-            <button id="copy-link-btn" class="btn-primary">Link kopieren</button>
-            <div class="social-share-buttons">
-                <button class="social-btn twitter" onclick="shareOnTwitter()">🐦 Twitter</button>
-                <button class="social-btn facebook" onclick="shareOnFacebook()">📘 Facebook</button>
-                <button class="social-btn whatsapp" onclick="shareOnWhatsApp()">💬 WhatsApp</button>
+            <p id="share-status" class="share-status" aria-live="polite"></p>
+            <div class="social-share-buttons" aria-label="Weitere Teilen-Optionen">
+                <button id="share-twitter-btn" class="social-btn twitter" type="button">𝕏 X / Twitter</button>
+                <button id="share-facebook-btn" class="social-btn facebook" type="button">📘 Facebook</button>
+                <button id="share-whatsapp-btn" class="social-btn whatsapp" type="button">💬 WhatsApp</button>
             </div>
         </div>
     </div>
