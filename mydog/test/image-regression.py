@@ -7,17 +7,24 @@ Run: python3 mydog/test/image-regression.py
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+import json
 import sys
 import threading
 
 from playwright.sync_api import sync_playwright
 
 ROOT = Path(__file__).resolve().parents[2]
+CSP = next(header['value'] for rule in json.loads((ROOT / 'vercel.json').read_text())['headers']
+           for header in rule['headers'] if header['key'].lower() == 'content-security-policy')
 
 
 class Handler(SimpleHTTPRequestHandler):
     def log_message(self, *args):
         pass
+
+    def end_headers(self):
+        self.send_header('Content-Security-Policy', CSP)
+        super().end_headers()
 
 
 class Server(ThreadingHTTPServer):
