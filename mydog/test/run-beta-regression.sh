@@ -79,7 +79,7 @@ if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v10'" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v11'" "$ROOT/mydog/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
 # App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
 if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
@@ -97,8 +97,8 @@ if len(versions) != 1 or len(re.findall(r'(?:style\.css|data\.js|script\.js)\?v=
     raise SystemExit('index.html must load style.css, data.js and script.js with one shared ?v= release token')
 if 'rel="icon"' not in html or 'rel="apple-touch-icon"' not in html:
     raise SystemExit('index.html must declare favicon and apple-touch-icon')
-if 'privacy.html' not in html or 'attribution.html' not in html:
-    raise SystemExit('index.html must link privacy and image attribution pages')
+if any(page not in html for page in ('privacy.html', 'impressum.html', 'attribution.html')):
+    raise SystemExit('index.html must link privacy, imprint and image attribution pages')
 PY
 echo 'service-worker: PASS | network-first app files, bounded photo cache, versioned assets'
 

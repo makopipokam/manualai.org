@@ -6,6 +6,8 @@ Dieses Verzeichnis enthält die vorbereitete Bubblewrap-Konfiguration für eine 
 
 Die Konfiguration ist vorbereitet. Am 02.10.2026 wurde nach Zustimmung zur Android-SDK-Lizenz ein **signiertes AAB (Version Code 1, Target API 36)** und ein Test-APK erzeugt und geprüft. Diese Dateien sowie der Upload-Key liegen privat **außerhalb des Repositorys**; der Android-Quellstand des AAB ist Commit `cdd557d`. **Noch nicht erfolgt:** Play-Console-Upload, Einrichtung des Play-App-Signing-Zertifikats in den Digital Asset Links und Test auf einem echten Android-Gerät. Wer den Build auf einer anderen Maschine reproduziert, muss die SDK-Lizenz dort selbst akzeptieren und den privaten Upload-Key sicher bereitstellen.
 
+Die [MyDog-Datenschutzerklärung](../mydog/legal/privacy.html) und das [MyDog-Impressum](../mydog/legal/impressum.html) nennen PICARDs Zentrale nach deren [offiziellem Impressum](https://picard-fashion.com/pages/impressum). Diese Dateien sind im Android-Branch vorbereitet, aber **nicht automatisch auf der Produktionsdomain veröffentlicht**. Vor ihrer Verwendung als Play-Console-URL muss PICARD die Betreiberrolle, Datenschutzkontakte und Vercel-Verarbeitung rechtlich freigeben; erst nach gesonderter Veröffentlichung muss die HTTPS-URL tatsächlich erreichbar sein. Details und Quellenabweichungen stehen in [MyDogs README](../mydog/README.md#android--offizieller-closed-test).
+
 ## Einmalige Vorbereitung auf einer Android-Build-Maschine
 
 1. Node.js, JDK 17, Android SDK und die für das aktuelle Bubblewrap erforderlichen SDK Build Tools installieren.

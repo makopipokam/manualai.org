@@ -9,40 +9,58 @@
     :root{color-scheme:light;--ink:#18362d;--muted:#5f7068;--paper:#f5f1e8;--card:#fffdf8;--line:#d9ded7;--accent:#1f5a45}
     *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 system-ui,-apple-system,"Segoe UI",sans-serif}
     main{width:min(860px,100% - 32px);margin:0 auto;padding:48px 0 64px}article{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:clamp(24px,5vw,56px);box-shadow:0 12px 30px #18362d12}
-    h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:0 0 12px;color:var(--accent)}h2{margin:32px 0 8px;font-size:1.25rem}p,ul{margin:10px 0}a{color:var(--accent);font-weight:650}small,.meta{color:var(--muted)}.notice{padding:14px 16px;border-left:4px solid #c27a3c;background:#fff3e2;border-radius:10px;margin:22px 0}.back{display:inline-block;margin-bottom:22px;text-decoration:none}
+    h1{font-size:clamp(2rem,5vw,3rem);line-height:1.1;margin:0 0 12px;color:var(--accent);hyphens:auto;overflow-wrap:anywhere}h2{margin:32px 0 8px;font-size:1.25rem}p,ul{margin:10px 0}a{color:var(--accent);font-weight:650;overflow-wrap:anywhere}small,.meta{color:var(--muted)}.back{display:inline-block;margin-bottom:22px;text-decoration:none}address{font-style:normal}nav{margin-top:36px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 20px}code{overflow-wrap:anywhere}
   </style>
 </head>
 <body>
-<main><a class="back" href="/mydog/">← Zurück zu MyDog</a><article>
-  <h1>Datenschutzerklärung</h1>
-  <p class="meta">MyDog · Stand: 02.10.2026</p>
-  <div class="notice"><strong>Vor dem Store-Submit ergänzen:</strong> Die verantwortliche natürliche oder juristische Person muss hier mit vollständigem Namen und ladungsfähiger Kontaktadresse eingetragen werden.</div>
+<main>
+  <a class="back" href="/mydog/">← Zurück zu MyDog</a>
+  <article>
+    <h1>Datenschutzerklärung</h1>
+    <p class="meta">MyDog · Stand: 02.10.2026</p>
+    <p>Diese Hinweise gelten für die MyDog-Web-App unter <a href="https://app.manualai.org/mydog/">app.manualai.org/mydog/</a> sowie für ihre Nutzung in der Android-App als Trusted Web Activity. Sie erklären, was lokal auf deinem Gerät passiert und welche technischen Daten beim Abruf der App anfallen.</p>
 
-  <h2>1. Verantwortliche Stelle</h2>
-  <p>Verantwortlich für MyDog ist: <strong>[vollständiger Name/Firma und Anschrift des Betreibers ergänzen]</strong>. Für Fragen zum Datenschutz kann zusätzlich das <a href="https://github.com/makopipokam/manualai.org/issues" rel="noopener">GitHub-Issue-Forum des Projekts</a> genutzt werden.</p>
+    <h2>1. Verantwortliche Stelle und Datenschutzkontakt</h2>
+    <address>
+      <strong>PICARD Lederwaren GmbH &amp; Co. KG</strong><br>
+      Friedensstraße 22<br>
+      63179 Obertshausen, Deutschland<br>
+      Telefon: <a href="tel:+4961047040">+49 (0) 6104 / 7040</a><br>
+      E-Mail: <a href="mailto:info@picard-fashion.com">info@picard-fashion.com</a>
+    </address>
+    <p>Den Datenschutzbeauftragten erreichst du unter: Frank Henry Frenz, Data Trust&amp;Safety, Danzigerstraße 18, 61118 Bad Vilbel, Deutschland; <a href="mailto:datenschutz@picard-fashion.com">datenschutz@picard-fashion.com</a>. Weitere Unternehmensangaben findest du im <a href="/mydog/legal/impressum.html">MyDog-Impressum</a>.</p>
 
-  <h2>2. Was MyDog macht</h2>
-  <p>MyDog ist ein spielerischer Persönlichkeitstest. Antworten werden lokal ausgewertet und führen zu einer sortierten Liste von Hundevorschlägen. Die Sterne zeigen eine rechnerische Ähnlichkeit zum Testprofil; sie sind keine tiermedizinische, verhaltensbiologische oder rechtliche Beratung und keine Kaufempfehlung.</p>
+    <h2>2. Persönlichkeitstest und lokale Speicherung</h2>
+    <p>MyDog stellt 30 Fragen und berechnet daraus auf deinem Gerät eine Rangfolge von Hundevorschlägen. Im Browser-<code>localStorage</code> unter <code>mydog_appState</code> speichert die App deine Antworten, die aktuelle Frage, ein bereits berechnetes Ergebnis einschließlich Profilwerten und Reihenfolge sowie deine Favoriten. So kannst du den Test fortsetzen und Vorschläge später erneut ansehen. Die Auswertung und die Rassefragen im Chat erfolgen ausschließlich im Browser; Chat-Nachrichten bleiben nur während der laufenden Sitzung im Arbeitsspeicher. Es gibt hierfür weder ein Benutzerkonto noch eine Übertragung deiner Antworten oder Chat-Nachrichten an einen MyDog-Auswertungsserver oder einen externen KI-Dienst.</p>
+    <p>Die Speicherung dient den von dir genutzten Funktionen Fortsetzen, Ergebnis und Favoriten. Soweit es sich dabei um personenbezogene Daten handelt, ist die Rechtsgrundlage Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse ist, dir diese von dir angeforderten App-Funktionen bereitzustellen. Für den Zugriff auf erforderliche lokale Speicherinhalte gilt § 25 Abs. 2 Nr. 2 TDDDG. Angaben zu den Fragen sind freiwillig; ohne Antworten kann MyDog kein persönliches Ergebnis berechnen.</p>
+    <p>„Test neu machen“ löscht Antworten und Ergebnis des bisherigen Tests, <strong>nicht</strong> die Favoriten. Du kannst Favoriten einzeln entfernen. Sämtliche lokalen MyDog-Daten kannst du über die Website-Datenverwaltung deines Browsers löschen. Die Daten bleiben sonst lokal erhalten, bis du sie auf diese Weise löschst oder dein Browser sie entfernt. Das Deinstallieren der Android-App entfernt Browser-Website-Daten nicht unbedingt.</p>
+    <p>Wenn du ein Gerät oder Browserprofil mit anderen Personen teilst, können diese unter Umständen auch die dort gespeicherten MyDog-Antworten und Ergebnisse sehen. Lösche bei Bedarf die Website-Daten im Browser; verwende für vertrauliche Angaben kein gemeinsam genutztes Browserprofil.</p>
 
-  <h2>3. Daten, die auf dem Gerät gespeichert werden</h2>
-  <p>Ohne Benutzerkonto speichert MyDog im Browser-<code>localStorage</code> Antworten, Testfortschritt, Ergebnis, Favoriten und die zuletzt geöffnete Vorschlagsposition. Diese Daten werden von MyDog nicht an einen eigenen Server übertragen. „Test neu machen“ setzt Antworten und Ergebnis zurück, lässt aber gespeicherte Favoriten bestehen; Favoriten können einzeln entfernt werden. Sämtliche lokalen MyDog-Daten können über die Website-Datenverwaltung des Browsers gelöscht werden. Das bloße Deinstallieren der Android-App löscht die Website-Daten des Browsers nicht zwingend.</p>
+    <h2>3. Bereitstellung, technische Zugriffsdaten und Vercel</h2>
+    <p>Beim Aufruf von MyDog werden technisch erforderliche Daten an den Hosting- und Auslieferungsdienst Vercel übertragen. Dazu können IP-Adresse, aufgerufene URL, Zeitpunkt, Browser-/Geräteinformationen und technische Fehler- oder Sicherheitsdaten gehören. Diese Verbindungsdaten sind für den Abruf der App erforderlich und dienen auch der Stabilität und Missbrauchsabwehr. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unsere berechtigten Interessen sind ein sicherer, funktionsfähiger Betrieb und die Fehlerbehebung. Empfänger ist Vercel mit seinen für den Betrieb eingesetzten Dienstleistern. Deine Testantworten und dein lokales Ergebnis werden nicht zur Auswertung an Vercel gesendet.</p>
+    <p>Vercel ist ein US-Anbieter. Eine Verarbeitung technischer Zugriffsdaten außerhalb des Europäischen Wirtschaftsraums, insbesondere in den USA, ist möglich. Für entsprechende Übermittlungen sieht <a href="https://vercel.com/legal/dpa" rel="noopener">Vercels Vereinbarung zur Datenverarbeitung</a> unter anderem EU-Standardvertragsklauseln vor. Weitere Informationen zu Vercels Umgang mit Endnutzer- und Zugriffsdaten enthält <a href="https://vercel.com/legal/privacy-notice" rel="noopener">Vercels Datenschutzhinweis</a>. Technische Protokolldaten werden aufbewahrt, solange sie für Betrieb, Fehleranalyse, Sicherheitszwecke oder gesetzliche Pflichten benötigt werden; die konkrete Verfügbarkeit von Logs hängt von den Einstellungen und dem Tarif des Hosting-Kontos ab.</p>
 
-  <h2>4. Externe Bildquellen</h2>
-  <p>Die Hundefotos stammen ursprünglich unter anderem von <a href="https://dog.ceo/dog-api/" rel="noopener">Dog CEO</a> und <a href="https://commons.wikimedia.org/" rel="noopener">Wikimedia Commons</a>. MyDog liefert die für die App verkleinerten Fotos selbst unter <code>/mydog/images/v1/</code> aus: Beim normalen Anzeigen eines Hundes wird daher keine separate Bildanfrage an diese Quellen gestellt. Wenn du die externen Links in den <a href="/mydog/legal/attribution.html">Bildnachweisen</a> öffnest, gelten deren eigene Datenschutzbestimmungen. Der Hosting-Anbieter erhält für MyDog-Aufrufe technisch notwendige Verbindungsdaten, etwa die IP-Adresse und angeforderte URL.</p>
+    <h2>4. Bilder, Offline-Funktion und Cookies</h2>
+    <p>Die verkleinerten Hundefotos werden unter <code>/mydog/images/v1/</code> von der MyDog-Domain ausgeliefert. Bei der normalen Anzeige eines Hundes erfolgt daher keine direkte Bildanfrage an die ursprünglichen Quellen (unter anderem Dog CEO und Wikimedia Commons). Die <a href="/mydog/legal/attribution.html">Bildnachweise</a> enthalten freiwillig aufrufbare externe Quellenlinks; erst beim Öffnen solcher Links besuchst du die jeweiligen Fremdseiten.</p>
+    <p>Ein Service Worker legt App-Dateien und bereits geladene Fotos im Browser-Cache ab, damit MyDog eingeschränkt offline funktioniert. Der Bilder-Cache ist in der App auf höchstens 160 Einträge begrenzt; die tatsächlich benötigte Speicherdauer bestimmt auch dein Browser. Du kannst den Cache in den Browser-Einstellungen löschen. Diese Speicherung dient der von dir aufgerufenen App samt Offline-Funktion (§ 25 Abs. 2 Nr. 2 TDDDG); für dabei möglicherweise verarbeitete personenbezogene Daten gilt Art. 6 Abs. 1 lit. f DSGVO mit dem Interesse an einem funktionsfähigen und zuverlässigen Angebot.</p>
+    <p>MyDog setzt keine eigenen Analyse-, Werbe- oder Tracking-Cookies ein. Wir verwenden für MyDog weder Werbung noch ein personenbezogenes Nutzungsprofil für Marketingzwecke.</p>
 
-  <h2>5. Teilen und externe Dienste</h2>
-  <p>Beim Teilen öffnet MyDog die native Teilen-Funktion des Geräts oder einen externen Dienst wie WhatsApp, Facebook oder X/Twitter. MyDog lädt keine Kontakte hoch und betreibt keinen eigenen Upload-Dienst. Ab dem Öffnen des jeweiligen externen Dienstes gelten dessen Datenschutzbestimmungen.</p>
+    <h2>5. Teilen und externe Dienste</h2>
+    <p>Nur wenn du selbst „Teilen“ auswählst, erstellt MyDog auf deinem Gerät einen Link zu einem Hundeprofil oder ein PNG mit dem gewählten Hundefoto und deinem bearbeiteten Bildtext. Du kannst die Datei lokal speichern, über die Teilen-Funktion deines Geräts weitergeben oder optional WhatsApp, Facebook oder X/Twitter öffnen. MyDog lädt dabei keine Kontakte hoch und speichert dein Share-Bild nicht auf einem eigenen Server. Bei der Weitergabe an eine von dir ausgewählte App oder externe Plattform verarbeitet deren Betreiber die von dir übermittelten Inhalte nach seinen eigenen Datenschutzregeln. Die Erstellung und Übergabe erfolgt auf deinen Wunsch; Rechtsgrundlage für eine dabei möglicherweise erfolgende Verarbeitung durch uns ist Art. 6 Abs. 1 lit. f DSGVO (Bereitstellung der angeforderten Teilen-Funktion).</p>
 
-  <h2>6. Cookies, Analyse und Werbung</h2>
-  <p>MyDog setzt keine eigenen Analyse-, Werbe- oder Tracking-Cookies ein. Es gibt kein Benutzerkonto, kein personalisiertes Werbeprofil und keine serverseitige Speicherung des Testergebnisses durch MyDog.</p>
+    <h2>6. Kontaktaufnahme</h2>
+    <p>Wenn du uns per E-Mail oder Post kontaktierst, verarbeiten wir deine dabei angegebenen Kontakt- und Inhaltsdaten, um deine Anfrage zu beantworten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Bearbeitung von Anfragen); bei der Ausübung von Datenschutzrechten ist die Erfüllung unserer rechtlichen Pflichten nach Art. 6 Abs. 1 lit. c DSGVO maßgeblich. Die Daten bleiben nur so lange erhalten, wie sie zur Bearbeitung und für etwaige gesetzliche Nachweis- und Aufbewahrungspflichten erforderlich sind.</p>
+    <p>Der Support-Link führt erst nach deinem Klick zu GitHub Issues, einem externen Dienst. Bei deinem Besuch verarbeitet GitHub technische Verbindungsdaten und gegebenenfalls Kontoangaben; eingereichte Issues und ihre Inhalte können öffentlich sichtbar sein. Es gelten <a href="https://docs.github.com/site-policy/privacy-policies/github-privacy-statement" rel="noopener">GitHubs Datenschutzhinweise</a>. MyDog übermittelt deine Testantworten nicht automatisch an GitHub. Bitte sende dort keine vertraulichen Angaben oder Datenschutzanfragen, sondern nutze dafür die PICARD-Kontakte in Abschnitt 1.</p>
 
-  <h2>7. Hosting und Service Worker</h2>
-  <p>Die App wird über Vercel ausgeliefert. Der Hosting-Anbieter kann technische Zugriffs- und Sicherheitsprotokolle nach seinen eigenen Bedingungen verarbeiten. Der Service Worker speichert die App-Dateien und bereits geladene Bilder lokal für eine begrenzte Offline-Nutzung.</p>
+    <h2>7. Automatische Auswertung und deine Rechte</h2>
+    <p>Die Vorschlagsreihenfolge wird anhand deiner Antworten automatisch berechnet. Sie ist eine spielerische Orientierung, keine Diagnose und keine Entscheidung mit rechtlicher oder ähnlich erheblicher Wirkung im Sinne von Art. 22 DSGVO.</p>
+    <p>Du hast nach Maßgabe der DSGVO insbesondere Rechte auf Auskunft (Art. 15), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen eine Verarbeitung auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO (Art. 21). Für lokal gespeicherte Daten kannst du unmittelbar die Browser-Datenverwaltung nutzen. Für Fragen oder zur Ausübung deiner Rechte im Hinblick auf technische Zugriffsdaten wende dich an die verantwortliche Stelle oder den Datenschutzbeauftragten aus Abschnitt 1.</p>
+    <p>Außerdem kannst du dich bei einer Datenschutzaufsichtsbehörde beschweren (Art. 77 DSGVO), insbesondere beim <a href="https://datenschutz.hessen.de/service/beschwerde-uebermitteln" rel="noopener">Hessischen Beauftragten für Datenschutz und Informationsfreiheit</a>. Deine übrigen Rechtsschutzmöglichkeiten bleiben unberührt.</p>
 
-  <h2>8. Rechte und Kontakt</h2>
-  <p>Für Auskunft, Berichtigung, Löschung oder Fragen zur Verarbeitung bitte die verantwortliche Stelle aus Abschnitt 1 kontaktieren. Die konkrete Identität, Anschrift und gegebenenfalls die zuständige Aufsichtsbehörde müssen vor einer offiziellen Store-Veröffentlichung ergänzt und geprüft werden.</p>
-
-  <p><small>Diese Seite ist eine technische Veröffentlichungsvorlage und keine individuelle Rechtsberatung.</small></p>
-</article></main>
+    <h2>8. Änderungen</h2>
+    <p>Wenn sich Funktionen oder Datenverarbeitungen von MyDog ändern, aktualisieren wir diese Hinweise. Maßgeblich ist die Fassung, die bei deinem Besuch abrufbar ist.</p>
+    <nav aria-label="Rechtliche Informationen"><a href="/mydog/legal/impressum.html">Impressum</a><a href="/mydog/legal/attribution.html">Bildnachweise</a><a href="/mydog/">Zur App</a></nav>
+  </article>
+</main>
 </body>
 </html>

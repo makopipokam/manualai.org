@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/mydog/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
-    <link rel="stylesheet" href="/mydog/style.css?v=20261002-android-catvoice">
+    <link rel="stylesheet" href="/mydog/style.css?v=20261002-picard-legal">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
@@ -38,10 +38,6 @@
                 <button id="resume-test-btn" class="btn-secondary" type="button">Test fortsetzen</button>
             </div>
             <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
-            <footer class="app-footer">
-                <a href="/mydog/legal/privacy.html">Datenschutz</a>
-                <a href="https://github.com/makopipokam/manualai.org/issues" target="_blank" rel="noopener">Support</a>
-            </footer>
         </div>
 
         <!-- Personality Test Screen -->
@@ -211,8 +207,11 @@
         </div>
     </div>
 
-    <footer class="mydog-footer">
+    <footer class="mydog-footer" aria-label="Rechtliche Informationen und Support">
+        <a href="/mydog/legal/privacy.html">Datenschutz</a>
+        <a href="/mydog/legal/impressum.html">Impressum</a>
         <a href="/mydog/legal/attribution.html">Info &amp; Bildnachweise</a>
+        <a href="https://github.com/makopipokam/manualai.org/issues" target="_blank" rel="noopener">Support</a>
     </footer>
 
     <!-- Share Modal -->
@@ -263,7 +262,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261002-android-catvoice"></script>
-    <script src="script.js?v=20261002-android-catvoice"></script>
+    <script src="data.js?v=20261002-picard-legal"></script>
+    <script src="script.js?v=20261002-picard-legal"></script>
 </body>
 </html>
