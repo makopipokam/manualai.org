@@ -13,8 +13,12 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 
 ### 🐕 Hunderassen
 - 18 verschiedene Hunderassen mit detaillierten Profilen
-- Bilder, Beschreibungen und Charaktereigenschaften
+- Jeweils sechs rassespezifische, lokal bereitgestellte WebP-Fotos, Beschreibungen und Charaktereigenschaften
 - Persönlichkeitsbasiertes Matching
+
+Die 108 Fotos liegen unter `mydog/images/v1/` (insgesamt ca. 4,7 MB). Das wichtigste Foto jeder Rasse wird zuerst geladen; beim Wechsel wird ein altes Foto sofort ausgeblendet. Bei einem defekten Leitfoto versucht die Galerie weitere Fotos **derselben** Rasse. Quellen-URLs stehen in `mydog/photo-sources.json`; [Bildnachweise](https://app.manualai.org/mydog/legal/attribution.html) sind direkt am Hundevorschlag verlinkt. Die Fotos wurden ohne Beschnitt auf maximal 960 px skaliert und als WebP neu kodiert.
+
+Um den Bestand aus den dokumentierten Quellen erneut zu erzeugen: `python3 -m pip install Pillow` und `python3 mydog/tools/prepare-photos.py`. Bestehende Dateien werden auf Lesbarkeit geprüft, nicht überschrieben. **Für spätere Fotoänderungen** wegen des langfristigen Browser-Cachings ein neues Versionsverzeichnis (`v2` usw.) verwenden und Pfade, Service Worker, Release-Token und Vercel-Cache-Regel gemeinsam anpassen. Vor einer kommerziellen Veröffentlichung die individuellen Bildrechte noch einmal prüfen.
 
 ### ⭐ Bewertungssystem
 - Sterne-Bewertung (1-5) für verschiedene Kriterien
@@ -45,7 +49,7 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 - Installierbar auf Mobilgeräten
 - Offline-App-Shell nach einem erfolgreichen Online-Besuch
 - App-Dateien werden **network-first** geladen: Online gibt es immer den aktuellen Stand, der Cache dient nur als Offline-Fallback
-- Bereits geladene Hundefotos liegen in einem begrenzten Runtime-Cache (max. 160 Fotos)
+- Bereits geladene lokale Hundefotos liegen in einem begrenzten Runtime-Cache (max. 160 Fotos); versionierte WebP-Dateien werden zusätzlich vom Browser dauerhaft gecacht
 - Automatische Service-Worker-Registrierung auf HTTPS und localhost
 - Enthaltene 192×192- und 512×512-PWA-Icons
 
@@ -120,6 +124,15 @@ Der Test prüft reproduzierbar:
 - „Test neu machen“ inklusive Löschen der alten Antworten
 - mobile Portrait- und Desktop-Viewport-Ausführung
 
+Zusätzlicher Foto-End-to-End-Test (benötigt Python Playwright und das installierte Chromium; startet/stoppt einen lokalen Testserver selbst):
+
+```bash
+python3 -m pip install playwright
+npm run test:mydog:images
+```
+
+Er prüft alle 18 Resultate und 108 decodierten Fotos, schnelle Hund-Wechsel ohne alte Bilder, Fallback auf ein Foto derselben Rasse, Migration alter Favoriten, den PNG-Export des Share-Bilds sowie ein Offline-Reload mit Service Worker.
+
 Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
 
 - Safe Area/Notch, Scrollverhalten und Touch-Ziele in iOS Safari und Android Chrome
@@ -147,7 +160,6 @@ Die PWA ist für einen Android-Closed-Test als Trusted Web Activity vorbereitet.
 
 - [ ] Filterfunktion für Hunde nach Kriterien
 - [ ] Suche nach Hunderassen
-- [ ] Mehr Bilder pro Hund
 - [ ] Soundeffekte
 - [ ] Animierte Hundebilder
 - [ ] Statistik über häufigste Persönlichkeitstypen

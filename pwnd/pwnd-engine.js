@@ -49,7 +49,7 @@
 
   function normalizedPrompt(prompt){ return String(prompt || '').trim().toLocaleLowerCase('de'); }
 
-  function chooseNextQuestion({ questions, history = [], skills, opponent, round, accuracy = 0, topicSkills = [] }){
+  function chooseNextQuestion({ questions, history = [], skills, opponent = {}, round, accuracy = 0, topicSkills = [] }){
     const recent = history.slice(-2).map(item => item.question.id);
     const usedIds = new Set(history.map(item => item.question.id));
     const usedPrompts = new Set(history.map(item => normalizedPrompt(item.question.prompt)));
@@ -66,7 +66,9 @@
     );
     if (!candidates.length) candidates = scopedQuestions.filter(question => !usedIds.has(question.id) && !usedPrompts.has(normalizedPrompt(question.prompt)));
     if (!candidates.length) candidates = scopedQuestions.filter(question => !recent.includes(question.id) && !usedPrompts.has(normalizedPrompt(question.prompt)));
-    if (!candidates.length) candidates = scopedQuestions;
+    // Never repeat a question merely because a content pool is exhausted.
+    // The caller can request another source or end the run explicitly.
+    if (!candidates.length) return null;
     return [...candidates].sort((a, b) => {
       const weaknessPriority = topicSkills.length ? Number(a.skill !== profile.weakestSkill) - Number(b.skill !== profile.weakestSkill) : 0;
       const difficultyPriority = Math.abs((a.difficulty ?? .5) - profile.targetDifficulty) - Math.abs((b.difficulty ?? .5) - profile.targetDifficulty);
@@ -78,11 +80,14 @@
     return .5 * outcome + .25 * accuracy + .15 * averageDifficulty + .1 * fastCorrectRate;
   }
 
-  function calculateNewEnergy({ before, opponentRating, score, calibration = 0 }){
-    const expected = 1 / (1 + Math.pow(10, ((opponentRating - before) / 400)));
+  function calculateNewEnergy({ before, opponentRating = 1000, score, calibration = 0 }){
+    const safeBefore = Number.isFinite(Number(before)) ? Number(before) : 1000;
+    const safeOpponentRating = Number.isFinite(Number(opponentRating)) ? Number(opponentRating) : 1000;
+    const safeScore = clamp(Number.isFinite(Number(score)) ? Number(score) : 0, 0, 1);
+    const expected = 1 / (1 + Math.pow(10, ((safeOpponentRating - safeBefore) / 400)));
     const k = calibration < 1 ? 48 : 24;
-    const delta = Math.round(k * (score - expected));
-    return { delta, energy: Math.max(0, Math.round(before + delta)) };
+    const delta = Math.round(k * (safeScore - expected));
+    return { delta, energy: Math.max(0, Math.round(safeBefore + delta)) };
   }
 
   function calculateResourceRewards({ mode = 'duel', correctAnswers, totalRounds, outcome = 0, fastCorrectRate = 0, maxCombo = 0 }){

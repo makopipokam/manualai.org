@@ -6,11 +6,12 @@ const STARTING_RESOURCES = Object.freeze({ energy: 1000, water: 250, air: 120, l
 const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' });
 const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
+const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
 const OPPONENTS = {
-  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
-  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
-  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🦊', focus: 'reasoning', time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
-  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
+  redfox: { name: 'ROTFUCHS', portrait: 'assets/red-fox.webp', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
+  arcticfox: { name: 'POLARFUCHS', portrait: 'assets/arctic-fox.webp', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
+  fennec: { name: 'FENNEK', portrait: 'assets/fennec-fox.webp', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
+  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
 };
 const TOPICS = {
   nature: { name: 'Natur & Erde', icon: '🌿', copy: 'Planet, Körper und Umwelt', skills: ['recall', 'causal'] },
@@ -70,12 +71,20 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
+const DEFAULT_SKILLS = Object.freeze({ recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 });
+function normalizeSkillProfile(raw){
+  return Object.fromEntries(Object.keys(DEFAULT_SKILLS).map(skill => {
+    const value = Number(raw?.[skill]);
+    return [skill, Number.isFinite(value) ? Math.max(0, Math.min(1, value)) : DEFAULT_SKILLS[skill]];
+  }));
+}
 const state = {
   energy: saved?.energy ?? saved?.ip ?? STARTING_RESOURCES.energy,
   water: saved?.water ?? saved?.elixir ?? STARTING_RESOURCES.water,
   air: saved?.air ?? STARTING_RESOURCES.air,
   love: saved?.love ?? STARTING_RESOURCES.love,
   calibration: saved?.calibration ?? 0,
+  skillProfile: normalizeSkillProfile(saved?.skillProfile),
   upgrades: saved?.upgrades ?? [],
   unlocked: saved?.unlocked ?? ['frog'],
   opponentId: 'redfox',
@@ -90,13 +99,26 @@ const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','
 const resourceIds = { energy: ['pondEnergy', 'playerEnergy'], water: ['pondWater', 'playerWater'], air: ['pondAir', 'playerAir'], love: ['pondLove', 'playerLove'] };
 
 function setText(id, value){ const element = $(id); if (element) element.textContent = value; }
+function setOpponentPortrait(id, opponent){
+  const element = $(id);
+  if (!opponent.portrait) { element.textContent = opponent.avatar; return; }
+  const image = document.createElement('img');
+  image.src = opponent.portrait;
+  image.alt = '';
+  image.decoding = 'async';
+  element.replaceChildren(image);
+}
 function formatResource(value){ return Math.round(value); }
 function save(){
-  localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, upgrades: state.upgrades, unlocked: state.unlocked }));
+  localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, skillProfile: normalizeSkillProfile(state.skillProfile), upgrades: state.upgrades, unlocked: state.unlocked }));
 }
 if (saved && !saved.resourceVersion) save();
 function updateResourceDisplays(){ Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource])))); }
-function formatCost(cost){ return ['energy', 'water', 'air', 'love'].map(resource => `${cost[resource]} ${RESOURCE_NAMES[resource]}`).join(' · '); }
+function formatCost(cost){
+  return `<span class="unlock-costs">${['energy', 'water', 'air', 'love'].map(resource =>
+    `<span class="unlock-cost"><span aria-hidden="true">${RESOURCE_SYMBOLS[resource]}</span><span class="sr-only">${RESOURCE_NAMES[resource]}: </span>${cost[resource]}</span>`
+  ).join('')}</span>`;
+}
 function canAfford(cost){ return Object.entries(cost).every(([resource, value]) => state[resource] >= value); }
 function show(id){ screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); window.scrollTo(0, 0); }
 function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
@@ -117,9 +139,9 @@ function staticAiQuestion(match){
 }
 function showQuestionLoading(match){
   setText('questionType', 'KI-FRAGE · EULE DENKT');
-  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Karte …');
-  setText('questionHint', 'Dein Skill-Level wird berücksichtigt.');
-  setText('aiComment', 'Die Eule sucht eine neue, noch nicht gespielte Frage.');
+  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Frage …');
+  setText('questionHint', match.mode === 'free' ? '' : 'Dein Skill-Level wird berücksichtigt.');
+  setText('aiComment', 'Die Eule beobachtet deine Antworten.');
   $('answers').innerHTML = '';
   $('lockBtn').disabled = true;
   setText('roundNo', match.round);
@@ -136,7 +158,7 @@ async function requestAiQuestion(match){
     if (isUsableQuestion(payload.question, match)) { match.aiQuestionCount += 1; return payload.question; }
     throw new Error('invalid or repeated question');
   } catch (error) {
-    console.warn('KI-Frage nicht verfügbar, Offline-Karte wird verwendet:', error);
+    console.warn('KI-Frage nicht verfügbar, Offline-Frage wird verwendet:', error);
     match.aiFallbackCount += 1;
     return staticAiQuestion(match) || weightedQuestion();
   }
@@ -145,7 +167,7 @@ function selectFreeTopic(id){
   if (!TOPICS[id] || !state.pendingTopicIds.includes(id)) return;
   state.selectedTopicId = id;
   document.querySelectorAll('.free-topic-option').forEach(button => button.classList.toggle('selected', button.dataset.topic === id));
-  setText('freeStartBtn', `Mit ${TOPICS[id].name} starten →`);
+  $('freeStartBtn').setAttribute('aria-label', `Los mit ${TOPICS[id].name}`);
 }
 function renderFreeTopicOptions(){
   const options = $('freeTopicOptions');
@@ -164,30 +186,81 @@ function selectDuelOpponent(id){
   if (!OPPONENTS[id] || id === FREE_OPPONENT_ID) return;
   state.opponentId = id;
   document.querySelectorAll('.duel-opponent-option').forEach(button => button.classList.toggle('selected', button.dataset.opponent === id));
-  setText('duelStartBtn', `Duell gegen ${OPPONENTS[id].name[0] + OPPONENTS[id].name.slice(1).toLowerCase()} starten →`);
+  $('duelStartBtn').setAttribute('aria-label', `Los gegen ${OPPONENTS[id].name}`);
 }
 function enterDuelSetup(){ show('screenDuelSetup'); selectDuelOpponent(state.opponentId); }
+function startLaunchCountdown(){
+  const match = state.match;
+  const opponent = currentOpponent();
+  const free = match.mode === 'free';
+  const screen = $('screenDuelCountdown');
+  screen.dataset.opponent = match.opponentId;
+  document.body.dataset.duelOpponent = match.opponentId;
+  setOpponentPortrait('countdownAvatar', opponent);
+  setText('countdownOpponent', opponent.name);
+  setText('countdownTitle', free ? 'Die Eule erwacht.' : 'Der Teich ruft.');
+  setText('countdownCopy', free ? `${opponent.intro} Thema: ${TOPICS[match.topicId].name}.` : opponent.intro);
+  setText('countdownStatus', free ? 'ARCHIV ÖFFNET' : 'BEREIT MACHEN');
+  setText('countdownHint', free ? 'Deine erste Frage wartet.' : 'Das Duell beginnt gleich.');
+  setText('cancelCountdownBtn', free ? '← Thema wählen' : '← Gegner wählen');
+  setText('countdownNumber', '3');
+  screen.classList.remove('countdown-go');
+  clearTimeout(state.timerId);
+  let remaining = 3;
+  const tick = () => {
+    if (state.match !== match) return;
+    if (remaining > 0) {
+      setText('countdownNumber', remaining);
+      const number = $('countdownNumber');
+      number.classList.remove('countdown-pulse');
+      void number.offsetWidth;
+      number.classList.add('countdown-pulse');
+      remaining -= 1;
+      state.timerId = setTimeout(tick, 1000);
+      return;
+    }
+    setText('countdownStatus', 'LOS!');
+    setText('countdownNumber', 'LOS');
+    screen.classList.add('countdown-go');
+    state.timerId = setTimeout(() => {
+      if (state.match !== match) return;
+      show('screenBattle');
+      nextQuestion();
+    }, 650);
+  };
+  show('screenDuelCountdown');
+  tick();
+}
+function cancelDuelCountdown(){
+  clearTimeout(state.timerId);
+  const free = state.match?.mode === 'free';
+  state.match = null;
+  state.mode = 'duel';
+  delete document.body.dataset.duelOpponent;
+  show(free ? 'screenFreeTopicSetup' : 'screenDuelSetup');
+  if (!free) selectDuelOpponent(state.opponentId);
+}
 function startMatch(mode = 'duel', topicId = null){
   state.mode = mode;
   state.mods = {};
   state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
   const opponentId = mode === 'free' ? FREE_OPPONENT_ID : state.opponentId;
   const selectedTopicId = mode === 'free' ? (topicId || state.selectedTopicId || Object.keys(TOPICS)[0]) : null;
-  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
+  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
   document.body.classList.toggle('free-mode', mode === 'free');
   setText('roundTotal', state.match.total);
   updateResourceDisplays();
   updateOpponentHeader();
   setText('phaseLabel', mode === 'free' ? 'FREIES QUIZZEN' : 'QUIZDUELL');
   setText('topicLabel', mode === 'free' ? `· ${TOPICS[selectedTopicId].name}` : '');
+  if (mode === 'duel' || mode === 'free') return startLaunchCountdown();
   show('screenBattle');
   nextQuestion();
 }
 function updateOpponentHeader(){
   const opponent = currentOpponent();
   setText('opponentLabel', opponent.name);
-  setText('opponentSpecies', opponent.species);
-  setText('opponentAvatar', opponent.avatar);
+  setOpponentPortrait('opponentAvatar', opponent);
 }
 async function nextQuestion(){
   const match = state.match;
@@ -198,7 +271,12 @@ async function nextQuestion(){
   showQuestionLoading(match);
   show('screenBattle');
   match.current = match.mode === 'free' ? await requestAiQuestion(match) : weightedQuestion();
-  if (state.match !== match || !match.current) return;
+  if (state.match !== match) return;
+  if (!match.current) {
+    match.round -= 1;
+    match.total = match.round;
+    return finishMatch();
+  }
   renderBattle();
   startTimer(Math.round(match.current.time * currentOpponent().time) + (state.mods.time || 0));
 }
@@ -210,7 +288,7 @@ function renderBattle(){
   setText('questionType', `${aiQuestion ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
   setText('topicLabel', match.mode === 'free' ? `· ${TOPICS[match.topicId].name}` : '');
   setText('questionTitle', question.prompt);
-  setText('questionHint', match.mode === 'free' ? (aiQuestion ? 'KI-Frage · keine Wiederholung in dieser Runde.' : 'Offline-Karte · keine Wiederholung in dieser Runde.') : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
+  setText('questionHint', match.mode === 'free' ? '' : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
   setText('comboText', `COMBO ${match.combo}`);
   setText('skillProfile', `${SKILL_NAMES[weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
   $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;
@@ -220,15 +298,17 @@ function renderBattle(){
   $('lockBtn').disabled = true;
   $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
   document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
-  const fallbackNote = match.aiFallbackCount > 0 && match.mode === 'free' ? ' · Offline-Fallback aktiv' : '';
-  setText('aiComment', match.round === 1 ? currentOpponent().intro + fallbackNote : adaptiveComment(match) + fallbackNote);
+  setText('lockBtn', 'Antwort abgeben');
+  setText('aiComment', match.mode === 'free'
+    ? (match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match))
+    : currentOpponent().intro);
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
 function adaptiveComment(match){
   const topic = match.topicId ? TOPICS[match.topicId] : null;
   const weakSkill = SKILL_NAMES[weakest(match.skills, topic?.skills)];
   if (match.mode === 'free') {
-    if (match.history.at(-1)?.correct === false) return `Die Schatten-Eule markiert deine ${weakSkill}-Lücke in ${topic.name}. Die nächste Karte zielt gezielt dorthin.`;
+    if (match.history.at(-1)?.correct === false) return `Die Schatten-Eule markiert deine ${weakSkill}-Lücke in ${topic.name}. Die nächste Frage zielt gezielt dorthin.`;
     return `Die Schatten-Eule vergleicht deine Antworten in ${topic.name} und prüft weiter deine ${weakSkill}.`;
   }
   if (match.combo >= 2) return 'Interessant. Deine Sicherheit steigt — also wechsle ich die Perspektive.';
@@ -263,6 +343,8 @@ function submitAnswer(index, forcedMs = null){
   match.maxCombo = Math.max(match.maxCombo, result.combo);
   if (match.mode === 'duel') { match.aiHp = Math.max(0, match.aiHp - result.damage); match.playerHp = Math.max(0, match.playerHp - result.selfDamage); }
   match.skills[question.skill] = Math.max(0, Math.min(1, match.skills[question.skill] + result.skillDelta));
+  state.skillProfile = normalizeSkillProfile(match.skills);
+  save();
   match.history.push({ question, correct: result.correct, time, damage: result.damage, selfDamage: result.selfDamage });
   match.accuracy = match.history.filter(entry => entry.correct).length / match.history.length;
   document.querySelectorAll('.answer').forEach((button, optionIndex) => { button.disabled = true; if (optionIndex === question.answer) button.classList.add('correct'); if (optionIndex === index && optionIndex !== question.answer) button.classList.add('wrong'); });
@@ -277,7 +359,7 @@ function showRoundResult(result){
   $('resultOrbit').textContent = result.correct ? '+' : '×';
   setText('roundEyebrow', free ? (result.correct ? 'WISSEN GESAMMELT' : 'DIE EULE BEOBACHTET') : (result.correct ? 'RESSOURCENFLUSS' : 'GEGENWELLE'));
   setText('roundTitle', free ? (result.correct ? 'Die Eule nickt.' : 'Die Eule schweigt.') : (result.correct ? 'Deine Entscheidung trägt.' : 'Die AI hat gekontert.'));
-  setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule legt die Karte zurück. Versuch es bei der nächsten Frage erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
+  setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule formuliert eine neue Frage. Versuch es gleich erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
   setText('resultTime', free ? 'ohne Zeitdruck' : `${(result.time / 1000).toFixed(1)} s`);
   setText('resultStatMiddleLabel', free ? 'WISSEN' : 'SCHADEN');
   setText('resultDamage', free ? (result.correct ? '+1' : '0') : (result.correct ? `+${result.damage}` : `-${result.selfDamage}`));
@@ -292,7 +374,7 @@ function finishMatch(){
   const opponent = currentOpponent();
   const free = match.mode === 'free';
   const outcome = free ? 1 : (match.aiHp <= match.playerHp ? 1 : 0);
-  const averageDifficulty = match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length;
+  const averageDifficulty = match.history.length ? match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length : 0;
   const fastCorrectRate = Math.min(1, match.history.filter(entry => entry.correct && entry.time < entry.question.time * .55).length / 3);
   const score = PwndEngine.calculateMatchScore({ outcome, accuracy: match.accuracy, averageDifficulty, fastCorrectRate });
   const energyRating = free ? { delta: 0, energy: state.energy } : PwndEngine.calculateNewEnergy({ before: state.energy, opponentRating: opponent.rating, score, calibration: state.calibration });
@@ -310,7 +392,7 @@ function finishMatch(){
   $('endResult').style.color = free ? 'var(--air)' : (outcome ? 'var(--leaf)' : 'var(--clay)');
   setText('energyChange', `${free ? '+' + rewards.energy : (energyRating.delta >= 0 ? '+' : '') + energyRating.delta} ENERGIE`);
   setText('endTitle', free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : 'Die AI hat deinen Wasserlauf gelesen.'));
-  setText('endCopy', free ? `${correctAnswers}/${match.total} Karten in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
+  setText('endCopy', free ? `${correctAnswers}/${match.total} Fragen in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
   setText('energyValue', formatResource(state.energy));
   setText('waterValue', formatResource(state.water));
   setText('airValue', formatResource(state.air));
@@ -340,6 +422,7 @@ $('backToPondBtn').addEventListener('click', () => show('screenStart'));
 $('backToPondFromTopicsBtn').addEventListener('click', () => show('screenStart'));
 $('freeStartBtn').addEventListener('click', () => startMatch('free', state.selectedTopicId));
 $('duelStartBtn').addEventListener('click', () => startMatch('duel'));
+$('cancelCountdownBtn').addEventListener('click', cancelDuelCountdown);
 $('lockBtn').addEventListener('click', () => submitAnswer(state.match.selected));
 $('continueBtn').addEventListener('click', () => state.match.round >= state.match.total ? finishMatch() : (show('screenBattle'), nextQuestion()));
 $('againBtn').addEventListener('click', () => state.mode === 'free' ? enterFreeTopicSetup() : enterDuelSetup());

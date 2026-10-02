@@ -74,6 +74,7 @@ const elements = {
     dogTrainability: document.getElementById('dog-trainability'),
     dogDescription: document.getElementById('dog-description'),
     dogImageMain: document.getElementById('dog-image-main'),
+    dogImageStatus: document.getElementById('dog-image-status'),
     dogImage1: document.getElementById('dog-image-1'),
     dogImage2: document.getElementById('dog-image-2'),
     dogImage3: document.getElementById('dog-image-3'),
@@ -138,7 +139,17 @@ function loadState() {
     if (savedState) {
         try {
             const state = JSON.parse(savedState);
-            appState.favorites = Array.isArray(state.favorites) ? state.favorites : [];
+            appState.favorites = Array.isArray(state.favorites) ? state.favorites.map(saved => {
+                const current = dogDatabase.find(dog => dog.id === saved?.id);
+                return current ? {
+                    ...saved,
+                    name: current.name,
+                    breed: current.breed,
+                    images: current.images,
+                    description: current.description,
+                    ratings: current.ratings
+                } : saved;
+            }) : [];
             appState.userAnswers = Array.isArray(state.userAnswers) ? state.userAnswers : [];
             appState.currentQuestion = state.currentQuestion || 0;
             appState.lastResult = state.lastResult || null;
@@ -538,6 +549,9 @@ function loadDogImages(imageUrls, labels) {
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
     const thumbnails = thumbnailIds.map(id => document.getElementById(id));
 
+    elements.dogImageStatus.textContent = `Foto von ${dog.name} wird geladen …`;
+    elements.dogImageStatus.hidden = false;
+
     // Clear every previous image before the next dog is rendered.
     [elements.dogImageMain, ...thumbnails].forEach(img => {
         if (!img) return;
@@ -552,11 +566,23 @@ function loadDogImages(imageUrls, labels) {
 
     elements.dogImageMain.alt = dog.name;
     elements.dogImageMain.loading = 'eager';
+    elements.dogImageMain.onload = function() {
+        if (loadToken !== imageLoadToken) return;
+        if (this.naturalWidth > 0) {
+            this.style.display = 'block';
+            this.style.visibility = 'visible';
+            elements.dogImageStatus.hidden = true;
+        }
+    };
     elements.dogImageMain.onerror = function() {
-        if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
+        if (loadToken !== imageLoadToken) return;
+        delete this.dataset.loaded;
+        this.style.display = 'none';
+        this.style.visibility = 'hidden';
+        tryMainImage(Number(this.dataset.activeIndex || 0) + 1);
     };
 
-    const loadImage = (index, target, onReady) => {
+    const loadImage = (index, target, onReady, onError) => {
         if (loadToken !== imageLoadToken || !target || !imageUrls[index] || target.dataset.loading === 'true') return;
         if (target.dataset.loaded === imageUrls[index]) {
             if (onReady) onReady();
@@ -564,13 +590,16 @@ function loadDogImages(imageUrls, labels) {
         }
         target.dataset.loading = 'true';
         const preloader = new Image();
+        preloader.fetchPriority = index === 0 ? 'high' : 'low';
         preloader.onload = () => {
             if (loadToken !== imageLoadToken) return;
             target.dataset.loading = 'false';
             target.dataset.loaded = imageUrls[index];
             target.src = imageUrls[index];
-            target.style.display = 'block';
-            target.style.visibility = 'visible';
+            if (target !== elements.dogImageMain) {
+                target.style.display = 'block';
+                target.style.visibility = 'visible';
+            }
             if (onReady) onReady();
         };
         preloader.onerror = () => {
@@ -578,8 +607,27 @@ function loadDogImages(imageUrls, labels) {
             target.dataset.loading = 'false';
             target.style.display = 'none';
             target.style.visibility = 'hidden';
+            if (onError) onError();
         };
         preloader.src = imageUrls[index];
+    };
+
+    const tryMainImage = (index) => {
+        if (loadToken !== imageLoadToken) return;
+        if (index >= imageUrls.length) {
+            elements.dogImageStatus.textContent = `Für ${dog.name} ist gerade kein Foto verfügbar.`;
+            return;
+        }
+        elements.dogImageMain.dataset.activeIndex = String(index);
+        loadImage(index, elements.dogImageMain, () => {
+            thumbnails.forEach((thumb, thumbIndex) => thumb?.classList.toggle('selected', thumbIndex === index));
+            if (thumbnails[index]) {
+                thumbnails[index].src = imageUrls[index];
+                thumbnails[index].dataset.loaded = imageUrls[index];
+                thumbnails[index].style.display = 'block';
+                thumbnails[index].style.visibility = 'visible';
+            }
+        }, () => tryMainImage(index + 1));
     };
 
     thumbnails.forEach((imgElement, index) => {
@@ -587,7 +635,10 @@ function loadDogImages(imageUrls, labels) {
         imgElement.alt = `${dog.name} — Bild ${index + 1}`;
         imgElement.loading = 'lazy';
         imgElement.onerror = function() {
-            if (loadToken === imageLoadToken) this.style.visibility = 'hidden';
+            if (loadToken !== imageLoadToken) return;
+            delete this.dataset.loaded;
+            this.style.display = 'none';
+            this.style.visibility = 'hidden';
         };
         imgElement.onclick = () => {
             if (loadToken !== imageLoadToken) return;
@@ -595,17 +646,7 @@ function loadDogImages(imageUrls, labels) {
         };
     });
 
-    if (thumbnails[0]) thumbnails[0].classList.add('selected');
-
-    loadImage(0, elements.dogImageMain, () => {
-        elements.dogImageMain.classList.add('selected');
-        if (thumbnails[0] && imageUrls[0]) {
-            thumbnails[0].src = imageUrls[0];
-            thumbnails[0].dataset.loaded = imageUrls[0];
-            thumbnails[0].style.display = 'block';
-            thumbnails[0].style.visibility = 'visible';
-        }
-    });
+    tryMainImage(0);
 
     // Unloaded thumbnails are display:none (no blank gap), so they can never intersect themselves.
     // Observe the always-visible gallery row instead and load the remaining photos once it is near.
@@ -632,9 +673,13 @@ function selectThumbnail(index, imageUrls, labels) {
     const dog = appState.currentDog;
     
     // Update main image
+    elements.dogImageStatus.textContent = `Foto von ${dog.name} wird geladen …`;
+    elements.dogImageStatus.hidden = false;
+    elements.dogImageMain.style.display = 'none';
+    elements.dogImageMain.style.visibility = 'hidden';
+    elements.dogImageMain.dataset.activeIndex = String(index);
     elements.dogImageMain.src = imageUrls[index] || imageUrls[0] || '';
     elements.dogImageMain.alt = `${dog.name} — Bild ${index + 1}`;
-    elements.dogImageMain.style.visibility = 'visible';
     
     // Update thumbnail selection
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
@@ -904,7 +949,8 @@ function getShareData(dog = appState.currentDog) {
 
 function getCurrentDogImageUrl(dog) {
     const visibleImage = elements.dogImageMain?.currentSrc || elements.dogImageMain?.src;
-    return dog.images?.includes(visibleImage) ? visibleImage : dog.images?.[0] || '';
+    return dog.images?.find(source => new URL(source, window.location.href).href === visibleImage)
+        || dog.images?.[0] || '';
 }
 
 function getShareImageCaption() {

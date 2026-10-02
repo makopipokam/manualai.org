@@ -27,8 +27,8 @@
       </div>
       <div class="pond-status"><div><small>BEWOHNER</small><strong>1 / 6</strong><span>Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
       <div class="pond-residents" aria-label="Teichbewohner"><span class="resident frogling">🐸</span><span class="resident reedling">✦</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span></div>
-      <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season">ENERGIE · WASSER · LUFT · LIEBE</span></div><div class="unlock-grid" id="unlockGrid"></div></div>
-      <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Elemente sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
+      <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season growth-resource-legend" role="img" aria-label="Energie, Wasser, Luft und Liebe"><span>⚡</span><span>💧</span><span>🌬️</span><span>❤️</span></span></div><div class="unlock-grid" id="unlockGrid"></div></div>
+      <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Ressourcen sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
       <button class="activity-card activity-active duel-entry" id="startBtn" type="button"><span class="activity-icon">⚔</span><span><b>Quizduell</b><small>Wähle erst danach deinen Fuchs-Gegner und tritt im 10-Runden-Duell an.</small></span><strong>→</strong></button>
       <button class="activity-card activity-active free-quiz" id="freeQuizBtn" type="button"><span class="activity-icon">🦉</span><span><b>Freies Quizzen</b><small>Ruhige 8-Fragen-Entdeckung mit KI-Fragen gegen die gruselige Schatten-Eule — ohne Wiederholung und Zeitdruck.</small></span><strong>→</strong></button>
       <div class="activity-card activity-soon"><span class="activity-icon">⌁</span><span><b>Sammeln &amp; Erkunden</b><small>Entdecke Quellen, Winde, Steine und seltene Pflanzen.</small></span><em>bald</em></div>
@@ -40,9 +40,9 @@
       <button class="back-link" id="backToPondFromTopicsBtn" type="button">← Zum Teich</button>
       <p class="eyebrow">FREIES QUIZZEN · 8 FRAGEN</p>
       <h1 id="freeTopicTitle">Wähle dein<br><em>Thema.</em></h1>
-      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und legt gezielt weitere Karten zu deiner erkannten Schwäche.</p>
+      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und formuliert gezielt weitere Fragen zu deiner erkannten Schwäche.</p>
       <div class="free-topic-options" id="freeTopicOptions"></div>
-      <button class="primary-btn free-start-btn" id="freeStartBtn" type="button">Mit Thema starten <span>→</span></button>
+      <button class="primary-btn free-start-btn" id="freeStartBtn" type="button" aria-label="Los mit dem gewählten Thema">LOS!</button>
       <p class="setup-note">Die drei Vorschläge werden bei jedem freien Quiz neu gemischt.</p>
     </section>
 
@@ -50,21 +50,33 @@
       <button class="back-link" id="backToPondBtn" type="button">← Zum Teich</button>
       <p class="eyebrow">QUIZDUELL · 10 RUNDEN</p>
       <h1 id="duelSetupTitle">Wähle deinen<br><em>Fuchs-Gegner.</em></h1>
-      <p class="lede">Jeder Fuchs liest dein Spiel anders. Die Auswahl gilt nur für dieses Duell und beeinflusst Tempo, Fragenfokus und Belohnung.</p>
+      <p class="lede">Drei Füchse, drei Taktiken. Wen forderst du heraus?</p>
       <div class="duel-opponent-options" id="duelOpponentOptions">
-        <button class="duel-opponent-option selected" type="button" data-opponent="redfox"><span class="fox-mark">🦊</span><span><b>Rotfuchs</b><small><i>Vulpes vulpes</i> · adaptiv</small><em>Beobachtet deine Muster und wechselt geschickt die Perspektive.</em></span></button>
-        <button class="duel-opponent-option" type="button" data-opponent="arcticfox"><span class="fox-mark">🦊</span><span><b>Polarfuchs</b><small><i>Vulpes lagopus</i> · schnell</small><em>Setzt dich unter Druck und verkürzt deine sichere Denkzeit.</em></span></button>
-        <button class="duel-opponent-option" type="button" data-opponent="fennec"><span class="fox-mark">🦊</span><span><b>Fennek</b><small><i>Vulpes zerda</i> · methodisch</small><em>Hört auf Begründungslücken und bevorzugt tiefe Fragen.</em></span></button>
+        <button class="duel-opponent-option selected" type="button" data-opponent="redfox"><span class="fox-mark"><img src="assets/red-fox.webp" alt="" width="72" height="72"></span><span class="fox-info"><b>Rotfuchs</b><span class="fox-trait">Liest deine Muster</span></span></button>
+        <button class="duel-opponent-option" type="button" data-opponent="arcticfox"><span class="fox-mark"><img src="assets/arctic-fox.webp" alt="" width="72" height="72"></span><span class="fox-info"><b>Polarfuchs</b><span class="fox-trait">Fordert schnelle Entscheidungen</span></span></button>
+        <button class="duel-opponent-option" type="button" data-opponent="fennec"><span class="fox-mark"><img src="assets/fennec-fox.webp" alt="" width="72" height="72"></span><span class="fox-info"><b>Fennek</b><span class="fox-trait">Prüft deine Begründungen</span></span></button>
       </div>
-      <button class="primary-btn duel-start-btn" id="duelStartBtn" type="button">Duell gegen Rotfuchs starten <span>→</span></button>
-      <p class="setup-note">Freies Quizzen bleibt davon getrennt: Dort wartet die Schatten-Eule ohne Gegnerauswahl.</p>
+      <button class="primary-btn duel-start-btn" id="duelStartBtn" type="button" aria-label="Los gegen Rotfuchs">LOS!</button>
+    </section>
+
+    <section class="screen duel-countdown-screen" id="screenDuelCountdown" aria-labelledby="countdownTitle" data-opponent="redfox">
+      <button class="back-link" id="cancelCountdownBtn" type="button">← Gegner wählen</button>
+      <div class="countdown-stage">
+        <p class="eyebrow" id="countdownStatus">BEREIT MACHEN</p>
+        <span class="countdown-avatar" id="countdownAvatar" aria-hidden="true"><img src="assets/red-fox.webp" alt=""></span>
+        <p class="countdown-opponent" id="countdownOpponent">ROTFUCHS</p>
+        <h1 id="countdownTitle">Der Teich ruft.</h1>
+        <p class="countdown-copy" id="countdownCopy">Der Rotfuchs liest deine erste Entscheidung. Finde deinen Rhythmus.</p>
+        <div class="countdown-number" id="countdownNumber" aria-live="assertive">3</div>
+        <p class="countdown-hint" id="countdownHint">Das Duell beginnt gleich.</p>
+      </div>
     </section>
 
     <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
       <div class="battle-head">
         <div class="fighter"><span class="avatar player-avatar">♧</span><div><small class="resource-readout"><span>E <b id="playerEnergy">1000</b></span><span>W <b id="playerWater">250</b></span><span>L <b id="playerAir">120</b></span><span>♥ <b id="playerLove">60</b></span></small><strong>TEICH</strong></div></div>
         <div class="round-count"><span id="phaseLabel">QUIZDUELL</span><span id="topicLabel" class="topic-battle-label"></span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
-        <div class="fighter ai-fighter"><div><small><span id="opponentLabel">ROTFUCHS</span> · <span id="opponentSpecies">Vulpes vulpes</span></small><strong>GEGNER</strong></div><span class="avatar ai-avatar" id="opponentAvatar">🦊</span></div>
+        <div class="fighter ai-fighter"><div><small><span id="opponentLabel">ROTFUCHS</span></small><strong>GEGNER</strong></div><span class="avatar ai-avatar" id="opponentAvatar"><img src="assets/red-fox.webp" alt=""></span></div>
       </div>
       <div class="health-row"><div class="health-track"><span id="playerHealth"></span></div><strong id="playerHpText">100</strong><div class="vs">VS</div><strong id="aiHpText">100</strong><div class="health-track ai-track"><span id="aiHealth"></span></div></div>
       <div class="combo-line"><span id="comboText">COMBO 0</span><span id="skillProfile">ANALYZING YOUR PATTERN…</span></div>
@@ -72,9 +84,9 @@
         <div class="question-meta"><span class="type-pill" id="questionType">LOGIC TRAP</span><span class="timer" id="timer">00:20</span></div>
         <h2 id="questionTitle">Frage wird geladen …</h2>
         <div class="answers" id="answers" role="group" aria-label="Antworten"></div>
-        <div class="question-foot"><span id="questionHint">Wähle eine Antwort.</span><button class="ghost-btn" id="lockBtn" type="button" disabled>Antwort sperren</button></div>
+        <div class="question-foot"><span id="questionHint">Wähle eine Antwort.</span><button class="ghost-btn" id="lockBtn" type="button" disabled>Antwort abgeben</button></div>
       </article>
-      <p class="ai-comment" id="aiComment" aria-live="polite">Der Gegner beobachtet deine erste Entscheidung.</p>
+      <p class="ai-comment" id="aiComment" aria-live="polite">Die Eule beobachtet deine Antworten.</p>
     </section>
 
     <section class="screen" id="screenRound" aria-labelledby="roundTitle">
