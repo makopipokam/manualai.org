@@ -6,10 +6,13 @@ const context = { console };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'pwnd-engine.js'), 'utf8'), context);
 const engine = context.PwndEngine;
 const appSource = fs.readFileSync(path.join(__dirname, '..', 'pwnd.js'), 'utf8');
+const apiSource = fs.readFileSync(path.join(__dirname, '..', '..', 'api', 'pwnd-question.js'), 'utf8');
 const questionIds = [...appSource.matchAll(/\{ id:'([^']+)', type:/g)].map(match => match[1]);
 assert.ok(new Set(questionIds).size >= 30, 'the pwnd question pool should contain at least 30 unique questions');
+assert.match(apiSource, /excludePrompts/, 'the AI endpoint must receive previously used prompts');
+assert.match(apiSource, /options.*length !== 4/, 'the AI endpoint must validate four answer options');
 
-const question = { id: 'q', type: 'recall', skill: 'recall', difficulty: .5, answer: 1, time: 12000 };
+const question = { id: 'q', type: 'recall', skill: 'recall', difficulty: .5, answer: 1, time: 12000, prompt: 'Eine Testfrage mit eindeutigem Text?' };
 const opponent = { focus: 'adaptive' };
 
 const hit = engine.evaluateAnswer({ answerIndex: 1, question, responseTimeMs: 2000, combo: 1 });
@@ -26,19 +29,21 @@ assert.equal(miss.combo, 0);
 
 const questions = [
   question,
-  { ...question, id: 'q2', skill: 'logic', type: 'logic', difficulty: .65 },
-  { ...question, id: 'q3', skill: 'causal', type: 'causal', difficulty: .8 },
+  { ...question, id: 'q2', prompt: 'Eine zweite Testfrage mit anderer Formulierung?', skill: 'logic', type: 'logic', difficulty: .65 },
+  { ...question, id: 'q3', prompt: 'Eine dritte Testfrage mit eigener Formulierung?', skill: 'causal', type: 'causal', difficulty: .8 },
 ];
 const next = engine.chooseNextQuestion({ questions, history: [{ question: questions[0] }], skills: { recall: .2, logic: .8, causal: .7 }, opponent, round: 3, accuracy: .5 });
 assert.ok(next && next.id !== 'q', 'recent questions should be avoided');
 const noRepeat = engine.chooseNextQuestion({ questions, history: [{ question: questions[0] }, { question: questions[1] }], skills: { recall: .5, logic: .5, causal: .5 }, opponent, round: 3, accuracy: .5 });
 assert.equal(noRepeat.id, 'q3', 'unused questions should be preferred before a repeat');
+const promptRepeat = engine.chooseNextQuestion({ questions: [questions[0], { ...questions[2], id: 'q3-copy', prompt: questions[0].prompt }, questions[1]], history: [{ question: questions[0] }], skills: { recall: .5, logic: .5, causal: .5 }, opponent, round: 3, accuracy: .5 });
+assert.equal(promptRepeat.id, 'q2', 'prompt-level repeat protection should skip a different id with the same prompt');
 
 const topicQuestions = [
-  { ...question, id: 'topic-recall', skill: 'recall', type: 'recall', difficulty: .35 },
-  { ...question, id: 'topic-recall-2', skill: 'recall', type: 'recall', difficulty: .55 },
-  { ...question, id: 'topic-logic', skill: 'logic', type: 'logic', difficulty: .4 },
-  { ...question, id: 'topic-source', skill: 'source', type: 'source', difficulty: .5 },
+  { ...question, id: 'topic-recall', prompt: 'Themenfrage Abruf eins?', skill: 'recall', type: 'recall', difficulty: .35 },
+  { ...question, id: 'topic-recall-2', prompt: 'Themenfrage Abruf zwei?', skill: 'recall', type: 'recall', difficulty: .55 },
+  { ...question, id: 'topic-logic', prompt: 'Themenfrage Logik?', skill: 'logic', type: 'logic', difficulty: .4 },
+  { ...question, id: 'topic-source', prompt: 'Themenfrage Quelle?', skill: 'source', type: 'source', difficulty: .5 },
 ];
 const owlWeaknessQuestion = engine.chooseNextQuestion({
   questions: topicQuestions,
@@ -50,6 +55,13 @@ const owlWeaknessQuestion = engine.chooseNextQuestion({
   accuracy: 0,
 });
 assert.equal(owlWeaknessQuestion.skill, 'recall', 'the owl should target the weakest skill inside the chosen topic');
+
+const lowSkill = engine.adaptiveQuestionProfile({ skills: { recall: .2, causal: .8 }, topicSkills: ['recall', 'causal'], round: 1 });
+const highSkill = engine.adaptiveQuestionProfile({ skills: { recall: .8, causal: .8 }, topicSkills: ['recall', 'causal'], round: 1 });
+assert.equal(lowSkill.weakestSkill, 'recall');
+assert.equal(highSkill.weakestSkill, 'recall');
+assert.ok(lowSkill.targetDifficulty < highSkill.targetDifficulty, 'question difficulty should rise with the player skill level');
+assert.ok(lowSkill.targetDifficulty >= .2 && highSkill.targetDifficulty <= .95);
 
 const score = engine.calculateMatchScore({ outcome: 1, accuracy: .8, averageDifficulty: .6, fastCorrectRate: .5 });
 assert.ok(score > .5 && score < 1);

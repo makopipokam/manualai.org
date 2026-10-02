@@ -39,26 +39,38 @@
     };
   }
 
+  function adaptiveQuestionProfile({ skills = {}, topicSkills = [], round = 1 }){
+    const scope = topicSkills.length ? [...topicSkills] : Object.keys(skills);
+    const weakestSkill = scope.sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0] || 'recall';
+    const skillLevel = clamp(Number(skills[weakestSkill] ?? .5), 0, 1);
+    const targetDifficulty = clamp(.25 + skillLevel * .7 + Math.min(0.08, Math.max(0, round - 1) * .01), .2, .95);
+    return { weakestSkill, skillLevel, targetDifficulty: Math.round(targetDifficulty * 100) / 100 };
+  }
+
+  function normalizedPrompt(prompt){ return String(prompt || '').trim().toLocaleLowerCase('de'); }
+
   function chooseNextQuestion({ questions, history = [], skills, opponent, round, accuracy = 0, topicSkills = [] }){
     const recent = history.slice(-2).map(item => item.question.id);
-    const used = history.map(item => item.question.id);
-    const skillScope = topicSkills.length ? topicSkills : Object.keys(skills);
-    const weakest = skillScope.sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0];
-    const focus = topicSkills.length ? [weakest]
+    const usedIds = new Set(history.map(item => item.question.id));
+    const usedPrompts = new Set(history.map(item => normalizedPrompt(item.question.prompt)));
+    const profile = adaptiveQuestionProfile({ skills, topicSkills, round });
+    const focus = topicSkills.length ? [profile.weakestSkill]
       : opponent.focus === 'pressure' ? ['recall', 'risk']
       : opponent.focus === 'reasoning' ? ['causal', 'logic', 'source']
-      : [weakest];
+      : [profile.weakestSkill];
     const scopedQuestions = topicSkills.length ? questions.filter(question => topicSkills.includes(question.skill)) : questions;
     let candidates = scopedQuestions.filter(question =>
-      !used.includes(question.id) &&
+      !usedIds.has(question.id) &&
+      !usedPrompts.has(normalizedPrompt(question.prompt)) &&
       (round < 2 || focus.includes(question.skill) || question.type !== history.at(-1)?.question.type)
     );
-    if (!candidates.length) candidates = scopedQuestions.filter(question => !used.includes(question.id));
-    if (!candidates.length) candidates = scopedQuestions.filter(question => !recent.includes(question.id));
-    const target = Math.min(.9, .25 + (round / 10) * .55 + (accuracy < .5 ? -.1 : 0) + (opponent.focus === 'reasoning' ? .08 : 0));
+    if (!candidates.length) candidates = scopedQuestions.filter(question => !usedIds.has(question.id) && !usedPrompts.has(normalizedPrompt(question.prompt)));
+    if (!candidates.length) candidates = scopedQuestions.filter(question => !recent.includes(question.id) && !usedPrompts.has(normalizedPrompt(question.prompt)));
+    if (!candidates.length) candidates = scopedQuestions;
     return [...candidates].sort((a, b) => {
-      const weaknessPriority = topicSkills.length ? Number(a.skill !== weakest) - Number(b.skill !== weakest) : 0;
-      return weaknessPriority || Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target);
+      const weaknessPriority = topicSkills.length ? Number(a.skill !== profile.weakestSkill) - Number(b.skill !== profile.weakestSkill) : 0;
+      const difficultyPriority = Math.abs((a.difficulty ?? .5) - profile.targetDifficulty) - Math.abs((b.difficulty ?? .5) - profile.targetDifficulty);
+      return weaknessPriority || difficultyPriority;
     })[0];
   }
 
@@ -87,5 +99,5 @@
     };
   }
 
-  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewEnergy, calculateResourceRewards };
+  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, adaptiveQuestionProfile, normalizedPrompt, chooseNextQuestion, calculateMatchScore, calculateNewEnergy, calculateResourceRewards };
 });

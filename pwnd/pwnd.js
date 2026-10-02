@@ -5,6 +5,7 @@ const SKILL_NAMES = { recall: 'Abruf', pattern: 'Muster', causal: 'Kausalität',
 const STARTING_RESOURCES = Object.freeze({ energy: 1000, water: 250, air: 120, love: 60 });
 const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' });
 const FREE_OPPONENT_ID = 'owl';
+const QUESTION_API = '/api/pwnd-question';
 const OPPONENTS = {
   redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🦊', focus: 'adaptive', time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
   arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '🦊', focus: 'pressure', time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
@@ -101,6 +102,39 @@ function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')
 function currentOpponent(){ return OPPONENTS[state.match?.opponentId || state.opponentId]; }
 function currentTopic(){ return state.match?.topicId ? TOPICS[state.match.topicId] : TOPICS[state.selectedTopicId]; }
 function weightedQuestion(){ const match = state.match; return PwndEngine.chooseNextQuestion({ questions: QUESTIONS, history: match.history, skills: match.skills, opponent: currentOpponent(), round: match.round, accuracy: match.accuracy, topicSkills: match.topicId ? TOPICS[match.topicId].skills : [] }); }
+function isUsableQuestion(question, match){
+  if (!question || typeof question.prompt !== 'string' || !Array.isArray(question.options) || question.options.length !== 4) return false;
+  if (!Number.isInteger(question.answer) || question.answer < 0 || question.answer > 3) return false;
+  const usedIds = new Set(match.history.map(entry => entry.question.id));
+  const usedPrompts = new Set(match.history.map(entry => PwndEngine.normalizedPrompt(entry.question.prompt)));
+  return !usedIds.has(question.id) && !usedPrompts.has(PwndEngine.normalizedPrompt(question.prompt));
+}
+function showQuestionLoading(match){
+  setText('questionType', 'KI-FRAGE · EULE DENKT');
+  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Karte …');
+  setText('questionHint', 'Dein Skill-Level wird berücksichtigt.');
+  setText('aiComment', 'Die Eule sucht eine neue, noch nicht gespielte Frage.');
+  $('answers').innerHTML = '';
+  $('lockBtn').disabled = true;
+  setText('roundNo', match.round);
+}
+async function requestAiQuestion(match){
+  const topic = TOPICS[match.topicId];
+  const profile = PwndEngine.adaptiveQuestionProfile({ skills: match.skills, topicSkills: topic.skills, round: match.round });
+  const excludeIds = match.history.map(entry => entry.question.id);
+  const excludePrompts = match.history.map(entry => entry.question.prompt);
+  try {
+    const response = await fetch(QUESTION_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topicId: match.topicId, skills: match.skills, weakestSkill: profile.weakestSkill, targetDifficulty: profile.targetDifficulty, excludeIds, excludePrompts }) });
+    if (!response.ok) throw new Error(`question API ${response.status}`);
+    const payload = await response.json();
+    if (isUsableQuestion(payload.question, match)) { match.aiQuestionCount += 1; return payload.question; }
+    throw new Error('invalid or repeated question');
+  } catch (error) {
+    console.warn('KI-Frage nicht verfügbar, Offline-Karte wird verwendet:', error);
+    match.aiFallbackCount += 1;
+    return weightedQuestion();
+  }
+}
 function selectFreeTopic(id){
   if (!TOPICS[id] || !state.pendingTopicIds.includes(id)) return;
   state.selectedTopicId = id;
@@ -133,7 +167,7 @@ function startMatch(mode = 'duel', topicId = null){
   state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
   const opponentId = mode === 'free' ? FREE_OPPONENT_ID : state.opponentId;
   const selectedTopicId = mode === 'free' ? (topicId || state.selectedTopicId || Object.keys(TOPICS)[0]) : null;
-  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode };
+  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
   document.body.classList.toggle('free-mode', mode === 'free');
   setText('roundTotal', state.match.total);
   updateResourceDisplays();
@@ -149,13 +183,16 @@ function updateOpponentHeader(){
   setText('opponentSpecies', opponent.species);
   setText('opponentAvatar', opponent.avatar);
 }
-function nextQuestion(){
+async function nextQuestion(){
   const match = state.match;
   if (match.round >= match.total) return finishMatch();
   match.round += 1;
-  match.current = weightedQuestion();
   match.selected = null;
   match.submitted = false;
+  showQuestionLoading(match);
+  show('screenBattle');
+  match.current = match.mode === 'free' ? await requestAiQuestion(match) : weightedQuestion();
+  if (state.match !== match || !match.current) return;
   renderBattle();
   startTimer(Math.round(match.current.time * currentOpponent().time) + (state.mods.time || 0));
 }
@@ -163,10 +200,10 @@ function renderBattle(){
   const match = state.match;
   const question = match.current;
   setText('roundNo', match.round);
-  setText('questionType', TYPE_NAMES[question.type]);
+  setText('questionType', `${question.source === 'ai' ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
   setText('topicLabel', match.mode === 'free' ? `· ${TOPICS[match.topicId].name}` : '');
   setText('questionTitle', question.prompt);
-  setText('questionHint', match.mode === 'free' ? 'Wähle in deinem eigenen Tempo.' : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
+  setText('questionHint', match.mode === 'free' ? (question.source === 'ai' ? 'KI-Frage · keine Wiederholung in dieser Runde.' : 'Offline-Karte · keine Wiederholung in dieser Runde.') : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
   setText('comboText', `COMBO ${match.combo}`);
   setText('skillProfile', `${SKILL_NAMES[weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
   $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;
@@ -176,7 +213,8 @@ function renderBattle(){
   $('lockBtn').disabled = true;
   $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
   document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
-  setText('aiComment', match.round === 1 ? currentOpponent().intro : adaptiveComment(match));
+  const fallbackNote = match.aiFallbackCount > 0 && match.mode === 'free' ? ' · Offline-Fallback aktiv' : '';
+  setText('aiComment', match.round === 1 ? currentOpponent().intro + fallbackNote : adaptiveComment(match) + fallbackNote);
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
 function adaptiveComment(match){
