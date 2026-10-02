@@ -16,3 +16,4 @@ Die Web-Beta nutzt vier dauerhaft gespeicherte Ressourcen. Sie ersetzen die frü
 - Freies Quizzen erzeugt verlässliche Ressourcen. Erfolgreiche Duelle belohnen Wasser, Luft und Liebe stärker.
 - Jede Wachstumsfreischaltung prüft alle vier Ressourcen. Dadurch entsteht kein einzelner dominanter Wert.
 - Bestehende lokale Spielstände werden beim ersten Laden migriert: `ip` wird zu Energie, `elixir` zu Wasser; Luft und Liebe starten mit den neuen Standardwerten.
+- Das gespeicherte Profil verwendet `resourceVersion: 2`, damit zukünftige Änderungen am Ressourcenschema eindeutig migriert werden können.
