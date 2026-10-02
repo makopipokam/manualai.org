@@ -37,10 +37,6 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 - Social Media Integration (Twitter, Facebook, WhatsApp)
 - Direkte Links zu einzelnen Hunden
 
-### 🌓 Dark Mode
-- Toggle zwischen Licht- und Dunkelmodus
-- Persistente Einstellung
-
 ### 📱 PWA (Progressive Web App)
 - Installierbar auf Mobilgeräten
 - Offline-App-Shell nach einem erfolgreichen Online-Besuch
@@ -57,7 +53,7 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 ## 🛠 Technologien
 
 - **HTML5** - Struktur
-- **CSS3** - Styling mit Variablen für Dark Mode
+- **CSS3** - Responsives Styling mit Variablen
 - **JavaScript (ES6+)** - Logik und Interaktivität
 - **Local Storage** - Datenpersistenz
 - **Service Worker** - PWA Unterstützung

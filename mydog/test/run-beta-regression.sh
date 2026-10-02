@@ -24,6 +24,13 @@ for _ in $(seq 1 30); do
 done
 curl -fsS "$URL" >/dev/null
 
+if grep -qE 'dark-mode|darkMode|toggleDark|updateDark|data-theme|Dark Mode' \
+  "$ROOT/mydog/index.html" "$ROOT/mydog/script.js" "$ROOT/mydog/style.css" "$ROOT/mydog/test/beta-regression.html"; then
+  echo 'theme-removal: FAIL | dark-mode code or markup remains' >&2
+  exit 1
+fi
+echo 'theme-removal: PASS | light theme is the only supported mode'
+
 python3 - "$ROOT/mydog/data.js" <<'PY'
 from pathlib import Path
 import re

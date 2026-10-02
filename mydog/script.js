@@ -23,7 +23,6 @@ let appState = {
         trainability: [],
         grooming: []
     },
-    darkMode: false,
     lastResult: null
 };
 
@@ -100,15 +99,13 @@ const elements = {
     shareModal: document.getElementById('share-modal'),
     shareLinkInput: document.getElementById('share-link-input'),
     copyLinkBtn: document.getElementById('copy-link-btn'),
-    closeModalBtn: document.querySelector('.close-btn'),
-    darkModeToggle: document.getElementById('dark-mode-toggle')
+    closeModalBtn: document.querySelector('.close-btn')
 };
 
 // Initialize the application
 function init() {
     loadState();
     setupEventListeners();
-    updateDarkMode();
     renderSavedResult();
     showScreen('start');
 }
@@ -120,7 +117,6 @@ function loadState() {
         try {
             const state = JSON.parse(savedState);
             appState.favorites = Array.isArray(state.favorites) ? state.favorites : [];
-            appState.darkMode = state.darkMode || false;
             appState.userAnswers = Array.isArray(state.userAnswers) ? state.userAnswers : [];
             appState.currentQuestion = state.currentQuestion || 0;
             appState.lastResult = state.lastResult || null;
@@ -134,7 +130,6 @@ function loadState() {
 function saveState() {
     const state = {
         favorites: appState.favorites,
-        darkMode: appState.darkMode,
         userAnswers: appState.userAnswers,
         currentQuestion: appState.currentQuestion,
         lastResult: appState.lastResult
@@ -184,9 +179,6 @@ function setupEventListeners() {
             sendMessage();
         });
     });
-    
-    // Dark mode toggle
-    elements.darkModeToggle.addEventListener('click', toggleDarkMode);
     
     // Close modal on outside click
     elements.shareModal.addEventListener('click', (e) => {
@@ -1026,24 +1018,6 @@ function generateChatResponse(message) {
     }
     
     return `Das ist eine interessante Frage! Als ${dogName} kann ich dazu sagen: Ich bin ein toller Hund!`;
-}
-
-// Toggle dark mode
-function toggleDarkMode() {
-    appState.darkMode = !appState.darkMode;
-    updateDarkMode();
-    saveState();
-}
-
-// Update dark mode
-function updateDarkMode() {
-    if (appState.darkMode) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        elements.darkModeToggle.textContent = '☀️';
-    } else {
-        document.documentElement.removeAttribute('data-theme');
-        elements.darkModeToggle.textContent = '🌓';
-    }
 }
 
 // Show toast notification
