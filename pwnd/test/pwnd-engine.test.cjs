@@ -5,10 +5,30 @@ const path = require('node:path');
 const context = { console };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'pwnd-engine.js'), 'utf8'), context);
 const engine = context.PwndEngine;
+const aiContext = { globalThis: {} };
+vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'pwnd-ai-questions.js'), 'utf8'), aiContext);
+const aiQuestions = aiContext.globalThis.PWND_AI_QUESTIONS;
 const appSource = fs.readFileSync(path.join(__dirname, '..', 'pwnd.js'), 'utf8');
 const apiSource = fs.readFileSync(path.join(__dirname, '..', '..', 'api', 'pwnd-question.js'), 'utf8');
 const questionIds = [...appSource.matchAll(/\{ id:'([^']+)', type:/g)].map(match => match[1]);
 assert.ok(new Set(questionIds).size >= 30, 'the pwnd question pool should contain at least 30 unique questions');
+assert.equal(aiQuestions.length, 48, 'the AI fallback pool should contain 48 questions');
+assert.equal(new Set(aiQuestions.map(question => question.prompt.trim().toLocaleLowerCase('de'))).size, 48, 'AI prompts must be unique');
+for (const question of aiQuestions) {
+  assert.equal(question.options.length, 4, 'AI questions must have four answer options');
+  assert.ok(question.answer >= 0 && question.answer < 4, 'AI answer index must be valid');
+}
+for (const topicId of ['nature', 'patterns', 'sources', 'decisions', 'world', 'reasoning']) {
+  const topicQuestions = aiQuestions.filter(question => question.topicId === topicId);
+  assert.equal(topicQuestions.length, 8, `${topicId} should have eight AI questions`);
+  const history = [];
+  for (let round = 1; round <= 8; round += 1) {
+    const next = engine.chooseNextQuestion({ questions: topicQuestions, history, skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, topicSkills: [...new Set(topicQuestions.map(question => question.skill))], opponent: { focus: 'reasoning' }, round, accuracy: .5 });
+    assert.ok(next, `${topicId} should yield a question in round ${round}`);
+    assert.ok(!history.some(item => item.question.id === next.id), `${topicId} must not repeat question ${next.id}`);
+    history.push({ question: next, correct: true });
+  }
+}
 assert.match(apiSource, /excludePrompts/, 'the AI endpoint must receive previously used prompts');
 assert.match(apiSource, /options.*length !== 4/, 'the AI endpoint must validate four answer options');
 

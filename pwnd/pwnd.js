@@ -66,6 +66,7 @@ const QUESTIONS = [
   { id:'risk2', type:'risk', skill:'risk', difficulty:.7, time:12000, prompt:'Die AI greift wiederholt deine Logikschwäche an. Was ist die intelligenteste Vorbereitung?', options:['Nur noch schnelle Fakten raten.','Ein Upgrade wählen, das Fehlerfolgen begrenzt.','Die Schwäche ignorieren.','Die Zeit immer weiter verkürzen.'], answer:1, explanation:'Die eigene Schwäche zu erkennen und ihre Konsequenzen zu begrenzen ist eine strategische Reaktion.' },
   { id:'risk3', type:'risk', skill:'risk', difficulty:.6, time:14000, prompt:'Du hast wenig Lebenspunkte, aber die nächste Frage wirkt vertraut. Was ist die beste Entscheidung?', options:['Antwort blind erzwingen.','Kurz prüfen, ob die Sicherheit echt ist, und dann bewusst antworten.','Immer aufgeben.','Die Uhr ignorieren.'], answer:1, explanation:'Bei wenig Lebenspunkten zählt nicht Panik, sondern eine kurze Prüfung der eigenen Sicherheit.' },
   { id:'risk4', type:'risk', skill:'risk', difficulty:.78, time:14000, prompt:'Eine schwierige Frage bietet eine große Belohnung. Was gehört zu einer guten Risikoentscheidung?', options:['Nur die Belohnung ansehen.','Wahrscheinlichkeit, Verlust und aktuelle Lage gemeinsam abwägen.','Risiko grundsätzlich vermeiden.','Zufall als Strategie nehmen.'], answer:1, explanation:'Gute Entscheidungen berücksichtigen Gewinn, Verlustwahrscheinlichkeit und den aktuellen Spielstand.' },
+  ...((globalThis.PWND_AI_QUESTIONS || []).filter(question => question && question.id && question.prompt)),
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
@@ -109,6 +110,11 @@ function isUsableQuestion(question, match){
   const usedPrompts = new Set(match.history.map(entry => PwndEngine.normalizedPrompt(entry.question.prompt)));
   return !usedIds.has(question.id) && !usedPrompts.has(PwndEngine.normalizedPrompt(question.prompt));
 }
+function staticAiQuestion(match){
+  const topic = TOPICS[match.topicId];
+  const pool = (globalThis.PWND_AI_QUESTIONS || []).filter(question => question.topicId === match.topicId);
+  return pool.length ? PwndEngine.chooseNextQuestion({ questions: pool, history: match.history, skills: match.skills, opponent: currentOpponent(), round: match.round, accuracy: match.accuracy, topicSkills: topic.skills }) : null;
+}
 function showQuestionLoading(match){
   setText('questionType', 'KI-FRAGE · EULE DENKT');
   setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Karte …');
@@ -132,7 +138,7 @@ async function requestAiQuestion(match){
   } catch (error) {
     console.warn('KI-Frage nicht verfügbar, Offline-Karte wird verwendet:', error);
     match.aiFallbackCount += 1;
-    return weightedQuestion();
+    return staticAiQuestion(match) || weightedQuestion();
   }
 }
 function selectFreeTopic(id){
@@ -200,10 +206,11 @@ function renderBattle(){
   const match = state.match;
   const question = match.current;
   setText('roundNo', match.round);
-  setText('questionType', `${question.source === 'ai' ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
+  const aiQuestion = String(question.source || '').startsWith('ai');
+  setText('questionType', `${aiQuestion ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
   setText('topicLabel', match.mode === 'free' ? `· ${TOPICS[match.topicId].name}` : '');
   setText('questionTitle', question.prompt);
-  setText('questionHint', match.mode === 'free' ? (question.source === 'ai' ? 'KI-Frage · keine Wiederholung in dieser Runde.' : 'Offline-Karte · keine Wiederholung in dieser Runde.') : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
+  setText('questionHint', match.mode === 'free' ? (aiQuestion ? 'KI-Frage · keine Wiederholung in dieser Runde.' : 'Offline-Karte · keine Wiederholung in dieser Runde.') : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
   setText('comboText', `COMBO ${match.combo}`);
   setText('skillProfile', `${SKILL_NAMES[weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
   $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;

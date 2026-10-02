@@ -1,6 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { allowed, hasOwn, textOf, parseJson } from "./_lib.js";
+import { allowed, textOf, parseJson } from "./_lib.js";
 import { createHash } from "node:crypto";
+import staticQuestions from "../pwnd/pwnd-ai-questions.json" with { type: "json" };
 
 const client = new Anthropic();
 const MODEL = "claude-haiku-4-5-20251001";
@@ -27,11 +28,15 @@ function cleanExclusions(value, maxLength) {
     : [];
 }
 
+function normalizedPrompt(prompt) {
+  return String(prompt || "").trim().toLocaleLowerCase("de");
+}
+
 function validQuestion(value, topic) {
   if (!value || typeof value !== "object") return false;
   if (typeof value.prompt !== "string" || value.prompt.trim().length < 18 || value.prompt.length > 260) return false;
   if (!SKILLS.includes(value.skill) || !topic.skills.includes(value.skill)) return false;
-  if (!TYPES.includes(value.type)) return false;
+  if (!TYPES.includes(value.type) || value.type !== value.skill) return false;
   if (!Array.isArray(value.options) || value.options.length !== 4) return false;
   if (value.options.some((option) => typeof option !== "string" || option.trim().length < 1 || option.length > 180)) return false;
   if (new Set(value.options.map((option) => option.trim().toLocaleLowerCase("de"))).size !== 4) return false;
@@ -41,7 +46,19 @@ function validQuestion(value, topic) {
 }
 
 function questionId(prompt) {
-  return "ai-" + createHash("sha256").update(prompt.trim().toLocaleLowerCase("de")).digest("hex").slice(0, 16);
+  return "ai-" + createHash("sha256").update(normalizedPrompt(prompt)).digest("hex").slice(0, 16);
+}
+
+function chooseStaticQuestion({ topicId, weakestSkill, targetDifficulty, excludedIds, excludedPrompts }) {
+  const excludedPromptSet = new Set(excludedPrompts.map(normalizedPrompt));
+  const unused = staticQuestions.filter((question) =>
+    question.topicId === topicId &&
+    !excludedIds.includes(question.id) &&
+    !excludedPromptSet.has(normalizedPrompt(question.prompt))
+  );
+  const skillPool = unused.filter((question) => question.skill === weakestSkill);
+  const candidates = skillPool.length ? skillPool : unused;
+  return [...candidates].sort((a, b) => Math.abs(a.difficulty - targetDifficulty) - Math.abs(b.difficulty - targetDifficulty))[0] || null;
 }
 
 export default async function handler(req, res) {
@@ -58,8 +75,10 @@ export default async function handler(req, res) {
   const gate = await allowed(req, "pwnd-question", VISITOR_LIMIT, GLOBAL_LIMIT);
   if (!gate.ok) return res.status(429).json({ error: "limit", scope: gate.scope });
 
+  const staticFallback = chooseStaticQuestion({ topicId: body.topicId, weakestSkill, targetDifficulty, excludedIds, excludedPrompts });
   const skillSnapshot = topic.skills.map((skill) => `${skill}: ${clamp(Number(skills[skill]), 0, 1).toFixed(2)}`).join(", ");
   const excluded = excludedPrompts.length ? `Bereits verwendete Fragen, die du weder wiederholen noch eng paraphrasieren darfst:\n${excludedPrompts.map((prompt, index) => `${index + 1}. ${prompt}`).join("\n")}` : "Es gibt noch keine verwendeten Fragen.";
+
   try {
     const response = await client.messages.create({
       model: MODEL,
@@ -68,19 +87,18 @@ export default async function handler(req, res) {
 Thema: ${topic.name}. Zielkompetenz: ${weakestSkill}. Kompetenzwerte des Spielers im Thema: ${skillSnapshot}. Zielschwierigkeit: ${targetDifficulty.toFixed(2)} auf einer Skala von 0 bis 1.
 Passe die Schwierigkeit an: niedrige Kompetenzwerte bekommen klare, lösbare Fragen; hohe Werte bekommen mehrschrittige oder nuanciertere Fragen. Bleibe bei überprüfbaren Fakten oder sauberer Logik. Keine politischen Überzeugungsfragen, keine medizinischen Diagnosen, keine aktuellen Detailbehauptungen und keine mehrdeutigen Antworten.
 Die vier Optionen müssen kurz, eindeutig und plausibel sein; genau eine Option ist richtig. Schreibe auf Deutsch. Antworte ausschließlich als JSON ohne Markdown:
-{"type":"recall|pattern|causal|logic|source|risk","skill":"${weakestSkill}","difficulty":0.0,"prompt":"...","options":["...","...","...","..."],"answer":0,"explanation":"Kurze Begründung."}
+{"type":"${weakestSkill}","skill":"${weakestSkill}","difficulty":0.0,"prompt":"...","options":["...","...","...","..."],"answer":0,"explanation":"Kurze Begründung."}
 ${excluded}`,
       messages: [{ role: "user", content: "Erzeuge jetzt die nächste neue Frage." }],
     });
     const question = parseJson(textOf(response));
-    if (!validQuestion(question, topic)) return res.status(502).json({ error: "Invalid generated question" });
+    if (!validQuestion(question, topic)) throw new Error("Invalid generated question");
     const id = questionId(question.prompt);
-    if (excludedIds.includes(id) || excludedPrompts.some((prompt) => prompt.toLocaleLowerCase("de") === question.prompt.trim().toLocaleLowerCase("de"))) {
-      return res.status(409).json({ error: "Repeated generated question" });
-    }
+    if (excludedIds.includes(id) || excludedPrompts.some((prompt) => normalizedPrompt(prompt) === normalizedPrompt(question.prompt))) throw new Error("Repeated generated question");
     return res.json({ question: { ...question, id, source: "ai", difficulty: clamp(Number(question.difficulty), .2, .95), time: 12000 } });
   } catch (error) {
-    console.error("pwnd question generation failed:", error);
-    return res.status(500).json({ error: "Question generation failed" });
+    console.error("pwnd question generation failed, serving static AI fallback:", error);
+    if (staticFallback) return res.json({ question: staticFallback, fallback: true });
+    return res.status(503).json({ error: "Question generation unavailable" });
   }
 }
