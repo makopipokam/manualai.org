@@ -989,6 +989,11 @@ body {
     font-size: 0.88rem;
 }
 
+.share-dog-summary [hidden],
+.share-image-preview-copy [hidden] {
+    display: none !important;
+}
+
 .share-image-editor {
     display: grid;
     gap: 12px;

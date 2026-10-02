@@ -104,6 +104,13 @@
       await wait(1200);
       assert(transitionImage?.style.visibility === 'hidden' || transitionImage?.getAttribute('src') !== firstDogImage, 'next dog does not retain the previous image');
       assert([...page.querySelectorAll('.dog-image.thumbnail')].every(image => image.style.visibility !== 'hidden' || image.style.display === 'none'), 'deferred thumbnails do not reserve blank layout space');
+      // Deferred thumbnails used to stay hidden forever because hidden images never intersect.
+      let loadedThumbs = 0;
+      for (let attempt = 0; attempt < 12 && loadedThumbs < 3; attempt++) {
+        await wait(200);
+        loadedThumbs = [...page.querySelectorAll('.dog-image.thumbnail')].filter(image => image.dataset.loaded && image.style.display !== 'none').length;
+      }
+      assert(loadedThumbs >= 3, `gallery thumbnails beyond the first photo load (loaded=${loadedThumbs})`);
 
       click('#chat-btn');
       assert(active() === 'chat-screen', 'chat opens from a result profile');
@@ -115,6 +122,7 @@
       click('#back-to-results-btn');
       assert(active() === 'results-screen', 'chat returns to the result profile');
 
+      page.querySelector('#share-btn')?.focus();
       click('#share-btn');
       assert(page.querySelector('#share-modal').classList.contains('active') || typeof app.navigator.share === 'function', 'share action opens native share or fallback dialog');
       assert(typeof app.getShareData === 'function', 'share data builder is available');
@@ -123,6 +131,9 @@
       assert(shareData.title.includes(page.querySelector('#dog-name').textContent), 'share title contains the current dog name');
       if (page.querySelector('#share-modal').classList.contains('active')) {
         assert(page.querySelector('#share-dog-name').textContent === page.querySelector('#dog-name').textContent, 'share dialog identifies the current dog');
+        const shareBreed = page.querySelector('#share-dog-breed');
+        assert(shareBreed.hidden || shareBreed.textContent.trim() !== page.querySelector('#share-dog-name').textContent.trim(), 'share dialog does not repeat the breed when it equals the name');
+        assert(page.querySelector('#share-modal').contains(page.activeElement), 'opening the share dialog moves focus into it');
         assert(page.querySelector('#share-link-input').value === shareData.url, 'share dialog contains the canonical dog URL');
         assert(typeof app.getShareImageState === 'function', 'share image state is available');
         assert(page.querySelector('#share-image-preview').alt.includes(page.querySelector('#dog-name').textContent), 'share preview uses the current dog');
@@ -133,6 +144,9 @@
         assert(shareImageState.source && shareImageState.caption, 'share image state contains photo and caption');
         assert(page.querySelectorAll('.social-share-buttons button').length === 3, 'social share fallbacks render');
         assert(!page.querySelector('[onclick*="shareOn"]'), 'share controls use event listeners instead of inline handlers');
+        page.dispatchEvent(new app.KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        assert(!page.querySelector('#share-modal').classList.contains('active'), 'Escape closes the share dialog');
+        assert(page.activeElement?.id === 'share-btn', 'closing the share dialog returns focus to the share button');
       }
       click('.close-btn');
 
@@ -142,6 +156,9 @@
       app.showFavorites();
       assert(active() === 'favorites-screen', 'favorites overview opens');
       assert(page.querySelectorAll('.favorite-card').length === 1, 'favorite card renders');
+      const favoriteCard = page.querySelector('.favorite-card');
+      const favoriteBreed = favoriteCard.querySelector('.breed');
+      assert(!favoriteBreed || favoriteBreed.textContent.trim() !== favoriteCard.querySelector('h3').textContent.trim(), 'favorite card does not repeat the dog name as breed');
       assert(page.querySelector('#favorites-count').textContent === '1', 'favorite count renders');
       assert(page.querySelector('.favorite-card .rating')?.textContent.includes('Eignung'), 'favorite stars are labeled as suitability');
       assert(getComputedStyle(page.querySelector('.favorites-header h2')).color !== 'rgb(76, 175, 80)', 'favorites overview has its own color');
