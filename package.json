@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "test": "npm run test:pwnd",
+    "test": "npm run test:pwnd && npm run test:catsdogs",
     "test:pwnd": "node pwnd/test/pwnd-engine.test.cjs && node pwnd/test/pwnd-api.test.mjs",
+    "test:catsdogs": "node catsdogs/deploy.test.mjs",
     "test:mydog:beta": "bash mydog/test/run-beta-regression.sh",
     "test:mydog:images": "python3 mydog/test/image-regression.py"
   },
