@@ -28,6 +28,8 @@ assert.match(script, /function orientation\(\)/);
 assert.match(script, /function quiz\(i,a\)/);
 assert.match(script, /<h3>Wie alt bist du\?<\/h3><div class="row">/);
 assert.doesNotMatch(script, /Du siehst dein echtes Alter mit Tierjahren/);
+assert.match(script, /a\.textContent=\(S\.ageBands&&S\.ageBands\[oid\]\)\|\|AG\[ageGroup\(Number\(o\.age\)\)\]/);
+assert.doesNotMatch(script, /Altersspanne des Gegenübers:/);
 assert.match(script, /rpc\('submit_cats_dogs_feedback'/);
 assert.match(script, /ba=testMode\?\(U\.an=='dog'\?'cat':'dog'\)/);
 assert.ok(fs.statSync(path.join(dir, 'vendor', 'supabase.js')).size > 150000);
