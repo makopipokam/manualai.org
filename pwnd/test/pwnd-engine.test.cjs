@@ -10,6 +10,19 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '..', 'pwnd-ai-questions
 const aiQuestions = aiContext.globalThis.PWND_AI_QUESTIONS;
 const appSource = fs.readFileSync(path.join(__dirname, '..', 'pwnd.js'), 'utf8');
 const apiSource = fs.readFileSync(path.join(__dirname, '..', '..', 'api', 'pwnd-question.js'), 'utf8');
+const pageSource = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
+assert.match(pageSource, /Ressourcen sammeln/, 'the pond activity must be called resources');
+assert.doesNotMatch(pageSource, /ENERGIE · WASSER · LUFT · LIEBE/, 'the growth map should show the four symbols instead of resource names');
+assert.match(pageSource, /growth-resource-legend[^>]*role="img"/, 'the growth legend must group all four resources');
+assert.match(appSource, /class="unlock-costs"/, 'growth costs must render as grouped resource values');
+assert.doesNotMatch(pageSource, /duel-start-glyph|▶/, 'the LOS buttons must not contain a play symbol');
+for (const species of ['red', 'arctic', 'fennec']) {
+  const portrait = `assets/${species}-fox.webp`;
+  assert.ok(fs.statSync(path.join(__dirname, '..', portrait)).size > 10000, `${species} fox portrait must be a real optimized image`);
+  assert.ok(pageSource.includes(portrait), `${species} fox portrait must appear on the selection screen`);
+  assert.ok(appSource.includes(portrait), `${species} fox portrait must follow the opponent into the match`);
+}
+assert.doesNotMatch(pageSource, /Vulpes vulpes|Vulpes lagopus|Vulpes zerda/, 'tiny Latin metadata should be removed from the opponent UI');
 const questionIds = [...appSource.matchAll(/\{ id:'([^']+)', type:/g)].map(match => match[1]);
 assert.ok(new Set(questionIds).size >= 30, 'the pwnd question pool should contain at least 30 unique questions');
 assert.equal(aiQuestions.length, 48, 'the AI fallback pool should contain 48 questions');

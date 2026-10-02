@@ -8,9 +8,9 @@ const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
 const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
 const OPPONENTS = {
-  redfox: { name: 'ROTFUCHS', species: 'Vulpes vulpes', avatar: '🔥🦊', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
-  arcticfox: { name: 'POLARFUCHS', species: 'Vulpes lagopus', avatar: '❄️🦊', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
-  fennec: { name: 'FENNEK', species: 'Vulpes zerda', avatar: '🌙🦊', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
+  redfox: { name: 'ROTFUCHS', portrait: 'assets/red-fox.webp', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
+  arcticfox: { name: 'POLARFUCHS', portrait: 'assets/arctic-fox.webp', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
+  fennec: { name: 'FENNEK', portrait: 'assets/fennec-fox.webp', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
   owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
 };
 const TOPICS = {
@@ -99,13 +99,26 @@ const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','
 const resourceIds = { energy: ['pondEnergy', 'playerEnergy'], water: ['pondWater', 'playerWater'], air: ['pondAir', 'playerAir'], love: ['pondLove', 'playerLove'] };
 
 function setText(id, value){ const element = $(id); if (element) element.textContent = value; }
+function setOpponentPortrait(id, opponent){
+  const element = $(id);
+  if (!opponent.portrait) { element.textContent = opponent.avatar; return; }
+  const image = document.createElement('img');
+  image.src = opponent.portrait;
+  image.alt = '';
+  image.decoding = 'async';
+  element.replaceChildren(image);
+}
 function formatResource(value){ return Math.round(value); }
 function save(){
   localStorage.setItem('pwnd-profile', JSON.stringify({ resourceVersion: 2, energy: formatResource(state.energy), water: formatResource(state.water), air: formatResource(state.air), love: formatResource(state.love), calibration: state.calibration, skillProfile: normalizeSkillProfile(state.skillProfile), upgrades: state.upgrades, unlocked: state.unlocked }));
 }
 if (saved && !saved.resourceVersion) save();
 function updateResourceDisplays(){ Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource])))); }
-function formatCost(cost){ return ['energy', 'water', 'air', 'love'].map(resource => `${RESOURCE_SYMBOLS[resource]} ${cost[resource]}`).join(' · '); }
+function formatCost(cost){
+  return `<span class="unlock-costs">${['energy', 'water', 'air', 'love'].map(resource =>
+    `<span class="unlock-cost"><span aria-hidden="true">${RESOURCE_SYMBOLS[resource]}</span><span class="sr-only">${RESOURCE_NAMES[resource]}: </span>${cost[resource]}</span>`
+  ).join('')}</span>`;
+}
 function canAfford(cost){ return Object.entries(cost).every(([resource, value]) => state[resource] >= value); }
 function show(id){ screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); window.scrollTo(0, 0); }
 function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
@@ -183,7 +196,7 @@ function startLaunchCountdown(){
   const screen = $('screenDuelCountdown');
   screen.dataset.opponent = match.opponentId;
   document.body.dataset.duelOpponent = match.opponentId;
-  setText('countdownAvatar', opponent.avatar);
+  setOpponentPortrait('countdownAvatar', opponent);
   setText('countdownOpponent', opponent.name);
   setText('countdownTitle', free ? 'Die Eule erwacht.' : 'Der Teich ruft.');
   setText('countdownCopy', free ? `${opponent.intro} Thema: ${TOPICS[match.topicId].name}.` : opponent.intro);
@@ -247,8 +260,7 @@ function startMatch(mode = 'duel', topicId = null){
 function updateOpponentHeader(){
   const opponent = currentOpponent();
   setText('opponentLabel', opponent.name);
-  setText('opponentSpecies', opponent.species);
-  setText('opponentAvatar', opponent.avatar);
+  setOpponentPortrait('opponentAvatar', opponent);
 }
 async function nextQuestion(){
   const match = state.match;
