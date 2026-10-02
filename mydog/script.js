@@ -35,6 +35,7 @@ let appState = {
 let imageLoadToken = 0;
 let imageObserver = null;
 let shareModalReturnFocus = null;
+let shareImageDebounceTimer = null;
 const SCORING_VERSION = 3;
 
 // DOM Elements
@@ -1012,7 +1013,7 @@ function handleShareImageSourceChange() {
     appState.shareImageFile = null;
     appState.shareImageKey = null;
     updateShareImagePreview();
-    setShareStatus('Foto ausgewählt – beim Speichern oder Teilen wird das Bild aktualisiert.');
+    queueShareImagePreparation(appState.currentDog);
 }
 
 function handleShareImageCaptionChange() {
@@ -1021,7 +1022,29 @@ function handleShareImageCaptionChange() {
     appState.shareImageFile = null;
     appState.shareImageKey = null;
     updateShareImagePreview();
-    setShareStatus('Text übernommen – beim Speichern oder Teilen wird das Bild aktualisiert.');
+    // Avoid rendering a 1200×630 PNG for every keystroke.
+    queueShareImagePreparation(appState.currentDog, 350);
+}
+
+function queueShareImagePreparation(dog, delay = 0) {
+    clearTimeout(shareImageDebounceTimer);
+    shareImageDebounceTimer = null;
+    const key = getShareImageKey(dog);
+    elements.nativeShareBtn.disabled = true;
+    setShareStatus('Share-Bild wird vorbereitet …');
+    const prepare = () => {
+        shareImageDebounceTimer = null;
+        void prepareShareImageFile(dog).then(file => {
+            // A previous photo/caption may finish after the editor has moved on.
+            if (!elements.shareModal.classList.contains('active') || appState.currentDog?.id !== dog.id || getShareImageKey(dog) !== key) return;
+            elements.nativeShareBtn.disabled = !file;
+            setShareStatus(file
+                ? 'Share-Bild bereit – du kannst es speichern oder direkt teilen.'
+                : 'Das Foto kann nicht als Bild exportiert werden. Der Link bleibt verfügbar.');
+        });
+    };
+    if (delay) shareImageDebounceTimer = setTimeout(prepare, delay);
+    else prepare();
 }
 
 // Open the share editor for browsers without native file sharing, or before preparing a share image.
@@ -1036,7 +1059,6 @@ function openShareModal() {
     elements.shareDogBreed.hidden = !breedSubtitle;
     elements.shareLinkInput.value = shareData.url;
     elements.nativeShareBtn.hidden = typeof navigator.share !== 'function';
-    elements.shareStatus.textContent = 'Share-Bild wird vorbereitet …';
     renderShareImageEditor(dog);
     if (!elements.shareModal.classList.contains('active')) {
         shareModalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
@@ -1045,13 +1067,7 @@ function openShareModal() {
     // Move keyboard and screen-reader focus into the dialog.
     const closeButton = elements.shareModal.querySelector('.close-btn');
     if (closeButton) closeButton.focus({ preventScroll: true });
-    void prepareShareImageFile(dog).then(file => {
-        if (file && elements.shareModal.classList.contains('active')) {
-            setShareStatus('Share-Bild bereit – du kannst es speichern oder direkt teilen.');
-        } else if (!file && elements.shareModal.classList.contains('active')) {
-            setShareStatus('Das Foto kann nicht als Bild exportiert werden. Der Link bleibt verfügbar.');
-        }
-    });
+    queueShareImagePreparation(dog);
 }
 
 function getShareUrl(dog = appState.currentDog) {
@@ -1244,7 +1260,7 @@ async function shareCurrentDog() {
     const key = getShareImageKey(dog);
     if (!appState.shareImageFile || appState.shareImageKey !== key) {
         if (!elements.shareModal.classList.contains('active')) openShareModal();
-        setShareStatus('Share-Bild wird vorbereitet … Tippe danach auf „Direkt teilen“.');
+        else queueShareImagePreparation(dog);
         return;
     }
 
@@ -1255,6 +1271,8 @@ async function shareCurrentDog() {
 function closeShareModal() {
     const wasOpen = elements.shareModal.classList.contains('active');
     elements.shareModal.classList.remove('active');
+    clearTimeout(shareImageDebounceTimer);
+    shareImageDebounceTimer = null;
     if (wasOpen && shareModalReturnFocus && document.contains(shareModalReturnFocus)) {
         shareModalReturnFocus.focus({ preventScroll: true });
     }
