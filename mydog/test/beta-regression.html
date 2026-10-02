@@ -210,6 +210,8 @@
       assert(active() === 'no-more-screen', 'all-breed catalogue ends on the completion screen');
       assert(page.querySelector('#no-more-screen h2')?.textContent.includes('Katzentyp'), 'cat-type ending is shown after all breeds');
       assert(page.querySelector('#shown-breed-count')?.textContent === '18', 'completion screen shows catalogue count');
+      assert(page.querySelector('#no-more-screen h2 + button#restart-test-btn'), 'cat-type headline leads directly to the restart action');
+      assert(!page.querySelector('#no-more-screen h2 + p'), 'no explanatory paragraph appears below the cat-type headline');
       click('#restart-test-btn');
       assert(active() === 'start-screen', 'ending button returns to the start screen');
       assert(state().userAnswers.filter(Boolean).length === 30, 'ending button preserves completed answers');

@@ -27,6 +27,7 @@ Um den Bestand aus den dokumentierten Quellen erneut zu erzeugen: `python3 -m pi
 
 ### 💬 Rassefragen
 - Lokale Steckbriefantworten zu Bewegung, Pflege, Erziehung und Familie; **keine Live-KI und keine individuelle tierärztliche Beratung**
+- Begrüßung und Tonfall orientieren sich spielerisch an den vorhandenen Rasseprofil-Werten: z. B. kontaktfreudig beim Labrador, konzentriert beim Border Collie und eigenständig beim Shiba Inu. Das sind **keine Aussagen über jeden einzelnen Hund**; dringende Gesundheitsfragen behalten unabhängig vom Tonfall eine sachliche Antwort.
 - Schnellauswahl-Buttons, einschließlich einer Frage zur Verdauung
 - Allgemeine Antwort auf die Frage nach dem Kotabsatz von Hunden (üblicherweise 1–3 Mal täglich bei erwachsenen Hunden; [Quelle: PDSA](https://www.pdsa.org.uk/pet-help-and-advice/pet-health-hub/conditions/dog-constipation)); bei Beschwerden Hinweis auf eine Tierarztpraxis
 - Bei unbekannten Fragen keine erfundene Behauptung oder generische „toller Hund“-Antwort; Nutzereingaben werden als Text und nicht als HTML gerendert
