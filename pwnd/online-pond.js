@@ -10,6 +10,9 @@
   }
   const client = window.supabase.createClient(CONFIG.url, CONFIG.publishableKey);
   const icons = { energy: '⚡', water: '💧', air: '🌬️', love: '❤️' };
+  const resourceNames = { energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' };
+  const passiveBonusHelp = 'Steht das Quellbecken nahe der Solar-Seerose (bis 2 Felder), erzeugt sie +300 Energie pro Stunde. Beim Schilf-Windrad (bis 3 Felder) sind es +120 Luft pro Stunde. Das läuft automatisch. Goldene Felder zeigen passende Bauplätze.';
+  const describeBonus = bonus => `${bonus.label} · ${DEMO.BUILDINGS[bonus.first].name}: +${bonus.perHour} ${resourceNames[bonus.resource]} pro Stunde`;
   const elementIds = { energy: 'onlineEnergy', water: 'onlineWater', air: 'onlineAir', love: 'onlineLove' };
   const sceneIds = { solar_lily: 'onlineSolar', spring_pool: 'onlineSpring', reed_windmill: 'onlineReed' };
   let pond = null;
@@ -55,7 +58,7 @@
       $('authView').hidden = true;
       $('pondView').hidden = false;
       render();
-      if (!quiet) status('Dein Teich ist sicher gespeichert. Wähle ein Gebäude und einen Bauplatz.');
+      if (!quiet) status('Tippe auf ein Gebäude, dann auf ein freies Feld. Ein gebautes Gebäude kannst du kostenlos versetzen.');
     } catch (error) {
       if (currentRequest !== requestVersion) return;
       if (error?.message === 'auth_required' || error?.code === 'PGRST301') showAuth(readableError(error));
@@ -70,8 +73,8 @@
     const rates = DEMO.productionRates(buildings);
     const bonuses = DEMO.activeBonuses(buildings);
     const active = bonuses.length
-      ? `Aktiv: ${bonuses.map(bonus => `${bonus.label} +${bonus.perHour} ${icons[bonus.resource]}/h`).join(' · ')}`
-      : '☀ + 💧: +300 ⚡/h bis 2 Felder. ✺ + 💧: +120 🌬️/h bis 3 Felder.';
+      ? `Aktiv: ${bonuses.map(describeBonus).join(' · ')}. Diese Boni wirken automatisch, solange die Gebäude nah beieinander stehen.`
+      : passiveBonusHelp;
     $('onlineBonus').textContent = active;
     $('onlineBonus').dataset.baseline = active;
     Object.entries(sceneIds).forEach(([type, id]) => {
@@ -108,7 +111,7 @@
         ...buildings.filter(item => item.type !== choice), { type: choice, x, y },
       ]).filter(bonus => bonus.first === choice || bonus.second === choice) : [];
       const boosted = previews.length > 0;
-      const bonusText = previews.map(bonus => `${bonus.label}: +${bonus.perHour} ${icons[bonus.resource]}/h`).join(' · ');
+      const bonusText = previews.length ? `Hier wirkt passiv: ${previews.map(describeBonus).join(' · ')}.` : '';
       const label = own ? `${own.name} auf Feld ${x + 1}, ${y + 1}` : core ? `Teichkern auf Feld ${x + 1}, ${y + 1}`
         : allowed ? `${selected.name} ab Feld ${x + 1}, ${y + 1} ${isMove ? 'umsetzen' : 'bauen'}${boosted ? `; ${bonusText}` : ''}`
           : `Wasserfeld ${x + 1}, ${y + 1}`;

@@ -8,11 +8,12 @@ const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
 const QUESTION_TIME_MIN = Object.freeze({ recall: 18000, pattern: 26000, causal: 30000, logic: 32000, source: 28000, risk: 20000 });
 const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
+const PASSIVE_BONUS_HELP = 'Steht das Quellbecken nahe der Solar-Seerose (bis 2 Felder), erzeugt sie +300 Energie pro Stunde. Beim Schilf-Windrad (bis 3 Felder) sind es +120 Luft pro Stunde. Das läuft automatisch. Goldene Felder zeigen passende Bauplätze.';
 const OPPONENTS = {
   redfox: { name: 'ROTFUCHS', portrait: 'assets/red-fox.webp', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
   arcticfox: { name: 'POLARFUCHS', portrait: 'assets/arctic-fox.webp', focus: 'pressure', rating: 1080, time: .82, intro: 'Der Polarfuchs wartet nicht auf Sicherheit. Die Kälte macht jede Sekunde sichtbar.' },
   fennec: { name: 'FENNEK', portrait: 'assets/fennec-fox.webp', focus: 'reasoning', rating: 1160, time: 1.08, intro: 'Der Fennek hört auf die Lücke in deiner Begründung — nicht nur auf deine Antwort.' },
-  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', avatar: '🦉', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
+  owl: { name: 'SCHATTENEULE', species: 'wissende Nacht-Eule', portrait: 'assets/shadow-owl.webp', focus: 'reasoning', rating: 1000, time: 1, intro: 'Die Schatten-Eule blättert lautlos in ihrem Archiv. Hier zählt Neugier, nicht Tempo.' },
 };
 const TOPICS = {
   nature: { name: 'Natur & Erde', icon: '🌿', copy: 'Planet, Körper und Umwelt', skills: ['recall', 'causal'] },
@@ -201,9 +202,13 @@ function showQuestionLoading(match){
   setText('questionType', free ? 'DIE EULE DENKT' : 'DER FUCHS DENKT');
   setText('questionTitle', free ? 'Die Schatten-Eule formuliert die nächste Frage …' : `${currentOpponent().name} stellt die nächste Frage …`);
   setText('questionHint', '');
-  setText('aiComment', free ? 'Die Eule beobachtet deine Antworten.' : `${currentOpponent().name} wertet deine letzte Antwort aus …`);
+  setText('timer', free ? 'RUHIG' : 'DENKT');
+  $('timer').classList.remove('danger');
+  $('aiComment').hidden = !free;
+  if (free) setText('aiComment', match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match));
   $('answers').innerHTML = '';
   $('lockBtn').disabled = true;
+  $('lockBtn').hidden = true;
   setText('roundNo', match.round);
 }
 async function requestAiQuestion(match){
@@ -239,13 +244,17 @@ async function requestAiQuestion(match){
 function selectFreeTopic(id){
   if (!TOPICS[id] || !state.pendingTopicIds.includes(id)) return;
   state.selectedTopicId = id;
-  document.querySelectorAll('.free-topic-option').forEach(button => button.classList.toggle('selected', button.dataset.topic === id));
+  document.querySelectorAll('.free-topic-option').forEach(button => {
+    const selected = button.dataset.topic === id;
+    button.classList.toggle('selected', selected);
+    button.setAttribute('aria-pressed', String(selected));
+  });
   $('freeStartBtn').setAttribute('aria-label', `Los mit ${TOPICS[id].name}`);
 }
 function renderFreeTopicOptions(){
   const options = $('freeTopicOptions');
   if (!options) return;
-  options.innerHTML = state.pendingTopicIds.map(id => { const topic = TOPICS[id]; return `<button class="free-topic-option" type="button" data-topic="${id}"><span class="topic-mark">${topic.icon}</span><span><b>${topic.name}</b><small>${topic.copy}</small><em>Die Eule prüft darin deine Schwächen.</em></span></button>`; }).join('');
+  options.innerHTML = state.pendingTopicIds.map(id => { const topic = TOPICS[id]; return `<button class="free-topic-option" type="button" data-topic="${id}"><span class="topic-mark" aria-hidden="true">${topic.icon}</span><b>${topic.name}</b></button>`; }).join('');
   options.querySelectorAll('.free-topic-option').forEach(button => button.addEventListener('click', () => selectFreeTopic(button.dataset.topic)));
   selectFreeTopic(state.selectedTopicId || state.pendingTopicIds[0]);
 }
@@ -351,6 +360,12 @@ async function nextQuestion(){
     return finishMatch();
   }
   if (match.mode === 'duel') match.current = { ...match.current, time: Math.max(Number(match.current.time) || 0, QUESTION_TIME_MIN[match.current.skill] || 20000) };
+  if (match.mode === 'duel') {
+    setText('aiComment', foxComment(match, match.current));
+    $('aiComment').hidden = false;
+  }
+  await new Promise(resolve => setTimeout(resolve, 1100));
+  if (state.match !== match) return;
   renderBattle();
   const recent = match.history.slice(-2);
   let timeFactor = currentOpponent().time;
@@ -374,12 +389,12 @@ function renderBattle(){
   setText('playerHpText', Math.ceil(match.playerHp));
   setText('aiHpText', Math.ceil(match.aiHp));
   $('lockBtn').disabled = true;
+  $('lockBtn').hidden = false;
   $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
   document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
   setText('lockBtn', 'Antwort abgeben');
-  setText('aiComment', match.mode === 'free'
-    ? (match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match))
-    : foxComment(match, question));
+  $('aiComment').hidden = false;
+  if (match.mode === 'free') setText('aiComment', match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match));
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
 function foxComment(match, question){
@@ -601,6 +616,9 @@ function unlockPond(id){
 function freezeProductionClocks(){
   state.pondDemo.buildings = PwndPondDemo.accruedBuildings(state.pondDemo.buildings, state, Date.now());
 }
+function describeBonus(bonus){
+  return `${bonus.label} · ${PwndPondDemo.BUILDINGS[bonus.first].name}: +${bonus.perHour} ${RESOURCE_NAMES[bonus.resource]} pro Stunde`;
+}
 function renderBuildPanel(){
   const buildings = state.pondDemo.buildings;
   if (state.buildChoice && !buildings.some(item => item.type === state.buildChoice) &&
@@ -619,12 +637,12 @@ function renderBuildPanel(){
   const choice = state.buildChoice && PwndPondDemo.BUILDINGS[state.buildChoice];
   $('cancelBuildBtn').hidden = !choice;
   setText('pondBuildStatus', choice
-    ? `Wähle einen freien Platz für ${choice.name} im Raster. Goldene Felder aktivieren einen Bonus.`
-    : 'Wähle ein Gebäude. Bereits gebaute Gebäude kannst du kostenlos umsetzen.');
+    ? `${choice.name}: Tippe auf ein freies Feld. Goldene Felder aktivieren einen passiven Nachbarschaftsbonus.`
+    : 'Tippe auf ein Gebäude. Ein gebautes Gebäude kannst du kostenlos versetzen.');
   const active = summary.bonuses;
   setText('buildBonusPreview', active.length
-    ? `Aktiv: ${active.map(bonus => `${bonus.label} +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ')}. Weitere Positionen prüfen? Gebäude umsetzen.`
-    : '☀ + 💧: +300 ⚡/h bis 2 Felder. ✺ + 💧: +120 🌬️/h bis 3 Felder. Goldene Bauplätze zeigen Boni.');
+    ? `Aktiv: ${active.map(describeBonus).join(' · ')}. Diese Boni wirken automatisch, solange die Gebäude nah beieinander stehen.`
+    : PASSIVE_BONUS_HELP);
   $('buildBonusPreview').dataset.baseline = $('buildBonusPreview').textContent;
   $('pondBuildGrid').innerHTML = Array.from({ length: PwndPondDemo.GRID_SIZE ** 2 }, (_, index) => {
     const x = index % PwndPondDemo.GRID_SIZE;
@@ -644,7 +662,7 @@ function renderBuildPanel(){
           : `Wasserfeld ${x + 1}, ${y + 1}`;
     const symbol = core && x === 4 && y === 4 ? '◆'
       : own && x === building.x && y === building.y ? own.symbol : allowed ? boosted ? '✦' : '+' : '';
-    return `<button type="button" class="build-cell${core ? ' core' : ''}${core && x === 4 && y === 4 ? ' core-head' : ''}${own ? ` ${own.type}` : ''}${own && x === building.x && y === building.y ? ' building-head' : ''}${allowed ? ' allowed' : ''}${boosted ? ' boosted' : ''}" data-x="${x}" data-y="${y}" data-bonus="${boosted ? previewBonuses.map(bonus => `${bonus.label}: +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ') : ''}" aria-label="${label}" ${allowed ? '' : 'disabled'}>${symbol}</button>`;
+    return `<button type="button" class="build-cell${core ? ' core' : ''}${core && x === 4 && y === 4 ? ' core-head' : ''}${own ? ` ${own.type}` : ''}${own && x === building.x && y === building.y ? ' building-head' : ''}${allowed ? ' allowed' : ''}${boosted ? ' boosted' : ''}" data-x="${x}" data-y="${y}" data-bonus="${boosted ? `Hier wirkt passiv: ${previewBonuses.map(describeBonus).join(' · ')}.` : ''}" aria-label="${label}" ${allowed ? '' : 'disabled'}>${symbol}</button>`;
   }).join('');
   renderProduction();
 }
@@ -692,7 +710,7 @@ function placeChoiceAt(x, y){
   const bonuses = PwndPondDemo.activeBonuses(state.pondDemo.buildings).filter(bonus =>
     bonus.first === type || bonus.second === type);
   setText('pondBuildStatus', `${PwndPondDemo.BUILDINGS[type].name} ${moving ? 'umgesetzt' : 'gebaut'}. ${bonuses.length
-    ? bonuses.map(bonus => `${bonus.label}: +${bonus.perHour} ${RESOURCE_SYMBOLS[bonus.resource]}/h`).join(' · ')
+    ? `Passiver Bonus aktiv: ${bonuses.map(describeBonus).join(' · ')}`
     : 'Du kannst die Position später kostenlos ändern.'}`);
   if (moving) { renderPondScene(); return; }
   window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });

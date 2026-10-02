@@ -41,20 +41,23 @@
       </div>
       <section class="pond-build-panel" id="pondBuildPanel" aria-labelledby="pondBuildTitle">
         <p class="eyebrow">DEIN BAUPLATZ · 10 × 10</p>
-        <h2 id="pondBuildTitle">Ein Teich, drei Kräfte.</h2>
-        <p class="build-lead">Baue Energie, Wasser und Luft auf. Der Kern in der Mitte bleibt frei; Nähe zur Quelle verstärkt deine Produktion.</p>
+        <h2 id="pondBuildTitle">Baue deinen Teich.</h2>
+        <p class="build-lead">Wähle ein Gebäude und danach ein freies Feld. Der Teichkern in der Mitte bleibt frei.</p>
         <div class="build-choice-list" id="buildChoiceList" aria-label="Produktionsgebäude"></div>
+        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Tippe auf ein Gebäude, um mögliche Bauplätze zu sehen.</p>
         <p class="board-scroll-hint">← Raster seitlich wischen →</p>
         <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster; auf kleinen Bildschirmen seitlich verschieben">
           <div class="pond-build-grid" id="pondBuildGrid" aria-label="Teichraster mit zehn mal zehn Feldern"></div>
+        </div>
+        <div class="build-bonus-panel" aria-labelledby="passiveBonusTitle">
+          <strong id="passiveBonusTitle">PASSIVER NACHBARSCHAFTSBONUS</strong>
+          <p class="build-bonus" id="buildBonusPreview" role="status" aria-live="polite">Steht das Quellbecken nahe bei der Solar-Seerose oder dem Schilf-Windrad, produzieren diese automatisch mehr. Goldene Felder zeigen passende Plätze.</p>
         </div>
         <div class="build-actions">
           <button class="build-primary" id="cancelBuildBtn" type="button" hidden>Platzwahl abbrechen</button>
           <button class="build-collect" id="claimProductionBtn" type="button" hidden>Produktion abholen <span id="pendingProduction"></span></button>
         </div>
-        <p class="build-bonus" id="buildBonusPreview" role="status" aria-live="polite">☀ + 💧: +300 ⚡/h bei höchstens 2 Feldern Abstand. ✺ + 💧: +120 🌬️/h bei höchstens 3 Feldern.</p>
-        <p class="build-cost">Produktion nach bis zu 8 Stunden abholen; Ernte stoppt je Ressource bei 2.000. Bestehende Quizressourcen bleiben erhalten.</p>
-        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Wähle ein Gebäude und dann seinen Platz im Raster.</p>
+        <p class="build-cost">Gebäude produzieren von selbst – auch offline. Bis zu 8 Stunden sammeln sich an; bei 2.000 pro Ressource stoppt die Produktion. Bestehende Quizressourcen bleiben erhalten.</p>
       </section>
       <div class="pond-status"><div><small>ENTDECKT</small><strong id="pondResidentCount">1 / 6</strong><span id="pondProgressLabel">Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
       <div class="pond-residents" id="pondResidents" aria-label="Freigeschaltete Teichelemente"></div>
@@ -70,12 +73,12 @@
 
     <section class="screen free-topic-screen" id="screenFreeTopicSetup" aria-labelledby="freeTopicTitle">
       <button class="back-link" id="backToPondFromTopicsBtn" type="button">← Zum Teich</button>
-      <p class="eyebrow">FREIES QUIZZEN · 8 FRAGEN</p>
-      <h1 id="freeTopicTitle">Wähle dein<br><em>Thema.</em></h1>
-      <p class="lede">Die Schatten-Eule stellt dir drei Themen zur Wahl. Danach beobachtet sie deine Antworten und formuliert gezielt weitere Fragen zu deiner erkannten Schwäche.</p>
-      <div class="free-topic-options" id="freeTopicOptions"></div>
+      <h1 class="sr-only" id="freeTopicTitle">Wähle eines von drei Themen der Schatten-Eule</h1>
+      <div class="owl-reveal" role="img" aria-label="Die Schatten-Eule tritt aus dem Dunkel hervor">
+        <img src="assets/shadow-owl.webp" alt="" width="540" height="720" decoding="async">
+      </div>
+      <div class="free-topic-options" id="freeTopicOptions" role="group" aria-label="Drei Themen zur Wahl"></div>
       <button class="primary-btn free-start-btn" id="freeStartBtn" type="button" aria-label="Los mit dem gewählten Thema">LOS!</button>
-      <p class="setup-note">Die drei Vorschläge werden bei jedem freien Quiz neu gemischt.</p>
     </section>
 
     <section class="screen duel-setup-screen" id="screenDuelSetup" aria-labelledby="duelSetupTitle">
