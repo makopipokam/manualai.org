@@ -124,6 +124,13 @@
       if (page.querySelector('#share-modal').classList.contains('active')) {
         assert(page.querySelector('#share-dog-name').textContent === page.querySelector('#dog-name').textContent, 'share dialog identifies the current dog');
         assert(page.querySelector('#share-link-input').value === shareData.url, 'share dialog contains the canonical dog URL');
+        assert(typeof app.getShareImageState === 'function', 'share image state is available');
+        assert(page.querySelector('#share-image-preview').alt.includes(page.querySelector('#dog-name').textContent), 'share preview uses the current dog');
+        assert(page.querySelectorAll('#share-image-source option').length === 6, 'share preview offers all six dog photos');
+        assert(page.querySelector('#share-image-caption').value.length > 0, 'share preview has an editable caption');
+        assert(page.querySelector('#download-share-image-btn'), 'share image download action renders');
+        const shareImageState = app.getShareImageState();
+        assert(shareImageState.source && shareImageState.caption, 'share image state contains photo and caption');
         assert(page.querySelectorAll('.social-share-buttons button').length === 3, 'social share fallbacks render');
         assert(!page.querySelector('[onclick*="shareOn"]'), 'share controls use event listeners instead of inline handlers');
       }

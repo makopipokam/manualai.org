@@ -34,6 +34,9 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 
 ### 📤 Teilen
 - Teile den aktuellen Hundevorschlag direkt über die native Web Share API auf Mobilgeräten
+- Erstelle ein personalisiertes Share-Bild mit dem Foto, Namen, Rasse und Eignungswert des Hundes
+- Wähle eines von sechs Rassefotos und passe den kurzen Bildtext an
+- Speichere das Share-Bild als PNG oder teile es als Dateianhang über kompatible native Share-Sheets
 - Link kopieren als Fallback für Desktop und nicht unterstützte Browser
 - Social-Media-Fallbacks für X/Twitter, Facebook und WhatsApp
 - Direkte, rassespezifische Links zu einzelnen Hunden (`?dog=<id>`)

@@ -15,6 +15,12 @@ let appState = {
     chatHistory: [],
     currentDog: null,
     sharedProfile: false,
+    shareImageSource: null,
+    shareImageCaption: 'Ein Hundevorschlag für dich',
+    shareImageFile: null,
+    shareImageKey: null,
+    shareImagePreparing: null,
+    shareImagePreparingKey: null,
     favorites: [],
     filters: {
         size: [],
@@ -103,6 +109,14 @@ const elements = {
     shareDogName: document.getElementById('share-dog-name'),
     shareDogBreed: document.getElementById('share-dog-breed'),
     shareStatus: document.getElementById('share-status'),
+    shareImagePreview: document.getElementById('share-image-preview'),
+    shareImageSource: document.getElementById('share-image-source'),
+    shareImageCaption: document.getElementById('share-image-caption'),
+    shareCardName: document.getElementById('share-card-name'),
+    shareCardBreed: document.getElementById('share-card-breed'),
+    shareCardRating: document.getElementById('share-card-rating'),
+    shareCardCaption: document.getElementById('share-card-caption'),
+    downloadShareImageBtn: document.getElementById('download-share-image-btn'),
     shareTwitterBtn: document.getElementById('share-twitter-btn'),
     shareFacebookBtn: document.getElementById('share-facebook-btn'),
     shareWhatsAppBtn: document.getElementById('share-whatsapp-btn'),
@@ -171,6 +185,9 @@ function setupEventListeners() {
     elements.shareBtn.addEventListener('click', shareCurrentDog);
     elements.copyLinkBtn.addEventListener('click', copyLink);
     elements.nativeShareBtn.addEventListener('click', shareCurrentDog);
+    elements.shareImageSource.addEventListener('change', handleShareImageSourceChange);
+    elements.shareImageCaption.addEventListener('input', handleShareImageCaptionChange);
+    elements.downloadShareImageBtn.addEventListener('click', downloadShareImage);
     elements.shareTwitterBtn.addEventListener('click', shareOnTwitter);
     elements.shareFacebookBtn.addEventListener('click', shareOnFacebook);
     elements.shareWhatsAppBtn.addEventListener('click', shareOnWhatsApp);
@@ -864,6 +881,10 @@ function updateFavoriteButton() {
     elements.favoriteBtn.textContent = isFavorite ? '❤️ Aus Favoriten entfernen' : '❤️ Zu Favoriten speichern';
 }
 
+const SHARE_IMAGE_WIDTH = 1200;
+const SHARE_IMAGE_HEIGHT = 630;
+const DEFAULT_SHARE_CAPTION = 'Ein Hundevorschlag für dich';
+
 function getShareData(dog = appState.currentDog) {
     if (!dog) return null;
     const url = getShareUrl(dog);
@@ -874,7 +895,80 @@ function getShareData(dog = appState.currentDog) {
     };
 }
 
-// Open share modal for browsers without the native Web Share API.
+function getCurrentDogImageUrl(dog) {
+    const visibleImage = elements.dogImageMain?.currentSrc || elements.dogImageMain?.src;
+    return dog.images?.includes(visibleImage) ? visibleImage : dog.images?.[0] || '';
+}
+
+function getShareImageCaption() {
+    return (elements.shareImageCaption?.value || appState.shareImageCaption || DEFAULT_SHARE_CAPTION).trim()
+        || DEFAULT_SHARE_CAPTION;
+}
+
+function getShareImageKey(dog = appState.currentDog) {
+    if (!dog) return null;
+    const source = appState.shareImageSource || dog.images?.[0] || '';
+    const caption = getShareImageCaption();
+    const rating = Number.isFinite(dog.matchScore) ? dog.matchScore.toFixed(2) : 'profile';
+    return `${dog.id}|${source}|${caption}|${rating}`;
+}
+
+function getShareRatingText(dog) {
+    const suitability = calculateSuitabilityRating(dog.matchScore);
+    return suitability === null ? 'Rasseprofil' : `${suitability.toFixed(1)}/5 Eignung`;
+}
+
+function renderShareImageEditor(dog) {
+    appState.shareImageSource = getCurrentDogImageUrl(dog);
+    appState.shareImageCaption = DEFAULT_SHARE_CAPTION;
+    appState.shareImageFile = null;
+    appState.shareImageKey = null;
+    appState.shareImagePreparing = null;
+    appState.shareImagePreparingKey = null;
+
+    elements.shareImageSource.innerHTML = '';
+    (dog.images || []).forEach((source, index) => {
+        const option = document.createElement('option');
+        option.value = source;
+        option.textContent = dog.imagesLabels?.[index] || `Bild ${index + 1}`;
+        elements.shareImageSource.appendChild(option);
+    });
+    elements.shareImageSource.value = appState.shareImageSource;
+    elements.shareImageCaption.value = DEFAULT_SHARE_CAPTION;
+    updateShareImagePreview(dog);
+}
+
+function updateShareImagePreview(dog = appState.currentDog) {
+    if (!dog) return;
+    const source = appState.shareImageSource || dog.images?.[0] || '';
+    const caption = getShareImageCaption();
+    elements.shareImagePreview.src = source;
+    elements.shareImagePreview.alt = `${dog.name} – Share-Bild`;
+    elements.shareCardName.textContent = dog.name;
+    elements.shareCardBreed.textContent = dog.breed;
+    elements.shareCardRating.textContent = getShareRatingText(dog);
+    elements.shareCardCaption.textContent = caption;
+}
+
+function handleShareImageSourceChange() {
+    if (!appState.currentDog) return;
+    appState.shareImageSource = elements.shareImageSource.value;
+    appState.shareImageFile = null;
+    appState.shareImageKey = null;
+    updateShareImagePreview();
+    setShareStatus('Foto ausgewählt – beim Speichern oder Teilen wird das Bild aktualisiert.');
+}
+
+function handleShareImageCaptionChange() {
+    if (!appState.currentDog) return;
+    appState.shareImageCaption = elements.shareImageCaption.value;
+    appState.shareImageFile = null;
+    appState.shareImageKey = null;
+    updateShareImagePreview();
+    setShareStatus('Text übernommen – beim Speichern oder Teilen wird das Bild aktualisiert.');
+}
+
+// Open the share editor for browsers without native file sharing, or before preparing a share image.
 function openShareModal() {
     const dog = appState.currentDog;
     if (!dog) return;
@@ -884,8 +978,16 @@ function openShareModal() {
     elements.shareDogBreed.textContent = dog.breed;
     elements.shareLinkInput.value = shareData.url;
     elements.nativeShareBtn.hidden = typeof navigator.share !== 'function';
-    elements.shareStatus.textContent = '';
+    elements.shareStatus.textContent = 'Share-Bild wird vorbereitet …';
+    renderShareImageEditor(dog);
     elements.shareModal.classList.add('active');
+    void prepareShareImageFile(dog).then(file => {
+        if (file && elements.shareModal.classList.contains('active')) {
+            setShareStatus('Share-Bild bereit – du kannst es speichern oder direkt teilen.');
+        } else if (!file && elements.shareModal.classList.contains('active')) {
+            setShareStatus('Das Foto kann nicht als Bild exportiert werden. Der Link bleibt verfügbar.');
+        }
+    });
 }
 
 function getShareUrl(dog = appState.currentDog) {
@@ -897,28 +999,190 @@ function getShareUrl(dog = appState.currentDog) {
     return url.toString();
 }
 
-// Share the current dog through the device share sheet, with the dialog as a safe fallback.
-async function shareCurrentDog() {
+function loadShareImage(source) {
+    return fetch(source, { mode: 'cors', credentials: 'omit' })
+        .then(response => {
+            if (!response.ok) throw new Error(`Share image request failed: ${response.status}`);
+            return response.blob();
+        })
+        .then(blob => new Promise((resolve, reject) => {
+            const objectUrl = URL.createObjectURL(blob);
+            const image = new Image();
+            image.onload = () => {
+                URL.revokeObjectURL(objectUrl);
+                resolve(image);
+            };
+            image.onerror = () => {
+                URL.revokeObjectURL(objectUrl);
+                reject(new Error('Share image could not be decoded'));
+            };
+            image.src = objectUrl;
+        }));
+}
+
+function drawCoverImage(context, image, x, y, width, height) {
+    const scale = Math.max(width / image.naturalWidth, height / image.naturalHeight);
+    const drawWidth = image.naturalWidth * scale;
+    const drawHeight = image.naturalHeight * scale;
+    const drawX = x + (width - drawWidth) / 2;
+    const drawY = y + (height - drawHeight) / 2;
+    context.drawImage(image, drawX, drawY, drawWidth, drawHeight);
+}
+
+function drawFittedCanvasText(context, text, x, y, maxWidth, weight, maxSize, minSize, style = '') {
+    let fontSize = maxSize;
+    while (fontSize > minSize) {
+        context.font = `${style}${weight} ${fontSize}px Arial, sans-serif`;
+        if (context.measureText(text).width <= maxWidth) break;
+        fontSize -= 2;
+    }
+    context.font = `${style}${weight} ${Math.max(fontSize, minSize)}px Arial, sans-serif`;
+    context.fillText(text, x, y);
+}
+
+function drawShareCard(context, image, dog, caption) {
+    context.clearRect(0, 0, SHARE_IMAGE_WIDTH, SHARE_IMAGE_HEIGHT);
+    drawCoverImage(context, image, 0, 0, SHARE_IMAGE_WIDTH, SHARE_IMAGE_HEIGHT);
+
+    const gradient = context.createLinearGradient(0, 0, 0, SHARE_IMAGE_HEIGHT);
+    gradient.addColorStop(0, 'rgba(10, 28, 21, 0.08)');
+    gradient.addColorStop(0.46, 'rgba(10, 28, 21, 0.18)');
+    gradient.addColorStop(1, 'rgba(10, 28, 21, 0.88)');
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, SHARE_IMAGE_WIDTH, SHARE_IMAGE_HEIGHT);
+
+    context.fillStyle = '#f4c95d';
+    context.font = '700 24px Arial, sans-serif';
+    context.letterSpacing = '2px';
+    context.fillText('MYDOG · HUNDEVORSCHLAG', 58, 66);
+
+    context.fillStyle = '#fffdf8';
+    drawFittedCanvasText(context, dog.name, 58, 470, 1080, '700', 68, 38);
+    drawFittedCanvasText(context, dog.breed, 60, 515, 1060, '400', 30, 22);
+
+    context.fillStyle = '#f4c95d';
+    context.font = '700 27px Arial, sans-serif';
+    context.fillText(getShareRatingText(dog), 60, 565);
+
+    context.fillStyle = '#fffdf8';
+    const safeCaption = caption.length > 70 ? `${caption.slice(0, 67)}…` : caption;
+    drawFittedCanvasText(context, safeCaption, 60, 606, 1060, '400', 26, 18, 'italic ');
+}
+
+async function createShareImageFile(dog) {
+    const source = appState.shareImageSource || dog.images?.[0];
+    if (!source) return null;
+    const image = await loadShareImage(source);
+    const canvas = document.createElement('canvas');
+    canvas.width = SHARE_IMAGE_WIDTH;
+    canvas.height = SHARE_IMAGE_HEIGHT;
+    drawShareCard(canvas.getContext('2d'), image, dog, getShareImageCaption());
+    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+    if (!blob) return null;
+    const safeName = dog.name.toLowerCase().replace(/[^a-z0-9]+/gi, '-').replace(/^-|-$/g, '') || 'hund';
+    return new File([blob], `mydog-${safeName}-share.png`, { type: 'image/png' });
+}
+
+async function prepareShareImageFile(dog = appState.currentDog) {
+    if (!dog) return null;
+    const key = getShareImageKey(dog);
+    if (appState.shareImageFile && appState.shareImageKey === key) return appState.shareImageFile;
+    if (appState.shareImagePreparing && appState.shareImagePreparingKey === key) {
+        return appState.shareImagePreparing;
+    }
+
+    appState.shareImagePreparingKey = key;
+    appState.shareImagePreparing = createShareImageFile(dog)
+        .then(file => {
+            if (getShareImageKey(dog) === key) {
+                appState.shareImageFile = file;
+                appState.shareImageKey = file ? key : null;
+            }
+            return file;
+        })
+        .catch(error => {
+            console.warn('Share image export unavailable:', error);
+            return null;
+        })
+        .finally(() => {
+            if (appState.shareImagePreparingKey === key) {
+                appState.shareImagePreparing = null;
+                appState.shareImagePreparingKey = null;
+            }
+        });
+    return appState.shareImagePreparing;
+}
+
+function getShareImageState() {
+    return {
+        ready: Boolean(appState.shareImageFile),
+        fileName: appState.shareImageFile?.name || null,
+        source: appState.shareImageSource,
+        caption: getShareImageCaption()
+    };
+}
+
+async function downloadShareImage() {
     const dog = appState.currentDog;
     if (!dog) return;
-
-    const shareData = getShareData(dog);
-    if (typeof navigator.share !== 'function') {
-        openShareModal();
+    setShareStatus('Share-Bild wird erstellt …');
+    const file = await prepareShareImageFile(dog);
+    if (!file) {
+        setShareStatus('Das Share-Bild konnte nicht erstellt werden. Bitte kopiere stattdessen den Link.');
         return;
+    }
+    const url = URL.createObjectURL(file);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = file.name;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+    setShareStatus('Share-Bild gespeichert.');
+    showToast('Share-Bild gespeichert!', 'success');
+}
+
+async function shareWithNativeSheet(dog) {
+    const shareData = getShareData(dog);
+    const file = appState.shareImageFile;
+    let includesImage = false;
+    if (file && typeof navigator.canShare === 'function' && navigator.canShare({ files: [file] })) {
+        shareData.files = [file];
+        includesImage = true;
     }
 
     closeShareModal();
     try {
         await navigator.share(shareData);
-        showToast('Hundeprofil geteilt!', 'success');
+        showToast(includesImage ? 'Share-Bild geteilt!' : 'Hundeprofil geteilt!', 'success');
     } catch (error) {
         // Cancelling the native sheet is a normal user action, not an error.
         if (error?.name !== 'AbortError') {
             openShareModal();
-            setShareStatus('Direktes Teilen ist gerade nicht verfügbar. Du kannst den Link kopieren.');
+            setShareStatus('Direktes Teilen ist gerade nicht verfügbar. Du kannst das Bild speichern oder den Link kopieren.');
         }
     }
+}
+
+// Share the current dog through the device sheet, attaching the generated image when possible.
+async function shareCurrentDog() {
+    const dog = appState.currentDog;
+    if (!dog) return;
+
+    if (typeof navigator.share !== 'function') {
+        openShareModal();
+        return;
+    }
+
+    const key = getShareImageKey(dog);
+    if (!appState.shareImageFile || appState.shareImageKey !== key) {
+        if (!elements.shareModal.classList.contains('active')) openShareModal();
+        setShareStatus('Share-Bild wird vorbereitet … Tippe danach auf „Direkt teilen“.');
+        return;
+    }
+
+    await shareWithNativeSheet(dog);
 }
 
 // Close share modal

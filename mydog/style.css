@@ -941,6 +941,11 @@ body {
     position: relative;
 }
 
+.share-modal-content {
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+}
+
 .close-btn {
     position: absolute;
     top: 15px;
@@ -982,6 +987,131 @@ body {
 .share-dog-summary span {
     color: var(--text-light);
     font-size: 0.88rem;
+}
+
+.share-image-editor {
+    display: grid;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding: 14px;
+    border: 1px solid rgba(31, 90, 69, 0.14);
+    border-radius: 16px;
+    background: rgba(31, 90, 69, 0.045);
+}
+
+.share-image-heading {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.share-image-heading h4 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 0.95rem;
+}
+
+.share-image-heading span {
+    color: var(--text-light);
+    font-size: 0.76rem;
+}
+
+.share-image-preview {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 1200 / 630;
+    border-radius: 13px;
+    background: var(--primary-color);
+}
+
+.share-image-preview img,
+.share-image-preview-shade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.share-image-preview img {
+    object-fit: cover;
+}
+
+.share-image-preview-shade {
+    background: linear-gradient(180deg, rgba(10, 28, 21, 0.08) 0%, rgba(10, 28, 21, 0.16) 42%, rgba(10, 28, 21, 0.88) 100%);
+}
+
+.share-image-preview-copy {
+    position: absolute;
+    right: 14px;
+    bottom: 13px;
+    left: 14px;
+    display: grid;
+    gap: 2px;
+    color: #fffdf8;
+}
+
+.share-image-brand {
+    color: #f4c95d;
+    font-size: 0.55rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+}
+
+.share-image-preview-copy strong {
+    overflow: hidden;
+    font-size: clamp(1.1rem, 4vw, 1.7rem);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.share-image-preview-copy > span:not(.share-image-brand) {
+    font-size: 0.7rem;
+}
+
+#share-card-rating {
+    color: #f4c95d;
+    font-size: 0.68rem;
+    font-weight: 800;
+}
+
+#share-card-caption {
+    overflow: hidden;
+    font-size: 0.68rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.share-image-controls {
+    display: grid;
+    gap: 6px;
+}
+
+.share-image-controls label {
+    color: var(--text-color);
+    font-size: 0.76rem;
+    font-weight: 800;
+}
+
+.share-image-controls select,
+.share-image-controls input {
+    width: 100%;
+    min-height: 44px;
+    padding: 9px 11px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: var(--card-background);
+    color: var(--text-color);
+    font: inherit;
+}
+
+.share-image-controls input {
+    margin-bottom: 4px;
+}
+
+.share-image-editor > .btn-outline {
+    min-height: 44px;
+    padding: 10px 14px;
 }
 
 .share-actions {
@@ -1885,6 +2015,17 @@ input:focus-visible,
 
     .share-actions {
         flex-direction: column;
+    }
+
+    .share-modal-content {
+        width: calc(100% - 24px);
+        padding: 22px 18px;
+    }
+
+    .share-image-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 2px;
     }
 }
 
