@@ -74,6 +74,9 @@ def run():
         assert page.locator('#onlineEnergy').inner_text() == '1000', 'Local 900000 must never be imported'
         assert page.locator('.build-choice').count() == 3
         assert page.locator('.build-cell').count() == 100
+        assert 'PASSIVER NACHBARSCHAFTSBONUS' in page.locator('#onlinePassiveBonusTitle').inner_text()
+        assert 'automatisch' in page.locator('#onlineBonus').inner_text()
+        assert page.evaluate("document.querySelector('#onlineBonus').compareDocumentPosition(document.querySelector('#onlineClaimBtn')) & Node.DOCUMENT_POSITION_FOLLOWING")
         page.locator('[data-building="solar_lily"]').click()
         page.locator('#onlineGrid [data-x="0"][data-y="0"]').click()
         page.locator('#onlineSolar.visible').wait_for()
@@ -83,6 +86,7 @@ def run():
         boosted.click()
         page.locator('#onlineSpring.visible').wait_for()
         assert 'Sonnenwasser' in page.locator('#onlineBonus').inner_text()
+        assert 'Solar-Seerose' in page.locator('#onlineBonus').inner_text()
         page.locator('[data-building="reed_windmill"]').click()
         page.locator('#onlineGrid [data-x="4"][data-y="0"]').click()
         page.locator('#onlineReed.visible').wait_for()

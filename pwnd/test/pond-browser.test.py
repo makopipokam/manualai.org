@@ -80,6 +80,9 @@ def run():
         assert page.locator('#pondBuildGrid .build-cell').count() == 100
         assert page.locator('#pondBuildGrid .build-cell.core').count() == 4
         assert page.locator('#buildChoiceList .build-choice').count() == 3
+        assert 'PASSIVER NACHBARSCHAFTSBONUS' in page.locator('#passiveBonusTitle').inner_text()
+        assert 'automatisch' in page.locator('#buildBonusPreview').inner_text()
+        assert page.evaluate("document.querySelector('#buildBonusPreview').compareDocumentPosition(document.querySelector('#claimProductionBtn')) & Node.DOCUMENT_POSITION_FOLLOWING")
         assert page.locator('#pondBuiltSolar.visible, #pondBuiltSpring.visible, #pondBuiltReed.visible').count() == 0
 
         earned = free_round(page, fail_final_write=True)
@@ -104,6 +107,8 @@ def run():
         page.locator('#pondBuiltSpring.visible').wait_for(timeout=4000)
         assert 'Sonnenwasser' in page.locator('#buildBonusPreview').inner_text()
         assert 'Schilfstrom' in page.locator('#buildBonusPreview').inner_text()
+        assert 'Solar-Seerose' in page.locator('#buildBonusPreview').inner_text()
+        assert 'Schilf-Windrad' in page.locator('#buildBonusPreview').inner_text()
         built = profile(page)
         assert len(built['pondDemo']['buildings']) == 3
         assert {b['type'] for b in built['pondDemo']['buildings']} == {'solar_lily', 'spring_pool', 'reed_windmill'}

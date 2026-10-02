@@ -35,7 +35,8 @@ def main():
         assert 'wertet deine letzte Antwort aus' not in first
         page.screenshot(path='/tmp/pwnd-fox-thinking.png', full_page=True)
         page.locator('#screenBattle.active #answers .answer').first.wait_for(timeout=10000)
-        assert not page.locator('#aiComment').is_visible(), 'The fox commentary must not accompany answer options'
+        assert page.locator('#aiComment').is_visible(), 'The fox commentary must remain readable during the question'
+        assert page.locator('#aiComment').inner_text() == first
         assert page.locator('#lockBtn').is_visible()
         assert page.locator('#questionTitle').inner_text() == QUESTIONS[0]['prompt']
         page.screenshot(path='/tmp/pwnd-fox-question.png', full_page=True)
@@ -51,11 +52,12 @@ def main():
         assert page.locator('#answers .answer').count() == 0
         assert not page.locator('#lockBtn').is_visible()
         page.locator('#screenBattle.active #answers .answer').first.wait_for(timeout=10000)
-        assert not page.locator('#aiComment').is_visible()
+        assert page.locator('#aiComment').is_visible()
+        assert page.locator('#aiComment').inner_text() == second
         assert page.locator('#questionTitle').inner_text() == QUESTIONS[1]['prompt']
         assert not errors, errors
         browser.close()
-        print('fox thinking UI: adaptive comment on thinking screen, removed on both question screens, old placeholder absent')
+        print('fox thinking UI: adaptive comment on thinking and both question screens, old placeholder absent')
 
 
 if __name__ == '__main__':

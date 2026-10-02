@@ -54,19 +54,22 @@
       <section class="pond-build-panel" aria-labelledby="onlineBuildTitle">
         <p class="eyebrow">SERVERZEIT · DEIN 10 × 10-TEICH</p>
         <h2 id="onlineBuildTitle" tabindex="-1">Baue einen lebendigen Teich.</h2>
-        <p class="build-lead">Wähle ein Gebäude, dann ein freies Feld. Goldene Felder bringen mehr Ertrag. Versetzen ist kostenlos.</p>
+        <p class="build-lead">Wähle ein Gebäude und danach ein freies Feld. Der Teichkern in der Mitte bleibt frei.</p>
         <div id="onlineChoices" class="build-choice-list" aria-label="Produktionsgebäude"></div>
+        <p id="onlineStatus" class="build-message" role="status" aria-live="polite"></p>
         <p class="board-scroll-hint">← Raster seitlich wischen →</p>
         <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster auf kleinen Bildschirmen seitlich verschieben">
           <div id="onlineGrid" class="pond-build-grid" aria-label="Zehn mal zehn Teichfelder"></div>
+        </div>
+        <div class="build-bonus-panel" aria-labelledby="onlinePassiveBonusTitle">
+          <strong id="onlinePassiveBonusTitle">PASSIVER NACHBARSCHAFTSBONUS</strong>
+          <p id="onlineBonus" class="build-bonus" role="status" aria-live="polite"></p>
         </div>
         <div class="build-actions">
           <button id="cancelChoiceBtn" class="build-primary" type="button" hidden>Platzwahl abbrechen</button>
           <button id="onlineClaimBtn" class="build-collect" type="button" hidden>Produktion abholen <span id="onlinePending"></span></button>
         </div>
-        <p id="onlineBonus" class="build-bonus" role="status" aria-live="polite"></p>
-        <p id="onlineStatus" class="build-message" role="status" aria-live="polite"></p>
-        <p class="build-cost">Ernte: höchstens 8 Stunden nachholbar, Stopp bei 2.000 je Ressource. Der Server berechnet die Zeit.</p>
+        <p class="build-cost">Gebäude produzieren von selbst – auch wenn du offline bist. Bis zu 8 Stunden sammeln sich an; bei 2.000 pro Ressource stoppt die Produktion. Der Server misst die Zeit.</p>
       </section>
       <p class="online-disclaimer">Dies ist der erste sichere Teich-Bauschritt. Freies Quiz und Fuchsduell bleiben vorerst auf dem <a href="/pwnd/">lokalen Demo-Spielstand</a>; sie schreiben noch keine Online-Belohnungen gut.</p>
     </section>
