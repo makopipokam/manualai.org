@@ -35,15 +35,15 @@
       damage: calculateDamage({ correct, question, responseTimeMs, combo, mods }),
       selfDamage: calculateSelfDamage({ correct, question, mods }),
       combo: nextCombo,
-      skillDelta: correct ? .09 : -.12
+      skillDelta: correct ? .09 : -.12,
     };
   }
 
   function chooseNextQuestion({ questions, history = [], skills, opponent, round, accuracy = 0 }){
     const recent = history.slice(-2).map(item => item.question.id);
-    const weakest = Object.entries(skills).sort((a,b) => a[1] - b[1])[0]?.[0];
-    const focus = opponent.focus === 'pressure' ? ['recall','risk']
-      : opponent.focus === 'reasoning' ? ['causal','logic','source']
+    const weakest = Object.entries(skills).sort((a, b) => a[1] - b[1])[0]?.[0];
+    const focus = opponent.focus === 'pressure' ? ['recall', 'risk']
+      : opponent.focus === 'reasoning' ? ['causal', 'logic', 'source']
       : [weakest];
     let candidates = questions.filter(question =>
       !recent.includes(question.id) &&
@@ -51,25 +51,31 @@
     );
     if (!candidates.length) candidates = questions.filter(question => !recent.includes(question.id));
     const target = Math.min(.9, .25 + (round / 10) * .55 + (accuracy < .5 ? -.1 : 0) + (opponent.focus === 'reasoning' ? .08 : 0));
-    return [...candidates].sort((a,b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target))[0];
+    return [...candidates].sort((a, b) => Math.abs(a.difficulty - target) - Math.abs(b.difficulty - target))[0];
   }
 
   function calculateMatchScore({ outcome, accuracy, averageDifficulty, fastCorrectRate }){
     return .5 * outcome + .25 * accuracy + .15 * averageDifficulty + .1 * fastCorrectRate;
   }
 
-  function calculateNewIP({ before, opponentRating, score, calibration = 0 }){
+  function calculateNewEnergy({ before, opponentRating, score, calibration = 0 }){
     const expected = 1 / (1 + Math.pow(10, ((opponentRating - before) / 400)));
     const k = calibration < 1 ? 48 : 24;
     const delta = Math.round(k * (score - expected));
-    return { delta, ip: Math.max(0, Math.round(before + delta)) };
+    return { delta, energy: Math.max(0, Math.round(before + delta)) };
   }
 
-  function calculateElixirReward({ mode = 'duel', correctAnswers, totalRounds, outcome = 0 }){
+  function calculateResourceRewards({ mode = 'duel', correctAnswers, totalRounds, outcome = 0, fastCorrectRate = 0, maxCombo = 0 }){
     const accuracy = totalRounds ? correctAnswers / totalRounds : 0;
-    const base = mode === 'free' ? 18 : 28;
-    return Math.max(6, Math.round(base + accuracy * 24 + (outcome ? 12 : 0)));
+    const waterBase = mode === 'free' ? 18 : 28;
+    const airBase = mode === 'free' ? 10 : 14;
+    const loveBase = mode === 'free' ? 6 : 8;
+    return {
+      water: Math.max(6, Math.round(waterBase + accuracy * 24 + (outcome ? 12 : 0))),
+      air: Math.max(4, Math.round(airBase + accuracy * 12 + fastCorrectRate * 6)),
+      love: Math.max(3, Math.round(loveBase + accuracy * 10 + Math.min(maxCombo, 5) * 1.5 + (outcome ? 4 : 0))),
+    };
   }
 
-  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewIP, calculateElixirReward };
+  return { clamp, calculateDamage, calculateSelfDamage, evaluateAnswer, chooseNextQuestion, calculateMatchScore, calculateNewEnergy, calculateResourceRewards };
 });

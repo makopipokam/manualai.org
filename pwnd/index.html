@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#123b38">
-  <meta name="description" content="pwnd — dein lebendiger Teich. Sammle Wasser, entdecke Bewohner und wachse durch Entscheidungen.">
+  <meta name="description" content="pwnd — dein lebendiger Teich. Sammle Energie, Wasser, Luft und Liebe und lasse deinen Teich wachsen.">
   <title>pwnd — dein Teich</title>
   <link rel="stylesheet" href="pwnd.css">
 </head>
@@ -18,19 +18,21 @@
       <div class="pond-scene" aria-hidden="true"><span class="sun-glint"></span><span class="lily lily-one"></span><span class="lily lily-two"></span><span class="frog">●</span><span class="reed reed-one"></span><span class="reed reed-two"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span></div>
       <p class="eyebrow">DEIN TEICH · SAISON 01</p>
       <h1 id="startTitle">Baue einen Teich,<br><em>der mit dir wächst.</em></h1>
-      <p class="lede">pwnd — ausgesprochen „pond“ — ist dein lebendiger Teich. Sammle Gold durch kluge Entscheidungen und Elixier für den Ausbau deiner kleinen Welt.</p>
+      <p class="lede">Sammle Energie für Entscheidungen, Wasser für Wachstum, Luft für Bewegung und Liebe für Vertrauen in deiner kleinen Teichwelt.</p>
       <div class="resource-grid" aria-label="Deine Ressourcen">
-        <div class="resource-card gold-card"><div><small>GOLD · INTELLIGENZPUNKTE</small><strong id="pondGold">1000</strong><span>deine Leistung</span></div><div class="resource-symbol">●</div></div>
-        <div class="resource-card elixir-card"><div><small>ELIXIER · WASSER</small><strong id="pondElixir">250</strong><span>für Teich und Bewohner</span></div><div class="resource-symbol">≈</div></div>
+        <div class="resource-card energy-resource"><div><small>ENERGIE</small><strong id="pondEnergy">1000</strong><span>Entscheidungskraft</span></div><div class="resource-symbol">ϟ</div></div>
+        <div class="resource-card water-resource"><div><small>WASSER</small><strong id="pondWater">250</strong><span>Wachstum im Teich</span></div><div class="resource-symbol">≈</div></div>
+        <div class="resource-card air-resource"><div><small>LUFT</small><strong id="pondAir">120</strong><span>Raum für Bewegung</span></div><div class="resource-symbol">⌁</div></div>
+        <div class="resource-card love-resource"><div><small>LIEBE</small><strong id="pondLove">60</strong><span>Bindung und Vertrauen</span></div><div class="resource-symbol">♥</div></div>
       </div>
       <div class="pond-status"><div><small>BEWOHNER</small><strong>1 / 6</strong><span>Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
       <div class="pond-residents" aria-label="Teichbewohner"><span class="resident frogling">🐸</span><span class="resident reedling">✦</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span></div>
-      <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season">GOLD + ELIXIER</span></div><div class="unlock-grid" id="unlockGrid"></div></div>
-      <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Wasser sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
-      <button class="activity-card activity-active" id="startBtn" type="button"><span class="activity-icon">◌</span><span><b>Quizduell</b><small>Stell dich der AI und bring Wasser nach Hause.</small></span><strong>→</strong></button>
-      <button class="activity-card activity-active free-quiz" id="freeQuizBtn" type="button"><span class="activity-icon">☼</span><span><b>Freies Quizzen</b><small>Frag die AI, entdecke Themen und sammle Wasser ohne Duellstress.</small></span><strong>→</strong></button>
-      <div class="activity-card activity-soon"><span class="activity-icon">⌁</span><span><b>Sammeln &amp; Erkunden</b><small>Entdecke Quellen, Steine und seltene Pflanzen.</small></span><em>bald</em></div>
-      <div class="activity-card activity-soon"><span class="activity-icon">♧</span><span><b>Teich pflegen</b><small>Verbessere Wasserqualität und schaffe Plätze für Bewohner.</small></span><em>bald</em></div>
+      <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season">ENERGIE · WASSER · LUFT · LIEBE</span></div><div class="unlock-grid" id="unlockGrid"></div></div>
+      <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Elemente sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
+      <button class="activity-card activity-active" id="startBtn" type="button"><span class="activity-icon">◌</span><span><b>Quizduell</b><small>Stell dich der AI und gewinne Energie, Wasser, Luft und Liebe.</small></span><strong>→</strong></button>
+      <button class="activity-card activity-active free-quiz" id="freeQuizBtn" type="button"><span class="activity-icon">☼</span><span><b>Freies Quizzen</b><small>Entdecke Themen und fülle deine vier Reserven ohne Duellstress.</small></span><strong>→</strong></button>
+      <div class="activity-card activity-soon"><span class="activity-icon">⌁</span><span><b>Sammeln &amp; Erkunden</b><small>Entdecke Quellen, Winde, Steine und seltene Pflanzen.</small></span><em>bald</em></div>
+      <div class="activity-card activity-soon"><span class="activity-icon">♧</span><span><b>Teich pflegen</b><small>Stärke Wasserqualität, Lebensraum und Vertrauen.</small></span><em>bald</em></div>
       <div class="opponent-picker" aria-label="Gegner für das Quizduell auswählen">
         <p class="picker-label">WÄHLE DEN GEGNER FÜR DEIN QUIZDUELL</p>
         <div class="opponent-options">
@@ -44,7 +46,7 @@
 
     <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
       <div class="battle-head">
-        <div class="fighter"><span class="avatar player-avatar">♧</span><div><small>GOLD · <span id="playerIp">1000</span> · ELIXIER <span id="playerElixir">250</span></small><strong>TEICH</strong></div></div>
+        <div class="fighter"><span class="avatar player-avatar">♧</span><div><small class="resource-readout"><span>E <b id="playerEnergy">1000</b></span><span>W <b id="playerWater">250</b></span><span>L <b id="playerAir">120</b></span><span>♥ <b id="playerLove">60</b></span></small><strong>TEICH</strong></div></div>
         <div class="round-count"><span id="phaseLabel">QUIZDUELL</span><b><span id="roundNo">1</span>/<span id="roundTotal">10</span></b></div>
         <div class="fighter ai-fighter"><div><small><span id="opponentLabel">MIRROR</span> · AI-TEICH</small><strong>GEGNER</strong></div><span class="avatar ai-avatar">≈</span></div>
       </div>
@@ -71,10 +73,15 @@
 
     <section class="screen" id="screenEnd" aria-labelledby="endTitle">
       <p class="eyebrow">RESSOURCEN GESAMMELT</p>
-      <div class="end-score"><span id="endResult">GEWONNEN</span><strong id="goldChange">+0 GOLD</strong></div>
+      <div class="end-score"><span id="endResult">GEWONNEN</span><strong id="energyChange">+0 ENERGIE</strong></div>
       <h2 id="endTitle">Dein Teich ist gewachsen.</h2>
       <p class="result-copy" id="endCopy"></p>
-      <div class="resource-result-grid"><div class="resource-result gold-card"><div><small>GOLD · IP</small><strong id="ipValue">1000</strong><span class="ip-delta" id="ipBeforeAfter">1000 → 1000</span></div><span>LEISTUNG</span></div><div class="resource-result elixir-card"><div><small>ELIXIER · WASSER</small><strong id="elixirValue">250</strong><span class="ip-delta" id="elixirChange">+0 → Teich</span></div><span>AUSBAU</span></div></div>
+      <div class="resource-result-grid">
+        <div class="resource-result energy-resource"><div><small>ENERGIE</small><strong id="energyValue">1000</strong><span class="ip-delta" id="energyBeforeAfter">1000 → 1000</span></div><span>ENTSCHEIDEN</span></div>
+        <div class="resource-result water-resource"><div><small>WASSER</small><strong id="waterValue">250</strong><span class="ip-delta" id="waterChange">+0 · Teich</span></div><span>WACHSEN</span></div>
+        <div class="resource-result air-resource"><div><small>LUFT</small><strong id="airValue">120</strong><span class="ip-delta" id="airChange">+0 · Bewegung</span></div><span>BEWEGEN</span></div>
+        <div class="resource-result love-resource"><div><small>LIEBE</small><strong id="loveValue">60</strong><span class="ip-delta" id="loveChange">+0 · Vertrauen</span></div><span>VERBINDEN</span></div>
+      </div>
       <div class="profile-grid"><div><small>DEINE STÄRKE</small><strong id="strengthValue">—</strong></div><div><small>NÄCHSTER SCHRITT</small><strong id="weaknessValue">—</strong></div></div>
       <h3>Wie soll dein Teich weiterwachsen?</h3>
       <p class="upgrade-note">Wähle eine Anpassung für dein nächstes Quizduell.</p>

@@ -23,18 +23,25 @@ assert.equal(miss.combo, 0);
 const questions = [
   question,
   { ...question, id: 'q2', skill: 'logic', type: 'logic', difficulty: .65 },
-  { ...question, id: 'q3', skill: 'causal', type: 'causal', difficulty: .8 }
+  { ...question, id: 'q3', skill: 'causal', type: 'causal', difficulty: .8 },
 ];
 const next = engine.chooseNextQuestion({ questions, history: [{ question: questions[0] }], skills: { recall: .2, logic: .8, causal: .7 }, opponent, round: 3, accuracy: .5 });
 assert.ok(next && next.id !== 'q', 'recent questions should be avoided');
 
 const score = engine.calculateMatchScore({ outcome: 1, accuracy: .8, averageDifficulty: .6, fastCorrectRate: .5 });
 assert.ok(score > .5 && score < 1);
-const rating = engine.calculateNewIP({ before: 1000, opponentRating: 1000, score, calibration: 0 });
-assert.ok(rating.ip > 1000 && rating.delta > 0);
-assert.equal(rating.ip, 1000 + rating.delta, 'the water resource should move by the deterministic delta');
-const duelElixir = engine.calculateElixirReward({ mode: 'duel', correctAnswers: 8, totalRounds: 10, outcome: 1 });
-const freeElixir = engine.calculateElixirReward({ mode: 'free', correctAnswers: 8, totalRounds: 10, outcome: 0 });
-assert.ok(duelElixir > freeElixir && freeElixir > 0, 'duel and free quiz should feed elixir independently from gold');
+const energy = engine.calculateNewEnergy({ before: 1000, opponentRating: 1000, score, calibration: 0 });
+assert.ok(energy.energy > 1000 && energy.delta > 0);
+assert.equal(energy.energy, 1000 + energy.delta, 'energy should move by the deterministic rating delta');
+
+const duelRewards = engine.calculateResourceRewards({ mode: 'duel', correctAnswers: 8, totalRounds: 10, outcome: 1, fastCorrectRate: .6, maxCombo: 4 });
+const freeRewards = engine.calculateResourceRewards({ mode: 'free', correctAnswers: 8, totalRounds: 10, outcome: 0, fastCorrectRate: .6, maxCombo: 4 });
+for (const resource of ['water', 'air', 'love']) {
+  assert.ok(duelRewards[resource] > 0, `${resource} should be a positive duel reward`);
+  assert.ok(freeRewards[resource] > 0, `${resource} should be a positive free-quiz reward`);
+}
+assert.ok(duelRewards.water > freeRewards.water, 'duel should provide more water on an equivalent strong run');
+assert.ok(duelRewards.air >= freeRewards.air, 'duel should not give less air on an equivalent strong run');
+assert.ok(duelRewards.love > freeRewards.love, 'winning a duel should strengthen love more than an equal free run');
 
 console.log('pwnd-engine tests: ok');

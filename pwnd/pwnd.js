@@ -2,6 +2,8 @@ const $ = (id) => document.getElementById(id);
 const screens = [...document.querySelectorAll('.screen')];
 const TYPE_NAMES = { recall: 'RAPID RECALL', pattern: 'PATTERN RECOGNITION', causal: 'CAUSAL CHOICE', logic: 'LOGIC TRAP', source: 'SOURCE SENSE', risk: 'AGENT DECISION' };
 const SKILL_NAMES = { recall: 'Abruf', pattern: 'Muster', causal: 'Kausalität', logic: 'Logik', source: 'Quellengefühl', risk: 'Risiko' };
+const STARTING_RESOURCES = Object.freeze({ energy: 1000, water: 250, air: 120, love: 60 });
+const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' });
 const OPPONENTS = {
   mirror: { name: 'MIRROR', rating: 1000, focus: 'adaptive', time: 1, intro: 'MIRROR beobachtet deine erste Entscheidung.' },
   rush: { name: 'RUSH', rating: 1050, focus: 'pressure', time: .82, intro: 'RUSH wartet nicht auf Sicherheit. Die Uhr ist Teil des Angriffs.' },
@@ -15,12 +17,12 @@ const UPGRADES = [
   { id: 'scanner', name: 'LIBELLENBLICK', text: 'Einmal pro Match eine Antwortoption entfernen.', apply: s => { s.mods.scanner = true; } },
 ];
 const POND_UNLOCKS = [
-  { id:'frog', name:'Froschbucht', gold:1000, elixir:250, copy:'Ein erster Bewohner wartet am Ufer.', symbol:'🐸' },
-  { id:'reeds', name:'Schilfgürtel', gold:1040, elixir:320, copy:'Mehr Ufer schafft Schutz und Ruhe.', symbol:'♒' },
-  { id:'dragonfly', name:'Libellen', gold:1120, elixir:420, copy:'Kleine Besucher zeigen klares Wasser an.', symbol:'✦' },
-  { id:'fish', name:'Karpfenkolk', gold:1260, elixir:560, copy:'Ein tiefer Bereich für größere Bewohner.', symbol:'◉' },
-  { id:'lily', name:'Seerosenfeld', gold:1440, elixir:760, copy:'Blüten machen den Teich zu deinem Ort.', symbol:'✿' },
-  { id:'stream', name:'Quellzulauf', gold:1700, elixir:1000, copy:'Eine neue Quelle erweitert deinen Wasserlauf.', symbol:'⌁' },
+  { id: 'frog', name: 'Froschbucht', cost: { energy: 1000, water: 250, air: 120, love: 60 }, copy: 'Ein erster Bewohner wartet am Ufer.', symbol: '🐸' },
+  { id: 'reeds', name: 'Schilfgürtel', cost: { energy: 1040, water: 320, air: 135, love: 70 }, copy: 'Mehr Ufer schafft Schutz und Ruhe.', symbol: '♒' },
+  { id: 'dragonfly', name: 'Libellen', cost: { energy: 1120, water: 420, air: 170, love: 90 }, copy: 'Kleine Besucher zeigen klares Wasser an.', symbol: '✦' },
+  { id: 'fish', name: 'Karpfenkolk', cost: { energy: 1260, water: 560, air: 215, love: 115 }, copy: 'Ein tiefer Bereich für größere Bewohner.', symbol: '◉' },
+  { id: 'lily', name: 'Seerosenfeld', cost: { energy: 1440, water: 760, air: 275, love: 150 }, copy: 'Blüten machen den Teich zu deinem Ort.', symbol: '✿' },
+  { id: 'stream', name: 'Quellzulauf', cost: { energy: 1700, water: 1000, air: 340, love: 200 }, copy: 'Eine neue Quelle erweitert deinen Wasserlauf.', symbol: '⌁' },
 ];
 const QUESTIONS = [
   { id:'r1', type:'recall', skill:'recall', difficulty:.25, time:10000, prompt:'Welcher Planet ist der Sonne am nächsten?', options:['Venus','Mars','Merkur','Jupiter'], answer:2, explanation:'Merkur ist der sonnennächste Planet.' },
@@ -43,57 +45,237 @@ const QUESTIONS = [
 ];
 
 const saved = JSON.parse(localStorage.getItem('pwnd-profile') || 'null');
-const state = { ip: saved?.ip ?? 1000, elixir: saved?.elixir ?? 250, calibration: saved?.calibration ?? 0, upgrades: saved?.upgrades ?? [], unlocked: saved?.unlocked ?? ['frog'], opponentId: 'mirror', mode: 'duel', mods: {}, match: null, timerId: null };
+const state = {
+  energy: saved?.energy ?? saved?.ip ?? STARTING_RESOURCES.energy,
+  water: saved?.water ?? saved?.elixir ?? STARTING_RESOURCES.water,
+  air: saved?.air ?? STARTING_RESOURCES.air,
+  love: saved?.love ?? STARTING_RESOURCES.love,
+  calibration: saved?.calibration ?? 0,
+  upgrades: saved?.upgrades ?? [],
+  unlocked: saved?.unlocked ?? ['frog'],
+  opponentId: 'mirror',
+  mode: 'duel',
+  mods: {},
+  match: null,
+  timerId: null,
+};
+
 const esc = (s) => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-function save(){ localStorage.setItem('pwnd-profile', JSON.stringify({ ip: Math.round(state.ip), elixir: Math.round(state.elixir), calibration: state.calibration, upgrades: state.upgrades, unlocked: state.unlocked })); }
-function show(id){ screens.forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo(0,0); }
-function formatTime(ms){ return `${String(Math.ceil(ms/1000)).padStart(2,'0')}`; }
-function weightedQuestion(){
-  const m = state.match;
-  return PwndEngine.chooseNextQuestion({ questions: QUESTIONS, history: m.history, skills: m.skills, opponent: OPPONENTS[m.opponentId], round: m.round, accuracy: m.accuracy });
+const resourceIds = { energy: ['pondEnergy', 'playerEnergy'], water: ['pondWater', 'playerWater'], air: ['pondAir', 'playerAir'], love: ['pondLove', 'playerLove'] };
+
+function setText(id, value){ const element = $(id); if (element) element.textContent = value; }
+function formatResource(value){ return Math.round(value); }
+function save(){
+  localStorage.setItem('pwnd-profile', JSON.stringify({
+    resourceVersion: 2,
+    energy: formatResource(state.energy),
+    water: formatResource(state.water),
+    air: formatResource(state.air),
+    love: formatResource(state.love),
+    calibration: state.calibration,
+    upgrades: state.upgrades,
+    unlocked: state.unlocked,
+  }));
 }
-function startMatch(mode='duel'){
-  state.mode=mode;
-  state.mods = {}; state.upgrades.forEach(id => UPGRADES.find(u=>u.id===id)?.apply(state));
-  state.match = { round:0, total:mode==='free'?6:10, playerHp:100, aiHp:100, combo:0, history:[], skills:{recall:.5,pattern:.5,causal:.5,logic:.5,source:.5,risk:.5}, accuracy:0, opponentId:state.opponentId, selected:null, current:null, mode };
-  $('roundTotal').textContent = state.match.total; $('playerIp').textContent = Math.round(state.ip); $('playerElixir').textContent = Math.round(state.elixir); $('pondGold').textContent = Math.round(state.ip); $('pondElixir').textContent = Math.round(state.elixir); $('opponentLabel').textContent = OPPONENTS[state.opponentId].name; $('phaseLabel').textContent = mode==='free'?'FREIES QUIZZEN':'QUIZDUELL'; show('screenBattle'); nextQuestion();
+if (saved && !saved.resourceVersion) save();
+function updateResourceDisplays(){
+  Object.entries(resourceIds).forEach(([resource, ids]) => ids.forEach(id => setText(id, formatResource(state[resource]))));
+}
+function formatCost(cost){ return ['energy', 'water', 'air', 'love'].map(resource => `${cost[resource]} ${RESOURCE_NAMES[resource]}`).join(' · '); }
+function canAfford(cost){ return Object.entries(cost).every(([resource, value]) => state[resource] >= value); }
+function show(id){ screens.forEach(s => s.classList.toggle('active', s.id === id)); window.scrollTo(0,0); }
+function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
+function weightedQuestion(){
+  const match = state.match;
+  return PwndEngine.chooseNextQuestion({ questions: QUESTIONS, history: match.history, skills: match.skills, opponent: OPPONENTS[match.opponentId], round: match.round, accuracy: match.accuracy });
+}
+function startMatch(mode = 'duel'){
+  state.mode = mode;
+  state.mods = {};
+  state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
+  state.match = { round: 0, total: mode === 'free' ? 6 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: { recall: .5, pattern: .5, causal: .5, logic: .5, source: .5, risk: .5 }, accuracy: 0, opponentId: state.opponentId, selected: null, current: null, mode };
+  setText('roundTotal', state.match.total);
+  updateResourceDisplays();
+  setText('opponentLabel', OPPONENTS[state.opponentId].name);
+  setText('phaseLabel', mode === 'free' ? 'FREIES QUIZZEN' : 'QUIZDUELL');
+  show('screenBattle');
+  nextQuestion();
 }
 function nextQuestion(){
-  const m=state.match; if(m.round >= m.total) return finishMatch(); m.round++; m.current=weightedQuestion(); m.selected=null; m.submitted=false; renderBattle(); startTimer(Math.round(m.current.time * OPPONENTS[m.opponentId].time) + (state.mods.time || 0));
+  const match = state.match;
+  if (match.round >= match.total) return finishMatch();
+  match.round += 1;
+  match.current = weightedQuestion();
+  match.selected = null;
+  match.submitted = false;
+  renderBattle();
+  startTimer(Math.round(match.current.time * OPPONENTS[match.opponentId].time) + (state.mods.time || 0));
 }
 function renderBattle(){
-  const m=state.match, q=m.current; $('roundNo').textContent=m.round; $('questionType').textContent=TYPE_NAMES[q.type]; $('questionTitle').textContent=q.prompt; $('questionHint').textContent=q.type==='risk'?'Deine Entscheidung hat Konsequenzen.':'Wähle eine Antwort.'; $('comboText').textContent=`COMBO ${m.combo}`; $('skillProfile').textContent=`${SKILL_NAMES[weakest(m.skills)]} wird beobachtet`;
-  $('playerHealth').style.width=`${Math.max(0,m.playerHp)}%`; $('aiHealth').style.width=`${Math.max(0,m.aiHp)}%`; $('playerHpText').textContent=Math.ceil(m.playerHp); $('aiHpText').textContent=Math.ceil(m.aiHp); $('lockBtn').disabled=true;
-  $('answers').innerHTML=q.options.map((o,i)=>`<button class="answer" type="button" data-answer="${i}"><span class="answer-index">${String.fromCharCode(65+i)}</span><span>${esc(o)}</span></button>`).join('');
-  document.querySelectorAll('.answer').forEach(btn=>btn.addEventListener('click',()=>selectAnswer(Number(btn.dataset.answer)))); $('aiComment').textContent = m.round===1 ? OPPONENTS[m.opponentId].intro : adaptiveComment(m);
+  const match = state.match;
+  const question = match.current;
+  setText('roundNo', match.round);
+  setText('questionType', TYPE_NAMES[question.type]);
+  setText('questionTitle', question.prompt);
+  setText('questionHint', question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.');
+  setText('comboText', `COMBO ${match.combo}`);
+  setText('skillProfile', `${SKILL_NAMES[weakest(match.skills)]} wird beobachtet`);
+  $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;
+  $('aiHealth').style.width = `${Math.max(0, match.aiHp)}%`;
+  setText('playerHpText', Math.ceil(match.playerHp));
+  setText('aiHpText', Math.ceil(match.aiHp));
+  $('lockBtn').disabled = true;
+  $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
+  document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
+  setText('aiComment', match.round === 1 ? OPPONENTS[match.opponentId].intro : adaptiveComment(match));
 }
-function weakest(skills){ return Object.entries(skills).sort((a,b)=>a[1]-b[1])[0][0]; }
-function adaptiveComment(m){ const w=SKILL_NAMES[weakest(m.skills)]; if(m.combo>=2) return 'Interessant. Deine Sicherheit steigt — also wechsle ich die Perspektive.'; if(m.history.at(-1)?.correct===false) return `Deine ${w}-Lücke ist sichtbar. Ich stelle die nächste Frage nicht zufällig.`; return 'Noch kein klares Muster. Eine weitere Entscheidung genügt.'; }
-function startTimer(limit){ clearInterval(state.timerId); const started=performance.now(); const tick=()=>{ const left=Math.max(0,limit-(performance.now()-started)); $('timer').textContent=`00:${formatTime(left)}`; $('timer').classList.toggle('danger',left<5000); if(left<=0){clearInterval(state.timerId); if(!state.match.submitted) submitAnswer(state.match.selected ?? -1,limit);} }; tick(); state.timerId=setInterval(tick,100); state.match.startedAt=started; }
-function selectAnswer(index){ if(state.match.submitted) return; state.match.selected=index; $('lockBtn').disabled=false; document.querySelectorAll('.answer').forEach(b=>b.classList.toggle('selected',Number(b.dataset.answer)===index)); }
-function submitAnswer(index, forcedMs=null){
-  const m=state.match,q=m.current; if(m.submitted) return; m.submitted=true; m.selected=index; clearInterval(state.timerId); const time=forcedMs ?? Math.max(1,performance.now()-m.startedAt);
-  const result=PwndEngine.evaluateAnswer({answerIndex:index,question:q,responseTimeMs:time,combo:m.combo,mods:state.mods});
-  m.combo=result.combo; m.aiHp=Math.max(0,m.aiHp-result.damage); m.playerHp=Math.max(0,m.playerHp-result.selfDamage); m.skills[q.skill]=Math.max(0,Math.min(1,m.skills[q.skill]+result.skillDelta)); m.history.push({question:q,correct:result.correct,time,damage:result.damage,selfDamage:result.selfDamage}); m.accuracy=m.history.filter(x=>x.correct).length/m.history.length;
-  document.querySelectorAll('.answer').forEach((b,i)=>{b.disabled=true;if(i===q.answer)b.classList.add('correct');if(i===index&&i!==q.answer)b.classList.add('wrong')}); $('lockBtn').disabled=true; showRoundResult({correct:result.correct,time,damage:result.damage,selfDamage:result.selfDamage,q});
+function weakest(skills){ return Object.entries(skills).sort((a, b) => a[1] - b[1])[0][0]; }
+function adaptiveComment(match){
+  const weakSkill = SKILL_NAMES[weakest(match.skills)];
+  if (match.combo >= 2) return 'Interessant. Deine Sicherheit steigt — also wechsle ich die Perspektive.';
+  if (match.history.at(-1)?.correct === false) return `Deine ${weakSkill}-Lücke ist sichtbar. Ich stelle die nächste Frage nicht zufällig.`;
+  return 'Noch kein klares Muster. Eine weitere Entscheidung genügt.';
 }
-function showRoundResult(r){ document.body.classList.remove('battle-hit','battle-miss'); document.body.classList.add(r.correct?'battle-hit':'battle-miss'); $('resultOrbit').classList.toggle('miss',!r.correct); $('resultOrbit').textContent=r.correct?'+' :'×'; $('roundEyebrow').textContent=r.correct?'WASSERGEWINN':'GEGENWELLE'; $('roundTitle').textContent=r.correct?'Deine Entscheidung trägt.':'Die AI hat gekontert.'; $('roundCopy').textContent=r.correct?`Du hast ${r.damage} Schaden verursacht${r.time<r.q.time*.45?' — schnell und präzise.':'.'}`:`Du hast die Frage verfehlt und ${r.selfDamage} Energie verloren. Die Konsequenz bleibt bestehen.`; $('resultTime').textContent=`${(r.time/1000).toFixed(1)} s`; $('resultDamage').textContent=r.correct?`+${r.damage}`:`-${r.selfDamage}`; $('resultAccuracy').textContent=r.correct?'KORREKT':'FEHLER'; $('explanation').textContent=r.q.explanation; $('continueBtn').textContent=state.match.round>=state.match.total?'Wasserbilanz ansehen →':'Nächste Runde →'; show('screenRound'); }
+function startTimer(limit){
+  clearInterval(state.timerId);
+  const started = performance.now();
+  const tick = () => {
+    const left = Math.max(0, limit - (performance.now() - started));
+    setText('timer', `00:${formatTime(left)}`);
+    $('timer').classList.toggle('danger', left < 5000);
+    if (left <= 0) {
+      clearInterval(state.timerId);
+      if (!state.match.submitted) submitAnswer(state.match.selected ?? -1, limit);
+    }
+  };
+  tick();
+  state.timerId = setInterval(tick, 100);
+  state.match.startedAt = started;
+}
+function selectAnswer(index){
+  if (state.match.submitted) return;
+  state.match.selected = index;
+  $('lockBtn').disabled = false;
+  document.querySelectorAll('.answer').forEach(button => button.classList.toggle('selected', Number(button.dataset.answer) === index));
+}
+function submitAnswer(index, forcedMs = null){
+  const match = state.match;
+  const question = match.current;
+  if (match.submitted) return;
+  match.submitted = true;
+  match.selected = index;
+  clearInterval(state.timerId);
+  const time = forcedMs ?? Math.max(1, performance.now() - match.startedAt);
+  const result = PwndEngine.evaluateAnswer({ answerIndex: index, question, responseTimeMs: time, combo: match.combo, mods: state.mods });
+  match.combo = result.combo;
+  match.maxCombo = Math.max(match.maxCombo, result.combo);
+  match.aiHp = Math.max(0, match.aiHp - result.damage);
+  match.playerHp = Math.max(0, match.playerHp - result.selfDamage);
+  match.skills[question.skill] = Math.max(0, Math.min(1, match.skills[question.skill] + result.skillDelta));
+  match.history.push({ question, correct: result.correct, time, damage: result.damage, selfDamage: result.selfDamage });
+  match.accuracy = match.history.filter(entry => entry.correct).length / match.history.length;
+  document.querySelectorAll('.answer').forEach((button, optionIndex) => {
+    button.disabled = true;
+    if (optionIndex === question.answer) button.classList.add('correct');
+    if (optionIndex === index && optionIndex !== question.answer) button.classList.add('wrong');
+  });
+  $('lockBtn').disabled = true;
+  showRoundResult({ correct: result.correct, time, damage: result.damage, selfDamage: result.selfDamage, question });
+}
+function showRoundResult(result){
+  document.body.classList.remove('battle-hit', 'battle-miss');
+  document.body.classList.add(result.correct ? 'battle-hit' : 'battle-miss');
+  $('resultOrbit').classList.toggle('miss', !result.correct);
+  $('resultOrbit').textContent = result.correct ? '+' : '×';
+  setText('roundEyebrow', result.correct ? 'RESSOURCENFLUSS' : 'GEGENWELLE');
+  setText('roundTitle', result.correct ? 'Deine Entscheidung trägt.' : 'Die AI hat gekontert.');
+  setText('roundCopy', result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`);
+  setText('resultTime', `${(result.time / 1000).toFixed(1)} s`);
+  setText('resultDamage', result.correct ? `+${result.damage}` : `-${result.selfDamage}`);
+  setText('resultAccuracy', result.correct ? 'KORREKT' : 'FEHLER');
+  setText('explanation', result.question.explanation);
+  setText('continueBtn', state.match.round >= state.match.total ? 'Ressourcenbilanz ansehen →' : 'Nächste Runde →');
+  show('screenRound');
+}
 function finishMatch(){
-  const m=state.match, before=state.ip, opponent=OPPONENTS[m.opponentId]; const outcome=m.aiHp<=m.playerHp?1:0;
-  const averageDifficulty=m.history.reduce((a,x)=>a+x.question.difficulty,0)/m.history.length;
-  const fastCorrectRate=Math.min(1,m.history.filter(x=>x.correct&&x.time<x.question.time*.55).length/3);
-  const score=PwndEngine.calculateMatchScore({outcome,accuracy:m.accuracy,averageDifficulty,fastCorrectRate});
-  const rating=PwndEngine.calculateNewIP({before,opponentRating:opponent.rating,score,calibration:state.calibration});
-  const correctAnswers=m.history.filter(x=>x.correct).length; const elixirReward=PwndEngine.calculateElixirReward({mode:m.mode,correctAnswers,totalRounds:m.total,outcome}); state.ip=rating.ip; state.elixir+=elixirReward; state.calibration=Math.min(1,state.calibration+1); save(); const skillValues=m.skills; const strongest=Object.entries(skillValues).sort((a,b)=>b[1]-a[1])[0][0], weak=Object.entries(skillValues).sort((a,b)=>a[1]-b[1])[0][0]; $('endResult').textContent=outcome?'GEWONNEN':'AUS DEM FLUSS'; $('endResult').style.color=outcome?'var(--leaf)':'var(--clay)'; $('goldChange').textContent=`${rating.delta>=0?'+':''}${rating.delta} GOLD`; $('endTitle').textContent=outcome?'Dein Teich ist gewachsen.':'Die AI hat deinen Wasserlauf gelesen.'; $('endCopy').textContent=`${correctAnswers}/${m.total} Antworten korrekt gegen ${opponent.name}. ${m.mode==='free'?'Freies Quizzen bringt Gold und Elixier in deinen Vorrat.':'Dein Duell hat Gold und Elixier in deinen Teich gebracht.'}`; $('ipValue').textContent=state.ip; $('elixirValue').textContent=state.elixir; $('pondGold').textContent=state.ip; $('pondElixir').textContent=state.elixir; $('ipBeforeAfter').textContent=`${Math.round(before)} → ${Math.round(state.ip)}`; $('elixirChange').textContent=`+${elixirReward} → Teich`; $('strengthValue').textContent=SKILL_NAMES[strongest]; $('weaknessValue').textContent=SKILL_NAMES[weak]; renderPondUnlocks(); renderUpgrades(); show('screenEnd'); }
+  const match = state.match;
+  const before = { energy: state.energy, water: state.water, air: state.air, love: state.love };
+  const opponent = OPPONENTS[match.opponentId];
+  const outcome = match.aiHp <= match.playerHp ? 1 : 0;
+  const averageDifficulty = match.history.reduce((sum, entry) => sum + entry.question.difficulty, 0) / match.history.length;
+  const fastCorrectRate = Math.min(1, match.history.filter(entry => entry.correct && entry.time < entry.question.time * .55).length / 3);
+  const score = PwndEngine.calculateMatchScore({ outcome, accuracy: match.accuracy, averageDifficulty, fastCorrectRate });
+  const energyRating = PwndEngine.calculateNewEnergy({ before: state.energy, opponentRating: opponent.rating, score, calibration: state.calibration });
+  const correctAnswers = match.history.filter(entry => entry.correct).length;
+  const rewards = PwndEngine.calculateResourceRewards({ mode: match.mode, correctAnswers, totalRounds: match.total, outcome, fastCorrectRate, maxCombo: match.maxCombo });
+  state.energy = energyRating.energy;
+  state.water += rewards.water;
+  state.air += rewards.air;
+  state.love += rewards.love;
+  state.calibration = Math.min(1, state.calibration + 1);
+  save();
+  const strongest = Object.entries(match.skills).sort((a, b) => b[1] - a[1])[0][0];
+  const weak = Object.entries(match.skills).sort((a, b) => a[1] - b[1])[0][0];
+  setText('endResult', outcome ? 'GEWONNEN' : 'AUS DEM FLUSS');
+  $('endResult').style.color = outcome ? 'var(--leaf)' : 'var(--clay)';
+  setText('energyChange', `${energyRating.delta >= 0 ? '+' : ''}${energyRating.delta} ENERGIE`);
+  setText('endTitle', outcome ? 'Dein Teich ist gewachsen.' : 'Die AI hat deinen Wasserlauf gelesen.');
+  setText('endCopy', `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. ${match.mode === 'free' ? 'Freies Quizzen füllt Energie, Wasser, Luft und Liebe verlässlich auf.' : 'Dein Duell hat deine vier Reserven gestärkt.'}`);
+  setText('energyValue', formatResource(state.energy));
+  setText('waterValue', formatResource(state.water));
+  setText('airValue', formatResource(state.air));
+  setText('loveValue', formatResource(state.love));
+  setText('energyBeforeAfter', `${formatResource(before.energy)} → ${formatResource(state.energy)}`);
+  setText('waterChange', `+${rewards.water} · Teich`);
+  setText('airChange', `+${rewards.air} · Bewegung`);
+  setText('loveChange', `+${rewards.love} · Vertrauen`);
+  setText('strengthValue', SKILL_NAMES[strongest]);
+  setText('weaknessValue', SKILL_NAMES[weak]);
+  updateResourceDisplays();
+  renderPondUnlocks();
+  renderUpgrades();
+  show('screenEnd');
+}
 function renderPondUnlocks(){
-  const gold=state.ip, elixir=state.elixir;
-  const grid=$('unlockGrid'); if(!grid)return; grid.innerHTML=POND_UNLOCKS.map(item=>{const open=state.unlocked.includes(item.id); const canAfford=gold>=item.gold&&elixir>=item.elixir; return `<div class="unlock-item ${open?'open':'locked'}"><span class="unlock-symbol">${open?item.symbol:'·'}</span><div><b>${item.name}</b><small>${open?item.copy:`${item.gold} Gold + ${item.elixir} Elixier`}</small></div>${open?'<strong>offen</strong>':`<button class="unlock-action" type="button" data-unlock="${item.id}" ${canAfford?'':'disabled'}>${canAfford?'freischalten':'gesperrt'}</button>`}</div>`;}).join('');
-  grid.querySelectorAll('[data-unlock]').forEach(button=>button.addEventListener('click',()=>unlockPond(button.dataset.unlock)));
+  const grid = $('unlockGrid');
+  if (!grid) return;
+  grid.innerHTML = POND_UNLOCKS.map(item => {
+    const open = state.unlocked.includes(item.id);
+    const affordable = canAfford(item.cost);
+    return `<div class="unlock-item ${open ? 'open' : 'locked'}"><span class="unlock-symbol">${open ? item.symbol : '·'}</span><div><b>${item.name}</b><small>${open ? item.copy : formatCost(item.cost)}</small></div>${open ? '<strong>offen</strong>' : `<button class="unlock-action" type="button" data-unlock="${item.id}" ${affordable ? '' : 'disabled'}>${affordable ? 'freischalten' : 'gesperrt'}</button>`}</div>`;
+  }).join('');
+  grid.querySelectorAll('[data-unlock]').forEach(button => button.addEventListener('click', () => unlockPond(button.dataset.unlock)));
 }
 function unlockPond(id){
-  const item=POND_UNLOCKS.find(unlock=>unlock.id===id); if(!item||state.unlocked.includes(id)||state.ip<item.gold||state.elixir<item.elixir)return;
-  state.ip-=item.gold; state.elixir-=item.elixir; state.unlocked=[...state.unlocked,id]; save(); $('pondGold').textContent=Math.round(state.ip); $('pondElixir').textContent=Math.round(state.elixir); renderPondUnlocks();
+  const item = POND_UNLOCKS.find(unlock => unlock.id === id);
+  if (!item || state.unlocked.includes(id) || !canAfford(item.cost)) return;
+  Object.entries(item.cost).forEach(([resource, value]) => { state[resource] -= value; });
+  state.unlocked = [...state.unlocked, id];
+  save();
+  updateResourceDisplays();
+  renderPondUnlocks();
 }
-function renderUpgrades(){ const choices=[...UPGRADES].sort(()=>Math.random()-.5).slice(0,3); $('upgrades').innerHTML=choices.map(u=>`<label class="upgrade"><input type="radio" name="upgrade" value="${u.id}"><strong>${u.name}</strong><small>${u.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(x=>x.addEventListener('click',()=>{document.querySelectorAll('.upgrade').forEach(y=>y.classList.remove('selected'));x.classList.add('selected'); const id=x.querySelector('input').value;if(!state.upgrades.includes(id))state.upgrades=[...state.upgrades.slice(-2),id];save();})); }
-document.querySelectorAll('.opponent-option').forEach(button=>button.addEventListener('click',()=>{state.opponentId=button.dataset.opponent;document.querySelectorAll('.opponent-option').forEach(other=>other.classList.toggle('selected',other===button));}));
-  renderPondUnlocks(); $('startBtn').addEventListener('click',()=>startMatch('duel')); $('freeQuizBtn').addEventListener('click',()=>startMatch('free')); $('lockBtn').addEventListener('click',()=>submitAnswer(state.match.selected)); $('continueBtn').addEventListener('click',()=>state.match.round>=state.match.total?finishMatch():(show('screenBattle'),nextQuestion())); $('againBtn').addEventListener('click',()=>startMatch(state.mode));
+function renderUpgrades(){
+  const choices = [...UPGRADES].sort(() => Math.random() - .5).slice(0, 3);
+  $('upgrades').innerHTML = choices.map(upgrade => `<label class="upgrade"><input type="radio" name="upgrade" value="${upgrade.id}"><strong>${upgrade.name}</strong><small>${upgrade.text}</small></label>`).join('');
+  document.querySelectorAll('.upgrade').forEach(option => option.addEventListener('click', () => {
+    document.querySelectorAll('.upgrade').forEach(other => other.classList.remove('selected'));
+    option.classList.add('selected');
+    const id = option.querySelector('input').value;
+    if (!state.upgrades.includes(id)) state.upgrades = [...state.upgrades.slice(-2), id];
+    save();
+  }));
+}
+
+document.querySelectorAll('.opponent-option').forEach(button => button.addEventListener('click', () => {
+  state.opponentId = button.dataset.opponent;
+  document.querySelectorAll('.opponent-option').forEach(other => other.classList.toggle('selected', other === button));
+}));
+
+updateResourceDisplays();
+renderPondUnlocks();
+$('startBtn').addEventListener('click', () => startMatch('duel'));
+$('freeQuizBtn').addEventListener('click', () => startMatch('free'));
+$('lockBtn').addEventListener('click', () => submitAnswer(state.match.selected));
+$('continueBtn').addEventListener('click', () => state.match.round >= state.match.total ? finishMatch() : (show('screenBattle'), nextQuestion()));
+$('againBtn').addEventListener('click', () => startMatch(state.mode));
