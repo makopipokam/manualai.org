@@ -32,6 +32,9 @@ assert.match(appSource, /recentAnswers/, 'fox requests must contain the previous
 assert.match(appSource, /match\.current = await requestAiQuestion\(match\)/, 'duels must request adaptive questions');
 assert.match(appSource, /QUESTION_TIME_MIN/, 'adaptive duel difficulty must not remove adequate thinking time');
 assert.match(appSource, /foxComment\(match, question\)/, 'each duel question must refresh the fox dialogue');
+assert.match(appSource, /setText\('aiComment', foxComment\(match, match\.current\)\)/, 'fox dialogue belongs to the thinking phase before each question');
+assert.match(appSource, /\$\('aiComment'\)\.hidden = match\.mode === 'duel'/, 'fox dialogue must disappear while answer choices are visible');
+assert.doesNotMatch(appSource, /wertet deine letzte Antwort aus/, 'old red loading placeholder must be removed');
 assert.doesNotMatch(appSource, /question\.opponentLine/, 'fox dialogue must use observed answers, never a model-invented claim');
 assert.match(appSource, /source: fallback\.source \|\| 'archive'/, 'the last offline fallback must be visibly tagged as archive content');
 const questionIds = [...appSource.matchAll(/\{ id:'([^']+)', type:/g)].map(match => match[1]);

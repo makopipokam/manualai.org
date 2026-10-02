@@ -201,9 +201,13 @@ function showQuestionLoading(match){
   setText('questionType', free ? 'DIE EULE DENKT' : 'DER FUCHS DENKT');
   setText('questionTitle', free ? 'Die Schatten-Eule formuliert die nächste Frage …' : `${currentOpponent().name} stellt die nächste Frage …`);
   setText('questionHint', '');
-  setText('aiComment', free ? 'Die Eule beobachtet deine Antworten.' : `${currentOpponent().name} wertet deine letzte Antwort aus …`);
+  setText('timer', free ? 'RUHIG' : 'DENKT');
+  $('timer').classList.remove('danger');
+  $('aiComment').hidden = !free;
+  if (free) setText('aiComment', 'Die Eule beobachtet deine Antworten.');
   $('answers').innerHTML = '';
   $('lockBtn').disabled = true;
+  $('lockBtn').hidden = true;
   setText('roundNo', match.round);
 }
 async function requestAiQuestion(match){
@@ -351,6 +355,12 @@ async function nextQuestion(){
     return finishMatch();
   }
   if (match.mode === 'duel') match.current = { ...match.current, time: Math.max(Number(match.current.time) || 0, QUESTION_TIME_MIN[match.current.skill] || 20000) };
+  if (match.mode === 'duel') {
+    setText('aiComment', foxComment(match, match.current));
+    $('aiComment').hidden = false;
+    await new Promise(resolve => setTimeout(resolve, 1100));
+    if (state.match !== match) return;
+  }
   renderBattle();
   const recent = match.history.slice(-2);
   let timeFactor = currentOpponent().time;
@@ -374,12 +384,12 @@ function renderBattle(){
   setText('playerHpText', Math.ceil(match.playerHp));
   setText('aiHpText', Math.ceil(match.aiHp));
   $('lockBtn').disabled = true;
+  $('lockBtn').hidden = false;
   $('answers').innerHTML = question.options.map((option, index) => `<button class="answer" type="button" data-answer="${index}"><span class="answer-index">${String.fromCharCode(65 + index)}</span><span>${esc(option)}</span></button>`).join('');
   document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => selectAnswer(Number(button.dataset.answer))));
   setText('lockBtn', 'Antwort abgeben');
-  setText('aiComment', match.mode === 'free'
-    ? (match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match))
-    : foxComment(match, question));
+  $('aiComment').hidden = match.mode === 'duel';
+  if (match.mode === 'free') setText('aiComment', match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match));
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
 function foxComment(match, question){
