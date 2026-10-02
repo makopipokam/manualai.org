@@ -225,7 +225,7 @@ body:has(.test-center) .mai-app { display: none; }
 .btn:active { box-shadow: 0 6px 14px rgba(92, 61, 138, .2); }
 .sm { padding: 12px 20px; font-size: 15px; }
 
-/* Choice cards (gender, preference) echo the launchpad cards. */
+/* Gender choice cards echo the launchpad cards. */
 .two { gap: 14px; width: min(100%, 580px); flex-wrap: nowrap; }
 .btn.big {
   position: relative;
@@ -248,8 +248,7 @@ body:has(.test-center) .mai-app { display: none; }
   box-shadow: var(--shadow);
   transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
 }
-.btn.big[data-g=w],
-.btn.big[data-o=homo] { background: var(--mai-tint-b); }
+.btn.big[data-g=w] { background: var(--mai-tint-b); }
 .btn.big::before {
   position: absolute;
   top: 22px;
@@ -261,8 +260,6 @@ body:has(.test-center) .mai-app { display: none; }
 }
 .btn.big[data-g=m]::before { content: "01 · Ich bin"; }
 .btn.big[data-g=w]::before { content: "02 · Ich bin"; }
-.btn.big[data-o=hetero]::before { content: "01 · Präferenz"; }
-.btn.big[data-o=homo]::before { content: "02 · Präferenz"; }
 .btn.big::after {
   content: "→";
   position: absolute;
@@ -279,8 +276,7 @@ body:has(.test-center) .mai-app { display: none; }
   letter-spacing: 0;
   transition: transform .25s ease, background .25s ease, color .25s ease;
 }
-.btn.big[data-g=w]::after,
-.btn.big[data-o=homo]::after { color: var(--acc); }
+.btn.big[data-g=w]::after { color: var(--acc); }
 .btn.big small {
   display: block;
   margin-top: 9px;
