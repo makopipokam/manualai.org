@@ -2038,3 +2038,38 @@ input:focus-visible,
 [data-theme="dark"] .favorites-header .back-btn {
     color: var(--text-color);
 }
+
+
+/* Dark mode high-contrast pass: brighter text and clearly raised surfaces. */
+[data-theme="dark"] {
+    --background-color: #0f1913;
+    --card-background: #21372a;
+    --text-color: #ffffff;
+    --text-light: #e5f0e8;
+    --border-color: #6e9a7c;
+    --favorite-color: #f0b978;
+    --favorite-hover: #f6c58f;
+    --secondary-color: #2f4b38;
+    --secondary-hover: #3d5e47;
+    --dark-surface: #1b2d21;
+    --dark-surface-raised: #2f4b38;
+    --dark-surface-muted: #35543e;
+}
+
+[data-theme="dark"] .app-container {
+    color: #ffffff;
+}
+
+[data-theme="dark"] .info-item,
+[data-theme="dark"] .favorite-card,
+[data-theme="dark"] .quick-reply-btn {
+    border-color: rgba(229, 240, 232, 0.34);
+}
+
+[data-theme="dark"] .favorite-card .remove-btn {
+    background: #41614b;
+}
+
+[data-theme="dark"] .chat-message.assistant {
+    border: 1px solid rgba(229, 240, 232, 0.24);
+}
