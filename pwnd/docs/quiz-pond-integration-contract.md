@@ -1,6 +1,6 @@
 # Quiz–Teich-Integrationsvertrag v0.1
 
-**Status:** Implementierungsgrenze für die spätere Zusammenführung von Quiz-Beta und pwnd-Hauptspiel.
+**Status:** Online-Teich als separater, servergespeicherter Baustein umgesetzt; die sichere Verbindung zur Quiz-Beta folgt später.
 
 ## Ziel
 
@@ -91,7 +91,7 @@ Eine Wiederholung mit derselben Idempotency-ID liefert dasselbe Ergebnis, erzeug
 
 ## Frontend-Regel
 
-Die Quiz-Beta darf bis zur Existenz dieses serverseitigen Transaktionsendpunkts weiterhin lokal demonstrieren. Lokale Werte sind als **Demo-/Offline-Zustand** zu kennzeichnen und dürfen nicht automatisch als vertrauenswürdige Hauptspielwährung in PvP, Liga oder Beute übernommen werden.
+Die Quiz-Beta darf bis zur Existenz dieses serverseitigen Transaktionsendpunkts weiterhin lokal demonstrieren. Lokale Werte sind **Demo-/Offline-Zustand** und werden weder automatisch in den Online-Teich übertragen noch als vertrauenswürdige Hauptspielwährung für PvP, Liga oder Beute behandelt.
 
 ### Umgesetzter lokaler Vertical Slice (2026-10-02)
 
@@ -101,7 +101,15 @@ Das 10×10-Raster hat einen festen 2×2-Teichkern. Je eine 2×2-Solar-Seerose (1
 
 Die Ernte wird bewusst per Button abgeholt; **nur die Produzentenernte** ist pro Zeitintervall auf acht Offline-Stunden und je Ressource auf einen lokalen Vorrat von 2.000 begrenzt. Bei vollem Vorrat werden ganze überschüssige Produktionseinheiten nicht für spätere Ausgaben geparkt; unterhalb der Grenze bleibt eine angebrochene Produktionszeit als Bruchrest erhalten. Bestehende Quizressourcen können über 2.000 liegen und werden nicht nachträglich abgeschnitten. Die Baukosten, Raten und Nachbarschaft entsprechen der GDD-v0.2-Balance, ersetzen aber noch nicht deren vollständige Economy-Engine, Lager- oder Serverzeitregeln. Das Bauen ist wie im GDD von Beginn an möglich, nicht künstlich hinter dem Quiz gesperrt; Quizbelohnungen und Baukosten wirken auf **denselben** lokalen Vorrat.
 
-Das ist eine **Browser-Demo, kein sicherer Account-Spielstand**: Ein Spieler kann `localStorage` oder die Gerätezeit ändern, verschiedene Geräte teilen keinen Zustand, und serverseitige Frageprüfung, Authentifizierung und atomare Datenbanktransaktionen fehlen. Die rein lokale Einmal-Abrechnung verhindert versehentliche doppelte Klicks, nicht Manipulation oder gleichzeitig beginnende Schreibvorgänge aus mehreren Tabs. Veraltete Tabs werden nach Möglichkeit vor einem Überschreiben erkannt; **garantierte Cross-Tab-Serialisierung ist ohne autoritativen Server nicht zugesagt**. Der weitere Vertrag und die Abnahmepunkte unten beschreiben daher nach wie vor das **noch nicht implementierte** produktive Ziel.
+Die **lokale Quiz-Demo** ist weiterhin kein sicherer Account-Spielstand: Ein Spieler kann `localStorage` oder die Gerätezeit ändern, verschiedene Geräte teilen diesen Zustand nicht und serverseitige Frageprüfung und atomare Quizabrechnung fehlen. Die rein lokale Einmal-Abrechnung verhindert versehentliche doppelte Klicks, nicht Manipulation oder gleichzeitig beginnende Schreibvorgänge aus mehreren Tabs. Veraltete Tabs werden nach Möglichkeit vor einem Überschreiben erkannt. Die serverseitigen Bausteine weiter unten betreffen ausdrücklich **nur den getrennten Online-Teich**, nicht die Quizbelohnung.
+
+### Umgesetzter serverseitiger Teich-Bauschritt (2026-10-02)
+
+Unter `/pwnd/online.html` gibt es einen **freiwilligen, separaten** Teich mit E-Mail-Code-Anmeldung über das bereits verwendete manualAI-Supabase-Projekt. `pwnd_ponds` und `pwnd_buildings` sind eigene Tabellen mit RLS und ohne direkten Zugriff für Browserrollen. Nur `pwnd_get_pond` und `pwnd_pond_action` stehen authentifizierten Benutzern als RPC offen. Sie leiten den Besitzer aus `auth.uid()` ab und verarbeiten Bauen, kostenfreies Umsetzen und Abholen in Transaktionen mit Zeilensperre und Revisionsprüfung. Der Client darf weder Währungen noch Produktionszeit oder Eigentümer-ID vorgeben. Der neue Teich beginnt unabhängig vom lokalen Browser-Spielstand mit **1.000 ⚡, 500 💧, 300 🌬️, 100 ❤️**, damit die drei Gebäude als Bau-Demo zugänglich sind. Er übernimmt **keine** lokal erspielten Quizressourcen.
+
+Produktionszeit stammt aus `clock_timestamp()` der Datenbank, nicht der Geräteuhr. Die Regeln entsprechen dem lokalen Drei-Gebäude-Prototyp (120/h je Gebäude, beide Footprint-Nachbarschaften, 2.000er Produktions-Cap je Ressource, höchstens 8 Stunden Offline-Nachholung je Abrechnungsintervall). Ein Online-Bau oder eine Ernte lässt sich nicht per Browser-Storage manipulieren. Zwei gleichzeitige Tabs können nicht dieselbe Ressourcenänderung buchen: Der erste gültige Schreibvorgang erhöht die Revision, der zweite benötigt ein erneutes Laden. Reine Lesefunktionen dürfen Produktionsbank und Serverzeit aktualisieren, aber keine frei angegebenen Ressourcen gutschreiben.
+
+**Noch offen:** Der Eulen- und Fuchsmodus benutzen weiterhin die lokale Demo-Währung; die online abgesicherte Frageausgabe, Antwortwertung, Skill-Synchronisierung und genau einmalige Quizgutschrift sind nicht Teil dieser Stufe. Auch PvP, Import alter lokaler Werte, Konto-Recovery-UX und produktive Lager-/Upgrade-Regeln sind nicht umgesetzt. Solange keine serverseitige Quiztransaktion existiert, bleibt das hier ein sicheres **Bau-/Zeitfundament**, keine fertige gemeinsame Spielökonomie.
 
 Die spätere UI-Antwort soll den aktualisierten Teich-Snapshot zurückgeben:
 

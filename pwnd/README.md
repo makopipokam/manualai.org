@@ -10,6 +10,14 @@ Footprint Manhattan distance matters: solar + spring within two cells adds 300 e
 
 **This is a same-browser demo, not authenticated or server-authoritative game currency.** Browser storage and the device clock can be changed; concurrently edited tabs are not transactionally serialized, and interrupted quiz rounds do not resume after reload. Never import these values into PvP, league or loot without the server checks in [`docs/quiz-pond-integration-contract.md`](docs/quiz-pond-integration-contract.md).
 
+## Optional online pond (server-side foundation)
+
+[`online.html`](online.html) is a deliberately **separate** authenticated pond. It reuses the existing manualAI Supabase E-Mail-OTP login and public publishable client key, with a dedicated additive schema in [`migrations/`](migrations/) and no new service-role key in browser code. Two authenticated, `SECURITY DEFINER` RPCs own the state and actions: `pwnd_get_pond()` and `pwnd_pond_action(kind,type,x,y,revision)`. All wallet changes, placement validation, bonuses, row locking and the eight-hour production time calculation occur in PostgreSQL. `auth.uid()` fixes the owner; RLS and revoked table grants block browser writes. New online accounts start with an independent 1,000 ⚡ / 500 💧 / 300 🌬️ / 100 ❤️ balance to let them try all three buildings. A stale revision is rejected. The previous local quiz profile is neither overwritten nor imported as online currency.
+
+The online pond currently **does not credit quiz rewards**; the owl and fox quizzes still use their local demo state. The next step is a server-verified question/answer/attempt transaction, not trusting the existing browser answers. Changing the device clock does not change online production. Signing out of this Supabase project signs out of other manualAI apps using the same login in this browser.
+
+The optional mocked-auth/mobile browser check is `python3 pwnd/test/online-browser.test.py` after starting a static server at repository root on port 4173. For a read-only test of deployed assets, use `PWND_ONLINE_URL=https://app.manualai.org/pwnd/online.html python3 pwnd/test/online-browser.test.py`: the test intercepts the auth library in an isolated browser and never creates a real account or writes to the live database. It verifies OTP screens, separate balances, three buildings, both bonuses, claim, move, reload and logout.
+
 Run the engine and API tests from the repository root:
 
 ```bash

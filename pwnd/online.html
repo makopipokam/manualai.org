@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#d9ebd8">
+  <meta name="description" content="pwnd Online-Teich: baue drei Produktionsgebäude mit sicher gespeicherter Serverzeit.">
+  <title>Online-Teich · pwnd</title>
+  <link rel="stylesheet" href="/pwnd/pwnd.css">
+  <link rel="stylesheet" href="/pwnd/online.css">
+</head>
+<body>
+  <main class="shell online-shell">
+    <header class="topbar">
+      <a class="brand" href="/pwnd/" aria-label="Zurück zum lokalen Quiz">← <b>pwnd</b></a>
+      <span class="online-tag">ONLINE-TEICH</span>
+    </header>
+    <div id="loading" class="online-loading" role="status">Dein Online-Teich wird geladen …</div>
+    <section id="authView" class="online-auth" hidden aria-labelledby="authTitle">
+      <p class="eyebrow">DEIN TEICH · AUF ALLEN GERÄTEN</p>
+      <h1 id="authTitle">Nimm deinen Teich <em>mit.</em></h1>
+      <p>Melde dich mit einem E-Mail-Code an. Der Online-Teich verwendet dein bestehendes manualAI-Konto.</p>
+      <form id="emailForm">
+        <label for="emailInput">E-Mail-Adresse</label>
+        <input id="emailInput" type="email" autocomplete="email" required placeholder="name@beispiel.de">
+        <button class="build-primary" type="submit" id="sendCodeBtn">Code senden</button>
+      </form>
+      <form id="codeForm" hidden>
+        <label for="codeInput">Code aus der E-Mail</label>
+        <input id="codeInput" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6,8}" required placeholder="Anmeldecode">
+        <button class="build-primary" type="submit" id="verifyCodeBtn">Code bestätigen</button>
+      </form>
+      <p id="authStatus" role="status" aria-live="polite"></p>
+      <p class="online-disclaimer">Dein bisheriger Browser-Teich bleibt erhalten. Seine Ressourcen werden aus Sicherheitsgründen nicht automatisch als Online-Ressourcen übernommen.</p>
+      <a class="secondary-btn online-back" href="/pwnd/">Zur lokalen Demo</a>
+    </section>
+    <section id="pondView" hidden aria-labelledby="pondTitle">
+      <div class="online-header">
+        <div><p class="eyebrow">DEIN ONLINE-TEICH</p><h1 id="pondTitle">Hier wächst dein <em>Teich.</em></h1></div>
+        <button class="online-logout" id="logoutBtn" type="button">Abmelden</button>
+      </div>
+      <div class="pond-scene online-scene" aria-hidden="true">
+        <span class="sun-glint"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span>
+        <span class="pond-built-solar" id="onlineSolar"><i></i><b>☀</b></span>
+        <span class="pond-built-spring" id="onlineSpring"><i></i><b>✦</b></span>
+        <span class="pond-built-reed" id="onlineReed"><i></i><b>✺</b></span>
+      </div>
+      <div class="resource-grid" aria-label="Online-Ressourcen">
+        <div class="resource-card energy-resource"><div><small>ENERGIE</small><strong id="onlineEnergy">–</strong></div><div class="resource-symbol" aria-hidden="true">⚡</div></div>
+        <div class="resource-card water-resource"><div><small>WASSER</small><strong id="onlineWater">–</strong></div><div class="resource-symbol" aria-hidden="true">💧</div></div>
+        <div class="resource-card air-resource"><div><small>LUFT</small><strong id="onlineAir">–</strong></div><div class="resource-symbol" aria-hidden="true">🌬️</div></div>
+        <div class="resource-card love-resource"><div><small>LIEBE</small><strong id="onlineLove">–</strong></div><div class="resource-symbol" aria-hidden="true">❤️</div></div>
+      </div>
+      <section class="pond-build-panel" aria-labelledby="onlineBuildTitle">
+        <p class="eyebrow">SERVERZEIT · DEIN 10 × 10-TEICH</p>
+        <h2 id="onlineBuildTitle" tabindex="-1">Baue einen lebendigen Teich.</h2>
+        <p class="build-lead">Wähle ein Gebäude, dann ein freies Feld. Goldene Felder bringen mehr Ertrag. Versetzen ist kostenlos.</p>
+        <div id="onlineChoices" class="build-choice-list" aria-label="Produktionsgebäude"></div>
+        <p class="board-scroll-hint">← Raster seitlich wischen →</p>
+        <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster auf kleinen Bildschirmen seitlich verschieben">
+          <div id="onlineGrid" class="pond-build-grid" aria-label="Zehn mal zehn Teichfelder"></div>
+        </div>
+        <div class="build-actions">
+          <button id="cancelChoiceBtn" class="build-primary" type="button" hidden>Platzwahl abbrechen</button>
+          <button id="onlineClaimBtn" class="build-collect" type="button" hidden>Produktion abholen <span id="onlinePending"></span></button>
+        </div>
+        <p id="onlineBonus" class="build-bonus" role="status" aria-live="polite"></p>
+        <p id="onlineStatus" class="build-message" role="status" aria-live="polite"></p>
+        <p class="build-cost">Ernte: höchstens 8 Stunden nachholbar, Stopp bei 2.000 je Ressource. Der Server berechnet die Zeit.</p>
+      </section>
+      <p class="online-disclaimer">Dies ist der erste sichere Teich-Bauschritt. Freies Quiz und Fuchsduell bleiben vorerst auf dem <a href="/pwnd/">lokalen Demo-Spielstand</a>; sie schreiben noch keine Online-Belohnungen gut.</p>
+    </section>
+  </main>
+  <script src="/catsdogs/vendor/supabase.js"></script>
+  <script src="/pwnd/online-config.js"></script>
+  <script src="/pwnd/pond-demo.js"></script>
+  <script src="/pwnd/online-pond.js"></script>
+</body>
+</html>
