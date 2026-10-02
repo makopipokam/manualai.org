@@ -47,5 +47,6 @@ assetlinks = (root / 'android-twa/assetlinks.json.template').read_text()
 assert 'REPLACE_WITH_THE_SHA256_FINGERPRINT_OF_THE_PLAY_APP_SIGNING_CERTIFICATE' in assetlinks
 assert 'org.manualai.mydog' in assetlinks and 'PLAY_UPLOAD_CERTIFICATE' not in assetlinks
 print('android-preflight: STRUCTURE PASS | PICARD legal identity, linked pages, PWA metadata, TWA manifest and fingerprint template')
-print('android-release: PENDING | PICARD legal/DPO approval, Play App Signing fingerprint, real-device test and Play Console declarations')
+print('android-legal: APPROVED | PICARD confirmed operator role, DPO contact and Vercel processing on 02.10.2026; legal pages live since PR #39')
+print('android-release: PENDING | Play App Signing fingerprint, real-device test and Play Console declarations')
 PY
