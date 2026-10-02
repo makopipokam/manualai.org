@@ -31,6 +31,8 @@
       const active = () => page.querySelector('.screen.active')?.id;
       const state = () => JSON.parse(app.localStorage.getItem('mydog_appState') || '{}');
 
+      const heroFacts = [...page.querySelectorAll('.hero-facts span')].map(element => element.textContent.trim());
+      assert(heroFacts.includes('Dein Rudel wartet') && !heroFacts.includes('5 Antwortstufen'), 'start screen shows the new short dog-discovery message');
       click('#start-test-btn');
       assert(active() === 'test-screen', 'test start opens test screen');
       assert(page.querySelectorAll('.likert-option').length === 5, 'five numeric Likert options render');
