@@ -5,7 +5,7 @@ import os
 import shutil
 from playwright.sync_api import sync_playwright
 
-URL = f"http://127.0.0.1:{os.getenv('PORT', '4173')}/pwnd/online.html"
+URL = os.getenv('PWND_ONLINE_URL', f"http://127.0.0.1:{os.getenv('PORT', '4173')}/pwnd/online.html")
 SUPABASE_MOCK = r"""
 (() => {
   const initial = { resources: { energy: 1000, water: 500, air: 300, love: 100 },

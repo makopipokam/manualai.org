@@ -16,7 +16,7 @@ Footprint Manhattan distance matters: solar + spring within two cells adds 300 e
 
 The online pond currently **does not credit quiz rewards**; the owl and fox quizzes still use their local demo state. The next step is a server-verified question/answer/attempt transaction, not trusting the existing browser answers. Changing the device clock does not change online production. Signing out of this Supabase project signs out of other manualAI apps using the same login in this browser.
 
-The optional mocked-auth/mobile browser check is `python3 pwnd/test/online-browser.test.py` after starting a static server at repository root on port 4173. It verifies OTP screens, separate balances, three buildings, both bonuses, claim, move, reload and logout without requiring an actual account.
+The optional mocked-auth/mobile browser check is `python3 pwnd/test/online-browser.test.py` after starting a static server at repository root on port 4173. For a read-only test of deployed assets, use `PWND_ONLINE_URL=https://app.manualai.org/pwnd/online.html python3 pwnd/test/online-browser.test.py`: the test intercepts the auth library in an isolated browser and never creates a real account or writes to the live database. It verifies OTP screens, separate balances, three buildings, both bonuses, claim, move, reload and logout.
 
 Run the engine and API tests from the repository root:
 
