@@ -15,7 +15,17 @@
     </header>
 
     <section class="screen active" id="screenStart" aria-labelledby="startTitle">
-      <div class="pond-scene" aria-hidden="true"><span class="sun-glint"></span><span class="lily lily-one"></span><span class="lily lily-two"></span><span class="frog">●</span><span class="reed reed-one"></span><span class="reed reed-two"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span></div>
+      <div class="pond-scene" id="pondScene" aria-hidden="true">
+        <span class="sun-glint"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span>
+        <span class="pond-feature pond-stream" data-feature="stream"><i></i></span>
+        <span class="pond-feature pond-lilies" data-feature="lily"><i></i><i></i><b>✿</b></span>
+        <span class="pond-feature pond-reeds" data-feature="reeds"><i></i><i></i><i></i><i></i></span>
+        <span class="pond-feature pond-fish" data-feature="fish">🐟</span>
+        <span class="pond-feature pond-dragonfly" data-feature="dragonfly"><i></i><b></b></span>
+        <span class="pond-feature pond-frog" data-feature="frog">🐸</span>
+        <span class="pond-scene-toast" id="pondSceneToast"></span>
+      </div>
+      <p class="sr-only" role="status" id="pondUnlockStatus"></p>
       <p class="eyebrow">DEIN TEICH · SAISON 01</p>
       <h1 id="startTitle">Baue einen Teich,<br><em>der mit dir wächst.</em></h1>
       <p class="lede">Sammle Energie für Entscheidungen, Wasser für Wachstum, Luft für Bewegung und Liebe für Vertrauen in deiner kleinen Teichwelt.</p>
@@ -25,8 +35,8 @@
         <div class="resource-card air-resource"><div><small>LUFT</small><strong id="pondAir">120</strong><span>Raum für Bewegung</span></div><div class="resource-symbol">⌁</div></div>
         <div class="resource-card love-resource"><div><small>LIEBE</small><strong id="pondLove">60</strong><span>Bindung und Vertrauen</span></div><div class="resource-symbol">♥</div></div>
       </div>
-      <div class="pond-status"><div><small>BEWOHNER</small><strong>1 / 6</strong><span>Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
-      <div class="pond-residents" aria-label="Teichbewohner"><span class="resident frogling">🐸</span><span class="resident reedling">✦</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span><span class="resident empty">+</span></div>
+      <div class="pond-status"><div><small>ENTDECKT</small><strong id="pondResidentCount">1 / 6</strong><span id="pondProgressLabel">Der Teich ist noch jung</span></div><div><small>TEICHZUSTAND</small><strong>klar</strong><span>gute Bedingungen</span></div></div>
+      <div class="pond-residents" id="pondResidents" aria-label="Freigeschaltete Teichelemente"></div>
       <div class="unlock-panel"><div class="activity-heading"><div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div><span class="pond-season growth-resource-legend" role="img" aria-label="Energie, Wasser, Luft und Liebe"><span>⚡</span><span>💧</span><span>🌬️</span><span>❤️</span></span></div><div class="unlock-grid" id="unlockGrid"></div></div>
       <div class="activity-heading"><div><p class="eyebrow">WAS MÖCHTEST DU TUN?</p><h2>Ressourcen sammeln</h2></div><span class="pond-season">DEIN TEICH</span></div>
       <button class="activity-card activity-active duel-entry" id="startBtn" type="button"><span class="activity-icon">⚔</span><span><b>Quizduell</b><small>Wähle erst danach deinen Fuchs-Gegner und tritt im 10-Runden-Duell an.</small></span><strong>→</strong></button>

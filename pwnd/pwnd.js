@@ -6,6 +6,7 @@ const STARTING_RESOURCES = Object.freeze({ energy: 1000, water: 250, air: 120, l
 const RESOURCE_NAMES = Object.freeze({ energy: 'Energie', water: 'Wasser', air: 'Luft', love: 'Liebe' });
 const FREE_OPPONENT_ID = 'owl';
 const QUESTION_API = '/api/pwnd-question';
+const QUESTION_TIME_MIN = Object.freeze({ recall: 18000, pattern: 26000, causal: 30000, logic: 32000, source: 28000, risk: 20000 });
 const RESOURCE_SYMBOLS = Object.freeze({ energy: '⚡', water: '💧', air: '🌬️', love: '❤️' });
 const OPPONENTS = {
   redfox: { name: 'ROTFUCHS', portrait: 'assets/red-fox.webp', focus: 'adaptive', rating: 1000, time: 1, intro: 'Der Rotfuchs beobachtet deine erste Entscheidung und wartet auf dein Muster.' },
@@ -86,7 +87,7 @@ const state = {
   calibration: saved?.calibration ?? 0,
   skillProfile: normalizeSkillProfile(saved?.skillProfile),
   upgrades: saved?.upgrades ?? [],
-  unlocked: saved?.unlocked ?? ['frog'],
+  unlocked: Array.isArray(saved?.unlocked) ? [...new Set(['frog', ...saved.unlocked.filter(id => POND_UNLOCKS.some(item => item.id === id))])] : ['frog'],
   opponentId: 'redfox',
   selectedTopicId: null,
   pendingTopicIds: [],
@@ -123,44 +124,59 @@ function canAfford(cost){ return Object.entries(cost).every(([resource, value]) 
 function show(id){ screens.forEach(screen => screen.classList.toggle('active', screen.id === id)); window.scrollTo(0, 0); }
 function formatTime(ms){ return `${String(Math.ceil(ms / 1000)).padStart(2, '0')}`; }
 function currentOpponent(){ return OPPONENTS[state.match?.opponentId || state.opponentId]; }
+function opponentDisplayName(opponent){ return opponent.name[0] + opponent.name.slice(1).toLocaleLowerCase('de'); }
 function currentTopic(){ return state.match?.topicId ? TOPICS[state.match.topicId] : TOPICS[state.selectedTopicId]; }
 function weightedQuestion(){ const match = state.match; return PwndEngine.chooseNextQuestion({ questions: QUESTIONS, history: match.history, skills: match.skills, opponent: currentOpponent(), round: match.round, accuracy: match.accuracy, topicSkills: match.topicId ? TOPICS[match.topicId].skills : [] }); }
 function isUsableQuestion(question, match){
   if (!question || typeof question.prompt !== 'string' || !Array.isArray(question.options) || question.options.length !== 4) return false;
   if (!Number.isInteger(question.answer) || question.answer < 0 || question.answer > 3) return false;
   const usedIds = new Set(match.history.map(entry => entry.question.id));
-  const usedPrompts = new Set(match.history.map(entry => PwndEngine.normalizedPrompt(entry.question.prompt)));
-  return !usedIds.has(question.id) && !usedPrompts.has(PwndEngine.normalizedPrompt(question.prompt));
+  const usedPrompts = match.history.map(entry => entry.question.prompt);
+  return !usedIds.has(question.id) && !usedPrompts.some(prompt => PwndEngine.nearDuplicatePrompt(prompt, question.prompt));
 }
 function staticAiQuestion(match){
-  const topic = TOPICS[match.topicId];
-  const pool = (globalThis.PWND_AI_QUESTIONS || []).filter(question => question.topicId === match.topicId);
-  return pool.length ? PwndEngine.chooseNextQuestion({ questions: pool, history: match.history, skills: match.skills, opponent: currentOpponent(), round: match.round, accuracy: match.accuracy, topicSkills: topic.skills }) : null;
+  const pool = (globalThis.PWND_AI_QUESTIONS || []).filter(question => match.mode === 'duel' || question.topicId === match.topicId);
+  const topicSkills = match.topicId ? TOPICS[match.topicId].skills : [];
+  return pool.length ? PwndEngine.chooseNextQuestion({ questions: pool, history: match.history, skills: match.skills, opponent: currentOpponent(), round: match.round, accuracy: match.accuracy, topicSkills }) : null;
 }
 function showQuestionLoading(match){
-  setText('questionType', 'KI-FRAGE · EULE DENKT');
-  setText('questionTitle', 'Die Schatten-Eule formuliert eine neue Frage …');
-  setText('questionHint', match.mode === 'free' ? '' : 'Dein Skill-Level wird berücksichtigt.');
-  setText('aiComment', 'Die Eule beobachtet deine Antworten.');
+  const free = match.mode === 'free';
+  setText('questionType', free ? 'DIE EULE DENKT' : 'DER FUCHS DENKT');
+  setText('questionTitle', free ? 'Die Schatten-Eule formuliert die nächste Frage …' : `${currentOpponent().name} stellt die nächste Frage …`);
+  setText('questionHint', '');
+  setText('aiComment', free ? 'Die Eule beobachtet deine Antworten.' : `${currentOpponent().name} wertet deine letzte Antwort aus …`);
   $('answers').innerHTML = '';
   $('lockBtn').disabled = true;
   setText('roundNo', match.round);
 }
 async function requestAiQuestion(match){
-  const topic = TOPICS[match.topicId];
-  const profile = PwndEngine.adaptiveQuestionProfile({ skills: match.skills, topicSkills: topic.skills, round: match.round });
+  const topicSkills = match.topicId ? TOPICS[match.topicId].skills : [];
+  const profile = PwndEngine.adaptiveQuestionProfile({ skills: match.skills, topicSkills, history: match.history, opponent: currentOpponent(), mode: match.mode });
+  match.challenge = profile;
   const excludeIds = match.history.map(entry => entry.question.id);
   const excludePrompts = match.history.map(entry => entry.question.prompt);
+  const recentAnswers = match.history.slice(-4).map(entry => ({
+    skill: entry.question.skill, correct: entry.correct,
+    timeRatio: entry.time / Math.max(1, entry.question.time),
+    question: entry.question.prompt,
+    picked: entry.question.options[entry.pickedIndex] || 'keine Antwort',
+    expected: entry.question.options[entry.question.answer],
+  }));
   try {
-    const response = await fetch(QUESTION_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ topicId: match.topicId, skills: match.skills, weakestSkill: profile.weakestSkill, targetDifficulty: profile.targetDifficulty, excludeIds, excludePrompts }) });
+    const response = await fetch(QUESTION_API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: AbortSignal.timeout(15000), body: JSON.stringify({ mode: match.mode, topicId: match.topicId, opponentId: match.opponentId, skills: match.skills, weakestSkill: profile.weakestSkill, targetDifficulty: profile.targetDifficulty, recentAnswers, excludeIds, excludePrompts }) });
     if (!response.ok) throw new Error(`question API ${response.status}`);
     const payload = await response.json();
-    if (isUsableQuestion(payload.question, match)) { match.aiQuestionCount += 1; return payload.question; }
+    if (isUsableQuestion(payload.question, match)) {
+      if (payload.fallback || payload.question.source !== 'ai') match.aiFallbackCount += 1;
+      else match.aiQuestionCount += 1;
+      return payload.question;
+    }
     throw new Error('invalid or repeated question');
   } catch (error) {
     console.warn('KI-Frage nicht verfügbar, Offline-Frage wird verwendet:', error);
     match.aiFallbackCount += 1;
-    return staticAiQuestion(match) || weightedQuestion();
+    const fallback = staticAiQuestion(match) || weightedQuestion();
+    return fallback ? { ...fallback, source: fallback.source || 'archive' } : null;
   }
 }
 function selectFreeTopic(id){
@@ -246,7 +262,7 @@ function startMatch(mode = 'duel', topicId = null){
   state.upgrades.forEach(id => UPGRADES.find(upgrade => upgrade.id === id)?.apply(state));
   const opponentId = mode === 'free' ? FREE_OPPONENT_ID : state.opponentId;
   const selectedTopicId = mode === 'free' ? (topicId || state.selectedTopicId || Object.keys(TOPICS)[0]) : null;
-  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0 };
+  state.match = { round: 0, total: mode === 'free' ? 8 : 10, playerHp: 100, aiHp: 100, combo: 0, maxCombo: 0, history: [], skills: normalizeSkillProfile(state.skillProfile), accuracy: 0, opponentId, topicId: selectedTopicId, selected: null, current: null, mode, aiQuestionCount: 0, aiFallbackCount: 0, challenge: null, lastFoxComment: '' };
   document.body.classList.toggle('free-mode', mode === 'free');
   setText('roundTotal', state.match.total);
   updateResourceDisplays();
@@ -270,27 +286,32 @@ async function nextQuestion(){
   match.submitted = false;
   showQuestionLoading(match);
   show('screenBattle');
-  match.current = match.mode === 'free' ? await requestAiQuestion(match) : weightedQuestion();
+  match.current = await requestAiQuestion(match);
   if (state.match !== match) return;
   if (!match.current) {
     match.round -= 1;
     match.total = match.round;
     return finishMatch();
   }
+  if (match.mode === 'duel') match.current = { ...match.current, time: Math.max(Number(match.current.time) || 0, QUESTION_TIME_MIN[match.current.skill] || 20000) };
   renderBattle();
-  startTimer(Math.round(match.current.time * currentOpponent().time) + (state.mods.time || 0));
+  const recent = match.history.slice(-2);
+  let timeFactor = currentOpponent().time;
+  if (recent.length === 2 && recent.every(entry => !entry.correct)) timeFactor = Math.max(1.12, timeFactor * 1.3);
+  else if (recent.at(-1) && (!recent.at(-1).correct || recent.at(-1).time > recent.at(-1).question.time * .85)) timeFactor = Math.max(1, timeFactor * 1.12);
+  startTimer(Math.round(match.current.time * timeFactor) + (state.mods.time || 0));
 }
 function renderBattle(){
   const match = state.match;
   const question = match.current;
   setText('roundNo', match.round);
-  const aiQuestion = String(question.source || '').startsWith('ai');
-  setText('questionType', `${aiQuestion ? 'KI · ' : ''}${TYPE_NAMES[question.type]}`);
+  const origin = question.source === 'ai' ? 'NEU · ' : ['ai-static', 'archive'].includes(question.source) ? 'ARCHIV · ' : '';
+  setText('questionType', `${origin}${TYPE_NAMES[question.type]}`);
   setText('topicLabel', match.mode === 'free' ? `· ${TOPICS[match.topicId].name}` : '');
   setText('questionTitle', question.prompt);
   setText('questionHint', match.mode === 'free' ? '' : (question.type === 'risk' ? 'Deine Entscheidung hat Konsequenzen.' : 'Wähle eine Antwort.'));
   setText('comboText', `COMBO ${match.combo}`);
-  setText('skillProfile', `${SKILL_NAMES[weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
+  setText('skillProfile', `${SKILL_NAMES[match.challenge?.weakestSkill || weakest(match.skills, match.topicId ? TOPICS[match.topicId].skills : null)]} wird beobachtet`);
   $('playerHealth').style.width = `${Math.max(0, match.playerHp)}%`;
   $('aiHealth').style.width = `${Math.max(0, match.aiHp)}%`;
   setText('playerHpText', Math.ceil(match.playerHp));
@@ -301,9 +322,30 @@ function renderBattle(){
   setText('lockBtn', 'Antwort abgeben');
   setText('aiComment', match.mode === 'free'
     ? (match.round === 1 ? 'Die Eule beobachtet deine Antworten.' : adaptiveComment(match))
-    : currentOpponent().intro);
+    : foxComment(match, question));
 }
 function weakest(skills, scope = null){ const keys = scope?.length ? scope : Object.keys(skills); return [...keys].sort((a, b) => (skills[a] ?? .5) - (skills[b] ?? .5))[0]; }
+function foxComment(match, question){
+  const last = match.history.at(-1);
+  const skill = SKILL_NAMES[question.skill];
+  const lastSkill = last ? SKILL_NAMES[last.question.skill] : '';
+  const followup = match.challenge?.support === 'guided' ? 'Nimm dir Zeit; gehe Schritt für Schritt vor.' : '';
+  const scripts = {
+    redfox: !last ? `Ich beginne mit ${skill}. Zeig mir deinen Ansatz.`
+      : last.correct ? `${lastSkill} hast du getroffen. Jetzt prüfe ich ${lastSkill === skill ? 'diese Fähigkeit' : skill} aus einem neuen Blickwinkel.`
+      : `Deine letzte Antwort in ${lastSkill} war nicht richtig. Ich mache ${lastSkill === skill ? 'die nächste Frage' : skill} zugänglicher.`,
+    arcticfox: !last ? `Bei ${skill} zählt Klarheit mehr als Hektik.`
+      : last.correct ? `Sicher bei ${lastSkill}. Die nächste Probe betrifft ${lastSkill === skill ? 'dieselbe Fähigkeit' : skill}.`
+      : `Bei ${lastSkill} lagst du daneben. Für ${lastSkill === skill ? 'die nächste Frage' : skill} bekommst du mehr Zeit.`,
+    fennec: !last ? `Mich interessiert, wie du bei ${skill} denkst.`
+      : last.correct ? `Dein Gedanke zu ${lastSkill} trug. Begründe nun ${lastSkill === skill ? 'den nächsten Schritt' : skill} sorgfältig.`
+      : `Bei ${lastSkill} fehlte ein Schritt. Suche ${lastSkill === skill ? 'diesmal' : `in ${skill}`} zuerst den entscheidenden Hinweis.`,
+  };
+  let comment = question.source === 'ai' && question.opponentLine ? question.opponentLine : `${scripts[match.opponentId]} ${followup}`.trim();
+  if (comment === match.lastFoxComment) comment = `Frage ${match.round}: ${comment}`;
+  match.lastFoxComment = comment;
+  return comment;
+}
 function adaptiveComment(match){
   const topic = match.topicId ? TOPICS[match.topicId] : null;
   const weakSkill = SKILL_NAMES[weakest(match.skills, topic?.skills)];
@@ -342,10 +384,10 @@ function submitAnswer(index, forcedMs = null){
   match.combo = result.combo;
   match.maxCombo = Math.max(match.maxCombo, result.combo);
   if (match.mode === 'duel') { match.aiHp = Math.max(0, match.aiHp - result.damage); match.playerHp = Math.max(0, match.playerHp - result.selfDamage); }
-  match.skills[question.skill] = Math.max(0, Math.min(1, match.skills[question.skill] + result.skillDelta));
+  match.skills[question.skill] = PwndEngine.updateSkillEstimate({ before: match.skills[question.skill], correct: result.correct, difficulty: question.difficulty, responseTimeMs: time, questionTime: question.time });
   state.skillProfile = normalizeSkillProfile(match.skills);
   save();
-  match.history.push({ question, correct: result.correct, time, damage: result.damage, selfDamage: result.selfDamage });
+  match.history.push({ question, correct: result.correct, pickedIndex: index, time, damage: result.damage, selfDamage: result.selfDamage });
   match.accuracy = match.history.filter(entry => entry.correct).length / match.history.length;
   document.querySelectorAll('.answer').forEach((button, optionIndex) => { button.disabled = true; if (optionIndex === question.answer) button.classList.add('correct'); if (optionIndex === index && optionIndex !== question.answer) button.classList.add('wrong'); });
   $('lockBtn').disabled = true;
@@ -358,7 +400,7 @@ function showRoundResult(result){
   $('resultOrbit').classList.toggle('miss', !result.correct);
   $('resultOrbit').textContent = result.correct ? '+' : '×';
   setText('roundEyebrow', free ? (result.correct ? 'WISSEN GESAMMELT' : 'DIE EULE BEOBACHTET') : (result.correct ? 'RESSOURCENFLUSS' : 'GEGENWELLE'));
-  setText('roundTitle', free ? (result.correct ? 'Die Eule nickt.' : 'Die Eule schweigt.') : (result.correct ? 'Deine Entscheidung trägt.' : 'Die AI hat gekontert.'));
+  setText('roundTitle', free ? (result.correct ? 'Die Eule nickt.' : 'Die Eule schweigt.') : (result.correct ? 'Deine Entscheidung trägt.' : `${opponentDisplayName(currentOpponent())} hat gekontert.`));
   setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule formuliert eine neue Frage. Versuch es gleich erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
   setText('resultTime', free ? 'ohne Zeitdruck' : `${(result.time / 1000).toFixed(1)} s`);
   setText('resultStatMiddleLabel', free ? 'WISSEN' : 'SCHADEN');
@@ -391,7 +433,7 @@ function finishMatch(){
   setText('endResult', free ? 'ARCHIVIERT' : (outcome ? 'GEWONNEN' : 'AUS DEM FLUSS'));
   $('endResult').style.color = free ? 'var(--air)' : (outcome ? 'var(--leaf)' : 'var(--clay)');
   setText('energyChange', `${free ? '+' + rewards.energy : (energyRating.delta >= 0 ? '+' : '') + energyRating.delta} ENERGIE`);
-  setText('endTitle', free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : 'Die AI hat deinen Wasserlauf gelesen.'));
+  setText('endTitle', free ? 'Dein Wissensarchiv ist gewachsen.' : (outcome ? 'Dein Teich ist gewachsen.' : `${opponentDisplayName(opponent)} hat deinen Wasserlauf gelesen.`));
   setText('endCopy', free ? `${correctAnswers}/${match.total} Fragen in ${TOPICS[match.topicId].name} richtig. Die Schatten-Eule hat neue Spuren in deinem Archiv hinterlassen und deine Schwächen vermessen.` : `${correctAnswers}/${match.total} Antworten korrekt gegen ${opponent.name}. Dein Duell hat deine vier Reserven gestärkt.`);
   setText('energyValue', formatResource(state.energy));
   setText('waterValue', formatResource(state.water));
@@ -410,11 +452,42 @@ function renderPondUnlocks(){
   grid.innerHTML = POND_UNLOCKS.map(item => { const open = state.unlocked.includes(item.id); const affordable = canAfford(item.cost); return `<div class="unlock-item ${open ? 'open' : 'locked'}"><span class="unlock-symbol">${open ? item.symbol : '·'}</span><div><b>${item.name}</b><small>${open ? item.copy : formatCost(item.cost)}</small></div>${open ? '<strong>offen</strong>' : `<button class="unlock-action" type="button" data-unlock="${item.id}" ${affordable ? '' : 'disabled'}>${affordable ? 'freischalten' : 'gesperrt'}</button>`}</div>`; }).join('');
   grid.querySelectorAll('[data-unlock]').forEach(button => button.addEventListener('click', () => unlockPond(button.dataset.unlock)));
 }
-function unlockPond(id){ const item = POND_UNLOCKS.find(unlock => unlock.id === id); if (!item || state.unlocked.includes(id) || !canAfford(item.cost)) return; Object.entries(item.cost).forEach(([resource, value]) => { state[resource] -= value; }); state.unlocked = [...state.unlocked, id]; save(); updateResourceDisplays(); renderPondUnlocks(); }
+function renderPondScene(arrivingId = null){
+  document.querySelectorAll('#pondScene [data-feature]').forEach(feature => {
+    const active = state.unlocked.includes(feature.dataset.feature);
+    feature.classList.toggle('unlocked', active);
+    feature.classList.toggle('arriving', active && feature.dataset.feature === arrivingId);
+    if (active && feature.dataset.feature === arrivingId) setTimeout(() => feature.classList.remove('arriving'), 1200);
+  });
+  setText('pondResidentCount', `${state.unlocked.length} / ${POND_UNLOCKS.length}`);
+  setText('pondProgressLabel', state.unlocked.length === 1 ? 'Der Teich ist noch jung' : `${state.unlocked.length} Entdeckungen beleben deinen Teich`);
+  $('pondResidents').innerHTML = POND_UNLOCKS.map(item => state.unlocked.includes(item.id)
+    ? `<span class="resident" role="img" aria-label="${item.name}" title="${item.name}">${item.symbol}</span>`
+    : '<span class="resident empty" aria-hidden="true">+</span>').join('');
+  if (arrivingId){
+    const item = POND_UNLOCKS.find(entry => entry.id === arrivingId);
+    setText('pondUnlockStatus', `${item.name} ist jetzt in deinem Teich zu sehen.`);
+    const toast = $('pondSceneToast');
+    toast.textContent = `${item.symbol} ${item.name} ist eingezogen`;
+    toast.classList.add('visible');
+    clearTimeout(state.pondToastTimer);
+    state.pondToastTimer = setTimeout(() => toast.classList.remove('visible'), 3200);
+  }
+}
+function unlockPond(id){
+  const item = POND_UNLOCKS.find(unlock => unlock.id === id);
+  if (!item || state.unlocked.includes(id) || !canAfford(item.cost)) return;
+  Object.entries(item.cost).forEach(([resource, value]) => { state[resource] -= value; });
+  state.unlocked = [...state.unlocked, id];
+  save(); updateResourceDisplays(); renderPondUnlocks();
+  window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  setTimeout(() => renderPondScene(id), matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 380);
+}
 function renderUpgrades(){ const choices = [...UPGRADES].sort(() => Math.random() - .5).slice(0, 3); $('upgrades').innerHTML = choices.map(upgrade => `<label class="upgrade"><input type="radio" name="upgrade" value="${upgrade.id}"><strong>${upgrade.name}</strong><small>${upgrade.text}</small></label>`).join(''); document.querySelectorAll('.upgrade').forEach(option => option.addEventListener('click', () => { document.querySelectorAll('.upgrade').forEach(other => other.classList.remove('selected')); option.classList.add('selected'); const id = option.querySelector('input').value; if (!state.upgrades.includes(id)) state.upgrades = [...state.upgrades.slice(-2), id]; save(); })); }
 
 document.querySelectorAll('.duel-opponent-option').forEach(button => button.addEventListener('click', () => selectDuelOpponent(button.dataset.opponent)));
 updateResourceDisplays();
+renderPondScene();
 renderPondUnlocks();
 $('startBtn').addEventListener('click', enterDuelSetup);
 $('freeQuizBtn').addEventListener('click', enterFreeTopicSetup);
