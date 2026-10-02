@@ -6,7 +6,7 @@
 //   Every online visit therefore receives the deployed version; a stale script can no longer be
 //   combined with newer HTML (that mismatch broke returning visitors after the share-image release).
 // - Versioned, locally hosted dog photos: cache-first with a bounded entry count.
-const STATIC_CACHE = 'mydog-static-v9';
+const STATIC_CACHE = 'mydog-static-v11';
 const IMAGE_CACHE = 'mydog-images-v3';
 const IMAGE_CACHE_LIMIT = 160;
 const OWNED_CACHE_PREFIX = 'mydog-';
@@ -16,6 +16,8 @@ const APP_SHELL = [
     '/mydog/style.css',
     '/mydog/script.js',
     '/mydog/data.js',
+    '/mydog/legal/privacy.html',
+    '/mydog/legal/impressum.html',
     '/mydog/legal/attribution.html',
     '/mydog/photo-sources.json',
     '/mydog/manifest.json',

@@ -134,6 +134,12 @@ npm run test:mydog:images
 
 Er prüft alle 18 Resultate und 108 decodierten Fotos, schnelle Hund-Wechsel ohne alte Bilder, Fallback auf ein Foto derselben Rasse, Migration alter Favoriten, den PNG-Export des Share-Bilds sowie ein Offline-Reload mit Service Worker.
 
+Die rechtlichen Seiten über einen lokalen HTTP-Server, alle internen Links, das Layout auf 320-/390-px-Smartphones und Desktop sowie die Offline-Abrufbarkeit mit Service Worker prüfen:
+
+```bash
+python3 mydog/test/legal-pages-regression.py
+```
+
 Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
 
 - Safe Area/Notch, Scrollverhalten und Touch-Ziele in iOS Safari und Android Chrome
@@ -144,6 +150,19 @@ Vor einem breiteren Beta-Test zusätzlich auf echten Geräten prüfen:
 1. Öffne die App in Chrome auf einem Mobilgerät
 2. Tippe auf "Zum Startbildschirm hinzufügen"
 3. Die App wird wie eine native App installiert
+
+### Android / offizieller Closed Test
+
+Die PWA ist für einen Android-Closed-Test als Trusted Web Activity vorbereitet. Die Bubblewrap-Konfiguration liegt in [`../android-twa/`](../android-twa/). Vor dem ersten signierten Build müssen auf einer eigenen Android-Build-Umgebung JDK 17, Android SDK und die SDK-Lizenzen eingerichtet werden. Der produktive Upload-Key bleibt außerhalb des Repositorys.
+
+Öffentliche Pflichtseiten:
+
+- [Datenschutzerklärung](./legal/privacy.html)
+- [Impressum](./legal/impressum.html)
+- [Bildnachweise](./legal/attribution.html)
+- [Support und Issues](https://github.com/makopipokam/manualai.org/issues)
+
+`npm run test:mydog:android` prüft PWA-Metadaten, PICARD-Betreiberangaben, Legal-Seiten und ihre Footer-/Offline-Links, TWA-Konfiguration und die Fingerprint-Vorlage. Name, Anschrift, E-Mail, Datenschutzbeauftragter und Registerdaten wurden am 02.10.2026 aus dem [offiziellen PICARD-Impressum](https://picard-fashion.com/pages/impressum) übernommen. **Prüfung vor Veröffentlichung:** Die [Shop-Datenschutzseite](https://picard-fashion.com/pages/datenschutz) nennt bei Rechtsform und E-Mail-Adressen abweichende Angaben. PICARDs Rechts-/Datenschutzteam muss die Verantwortung für MyDog, den zutreffenden DPO-Kontakt, das Impressum sowie den tatsächlich genutzten Vercel-Vertrag (einschließlich Log-Aufbewahrung und Drittlandtransfer) bestätigen. Auch ein echter Play-App-Signing-Fingerprint, Android-Hardwaretest und die Play-Console-Angaben fehlen noch. Ein bestandener Strukturtest ist keine Rechtsfreigabe oder Produktionsveröffentlichung.
 
 ## 🐛 Bugs & Verbesserungen
 

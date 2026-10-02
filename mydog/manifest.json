@@ -1,8 +1,11 @@
 {
-  "name": "Finde passende Hundevorschläge",
+  "id": "/mydog/",
+  "name": "MyDog – passende Hundevorschläge",
   "short_name": "MyDog",
-  "description": "Experimenteller Persönlichkeitstest mit passenden Hundevorschlägen.",
-  "start_url": "./",
+  "description": "Persönlichkeitstest mit spielerischen Hundevorschlägen für deinen Alltag.",
+  "lang": "de-DE",
+  "dir": "ltr",
+  "start_url": "/mydog/",
   "display": "standalone",
   "background_color": "#f5f1e8",
   "theme_color": "#1f5a45",
@@ -20,5 +23,7 @@
       "purpose": "any maskable"
     }
   ],
-  "scope": "./"
+  "scope": "/mydog/",
+  "categories": ["lifestyle", "education"],
+  "prefer_related_applications": false
 }

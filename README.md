@@ -7,7 +7,7 @@ Repository for three separate applications maintained under the manualAI.org umb
 | App | Path | Purpose | Entry point |
 |---|---|---|---|
 | **pwnd** | [`pwnd/`](pwnd/) | Quizbattle and pond-game prototype | [`/pwnd/`](https://app.manualai.org/pwnd/) |
-| **mydog** | [`mydog/`](mydog/) | Personality test and dog matching app | [`/mydog/`](https://manualai.org/mydog/) |
+| **mydog** | [`mydog/`](mydog/) | Personality test and dog matching app | [`/mydog/`](https://app.manualai.org/mydog/) |
 | **cats&dogs** | [`catsdogs/`](catsdogs/) | Dating-app feedback test with Big Five assignment and a bot encounter | [`/catsdogs/`](https://app.manualai.org/catsdogs/) |
 
 The applications have separate HTML, CSS, JavaScript, data, documentation, and tests. Shared Vercel routing and serverless API helpers remain at the repository root because they serve the manualAI.org shell or both applications.

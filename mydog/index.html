@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/mydog/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
-    <link rel="stylesheet" href="/mydog/style.css?v=20261002-catvoice">
+    <link rel="stylesheet" href="/mydog/style.css?v=20261002-picard-legal">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
@@ -19,6 +19,7 @@
             <p class="eyebrow">MyDog · Dein Hundeprofil</p>
             <h1>Finde Hunde,<br><em>die zu dir passen.</em> 🐾</h1>
             <p class="subtitle">Beantworte 30 kurze Fragen und entdecke Rassen, die zu deinem Alltag und deiner Persönlichkeit passen.</p>
+            <p class="app-disclaimer">Spielerische Orientierung, keine tiermedizinische oder verhaltensbiologische Beratung.</p>
             <div class="hero-facts" aria-label="Testinformationen">
                 <span>30 Fragen</span>
                 <span>Dein Rudel wartet</span>
@@ -206,8 +207,11 @@
         </div>
     </div>
 
-    <footer class="mydog-footer">
+    <footer class="mydog-footer" aria-label="Rechtliche Informationen und Support">
+        <a href="/mydog/legal/privacy.html">Datenschutz</a>
+        <a href="/mydog/legal/impressum.html">Impressum</a>
         <a href="/mydog/legal/attribution.html">Info &amp; Bildnachweise</a>
+        <a href="https://github.com/makopipokam/manualai.org/issues" target="_blank" rel="noopener">Support</a>
     </footer>
 
     <!-- Share Modal -->
@@ -258,7 +262,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261002-catvoice"></script>
-    <script src="script.js?v=20261002-catvoice"></script>
+    <script src="data.js?v=20261002-picard-legal"></script>
+    <script src="script.js?v=20261002-picard-legal"></script>
 </body>
 </html>
