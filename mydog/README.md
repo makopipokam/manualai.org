@@ -16,7 +16,7 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 - Jeweils sechs rassespezifische, lokal bereitgestellte WebP-Fotos, Beschreibungen und Charaktereigenschaften
 - Persönlichkeitsbasiertes Matching
 
-Die 108 Fotos liegen unter `mydog/images/v1/` (insgesamt ca. 4,7 MB). Das wichtigste Foto jeder Rasse wird zuerst geladen; beim Wechsel wird ein altes Foto sofort ausgeblendet. Bei einem defekten Leitfoto versucht die Galerie weitere Fotos **derselben** Rasse. Quellen-URLs stehen in `mydog/photo-sources.json`; [Bildnachweise](https://app.manualai.org/mydog/legal/attribution.html) sind direkt am Hundevorschlag verlinkt. Die Fotos wurden ohne Beschnitt auf maximal 960 px skaliert und als WebP neu kodiert.
+Die 108 Fotos liegen unter `mydog/images/v1/` (insgesamt ca. 4,7 MB). Das wichtigste Foto jeder Rasse wird zuerst geladen; beim Wechsel wird ein altes Foto sofort ausgeblendet. Währenddessen erscheint ein kleines animiertes Hundesymbol (bei reduzierter Bewegung statisch), der Ladetext bleibt für Screenreader erhalten. Bei einem defekten Leitfoto versucht die Galerie weitere Fotos **derselben** Rasse. Quellen-URLs stehen in `mydog/photo-sources.json`; die [Bildnachweise](https://app.manualai.org/mydog/legal/attribution.html) sind über den zurückhaltenden Footer erreichbar. Die Fotos wurden ohne Beschnitt auf maximal 960 px skaliert und als WebP neu kodiert.
 
 Um den Bestand aus den dokumentierten Quellen erneut zu erzeugen: `python3 -m pip install Pillow` und `python3 mydog/tools/prepare-photos.py`. Bestehende Dateien werden auf Lesbarkeit geprüft, nicht überschrieben. **Für spätere Fotoänderungen** wegen des langfristigen Browser-Cachings ein neues Versionsverzeichnis (`v2` usw.) verwenden und Pfade, Service Worker, Release-Token und Vercel-Cache-Regel gemeinsam anpassen. Vor einer kommerziellen Veröffentlichung die individuellen Bildrechte noch einmal prüfen.
 
@@ -25,11 +25,11 @@ Um den Bestand aus den dokumentierten Quellen erneut zu erzeugen: `python3 -m pi
 - Energielevel, Pflegebedarf, Familientauglichkeit, Trainierbarkeit, Gesundheit
 - Gesamtbewertung pro Hund
 
-### 💬 Interaktiver Chat
-- Chat mit jedem Hund
-- Schnellauswahl-Buttons für häufige Fragen
-- Individuelle Antworten pro Hunderasse
-- Nutzereingaben werden als Text und nicht als HTML gerendert
+### 💬 Rassefragen
+- Lokale Steckbriefantworten zu Bewegung, Pflege, Erziehung und Familie; **keine Live-KI und keine individuelle tierärztliche Beratung**
+- Schnellauswahl-Buttons, einschließlich einer Frage zur Verdauung
+- Allgemeine Antwort auf die Frage nach dem Kotabsatz von Hunden (üblicherweise 1–3 Mal täglich bei erwachsenen Hunden; [Quelle: PDSA](https://www.pdsa.org.uk/pet-help-and-advice/pet-health-hub/conditions/dog-constipation)); bei Beschwerden Hinweis auf eine Tierarztpraxis
+- Bei unbekannten Fragen keine erfundene Behauptung oder generische „toller Hund“-Antwort; Nutzereingaben werden als Text und nicht als HTML gerendert
 
 ### 📚 Favoriten
 - Füge Hunde zu deinen Favoriten hinzu

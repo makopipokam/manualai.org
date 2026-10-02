@@ -76,6 +76,7 @@ const elements = {
     dogDescription: document.getElementById('dog-description'),
     dogImageMain: document.getElementById('dog-image-main'),
     dogImageStatus: document.getElementById('dog-image-status'),
+    dogImageStatusText: document.getElementById('dog-image-status-text'),
     dogImage1: document.getElementById('dog-image-1'),
     dogImage2: document.getElementById('dog-image-2'),
     dogImage3: document.getElementById('dog-image-3'),
@@ -542,6 +543,14 @@ function showDogResult() {
     showScreen('results');
 }
 
+function showDogImageStatus(dog, failed = false) {
+    elements.dogImageStatusText.textContent = failed
+        ? `Für ${dog.name} ist gerade kein Foto verfügbar.`
+        : `Foto von ${dog.name} wird geladen …`;
+    elements.dogImageStatus.classList.toggle('is-error', failed);
+    elements.dogImageStatus.hidden = false;
+}
+
 // Load breed-specific images without showing stale images during transitions.
 function loadDogImages(imageUrls, labels) {
     const dog = appState.currentDog;
@@ -550,8 +559,7 @@ function loadDogImages(imageUrls, labels) {
     const thumbnailIds = ['dog-image-1', 'dog-image-2', 'dog-image-3', 'dog-image-4', 'dog-image-5', 'dog-image-6'];
     const thumbnails = thumbnailIds.map(id => document.getElementById(id));
 
-    elements.dogImageStatus.textContent = `Foto von ${dog.name} wird geladen …`;
-    elements.dogImageStatus.hidden = false;
+    showDogImageStatus(dog);
 
     // Clear every previous image before the next dog is rendered.
     [elements.dogImageMain, ...thumbnails].forEach(img => {
@@ -616,7 +624,7 @@ function loadDogImages(imageUrls, labels) {
     const tryMainImage = (index) => {
         if (loadToken !== imageLoadToken) return;
         if (index >= imageUrls.length) {
-            elements.dogImageStatus.textContent = `Für ${dog.name} ist gerade kein Foto verfügbar.`;
+            showDogImageStatus(dog, true);
             return;
         }
         elements.dogImageMain.dataset.activeIndex = String(index);
@@ -674,8 +682,7 @@ function selectThumbnail(index, imageUrls, labels) {
     const dog = appState.currentDog;
     
     // Update main image
-    elements.dogImageStatus.textContent = `Foto von ${dog.name} wird geladen …`;
-    elements.dogImageStatus.hidden = false;
+    showDogImageStatus(dog);
     elements.dogImageMain.style.display = 'none';
     elements.dogImageMain.style.visibility = 'hidden';
     elements.dogImageMain.dataset.activeIndex = String(index);
@@ -760,7 +767,7 @@ function showChat() {
     appState.chatHistory = [];
     elements.chatMessages.innerHTML = '';
     
-    addChatMessage('assistant', `Hallo! Ich bin ${dog.name}. 🐶 Wie kann ich dir helfen?`);
+    addChatMessage('assistant', `Frag mich nach ${dog.name}: Bewegung, Pflege, Erziehung oder Alltag. Ich antworte aus dem Rasse-Steckbrief, nicht als echter Hund.`);
     
     elements.userMessageInput.value = '';
     
@@ -1378,79 +1385,60 @@ function sendMessage() {
     
     addChatMessage('user', message);
     elements.userMessageInput.value = '';
-    
-    setTimeout(() => {
-        const response = generateChatResponse(message);
-        addChatMessage('assistant', response);
-        scrollChatToBottom();
-    }, 500);
+
+    // These are local profile answers, not an AI request. Respond immediately and
+    // never let an old delayed answer appear under a different dog's profile.
+    addChatMessage('assistant', generateChatResponse(message));
 }
 
-// Generate chat response based on user message
+// Answer known profile topics; never pretend to know things absent from the data.
 function generateChatResponse(message) {
-    const dogName = appState.currentDog.name;
-    const dogResponses = dogChatResponses[dogName];
-    
-    if (dogResponses) {
-        const lowerMessage = message.toLowerCase();
-        
-        if (quickReplyMessages[message]) {
-            const responseKey = quickReplyMessages[message];
-            if (dogResponses[responseKey]) {
-                return dogResponses[responseKey];
-            }
-        }
-        
-        if (lowerMessage.includes('bewegung') || lowerMessage.includes('spazieren') || 
-            lowerMessage.includes('laufen') || lowerMessage.includes('sport')) {
-            return dogResponses.movement || "Ich liebe Bewegung! Tägliche Spaziergänge und Spiel sind wichtig für mich.";
-        }
-        
-        if (lowerMessage.includes('futter') || lowerMessage.includes('essen') || 
-            lowerMessage.includes('fressen') || lowerMessage.includes('leckerli')) {
-            return dogResponses.food || "Ich esse am liebsten hochwertiges Hundefutter. Leckerlis sind auch immer willkommen!";
-        }
-        
-        if (lowerMessage.includes('kinder') || lowerMessage.includes('kind') || 
-            lowerMessage.includes('familie')) {
-            return dogResponses.children || "Ich liebe Kinder! Aber wie bei allen Hunden: Kleine Kinder sollten nie unbeaufsichtigt mit mir spielen.";
-        }
-        
-        if (lowerMessage.includes('pflege') || lowerMessage.includes('bürsten') || 
-            lowerMessage.includes('fell') || lowerMessage.includes('haare')) {
-            return dogResponses.grooming || "Mein Fell braucht regelmäßige Pflege. Bürsten hält es gesund und glänzend!";
-        }
-        
-        if (lowerMessage.includes('leben') || lowerMessage.includes('alter') || 
-            lowerMessage.includes('jahre') || lowerMessage.includes('wie alt')) {
-            return dogResponses.lifespan || "Mit guter Pflege lebe ich durchschnittlich 10-15 Jahre.";
-        }
-        
-        if (lowerMessage.includes('erziehung') || lowerMessage.includes('trainieren') || 
-            lowerMessage.includes('lernen') || lowerMessage.includes('tricks')) {
-            return dogResponses.training || "Ich bin intelligent und lernwillig! Positive Verstärkung mit Leckerlis und Lob funktioniert am besten.";
-        }
-        
-        if (lowerMessage.includes('hallo') || lowerMessage.includes('hi') || 
-            lowerMessage.includes('hey')) {
-            return `Hallo! Ich bin ${dogName}. 🐶 Wie kann ich dir helfen?`;
-        }
-        
-        if (lowerMessage.includes('name') || lowerMessage.includes('heißt') || 
-            lowerMessage.includes('bist du')) {
-            return `Ich bin ${dogName}, ein ${appState.currentDog.breed}. Freut mich, dich kennenzulernen!`;
-        }
-        
-        if (lowerMessage.includes('danke') || lowerMessage.includes('vielen dank')) {
-            return "Gern geschehen! 😊 hast du noch andere Fragen?";
-        }
-        
-        if (lowerMessage.includes('tschüss') || lowerMessage.includes('bye')) {
-            return "Tschüss! Es war schön, mit dir zu plaudern. Komm bald wieder! 🐾";
-        }
+    const dog = appState.currentDog;
+    if (!dog) return 'Öffne zuerst einen Hundevorschlag, damit ich seinen Steckbrief erklären kann.';
+    const responses = dogChatResponses[dog.name] || {};
+    const text = message.toLocaleLowerCase('de-DE')
+        .replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss');
+
+    if (/(?:blut|durchfall|verstopf|erbrech|schmerz|krank|notfall|tierarzt)/.test(text)) {
+        return 'Bei Blut im Kot, Schmerzen, starkem Durchfall, Erbrechen oder anhaltenden Veränderungen bitte eine Tierarztpraxis kontaktieren. Ein Rasse-Steckbrief kann keine Diagnose stellen.';
     }
-    
-    return `Das ist eine interessante Frage! Als ${dogName} kann ich dazu sagen: Ich bin ein toller Hund!`;
+    if (/(?:kack|scheiss|kot|stuhlgang|haeuf|poop|verdau|gross(?:es?|en)?\s+geschaeft)/.test(text)) {
+        return 'Erwachsene Hunde machen normalerweise etwa ein- bis dreimal täglich ihr großes Geschäft; Welpen oft häufiger. Wie oft ein bestimmter Hund muss, hängt unter anderem von Alter, Futter und seinem gewohnten Rhythmus ab. Wenn sich das plötzlich ändert oder der Hund presst, frag eine Tierarztpraxis. Quelle: PDSA (tierärztlicher Ratgeber).';
+    }
+    if (/(?:pinkel|urin|blase|kleines\s+geschaeft)/.test(text)) {
+        return 'Wie oft ein Hund pinkeln muss, ist individuell und hängt etwa von Alter, Trinken und Gesundheit ab. Regelmäßige Gelegenheiten zum Rausgehen sind wichtig; bei Schmerzen oder plötzlichen Änderungen hilft eine Tierarztpraxis.';
+    }
+    if (/(?:futter|fuetter|essen|fress|friss|ernaehr|leckerli|portion)/.test(text)) {
+        return `Zur Fütterung von ${dog.name}: Die passende Menge hängt von Alter, Gewicht, Bewegung und Futter ab. Feste Grammzahlen aus einem Rasseprofil wären für deinen individuellen Hund unzuverlässig; orientiere dich an der Futterdeklaration und frage bei Unsicherheit eine Tierarztpraxis.`;
+    }
+    if (/(?:beweg|spazier|gassi|lauf|sport|auslast|aktiv)/.test(text)) {
+        return responses.movement || `Im Steckbrief von ${dog.name} steht zur Aktivität: ${dog.energy}`;
+    }
+    if (/(?:kinder|kind|familie|baby)/.test(text)) {
+        return `${dog.name}: ${dog.familyFriendly}. Kleine Kinder und Hunde sollten beim Spielen immer beaufsichtigt werden; der einzelne Hund und seine Sozialisation sind entscheidend.`;
+    }
+    if (/(?:pflege|buerst|fell|haar|wasch|schneid)/.test(text)) {
+        return responses.grooming || `Im Steckbrief von ${dog.name} steht zur Pflege: ${dog.grooming}`;
+    }
+    if (/(?:lebenserwart|lebensdauer|wie alt|alter|jahre|lange leb)/.test(text)) {
+        return responses.lifespan || `Für ${dog.name} liegt mir keine verlässliche Angabe zur Lebenserwartung vor. Das Alter eines individuellen Hundes kann ich nicht vorhersagen.`;
+    }
+    if (/(?:erzieh|trainier|lern|trick|gehorch)/.test(text)) {
+        return responses.training || `Im Steckbrief von ${dog.name} steht zur Erziehung: ${dog.trainability}`;
+    }
+    if (/(?:allein|wohnung|bell|schlaf|beschaeftig)/.test(text)) {
+        return `Ob ${dog.name} gut allein bleibt oder wie er sich zu Hause verhält, kann ich aus der Rasse allein nicht seriös vorhersagen. Training, Gesundheit und Persönlichkeit des einzelnen Hundes sind dafür wichtig.`;
+    }
+    if (/(?:hallo|\bhi\b|\bhey\b|guten tag)/.test(text)) {
+        return `Hallo! Zu ${dog.name} kenne ich Infos über Bewegung, Pflege, Erziehung und Familie. Was interessiert dich?`;
+    }
+    if (/(?:name|heisst|bist du|welche rasse)/.test(text)) {
+        return `Hier geht es um ${dog.name} (${dog.breed}). Das sind allgemeine Rasseinformationen, kein individueller Hund.`;
+    }
+    if (/(?:danke|vielen dank)/.test(text)) return 'Gerne! Du kannst noch nach Bewegung, Pflege oder Alltag fragen.';
+    if (/(?:tschuess|bye|auf wiedersehen)/.test(text)) return 'Bis bald und viel Spaß beim Entdecken der Hunde!';
+
+    return `Dazu habe ich im Steckbrief von ${dog.name} keine verlässliche Antwort. Frag mich zum Beispiel nach Bewegung, Pflege, Erziehung, Familie oder Verdauung – für individuelle Gesundheitsfragen hilft eine Tierarztpraxis.`;
 }
 
 // Show toast notification

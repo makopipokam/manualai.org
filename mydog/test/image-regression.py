@@ -10,6 +10,7 @@ from pathlib import Path
 import json
 import sys
 import threading
+import time
 
 from playwright.sync_api import sync_playwright
 
@@ -19,8 +20,15 @@ CSP = next(header['value'] for rule in json.loads((ROOT / 'vercel.json').read_te
 
 
 class Handler(SimpleHTTPRequestHandler):
+    slow_lead = False
+
     def log_message(self, *args):
         pass
+
+    def do_GET(self):
+        if self.slow_lead and self.path.split('?', 1)[0] == '/mydog/images/v1/01/2.webp':
+            time.sleep(0.7)
+        super().do_GET()
 
     def end_headers(self):
         self.send_header('Content-Security-Policy', CSP)
@@ -45,6 +53,18 @@ def main():
             errors, external_images = [], []
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.on('request', lambda request: external_images.append(request.url) if request.resource_type == 'image' and ('dog.ceo' in request.url or 'wikimedia' in request.url) else None)
+
+            Handler.slow_lead = True
+            page.goto(f'{base}?dog=1', wait_until='domcontentloaded')
+            page.locator('#results-screen.active').wait_for(timeout=7000)
+            assert page.locator('#dog-image-status').is_visible(), 'slow photo does not show loading state'
+            assert page.locator('#dog-image-status .dog-loading-icon').is_visible(), 'small dog animation is not visible while photo loads'
+            status_text_style = page.locator('#dog-image-status-text').evaluate('(node) => getComputedStyle(node).clipPath')
+            assert status_text_style.startswith('inset('), 'loading text should be available only to screen readers'
+            page.wait_for_function("() => document.querySelector('#dog-image-main')?.naturalWidth > 0", timeout=7000)
+            assert page.locator('#dog-image-status').is_hidden(), 'loading dog icon did not disappear after photo loaded'
+            Handler.slow_lead = False
+            print('slow photo: PASS | animated dog while loading, no visible text, then decoded breed photo')
 
             for dog_id in range(1, 19):
                 page.goto(f'{base}?dog={dog_id}', wait_until='domcontentloaded')
