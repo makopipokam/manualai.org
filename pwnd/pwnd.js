@@ -341,7 +341,7 @@ function foxComment(match, question){
       : last.correct ? `Dein Gedanke zu ${lastSkill} trug. Begründe nun ${lastSkill === skill ? 'den nächsten Schritt' : skill} sorgfältig.`
       : `Bei ${lastSkill} fehlte ein Schritt. Suche ${lastSkill === skill ? 'diesmal' : `in ${skill}`} zuerst den entscheidenden Hinweis.`,
   };
-  let comment = question.source === 'ai' && question.opponentLine ? question.opponentLine : `${scripts[match.opponentId]} ${followup}`.trim();
+  let comment = `${scripts[match.opponentId]} ${followup}`.trim();
   if (comment === match.lastFoxComment) comment = `Frage ${match.round}: ${comment}`;
   match.lastFoxComment = comment;
   return comment;
