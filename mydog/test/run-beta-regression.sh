@@ -49,21 +49,39 @@ for breed, block in entries:
     urls = re.findall(r'"(https?://[^"\n]+)"', block)
     if len(urls) != 6:
         raise SystemExit(f'{breed}: expected 6 image references, found {len(urls)}')
+    if len(set(urls)) != 6:
+        raise SystemExit(f'{breed}: the same photo is listed more than once')
     breed_images[breed] = set(urls)
 for breed, urls in breed_images.items():
     reused_by = [other for other, other_urls in breed_images.items() if other != breed and urls & other_urls]
     if reused_by:
         raise SystemExit(f'{breed}: image URLs reused by {reused_by}')
-print(f'catalogue: PASS | {len(entries)} breeds | 6 non-shared image references each')
+print(f'catalogue: PASS | {len(entries)} breeds | 6 distinct, non-shared photos each')
 PY
 
 if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/sw.js"; then
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v3'" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v4'" "$ROOT/mydog/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
-echo 'service-worker: PASS | versioned MyDog-only app-shell cache'
+# App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
+if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
+  echo 'service-worker: FAIL | app files are served cache-first again' >&2
+  exit 1
+fi
+grep -q "IMAGE_CACHE_LIMIT" "$ROOT/mydog/sw.js"
+python3 - "$ROOT/mydog/index.html" <<'PY'
+import re, sys
+from pathlib import Path
+html = Path(sys.argv[1]).read_text()
+versions = set(re.findall(r'(?:style\.css|data\.js|script\.js)\?v=([0-9A-Za-z._-]+)', html))
+if len(versions) != 1 or len(re.findall(r'(?:style\.css|data\.js|script\.js)\?v=', html)) != 3:
+    raise SystemExit('index.html must load style.css, data.js and script.js with one shared ?v= release token')
+if 'rel="icon"' not in html or 'rel="apple-touch-icon"' not in html:
+    raise SystemExit('index.html must declare favicon and apple-touch-icon')
+PY
+echo 'service-worker: PASS | network-first app files, bounded photo cache, versioned assets'
 
 direct_output="$TMP_DIR/direct-profile.html"
 chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \

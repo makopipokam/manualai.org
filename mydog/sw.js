@@ -1,7 +1,14 @@
 // Service Worker for PWA - MyDog
 // Only caches owned by the /mydog/ app are managed here.
-const STATIC_CACHE = 'mydog-static-v3';
-const IMAGE_CACHE = 'mydog-images-v1';
+//
+// Strategy:
+// - App files (HTML, JS, CSS, data, manifest, icons): network-first, cache only as offline fallback.
+//   Every online visit therefore receives the deployed version; a stale script can no longer be
+//   combined with newer HTML (that mismatch broke returning visitors after the share-image release).
+// - Dog photos from the allowed image hosts: cache-first with a bounded entry count.
+const STATIC_CACHE = 'mydog-static-v4';
+const IMAGE_CACHE = 'mydog-images-v2';
+const IMAGE_CACHE_LIMIT = 160;
 const OWNED_CACHE_PREFIX = 'mydog-';
 const APP_SHELL = [
     '/mydog/',
@@ -22,7 +29,8 @@ const IMAGE_HOSTS = new Set([
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(STATIC_CACHE)
-            .then(cache => cache.addAll(APP_SHELL))
+            // Bypass the HTTP cache so the offline copy always matches the deployed release.
+            .then(cache => cache.addAll(APP_SHELL.map(url => new Request(url, { cache: 'reload' }))))
             .then(() => self.skipWaiting())
     );
 });
@@ -51,35 +59,53 @@ function isAllowedImageRequest(request, url) {
     return request.destination === 'image' && IMAGE_HOSTS.has(url.host);
 }
 
-function cacheSuccessfulResponse(cache, request, response) {
-    if (response && (response.ok || response.type === 'opaque')) {
-        cache.put(request, response.clone()).catch(() => {});
-    }
-    return response;
+// Cache app files under their path only, so versioned URLs (?v=…) and profile links (?dog=…)
+// share one offline entry instead of piling up.
+function appCacheKey(url) {
+    return url.origin + url.pathname;
 }
 
-function appShellRequest(event, url) {
+function appRequest(event, url) {
     const request = event.request;
-    return caches.open(STATIC_CACHE).then(cache => {
-        if (isDocumentRequest(request, url)) {
-            return fetch(request)
-                .then(response => cacheSuccessfulResponse(cache, request, response))
-                .catch(() => cache.match('/mydog/index.html'));
-        }
+    const key = appCacheKey(url);
+    return caches.open(STATIC_CACHE).then(cache =>
+        fetch(request)
+            .then(response => {
+                if (response && response.ok && response.type === 'basic') {
+                    cache.put(key, response.clone()).catch(() => {});
+                }
+                return response;
+            })
+            .catch(() => cache.match(key).then(cached => {
+                if (cached) return cached;
+                if (isDocumentRequest(request, url)) return cache.match('/mydog/index.html');
+                return Response.error();
+            }))
+    );
+}
 
-        return cache.match(request)
-            .then(cached => cached || fetch(request).then(response => cacheSuccessfulResponse(cache, request, response)));
-    });
+function trimImageCache(cache) {
+    return cache.keys().then(keys => {
+        const overflow = keys.length - IMAGE_CACHE_LIMIT;
+        if (overflow <= 0) return;
+        return Promise.all(keys.slice(0, overflow).map(key => cache.delete(key)));
+    }).catch(() => {});
 }
 
 function imageRequest(event) {
-    return caches.open(IMAGE_CACHE).then(cache => {
-        return cache.match(event.request).then(cached => {
+    return caches.open(IMAGE_CACHE).then(cache =>
+        cache.match(event.request).then(cached => {
             if (cached) return cached;
-            return fetch(event.request)
-                .then(response => cacheSuccessfulResponse(cache, event.request, response));
-        });
-    });
+            return fetch(event.request).then(response => {
+                if (response && (response.ok || response.type === 'opaque')) {
+                    cache.put(event.request, response.clone())
+                        .then(() => trimImageCache(cache))
+                        .catch(() => {});
+                }
+                return response;
+            });
+        })
+    );
 }
 
 self.addEventListener('fetch', (event) => {
@@ -87,7 +113,7 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(event.request.url);
     if (isAppRequest(url)) {
-        event.respondWith(appShellRequest(event, url));
+        event.respondWith(appRequest(event, url));
     } else if (isAllowedImageRequest(event.request, url)) {
         event.respondWith(imageRequest(event));
     }

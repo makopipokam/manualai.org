@@ -44,10 +44,12 @@ Eine experimentelle Web-App, bei der du einen Big-Five-Persönlichkeitstest mach
 ### 📱 PWA (Progressive Web App)
 - Installierbar auf Mobilgeräten
 - Offline-App-Shell nach einem erfolgreichen Online-Besuch
-- Versionierter MyDog-only Service-Worker-Cache
-- Bereits geladene externe Bilder können im Runtime-Cache verfügbar sein
+- App-Dateien werden **network-first** geladen: Online gibt es immer den aktuellen Stand, der Cache dient nur als Offline-Fallback
+- Bereits geladene Hundefotos liegen in einem begrenzten Runtime-Cache (max. 160 Fotos)
 - Automatische Service-Worker-Registrierung auf HTTPS und localhost
 - Enthaltene 192×192- und 512×512-PWA-Icons
+
+**Release-Hinweis:** `index.html` lädt `style.css`, `data.js` und `script.js` mit einem gemeinsamen `?v=`-Token. Bei Änderungen an diesen Dateien Token **und** `STATIC_CACHE` in `sw.js` erhöhen; der Regressionstest prüft beides.
 
 ### 💾 Fortschritt speichern
 - Testfortschritt wird automatisch gespeichert
@@ -111,7 +113,10 @@ Der Test prüft reproduzierbar:
 - Ergebnisdarstellung und direkter Rasseprofil-Link ohne persönlichen Score
 - Favoriten speichern, entfernen und Favoritenübersicht
 - Chat-Zugriff und sichere Darstellung von Nutzereingaben
-- versionierten MyDog-only Service-Worker-Cache
+- network-first Service Worker, begrenzter Foto-Cache und einheitliches `?v=`-Release-Token
+- sechs unterschiedliche Fotos pro Rasse, die keine andere Rasse verwendet
+- nachladende Galerie-Vorschaubilder und keine doppelte Rassenzeile, wenn Rasse und Name identisch sind
+- Teilen-Dialog: Fokus wandert hinein, Esc schließt, Fokus kehrt zum Teilen-Button zurück
 - „Test neu machen“ inklusive Löschen der alten Antworten
 - mobile Portrait- und Desktop-Viewport-Ausführung
 

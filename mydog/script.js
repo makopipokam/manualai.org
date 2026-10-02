@@ -34,6 +34,7 @@ let appState = {
 
 let imageLoadToken = 0;
 let imageObserver = null;
+let shareModalReturnFocus = null;
 const SCORING_VERSION = 3;
 
 // DOM Elements
@@ -192,6 +193,7 @@ function setupEventListeners() {
     elements.shareFacebookBtn.addEventListener('click', shareOnFacebook);
     elements.shareWhatsAppBtn.addEventListener('click', shareOnWhatsApp);
     elements.closeModalBtn.addEventListener('click', closeShareModal);
+    document.addEventListener('keydown', handleShareModalKeydown);
     
     // Chat input
     elements.userMessageInput.addEventListener('keypress', (e) => {
@@ -605,18 +607,23 @@ function loadDogImages(imageUrls, labels) {
         }
     });
 
-    if ('IntersectionObserver' in window) {
-        imageObserver = new IntersectionObserver(entries => {
-            entries.forEach(entry => {
-                if (!entry.isIntersecting) return;
-                const index = Number(entry.target.dataset.index);
-                loadImage(index, entry.target);
-                imageObserver.unobserve(entry.target);
-            });
-        }, { rootMargin: '120px' });
-        thumbnails.slice(1).forEach(img => {
-            if (img) imageObserver.observe(img);
-        });
+    // Unloaded thumbnails are display:none (no blank gap), so they can never intersect themselves.
+    // Observe the always-visible gallery row instead and load the remaining photos once it is near.
+    const loadRemainingThumbnails = () => {
+        thumbnails.slice(1).forEach((img, offset) => loadImage(offset + 1, img));
+    };
+    const gallery = elements.dogImageMain?.parentElement?.querySelector('.thumbnail-gallery');
+    if ('IntersectionObserver' in window && gallery) {
+        const observer = new IntersectionObserver(entries => {
+            if (!entries.some(entry => entry.isIntersecting)) return;
+            observer.disconnect();
+            if (imageObserver === observer) imageObserver = null;
+            loadRemainingThumbnails();
+        }, { rootMargin: '200px' });
+        imageObserver = observer;
+        observer.observe(gallery);
+    } else {
+        loadRemainingThumbnails();
     }
 }
 
@@ -684,17 +691,16 @@ function generateStarRating(score) {
     return html;
 }
 
-// Calculate overall rating from individual ratings
-function calculateOverallRating(ratings) {
-    const values = Object.values(ratings);
-    if (values.length === 0) return 3;
-    const sum = values.reduce((a, b) => a + b, 0);
-    return sum / values.length;
-}
-
 function calculateSuitabilityRating(matchScore) {
     if (!Number.isFinite(matchScore)) return null;
     return Math.max(0, Math.min(5, matchScore / 20));
+}
+
+// Most catalogue entries use the breed as their display name; avoid printing it twice.
+function getBreedSubtitle(dog) {
+    const breed = (dog?.breed || '').trim();
+    const name = (dog?.name || '').trim();
+    return breed && breed.toLowerCase() !== name.toLowerCase() ? breed : '';
 }
 
 // Show chat screen
@@ -789,10 +795,11 @@ function renderFavorites() {
         card.setAttribute('role', 'group');
         card.dataset.dogId = dog.id;
         const suitability = calculateSuitabilityRating(dog.matchScore);
+        const breedSubtitle = getBreedSubtitle(dog);
         card.innerHTML = `
             <img src="${dog.images[0] || ''}" alt="${dog.name}" onerror="this.style.visibility='hidden'">
             <h3>${dog.name}</h3>
-            <p class="breed">${dog.breed}</p>
+            ${breedSubtitle ? `<p class="breed">${breedSubtitle}</p>` : ''}
             <p>${dog.description.substring(0, 100)}...</p>
             <div class="rating">
                 <span>⭐ ${suitability === null ? '—' : `${suitability.toFixed(1)}/5`} Eignung</span>
@@ -930,7 +937,8 @@ function renderShareImageEditor(dog) {
     (dog.images || []).forEach((source, index) => {
         const option = document.createElement('option');
         option.value = source;
-        option.textContent = dog.imagesLabels?.[index] || `Bild ${index + 1}`;
+        // Catalogue labels are generic ("… Welpe") and do not always describe the actual photo.
+        option.textContent = `Foto ${index + 1}`;
         elements.shareImageSource.appendChild(option);
     });
     elements.shareImageSource.value = appState.shareImageSource;
@@ -945,7 +953,9 @@ function updateShareImagePreview(dog = appState.currentDog) {
     elements.shareImagePreview.src = source;
     elements.shareImagePreview.alt = `${dog.name} – Share-Bild`;
     elements.shareCardName.textContent = dog.name;
-    elements.shareCardBreed.textContent = dog.breed;
+    const breedSubtitle = getBreedSubtitle(dog);
+    elements.shareCardBreed.textContent = breedSubtitle;
+    elements.shareCardBreed.hidden = !breedSubtitle;
     elements.shareCardRating.textContent = getShareRatingText(dog);
     elements.shareCardCaption.textContent = caption;
 }
@@ -975,12 +985,20 @@ function openShareModal() {
 
     const shareData = getShareData(dog);
     elements.shareDogName.textContent = dog.name;
-    elements.shareDogBreed.textContent = dog.breed;
+    const breedSubtitle = getBreedSubtitle(dog);
+    elements.shareDogBreed.textContent = breedSubtitle;
+    elements.shareDogBreed.hidden = !breedSubtitle;
     elements.shareLinkInput.value = shareData.url;
     elements.nativeShareBtn.hidden = typeof navigator.share !== 'function';
     elements.shareStatus.textContent = 'Share-Bild wird vorbereitet …';
     renderShareImageEditor(dog);
+    if (!elements.shareModal.classList.contains('active')) {
+        shareModalReturnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    }
     elements.shareModal.classList.add('active');
+    // Move keyboard and screen-reader focus into the dialog.
+    const closeButton = elements.shareModal.querySelector('.close-btn');
+    if (closeButton) closeButton.focus({ preventScroll: true });
     void prepareShareImageFile(dog).then(file => {
         if (file && elements.shareModal.classList.contains('active')) {
             setShareStatus('Share-Bild bereit – du kannst es speichern oder direkt teilen.');
@@ -1057,8 +1075,10 @@ function drawShareCard(context, image, dog, caption) {
     context.fillText('MYDOG · HUNDEVORSCHLAG', 58, 66);
 
     context.fillStyle = '#fffdf8';
-    drawFittedCanvasText(context, dog.name, 58, 470, 1080, '700', 68, 38);
-    drawFittedCanvasText(context, dog.breed, 60, 515, 1060, '400', 30, 22);
+    const breedSubtitle = getBreedSubtitle(dog);
+    // Without a separate breed line the name moves down so the text block stays balanced.
+    drawFittedCanvasText(context, dog.name, 58, breedSubtitle ? 470 : 505, 1080, '700', 68, 38);
+    if (breedSubtitle) drawFittedCanvasText(context, breedSubtitle, 60, 515, 1060, '400', 30, 22);
 
     context.fillStyle = '#f4c95d';
     context.font = '700 27px Arial, sans-serif';
@@ -1187,7 +1207,36 @@ async function shareCurrentDog() {
 
 // Close share modal
 function closeShareModal() {
+    const wasOpen = elements.shareModal.classList.contains('active');
     elements.shareModal.classList.remove('active');
+    if (wasOpen && shareModalReturnFocus && document.contains(shareModalReturnFocus)) {
+        shareModalReturnFocus.focus({ preventScroll: true });
+    }
+    shareModalReturnFocus = null;
+}
+
+// Keyboard support for the share dialog: Escape closes, Tab stays inside the dialog.
+function handleShareModalKeydown(event) {
+    if (!elements.shareModal.classList.contains('active')) return;
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        closeShareModal();
+        return;
+    }
+    if (event.key !== 'Tab') return;
+    const focusable = [...elements.shareModal.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )].filter(element => !element.hidden && element.offsetParent !== null);
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+    } else if (!event.shiftKey && (document.activeElement === last || !elements.shareModal.contains(document.activeElement))) {
+        event.preventDefault();
+        first.focus();
+    }
 }
 
 function setShareStatus(message) {
