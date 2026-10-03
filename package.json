@@ -9,7 +9,10 @@
     "test:catsdogs": "node catsdogs/deploy.test.mjs",
     "test:mydog:beta": "bash mydog/test/run-beta-regression.sh",
     "test:mydog:android": "bash mydog/test/run-android-preflight.sh",
-    "test:mydog:images": "python3 mydog/test/image-regression.py"
+    "test:mydog:images": "python3 mydog/test/image-regression.py",
+    "test:mycat:beta": "bash mycat/test/run-beta-regression.sh",
+    "test:mycat:images": "python3 mycat/test/image-regression.py",
+    "test:mycat:legal": "python3 mycat/test/legal-pages-regression.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "latest"
