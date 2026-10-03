@@ -48,7 +48,7 @@ assert.ok(config.redirects.some(r => r.source === '/mycat' && r.destination === 
 assert.ok(config.rewrites.some(r => r.source === '/mycat' && r.destination === '/mycat/index.html'));
 assert.ok(config.redirects.some(r => r.source === '/mycat/cats&dogs' && r.destination === '/mycat/cats&dogs/'));
 assert.ok(config.rewrites.some(r => r.source === '/mycat/cats&dogs' && r.destination === '/mycat/cats&dogs/index.html'));
-assert.match(continuation, /Oder suchst du eigentlich nach Liebe\?/);
+assert.match(continuation, /Oder willst du eigentlich nur Liebe\?/);
 assert.match(continuation, /Die MyCat-Ergebnisse werden noch nicht an eine Dating-App übergeben\./);
 assert.match(mycatServiceWorker, /'\/mycat\/cats&dogs\/index\.html'/);
 assert.ok(config.redirects.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/'));
