@@ -117,23 +117,23 @@
     .app-card::after { content: ""; position: absolute; width: 230px; height: 230px; right: -78px; bottom: -100px; border: 1px solid rgba(29,41,37,.16); border-radius: 50%; box-shadow: 0 0 0 20px rgba(29,41,37,.035), 0 0 0 43px rgba(29,41,37,.025); }
     .pwnd-card { background: linear-gradient(145deg, var(--green-pale), var(--green-soft)); }
     .mydog-card { background: linear-gradient(145deg, #fff8ed, var(--coral-soft)); }
-    .catsdogs-card { background: linear-gradient(145deg, #f3efff, #f6d9e3); }
+    .mycat-card { background: linear-gradient(145deg, #f6f0fb, #f6d9e3); }
     .fishroyale-card { background: linear-gradient(145deg, #e7f2e9, #cbe6dc); }
     .card-top, .card-bottom { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .card-index { color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
     .card-tag { padding: 7px 9px; border: 1px solid currentColor; border-radius: 999px; color: var(--green); font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
     .mydog-card .card-tag { color: var(--coral); }
-    .catsdogs-card .card-tag { color: #815aa9; }
+    .mycat-card .card-tag { color: #815aa9; }
     .fishroyale-card .card-tag, .fishroyale-card .card-glyph, .fishroyale-card .launch { color: #187d73; }
     .card-content { position: relative; z-index: 1; }
     .card-glyph { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 24px; border: 1px solid currentColor; border-radius: 18px; color: var(--green); font-size: 27px; }
     .mydog-card .card-glyph { color: var(--coral); }
-    .catsdogs-card .card-glyph { color: #815aa9; }
+    .mycat-card .card-glyph { color: #815aa9; }
     .app-card h3 { margin: 0 0 10px; font-size: clamp(32px, 4vw, 47px); letter-spacing: -.075em; line-height: .95; }
     .app-card p { max-width: 360px; margin: 0; color: rgba(29,41,37,.72); font-size: 15px; line-height: 1.52; }
     .launch { display: inline-flex; align-items: center; gap: 10px; color: var(--green); font-size: 13px; font-weight: 800; }
     .mydog-card .launch { color: var(--coral); }
-    .catsdogs-card .launch { color: #815aa9; }
+    .mycat-card .launch { color: #815aa9; }
     .arrow { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid currentColor; border-radius: 50%; font-size: 17px; transition: transform .25s ease; }
     .app-card:hover .arrow, .app-card:focus-visible .arrow { transform: translateX(5px); }
 
@@ -215,14 +215,14 @@
           </div>
           <div class="card-bottom"><span class="launch">Test starten <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">30 FRAGEN</span></div>
         </a>
-        <a class="app-card catsdogs-card" href="/catsdogs/">
-          <div class="card-top"><span class="card-index">03 · DATING</span><span class="card-tag">Testphase</span></div>
+        <a class="app-card mycat-card" href="/mycat/">
+          <div class="card-top"><span class="card-index">03 · PROFIL</span><span class="card-tag">Entdecken</span></div>
           <div class="card-content">
-            <span class="card-glyph" aria-hidden="true">♡</span>
-            <h3>cats&amp;dogs</h3>
-            <p>Finde mit zehn Persönlichkeitsfragen dein Tier und erlebe eine spielerische Begegnung mit einem Test-Bot.</p>
+            <span class="card-glyph" aria-hidden="true">🐈</span>
+            <h3>MyCat</h3>
+            <p>Entdecke 18 Katzenprofile und finde spielerisch heraus, welche Charaktere zu deinem Alltag passen könnten.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Test starten <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">10 FRAGEN</span></div>
+          <div class="card-bottom"><span class="launch">Katzen entdecken <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">30 FRAGEN</span></div>
         </a>
         <a class="app-card fishroyale-card" href="/fishroyale/">
           <div class="card-top"><span class="card-index">04 · SPIEL</span><span class="card-tag">Fair Play</span></div>

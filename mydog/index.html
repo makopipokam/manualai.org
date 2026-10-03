@@ -9,15 +9,20 @@
     <link rel="apple-touch-icon" href="/mydog/icon-192x192.png">
     <!-- ?v= makes browsers still running the old cache-first service worker fetch the current release. -->
     <link rel="stylesheet" href="/mydog/style.css?v=20261002-picard-legal">
+    <link rel="stylesheet" href="/mydog/manualai-theme.css?v=20261002-manualai">
     <link rel="manifest" href="/mydog/manifest.json">
     <base href="/mydog/">
 </head>
 <body>
+    <header class="mai-bar">
+        <a class="mai-home" href="/" aria-label="Zur manualAI Startseite"><span class="mai-mark" aria-hidden="true">✦</span><span class="mai-name">manualAI<small>.org</small></span></a>
+        <span class="mai-app"><i aria-hidden="true"></i>02 · MyDog</span>
+    </header>
     <div class="app-container">
         <!-- Start Screen -->
         <div id="start-screen" class="screen active">
             <p class="eyebrow">MyDog · Dein Hundeprofil</p>
-            <h1>Finde Hunde,<br><em>die zu dir passen.</em> 🐾</h1>
+            <h1>Finde Hunde,<br><em>die zu dir passen.</em></h1>
             <p class="subtitle">Beantworte 30 kurze Fragen und entdecke Rassen, die zu deinem Alltag und deiner Persönlichkeit passen.</p>
             <p class="app-disclaimer">Spielerische Orientierung, keine tiermedizinische oder verhaltensbiologische Beratung.</p>
             <div class="hero-facts" aria-label="Testinformationen">
@@ -37,7 +42,19 @@
                 <p><strong>Dein Test ist noch nicht abgeschlossen.</strong><span id="saved-progress-text"></span></p>
                 <button id="resume-test-btn" class="btn-secondary" type="button">Test fortsetzen</button>
             </div>
-            <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">📚 Meine Favoriten anzeigen</button>
+            <button id="view-favorites-btn" class="btn-secondary" style="margin-top: 20px;">Meine Favoriten anzeigen</button>
+            <aside class="start-aside" aria-hidden="true">
+                <div class="aside-top"><span>Beispiel · Steckbrief</span><b>MyDog</b></div>
+                <span class="aside-dog"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11.25 16.25h1.5L12 17z"/><path d="M16 14v.5"/><path d="M4.42 11.247A13.152 13.152 0 0 0 4 14.556C4 18.728 7.582 21 12 21s8-2.272 8-6.444a11.702 11.702 0 0 0-.493-3.309"/><path d="M8 14v.5"/><path d="M8.5 8.5c-.384 1.05-1.083 2.028-2.344 2.5-1.931.722-3.576-.297-3.656-1-.113-.994 1.177-6.53 4-7 1.923-.321 3.651.845 3.651 2.235A7.497 7.497 0 0 1 14 5.277c0-1.39 1.844-2.598 3.767-2.277 2.823.47 4.113 6.006 4 7-.08.703-1.725 1.722-3.656 1-1.261-.472-1.855-1.45-2.239-2.5"/></svg></span>
+                <p class="aside-title">Dein Rudel,<br><span>passend zu dir.</span></p>
+                <ul class="aside-traits">
+                    <li>Energie <i style="--v: 72%"></i></li>
+                    <li>Pflege <i style="--v: 40%"></i></li>
+                    <li>Familie <i style="--v: 88%"></i></li>
+                    <li>Training <i style="--v: 64%"></i></li>
+                </ul>
+                <div class="aside-foot">Eignung für dich<span>★ 4.7 / 5</span></div>
+            </aside>
         </div>
 
         <!-- Personality Test Screen -->
@@ -72,7 +89,7 @@
 
         <!-- Results Screen -->
         <div id="results-screen" class="screen">
-            <h2><span id="dog-name"></span> 🐕</h2>
+            <h2><span id="dog-name"></span></h2>
             
             <div class="dog-profile">
                 <div class="dog-images">
@@ -190,7 +207,7 @@
             <div class="favorites-header">
                 <button id="back-from-favorites-btn" class="back-btn">← Zurück</button>
                 <div>
-                    <h2>📚 Meine Favoriten <span id="favorites-count" class="favorites-count" aria-live="polite">0</span></h2>
+                    <h2>Meine Favoriten <span id="favorites-count" class="favorites-count" aria-live="polite">0</span></h2>
                     <p id="favorites-summary" class="favorites-summary">Noch keine gespeicherten Hunde.</p>
                 </div>
             </div>

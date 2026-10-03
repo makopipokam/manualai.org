@@ -1,0 +1,125 @@
+@charset "utf-8";
+/* =====================================================================
+   pwnd · manualAI design layer
+   Loaded after pwnd.css. Adds the manualAI family header, mono labels
+   and a wide dashboard layout for the pond on large screens. Visual
+   only; all ids and classes used by pwnd.js stay untouched.
+   ===================================================================== */
+:root {
+  --mai-ink: #1d2925;
+  --mai-muted: #5f7468;
+  --mai-line: rgba(29, 41, 37, .14);
+  --mai-green: #286d59;
+  --mai-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mai-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* ---------- manualAI family header ---------- */
+.topbar {
+  gap: 16px;
+  padding-top: max(4px, env(safe-area-inset-top));
+  border-bottom-color: var(--mai-line);
+}
+.mai-home { display: inline-flex; align-items: center; gap: 10px; color: var(--mai-ink); text-decoration: none; border-radius: 999px; }
+.mai-home:focus-visible { outline: 3px solid rgba(40, 109, 89, .5); outline-offset: 4px; }
+.mai-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--mai-green);
+  border-radius: 50%;
+  color: var(--mai-green);
+  font-size: 16px;
+  line-height: 1;
+  transition: transform .25s ease, background .25s ease, color .25s ease;
+}
+.mai-home:hover .mai-mark { transform: rotate(-90deg); background: var(--mai-green); color: #f7f5e8; }
+.mai-name { font-family: var(--mai-display); font-size: 15px; font-weight: 800; letter-spacing: -.045em; }
+.mai-name small { margin-left: 2px; color: var(--mai-muted); font-family: var(--mai-mono); font-size: 9px; font-weight: 700; letter-spacing: .03em; }
+.topbar .brand.mai-app {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 12px 7px 10px;
+  border: 1px solid var(--mai-line);
+  border-radius: 999px;
+  background: rgba(247, 245, 232, .7);
+  color: var(--mai-muted);
+  font: 700 10px/1 var(--mai-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transition: border-color .2s ease, color .2s ease;
+}
+.topbar .brand.mai-app b { color: var(--mai-green); font-size: 11px; letter-spacing: .02em; text-transform: none; }
+.topbar .brand.mai-app i { width: 7px; height: 7px; border-radius: 50%; background: var(--mai-green); box-shadow: 0 0 0 4px rgba(40, 109, 89, .13); }
+.topbar .brand.mai-app:hover { border-color: rgba(40, 109, 89, .45); color: var(--mai-ink); }
+
+/* ---------- shared type ---------- */
+.eyebrow { font-family: var(--mai-mono); letter-spacing: .16em; }
+.microcopy,
+.pond-season { font-family: var(--mai-mono); letter-spacing: .06em; }
+.pond-season.growth-resource-legend { font-family: inherit; letter-spacing: 0; }
+
+/* ---------- wide pond dashboard ---------- */
+@media (min-width: 1100px) {
+  .shell:has(#screenStart.active) {
+    width: 100%;
+    max-width: 1220px;
+    padding-left: 36px;
+    padding-right: 36px;
+  }
+  #screenStart.active {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: 26px;
+    align-items: start;
+  }
+  #screenStart > * { grid-column: 1 / -1; }
+
+  /* Hero: copy on the left, the living pond on the right. */
+  #screenStart > .eyebrow { grid-column: 1; grid-row: 1; align-self: end; margin-top: 34px; }
+  #screenStart > h1 { grid-column: 1; grid-row: 2; max-width: none; font-size: clamp(48px, 4.1vw, 58px); }
+  #screenStart > .lede { grid-column: 1; grid-row: 3; font-size: 17px; }
+  #screenStart > .pond-scene {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+    align-self: stretch;
+    height: auto;
+    min-height: 330px;
+    margin: 12px 0 0;
+    border-radius: 34px;
+  }
+
+  #screenStart > .resource-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 30px 0 6px; }
+
+  /* Build panel: choices and guidance left, the 10 x 10 board right. */
+  #screenStart > .pond-build-panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: repeat(9, auto) 1fr;
+    column-gap: 30px;
+    align-items: start;
+    padding: 26px;
+    border-radius: 28px;
+  }
+  .pond-build-panel > * { grid-column: 1; }
+  .pond-build-panel > .pond-board-scroll {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    align-self: center;
+    width: max-content;
+    max-width: 100%;
+  }
+  .pond-build-panel > .board-scroll-hint { display: none; }
+
+  #screenStart > .pond-status { grid-column: 1; margin: 6px 0 0; }
+  #screenStart > .pond-residents { grid-column: 2; align-self: center; justify-content: flex-end; margin: 6px 0 0; }
+
+  /* Growth map left, activities right. */
+  #screenStart > .unlock-panel { grid-column: 1; grid-row: span 7; align-self: start; margin: 26px 0 0; }
+  .unlock-panel .unlock-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #screenStart > .activity-heading { grid-column: 2; margin: 26px 0 4px; }
+  #screenStart > .activity-card { grid-column: 2; margin: 0 0 10px; }
+  #screenStart > .microcopy { grid-column: 2; margin-top: 4px; }
+}

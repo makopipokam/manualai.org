@@ -14,6 +14,7 @@ const APP_SHELL = [
     '/mydog/',
     '/mydog/index.html',
     '/mydog/style.css',
+    '/mydog/manualai-theme.css',
     '/mydog/script.js',
     '/mydog/data.js',
     '/mydog/legal/privacy.html',
