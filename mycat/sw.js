@@ -13,6 +13,8 @@ const OWNED_CACHE_PREFIX = 'mycat-';
 const APP_SHELL = [
     '/mycat/',
     '/mycat/index.html',
+    '/mycat/cats&dogs/',
+    '/mycat/cats&dogs/index.html',
     '/mycat/style.css',
     '/mycat/manualai-theme.css',
     '/mycat/script.js',

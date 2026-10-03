@@ -96,6 +96,8 @@ if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mycat/sw.js"; then
 fi
 grep -q "IMAGE_CACHE_LIMIT" "$ROOT/mycat/sw.js"
 grep -q "url.pathname.startsWith('/mycat/images/v1/')" "$ROOT/mycat/sw.js"
+grep -Fq "'/mycat/cats&dogs/index.html'" "$ROOT/mycat/sw.js"
+grep -Fq "href=\"/mycat/cats&amp;dogs/\"" "$ROOT/mycat/index.html"
 python3 - "$ROOT/mycat/index.html" <<'PY'
 import re, sys
 from pathlib import Path

@@ -9,6 +9,7 @@ Standalone cat-profile discovery app in the manualAI.org family. The interface a
 - Profile photos, galleries, favorites, profile links (`?cat=<id>`), and locally generated/shareable PNGs.
 - Breed-level source links and welfare/health caveats. Breed tendencies never predict the personality or health of an individual cat; medical concerns belong with a veterinary practice.
 - No MyCat account or external scoring/AI request. Answers and favorites are kept in browser `localStorage`; consult the [privacy notice](legal/privacy.html) for hosting, storage, and sharing details.
+- After all ranked profiles, the completion screen links to MyDog and `/mycat/cats&dogs/`. That route is currently a transparent handoff page, not a functioning dating app; connecting the MyCat profiles to a shared dating experience is the next implementation step.
 
 ## Catalogue and image sources
 
@@ -45,3 +46,8 @@ npm run test:mycat:legal   # legal links, narrow layouts, service-worker/offline
 ```
 
 The browser suites use Python Playwright and Chromium. They start and stop their own local HTTP server. `npm test` runs the repository's existing lightweight app-engine and deployment smoke tests.
+
+
+## Gemeinsame Dating-Erfahrung
+
+Die Abschlussseite verlinkt auf `/mycat/cats&dogs/`. Dort ist derzeit nur eine transparente Einstiegsseite verfügbar. Der nächste Umsetzungsschritt ist die ausdrückliche, datenschutzgerechte Übernahme von MyCat-Profilen in eine funktionsfähige gemeinsame MyCat×MyDog-Dating-Erfahrung; bis dahin werden MyCat-Ergebnisse nicht übertragen.
