@@ -6,7 +6,7 @@ Standalone cat-profile discovery app in the manualAI.org family. The interface a
 
 - German 30-question, five-point Big Five questionnaire, with the same questions and answer scale as MyDog.
 - Browser-local ranking of 18 cat profiles. The score is a playful heuristic, not a validated psychological, veterinary, or animal-behaviour assessment.
-- Profile photos, galleries, favorites, profile links (`?cat=<id>`), and locally generated/shareable PNGs.
+- Profile photos, galleries, favorites, profile links (`?cat=<id>`), forward browsing through the catalogue from shared profiles, and locally generated/shareable PNGs.
 - Breed-level source links and welfare/health caveats. Breed tendencies never predict the personality or health of an individual cat; medical concerns belong with a veterinary practice.
 - No MyCat account or external scoring/AI request. Answers and favorites are kept in browser `localStorage`; consult the [privacy notice](legal/privacy.html) for hosting, storage, and sharing details.
 - After all ranked profiles, the completion screen links to MyDog and `/mycat/cats&dogs/`. That route is currently a transparent handoff page, not a functioning dating app; connecting the MyCat profiles to a shared dating experience is the next implementation step.

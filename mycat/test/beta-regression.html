@@ -231,7 +231,25 @@
       assert(optionsRect.right <= page.documentElement.clientWidth + 1, 'Likert options fit viewport');
       assert(optionsRect.width >= 260, 'Likert options remain touch-usable');
 
-      status.textContent = `PASS\nviewport=${page.documentElement.clientWidth}x${page.documentElement.clientHeight}\nflows=30-question, back/next, resume, restore, shared-profile, chat, favorites, retake\nlikert=5 numeric options + OCEAN direction`;
+      frame.src = '../index.html?cat=1';
+      await new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
+      await wait(220);
+      page = frame.contentDocument;
+      const directApp = frame.contentWindow;
+      assert(active() === 'results-screen', 'a direct cat link opens its profile');
+      const directFirstBreed = page.querySelector('#cat-breed')?.textContent;
+      assert(!page.querySelector('#next-cat-btn')?.hidden, 'direct shared profile keeps the next-cat action visible');
+      click('#next-cat-btn');
+      const directSeenBreeds = new Set([directFirstBreed, page.querySelector('#cat-breed')?.textContent]);
+      for (let breedIndex = 2; breedIndex < 18; breedIndex += 1) {
+        directApp.showNextCat();
+        directSeenBreeds.add(page.querySelector('#cat-breed')?.textContent);
+      }
+      assert(directSeenBreeds.size === 18, `direct profile browses all 18 cats (seen=${directSeenBreeds.size})`);
+      directApp.showNextCat();
+      assert(active() === 'no-more-screen', 'direct-profile browsing ends after the catalogue');
+
+      status.textContent = `PASS\nviewport=${page.documentElement.clientWidth}x${page.documentElement.clientHeight}\nflows=30-question, back/next, resume, restore, shared-profile-next, chat, favorites, retake\nlikert=5 numeric options + OCEAN direction`;
       document.title = `PASS MyCat beta ${page.documentElement.clientWidth}px`;
     }
 
