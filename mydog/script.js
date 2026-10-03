@@ -95,6 +95,7 @@ const elements = {
     userMessageInput: document.getElementById('user-message-input'),
     sendMessageBtn: document.getElementById('send-message-btn'),
     restartTestBtn: document.getElementById('restart-test-btn'),
+    catsDogsLink: document.getElementById('catsdogs-link'),
     shownBreedCount: document.getElementById('shown-breed-count'),
     quickReplyBtns: document.querySelectorAll('.quick-reply-btn'),
     favoritesList: document.getElementById('favorites-list'),
@@ -213,6 +214,7 @@ function setupEventListeners() {
         if (e.key === 'Enter') sendMessage();
     });
     elements.sendMessageBtn.addEventListener('click', sendMessage);
+    elements.catsDogsLink?.addEventListener('click', prepareCatsDogsHandoff);
     
     // Quick reply buttons
     elements.quickReplyBtns.forEach(btn => {
@@ -799,6 +801,21 @@ function showChat() {
 }
 
 // Show next dog
+function prepareCatsDogsHandoff() {
+    const key = 'manualai_mydog_handoff_v1';
+    const personality = appState.lastResult?.userPersonality;
+    const dimensions = ['O', 'C', 'E', 'A', 'N'];
+    try {
+        localStorage.removeItem(key);
+        if (!personality || !dimensions.every(dim => Number.isFinite(personality[dim]) && personality[dim] >= 0 && personality[dim] <= 100)) return;
+        const b5 = Object.fromEntries(dimensions.map(dim => [dim, Math.round((personality[dim] / 20) * 100) / 100]));
+        localStorage.setItem(key, JSON.stringify({ source: 'mydog', version: 1, createdAt: Date.now(), b5 }));
+    } catch (error) {
+        // The link remains usable; cats&dogs can fall back to its own personality quiz.
+        console.warn('MyDog-Profil konnte nicht an cats&dogs übergeben werden.', error);
+    }
+}
+
 function showNextDog() {
     appState.currentDogIndex++;
     if (appState.lastResult) {
