@@ -8,6 +8,8 @@ const root = path.dirname(dir);
 const shell = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const app = fs.readFileSync(path.join(dir, 'index.html'), 'utf8');
 const config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'));
+const continuation = fs.readFileSync(path.join(root, 'mycat', 'cats&dogs', 'index.html'), 'utf8');
+const mycatServiceWorker = fs.readFileSync(path.join(root, 'mycat', 'sw.js'), 'utf8');
 const script = app.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 
 assert.ok(script, 'App-Script fehlt');
@@ -44,6 +46,11 @@ assert.ok(config.redirects.some(r => r.source === '/catsdogs' && r.destination =
 assert.ok(config.rewrites.some(r => r.source === '/catsdogs' && r.destination === '/catsdogs/index.html'));
 assert.ok(config.redirects.some(r => r.source === '/mycat' && r.destination === '/mycat/'));
 assert.ok(config.rewrites.some(r => r.source === '/mycat' && r.destination === '/mycat/index.html'));
+assert.ok(config.redirects.some(r => r.source === '/mycat/cats&dogs' && r.destination === '/mycat/cats&dogs/'));
+assert.ok(config.rewrites.some(r => r.source === '/mycat/cats&dogs' && r.destination === '/mycat/cats&dogs/index.html'));
+assert.match(continuation, /Oder willst du eigentlich nur Liebe\?/);
+assert.match(continuation, /Die MyCat-Ergebnisse werden noch nicht an eine Dating-App übergeben\./);
+assert.match(mycatServiceWorker, /'\/mycat\/cats&dogs\/index\.html'/);
 assert.ok(config.redirects.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/'));
 assert.ok(config.rewrites.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/index.html'));
 assert.ok(config.headers.some(h => h.headers.some(v => v.key === 'Content-Security-Policy' && v.value.includes("script-src 'self'"))));

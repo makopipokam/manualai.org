@@ -539,7 +539,7 @@ function showCatResult() {
     } else {
         elements.matchReason.textContent = 'Allgemeines Rasseprofil. Mache den Persönlichkeitstest, um deine persönliche Eignung zu sehen.';
     }
-    elements.nextCatBtn.hidden = !hasPersonalMatch;
+    elements.nextCatBtn.hidden = false;
 
     // Update favorite button state
     updateFavoriteButton();
@@ -810,8 +810,17 @@ function showChat() {
 
 // Show next cat
 function showNextCat() {
+    // A shared link or a favorite opens one profile. Let the user continue through the full catalogue.
+    if (appState.matchingCats.length <= 1) {
+        const current = appState.matchingCats[appState.currentCatIndex] || appState.currentCat;
+        if (current) {
+            appState.matchingCats = buildCatalogueBrowseList(current.id);
+            appState.currentCatIndex = 0;
+            appState.sharedProfile = true;
+        }
+    }
     appState.currentCatIndex++;
-    if (appState.lastResult) {
+    if (appState.lastResult && !appState.sharedProfile) {
         appState.lastResult.currentCatIndex = appState.currentCatIndex;
         saveState();
     }
@@ -824,6 +833,13 @@ function showNextCat() {
         }
         showScreen('noMore');
     }
+}
+
+function buildCatalogueBrowseList(startingCatId) {
+    const startIndex = catDatabase.findIndex(cat => cat.id == startingCatId);
+    const start = startIndex < 0 ? 0 : startIndex;
+    const orderedCats = [...catDatabase.slice(start), ...catDatabase.slice(0, start)];
+    return orderedCats.map(cat => ({ ...cat, matchScore: null }));
 }
 
 // Back to results from chat

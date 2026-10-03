@@ -7,8 +7,8 @@
     <title>MyCat – Katzenprofile, die zu dir passen</title>
     <link rel="icon" type="image/png" sizes="192x192" href="/mycat/icon-192x192.png">
     <link rel="apple-touch-icon" href="/mycat/icon-192x192.png">
-    <link rel="stylesheet" href="/mycat/style.css?v=20261003-mycat-v1">
-    <link rel="stylesheet" href="/mycat/manualai-theme.css?v=20261003-mycat-v1">
+    <link rel="stylesheet" href="/mycat/style.css?v=20261003-mycat-v3">
+    <link rel="stylesheet" href="/mycat/manualai-theme.css?v=20261003-mycat-v3">
     <link rel="manifest" href="/mycat/manifest.json">
     <base href="/mycat/">
 </head>
@@ -220,7 +220,12 @@
         <!-- No More cats Screen -->
         <div id="no-more-screen" class="screen">
             <p class="no-more-kicker">Alle <span id="shown-breed-count">18</span> Rassen entdeckt</p>
-            <h2>Vielleicht doch ein Katzentyp? 🐱</h2>
+            <h2>Vielleicht doch ein Hundetyp?</h2>
+            <a id="mydog-crosslink" class="end-crosslink end-crosslink-primary" href="/mydog/">MyDog entdecken <span aria-hidden="true">→</span></a>
+            <section class="no-more-dating" aria-labelledby="no-more-dating-prompt">
+                <p id="no-more-dating-prompt" class="no-more-dating-prompt">Oder willst du eigentlich nur Liebe?</p>
+                <a id="dating-continuation-link" class="end-crosslink end-crosslink-secondary" href="/mycat/cats&amp;dogs/">Zur Dating-App <span aria-hidden="true">→</span></a>
+            </section>
             <button id="restart-test-btn" class="btn-primary">Katzen neu entdecken</button>
         </div>
     </div>
@@ -280,7 +285,7 @@
         </div>
     </div>
 
-    <script src="data.js?v=20261003-mycat-v1"></script>
-    <script src="script.js?v=20261003-mycat-v1"></script>
+    <script src="data.js?v=20261003-mycat-v3"></script>
+    <script src="script.js?v=20261003-mycat-v3"></script>
 </body>
 </html>

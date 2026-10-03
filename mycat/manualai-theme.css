@@ -422,3 +422,140 @@ body::before {
 .cat-health-note a { color: var(--mai-green-deep); font-size: 12px; font-weight: 750; text-underline-offset: 3px; }
 .aside-cat img { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
 .cat-loading-icon { object-fit: contain; }
+
+
+/* ---------- end-of-catalogue cross-links ---------- */
+#no-more-screen {
+  width: min(820px, calc(100% - 32px));
+  margin-inline: auto;
+  padding: clamp(36px, 7vw, 72px) 20px;
+}
+#no-more-screen h2 {
+  max-width: 680px;
+  margin: 0 auto 20px;
+  text-wrap: balance;
+}
+.end-crosslink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 13px 22px;
+  border: 1px solid var(--mai-line-strong);
+  border-radius: 999px;
+  color: var(--mai-ink);
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform .18s ease, background .18s ease, color .18s ease;
+}
+.end-crosslink:hover { transform: translateY(-2px); }
+.end-crosslink:focus-visible,
+.dating-handoff-link:focus-visible { outline: 3px solid rgba(165, 111, 154, .55); outline-offset: 4px; }
+.end-crosslink-primary {
+  border-color: var(--mai-green);
+  background: var(--mai-green);
+  color: #fffdf8;
+}
+.end-crosslink-primary:hover { background: var(--mai-green-deep); color: #fffdf8; }
+.end-crosslink-secondary { background: #fffdf8; }
+.end-crosslink-secondary:hover { background: var(--mai-green-pale); }
+.no-more-dating {
+  width: min(560px, 100%);
+  margin: 34px auto 24px;
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid var(--mai-line);
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 250, 255, .92), rgba(239, 223, 238, .65));
+  box-shadow: 0 14px 40px rgba(62, 49, 67, .08);
+}
+.no-more-dating-prompt {
+  margin: 0 0 16px;
+  color: var(--mai-ink);
+  font: 750 clamp(20px, 3.2vw, 28px)/1.2 var(--mai-display);
+  letter-spacing: -.04em;
+  text-wrap: balance;
+}
+#restart-test-btn { margin-top: 10px; }
+
+/* ---------- dating handoff landing page ---------- */
+.dating-handoff-main {
+  width: min(850px, calc(100% - 36px));
+  margin: clamp(52px, 9vw, 112px) auto 80px;
+}
+.dating-handoff-main h1 {
+  max-width: 760px;
+  margin: 14px 0 20px;
+  color: var(--mai-ink);
+  font: 750 clamp(42px, 7vw, 78px)/.98 var(--mai-display);
+  letter-spacing: -.075em;
+  text-wrap: balance;
+}
+.dating-handoff-lead {
+  max-width: 640px;
+  margin: 0;
+  color: var(--mai-muted);
+  font-size: clamp(18px, 2.3vw, 22px);
+  line-height: 1.55;
+}
+.dating-handoff-status {
+  max-width: 680px;
+  margin: 34px 0 26px;
+  padding: clamp(22px, 4vw, 34px);
+  border: 1px solid var(--mai-line);
+  border-left: 4px solid var(--mai-coral);
+  border-radius: 22px;
+  background: rgba(255, 250, 255, .88);
+  box-shadow: var(--mai-shadow);
+}
+.dating-handoff-badge {
+  display: inline-block;
+  padding: 7px 10px;
+  border: 1px solid var(--mai-line);
+  border-radius: 999px;
+  color: var(--mai-coral-deep);
+  font: 800 10px/1 var(--mai-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.dating-handoff-status h2 {
+  margin: 16px 0 10px;
+  color: var(--mai-ink);
+  font: 750 clamp(24px, 4vw, 34px)/1.1 var(--mai-display);
+  letter-spacing: -.05em;
+}
+.dating-handoff-status p {
+  margin: 0;
+  color: var(--mai-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.dating-handoff-status strong { color: var(--mai-ink); }
+.dating-handoff-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.dating-handoff-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 50px;
+  padding: 12px 20px;
+  border: 1px solid var(--mai-line-strong);
+  border-radius: 999px;
+  color: var(--mai-ink);
+  font-weight: 750;
+  text-decoration: none;
+  transition: transform .18s ease, background .18s ease;
+}
+.dating-handoff-link:hover { transform: translateY(-2px); }
+.dating-handoff-link-primary { border-color: var(--mai-green); background: var(--mai-green); color: #fffdf8; }
+.dating-handoff-link-primary:hover { background: var(--mai-green-deep); color: #fffdf8; }
+.dating-handoff-link-secondary { background: rgba(255, 250, 255, .86); }
+.dating-handoff-link-secondary:hover { background: var(--mai-green-pale); }
+@media (max-width: 600px) {
+  #no-more-screen { width: calc(100% - 12px); padding: 38px 12px; }
+  #no-more-screen > .end-crosslink { width: 100%; }
+  .no-more-dating { margin-top: 26px; }
+  .dating-handoff-main { width: calc(100% - 28px); margin-top: 48px; }
+  .dating-handoff-actions { flex-direction: column; }
+  .dating-handoff-link { width: 100%; }
+}

@@ -17,6 +17,10 @@
       "destination": "/mycat/index.html"
     },
     {
+      "source": "/mycat/cats&dogs",
+      "destination": "/mycat/cats&dogs/index.html"
+    },
+    {
       "source": "/catsdogs",
       "destination": "/catsdogs/index.html"
     },
@@ -39,6 +43,11 @@
     {
       "source": "/mycat",
       "destination": "/mycat/",
+      "permanent": true
+    },
+    {
+      "source": "/mycat/cats&dogs",
+      "destination": "/mycat/cats&dogs/",
       "permanent": true
     },
     {
