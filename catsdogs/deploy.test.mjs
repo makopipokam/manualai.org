@@ -11,10 +11,11 @@ const config = JSON.parse(fs.readFileSync(path.join(root, 'vercel.json'), 'utf8'
 const script = app.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 
 assert.ok(script, 'App-Script fehlt');
-assert.match(shell, /3 WEGE/);
+assert.match(shell, /4 WEGE/);
 assert.match(shell, /href="\/pwnd\/"/);
 assert.match(shell, /href="\/mydog\/"/);
 assert.match(shell, /href="\/catsdogs\/"/);
+assert.match(shell, /href="\/fishroyale\/"/);
 assert.match(shell, /03 · DATING/);
 assert.match(shell, /Feedback|Testphase/);
 assert.match(app, /src="\/catsdogs\/vendor\/supabase\.js"/);
@@ -38,5 +39,7 @@ assert.ok(fs.statSync(path.join(dir, 'vendor', 'supabase.js')).size > 150000);
 assert.ok(fs.statSync(path.join(dir, 'vendor', 'LICENSE')).size > 500);
 assert.ok(config.redirects.some(r => r.source === '/catsdogs' && r.destination === '/catsdogs/'));
 assert.ok(config.rewrites.some(r => r.source === '/catsdogs' && r.destination === '/catsdogs/index.html'));
+assert.ok(config.redirects.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/'));
+assert.ok(config.rewrites.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/index.html'));
 assert.ok(config.headers.some(h => h.headers.some(v => v.key === 'Content-Security-Policy' && v.value.includes("script-src 'self'"))));
-console.log('cats&dogs deployment smoke passed: third card, test-only flow, routes, CSP and vendored browser library.');
+console.log('cats&dogs deployment smoke passed: app cards, test-only flow, routes, CSP and vendored browser library.');

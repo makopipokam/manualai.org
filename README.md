@@ -1,12 +1,13 @@
 # manualAI.org
 
-Repository for three separate applications maintained under the manualAI.org umbrella.
+Repository for four separate applications maintained under the manualAI.org umbrella.
 
 ## Applications
 
 | App | Path | Purpose | Entry point |
 |---|---|---|---|
 | **pwnd** | [`pwnd/`](pwnd/) | Quizbattle and pond-game prototype | [`/pwnd/`](https://app.manualai.org/pwnd/) |
+| **Fish Royale** | [`fishroyale/`](fishroyale/) | Deterministic quiz-and-tactics arena; no purchases, loot, timers, streaks or random outcomes | [`/fishroyale/`](https://app.manualai.org/fishroyale/) |
 | **mydog** | [`mydog/`](mydog/) | Personality test and dog matching app | [`/mydog/`](https://app.manualai.org/mydog/) |
 | **cats&dogs** | [`catsdogs/`](catsdogs/) | Dating-app feedback test with Big Five assignment and a bot encounter | [`/catsdogs/`](https://app.manualai.org/catsdogs/) |
 
@@ -21,6 +22,10 @@ The applications have separate HTML, CSS, JavaScript, data, documentation, and t
 
 The quiz Web Beta remains a local demo; the optional authenticated online pond at [`/pwnd/online.html`](https://app.manualai.org/pwnd/online.html) is a separate server-saved building slice. New 3D work belongs to the Godot prototype and its feature branch.
 
+## Fish Royale
+
+[`fishroyale/`](fishroyale/) is a standalone six-round browser arena. Three fixed quiz paths feed a deterministic tactics engine; the opponent's lane, attack and guards are public before each move. All four cards are available from the start, and the same choices always resolve the same way. It has no accounts, purchases, paid evolutions, loot, random card draws, timers, streaks, daily rewards, leaderboard or saved progression. Run `npm run test:fishroyale` for its engine and fair-play tests.
+
 ## mydog
 
 - App: [`mydog/index.html`](mydog/index.html)
@@ -34,7 +39,7 @@ The quiz Web Beta remains a local demo; the optional authenticated online pond a
 - `api/` — shared serverless API handlers
 - `package.json` — repository scripts and dependencies
 
-Do not place new app-specific files in the repository root. Add them under the appropriate app directory (`pwnd/`, `mydog/`, or `catsdogs/`).
+Do not place new app-specific files in the repository root. Add them under the appropriate app directory (`pwnd/`, `fishroyale/`, `mydog/`, or `catsdogs/`).
 
 ## cats&dogs
 

@@ -15,6 +15,10 @@
     {
       "source": "/catsdogs",
       "destination": "/catsdogs/index.html"
+    },
+    {
+      "source": "/fishroyale",
+      "destination": "/fishroyale/index.html"
     }
   ],
   "redirects": [
@@ -31,6 +35,11 @@
     {
       "source": "/catsdogs",
       "destination": "/catsdogs/",
+      "permanent": true
+    },
+    {
+      "source": "/fishroyale",
+      "destination": "/fishroyale/",
       "permanent": true
     }
   ],
