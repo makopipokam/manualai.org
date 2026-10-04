@@ -10,6 +10,7 @@ Repository for the independent browser apps published under the manualAI.org umb
 | **MyDog** | [`mydog/`](mydog/) | Personality test and dog-breed profiles | [`/mydog/`](https://app.manualai.org/mydog/) |
 | **MyCat** | [`mycat/`](mycat/) | Personality test and cat-breed profiles | [`/mycat/`](https://app.manualai.org/mycat/) |
 | **Fish Royale** | [`fishroyale/`](fishroyale/) | Deterministic quiz-and-tactics arena | [`/fishroyale/`](https://app.manualai.org/fishroyale/) |
+| **Tauben vs Krähen** | [`TaubenVSKrähen/`](TaubenVSKrähen/) | Rundenbasierte Gebietskontrolle mit Krähen-KI | [`/TaubenVSKrähen/`](https://app.manualai.org/TaubenVSKr%C3%A4hen/) |
 
 The root [`index.html`](index.html) is the app-selection page. The individual apps have separate code, styles, data, documentation, and tests; Vercel routing and shared API helpers remain at the repository root.
 
@@ -45,6 +46,10 @@ The optional authenticated online pond at [`/pwnd/online.html`](https://app.manu
 ## Fish Royale
 
 [`fishroyale/`](fishroyale/) is a standalone six-round browser arena. Three fixed quiz paths feed a deterministic tactics engine; the opponent's lane, attack, and guards are public before each move. All four cards are available from the start, and the same choices always resolve the same way. It has no accounts, purchases, paid evolutions, loot, random card draws, timers, streaks, daily rewards, leaderboard, or saved progression. Run `npm run test:fishroyale` for its engine and fair-play tests.
+
+## Tauben vs Krähen
+
+[`TaubenVSKrähen/`](TaubenVSKrähen/) contains the standalone Godot Web export and a small run guide. The game is a German, turn-based territory skirmish: each dove turn grants two actions, adjacent park regions can be captured, and the first side to control four of five regions wins. The crow opponent uses a deterministic local strategy; there are no accounts or online services.
 
 ## cats&dogs prototype
 
