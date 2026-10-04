@@ -217,7 +217,8 @@
       const handoffResponse = await app.fetch('/mycat/cats&dogs/');
       assert(handoffResponse.ok, 'MyCat dating continuation route returns successfully');
       const handoffPage = await handoffResponse.text();
-      assert(handoffPage.includes('Die MyCat-Ergebnisse werden noch nicht an eine Dating-App übergeben.'), 'handoff route is transparent that profile integration is pending');
+      assert(handoffPage.includes('<title>MyCat × MyDog – Dating-Profil</title>'), 'handoff route serves the new dating-profile app');
+      assert(handoffPage.includes('/mycat/cats&dogs/app.js?v=20261004-profile-v1'), 'dating route loads its versioned app logic');
       click('#restart-test-btn');
       assert(active() === 'start-screen', 'ending button returns to the start screen');
       assert(state().userAnswers.filter(Boolean).length === 30, 'ending button preserves completed answers');

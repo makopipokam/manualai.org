@@ -12,7 +12,8 @@
     "test:mydog:images": "python3 mydog/test/image-regression.py",
     "test:mycat:beta": "bash mycat/test/run-beta-regression.sh",
     "test:mycat:images": "python3 mycat/test/image-regression.py",
-    "test:mycat:legal": "python3 mycat/test/legal-pages-regression.py"
+    "test:mycat:legal": "python3 mycat/test/legal-pages-regression.py",
+    "test:mycat:dating": "python3 mycat/test/dating-profile-regression.py"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "latest"

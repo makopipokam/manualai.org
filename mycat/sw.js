@@ -6,7 +6,7 @@
 //   Every online visit therefore receives the deployed version; a stale script can no longer be
 //   combined with newer HTML (that mismatch broke returning visitors after the share-image release).
 // - Versioned, locally hosted cat photos: cache-first with a bounded entry count.
-const STATIC_CACHE = 'mycat-static-v1';
+const STATIC_CACHE = 'mycat-static-v2';
 const IMAGE_CACHE = 'mycat-images-v1';
 const IMAGE_CACHE_LIMIT = 160;
 const OWNED_CACHE_PREFIX = 'mycat-';
@@ -15,6 +15,9 @@ const APP_SHELL = [
     '/mycat/index.html',
     '/mycat/cats&dogs/',
     '/mycat/cats&dogs/index.html',
+    '/mycat/cats&dogs/app.css',
+    '/mycat/cats&dogs/app.js',
+    '/mycat/cats&dogs/privacy.html',
     '/mycat/style.css',
     '/mycat/manualai-theme.css',
     '/mycat/script.js',
