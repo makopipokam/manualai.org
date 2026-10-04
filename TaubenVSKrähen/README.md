@@ -1,4 +1,4 @@
-# Tauben vs Krähen
+# pidgeons & crows
 
 Ein deutschsprachiges, rundenbasiertes Strategiespiel um die Kontrolle über einen Park. Die Tauben verteidigen ihr Revier gegen eine Krähen-KI.
 
@@ -10,7 +10,7 @@ Dieses Verzeichnis enthält den portablen Godot-Webexport samt Lizenzhinweisen. 
 python3 -m http.server 8000
 ```
 
-Rufe danach `http://localhost:8000/TaubenVSKr%C3%A4hen/` auf. Nach einem späteren Deployment ist die Spielroute `/TaubenVSKrähen/`.
+Rufe danach `http://localhost:8000/TaubenVSKr%C3%A4hen/` auf. Der bestehende Pfad bleibt `/TaubenVSKrähen/`.
 
 ## Regeln
 
