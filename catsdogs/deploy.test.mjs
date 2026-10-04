@@ -38,7 +38,7 @@ assert.match(script, /Welchen Genotyp hast du\?/);
 assert.match(script, /'XX','XY','X0','XXY','XYY','XXX'/);
 assert.match(script, /data-gt=/);
 assert.match(script, /XX, X0 und XXX matchen mit XY, XXY und XYY/);
-assert.match(script, /Dem Match wird der Genotyp nicht angezeigt/);
+assert.match(script, /Deinem Gegenüber wird dein Genotyp nicht angezeigt/);
 assert.match(script, /set_cats_dogs_genotype/);
 assert.match(script, /genotype:U\.gt/);
 assert.doesNotMatch(script, /function gender\(\)|data-g=|gender:U\.g/);
