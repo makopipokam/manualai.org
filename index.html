@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3efe5">
-  <meta name="description" content="manualAI — vier eigenständige Erfahrungen für neugierige Köpfe.">
+  <meta name="description" content="manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <title>manualAI — Wähle deine Erfahrung</title>
   <style>
@@ -111,7 +111,7 @@
     .section-head { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 15px; }
     .section-head h2 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: -.02em; }
     .section-count { color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; }
-    .app-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+    .app-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
     .app-card { position: relative; display: flex; min-height: 336px; flex-direction: column; justify-content: space-between; padding: clamp(24px, 3vw, 34px); overflow: hidden; border: 1px solid var(--line); border-radius: 26px; text-decoration: none; box-shadow: var(--shadow); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
     .app-card:hover, .app-card:focus-visible { transform: translateY(-6px); border-color: var(--line-strong); box-shadow: 0 30px 70px rgba(62,67,51,.18); outline: none; }
     .app-card::after { content: ""; position: absolute; width: 230px; height: 230px; right: -78px; bottom: -100px; border: 1px solid rgba(29,41,37,.16); border-radius: 50%; box-shadow: 0 0 0 20px rgba(29,41,37,.035), 0 0 0 43px rgba(29,41,37,.025); }
@@ -119,16 +119,20 @@
     .mydog-card { background: linear-gradient(145deg, #fff8ed, var(--coral-soft)); }
     .mycat-card { background: linear-gradient(145deg, #f6f0fb, #f6d9e3); }
     .fishroyale-card { background: linear-gradient(145deg, #e7f2e9, #cbe6dc); }
+    .tauben-kraehen-card { background: linear-gradient(145deg, #f3f4df, #d4e2c7); }
     .card-top, .card-bottom { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .card-index { color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
     .card-tag { padding: 7px 9px; border: 1px solid currentColor; border-radius: 999px; color: var(--green); font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
     .mydog-card .card-tag { color: var(--coral); }
     .mycat-card .card-tag { color: #815aa9; }
     .fishroyale-card .card-tag, .fishroyale-card .card-glyph, .fishroyale-card .launch { color: #187d73; }
+    .tauben-kraehen-card .card-tag, .tauben-kraehen-card .card-glyph, .tauben-kraehen-card .launch { color: #5f804e; }
     .card-content { position: relative; z-index: 1; }
     .card-glyph { display: grid; place-items: center; width: 56px; height: 56px; margin-bottom: 24px; border: 1px solid currentColor; border-radius: 18px; color: var(--green); font-size: 27px; }
     .mydog-card .card-glyph { color: var(--coral); }
     .mycat-card .card-glyph { color: #815aa9; }
+    .tauben-kraehen-card .card-glyph { width: 56px; height: 56px; overflow: hidden; border: 0; border-radius: 50%; }
+    .tauben-kraehen-card .card-glyph img { display: block; width: 100%; height: 100%; object-fit: cover; }
     .app-card h3 { margin: 0 0 10px; font-size: clamp(32px, 4vw, 47px); letter-spacing: -.075em; line-height: .95; }
     .app-card p { max-width: 360px; margin: 0; color: rgba(29,41,37,.72); font-size: 15px; line-height: 1.52; }
     .launch { display: inline-flex; align-items: center; gap: 10px; color: var(--green); font-size: 13px; font-weight: 800; }
@@ -175,7 +179,7 @@
         <span class="wordmark-mark" aria-hidden="true">✦</span>
         <span class="wordmark-name">manualAI<small>.org</small></span>
       </a>
-      <span class="nav-note"><span class="live-dot" aria-hidden="true"></span> vier erfahrungen · ein ort</span>
+      <span class="nav-note"><span class="live-dot" aria-hidden="true"></span> fünf erfahrungen · ein ort</span>
     </nav>
 
     <section class="hero" aria-labelledby="hero-title">
@@ -194,7 +198,7 @@
     <section aria-labelledby="experiences-title">
       <div class="section-head">
         <h2 id="experiences-title">Wohin zieht es dich?</h2>
-        <span class="section-count">4 WEGE</span>
+        <span class="section-count">5 WEGE</span>
       </div>
       <div class="app-grid">
         <a class="app-card pwnd-card" href="/pwnd/">
@@ -232,6 +236,15 @@
             <p>Quiz trifft Taktik-Arena. Feste Fragen und offene Züge — ohne Käufe, Loot oder Zufall.</p>
           </div>
           <div class="card-bottom"><span class="launch">Ins Riff <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">6 RUNDEN</span></div>
+        </a>
+        <a class="app-card tauben-kraehen-card" href="/TaubenVSKrähen/">
+          <div class="card-top"><span class="card-index">05 · STRATEGIE</span><span class="card-tag">Rundenbasiert</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true"><img src="/TaubenVSKrähen/favicon.png" alt="" width="56" height="56" loading="lazy"></span>
+            <h3>pidgeons &amp; crows</h3>
+            <p>Führe die Tauben rundenweise durch den Park, erobere Nachbargebiete und wehre die Krähen-KI ab. Vier von fünf Revieren entscheiden die Partie.</p>
+          </div>
+          <div class="card-bottom"><span class="launch">Park sichern <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">5 REVIERE</span></div>
         </a>
       </div>
     </section>
