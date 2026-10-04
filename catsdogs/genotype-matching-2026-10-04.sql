@@ -1,6 +1,7 @@
 -- cats&dogs: genotype-based matching
--- Product rule: two users are compatible only when their selected genotype is identical.
--- This is an app matching rule, not a biological compatibility claim.
+-- Product rule: pair complementary chromosome-pattern groups:
+-- XX / X0 / XXX <-> XY / XXY / XYY.
+-- This is an app matching rule, not a claim about identity or orientation.
 -- Apply alongside the matching client release; do not expose genotype in pair profiles.
 
 alter table public.cats_dogs_profiles
@@ -73,7 +74,8 @@ revoke all on function public.set_cats_dogs_genotype(text) from public;
 revoke all on function public.set_cats_dogs_genotype(text) from anon;
 grant execute on function public.set_cats_dogs_genotype(text) to authenticated;
 
--- Replace gender/orientation filtering with exact, symmetric genotype matching.
+-- Replace gender/orientation filtering with symmetric matching across the two
+-- explicitly chosen genotype groups. Same-group pairs are not selected.
 -- The genotype is read from the private profile table and is not copied into lobby or pair payloads.
 create or replace function public.join_cats_dogs_lobby()
 returns table(pair_id uuid, matched boolean)
@@ -137,7 +139,13 @@ begin
     where l.user_id <> me
       and l.expires_at >= now()
       and p.profile_locked = true
-      and p.genotype = my_genotype
+      and (
+        (my_genotype = any (array['XX', 'X0', 'XXX']::text[])
+          and p.genotype = any (array['XY', 'XXY', 'XYY']::text[]))
+        or
+        (my_genotype = any (array['XY', 'XXY', 'XYY']::text[])
+          and p.genotype = any (array['XX', 'X0', 'XXX']::text[]))
+      )
       and not exists (
         select 1 from public.cats_dogs_blocks b
         where (b.blocker_id = me and b.blocked_id = l.user_id)

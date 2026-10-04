@@ -37,17 +37,20 @@ assert.match(script, /function genotype\(\)/);
 assert.match(script, /Welchen Genotyp hast du\?/);
 assert.match(script, /'XX','XY','X0','XXY','XYY','XXX'/);
 assert.match(script, /data-gt=/);
-assert.match(script, /mit demselben Genotyp zusammengeführt/);
-assert.match(script, /deinem Match wird er nicht angezeigt/);
+assert.match(script, /XX, X0 und XXX matchen mit XY, XXY und XYY/);
+assert.match(script, /Dem Match wird der Genotyp nicht angezeigt/);
 assert.match(script, /set_cats_dogs_genotype/);
 assert.match(script, /genotype:U\.gt/);
 assert.doesNotMatch(script, /function gender\(\)|data-g=|gender:U\.g/);
 assert.match(script, /TX\.neutral/);
 assert.match(genotypeMigration, /add column if not exists genotype text/i);
 assert.match(genotypeMigration, /genotype is not null or gender is not null/i);
-assert.match(genotypeMigration, /p\.genotype = my_genotype/);
+assert.match(genotypeMigration, /my_genotype = any \(array\['XX', 'X0', 'XXX'\]::text\[\]\)/);
+assert.match(genotypeMigration, /p\.genotype = any \(array\['XY', 'XXY', 'XYY'\]::text\[\]\)/);
+assert.match(genotypeMigration, /my_genotype = any \(array\['XY', 'XXY', 'XYY'\]::text\[\]\)/);
+assert.match(genotypeMigration, /p\.genotype = any \(array\['XX', 'X0', 'XXX'\]::text\[\]\)/);
 assert.match(genotypeMigration, /set_cats_dogs_genotype/);
-assert.match(genotypeMigration, /only when their selected genotype is identical/i);
+assert.match(genotypeMigration, /complementary chromosome-pattern groups/i);
 assert.match(genotypeMigration, /jsonb_build_object\('uid', p\.user_id, 'an', p\.animal/);
 
 // Existing beta, age, feedback, test-mode, route, and MyCat continuation contracts.
