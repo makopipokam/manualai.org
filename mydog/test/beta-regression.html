@@ -210,8 +210,16 @@
       assert(active() === 'no-more-screen', 'all-breed catalogue ends on the completion screen');
       assert(page.querySelector('#no-more-screen h2')?.textContent.includes('Katzentyp'), 'cat-type ending is shown after all breeds');
       assert(page.querySelector('#shown-breed-count')?.textContent === '18', 'completion screen shows catalogue count');
-      assert(page.querySelector('#no-more-screen h2 + button#restart-test-btn'), 'cat-type headline leads directly to the restart action');
-      assert(!page.querySelector('#no-more-screen h2 + p'), 'no explanatory paragraph appears below the cat-type headline');
+      assert(page.querySelector('#no-more-screen h2 + p.no-more-dating-prompt')?.textContent.includes('Oder suchst du eigentlich nach Liebe?'), 'dating prompt follows the cat-type headline');
+      assert(page.querySelector('#catsdogs-link')?.getAttribute('href') === '/catsdogs/?from=mydog', 'dating CTA opens cats&dogs with MyDog handoff route');
+      assert(page.querySelector('#no-more-dating-note')?.textContent.includes('einzelnen Antworten bleiben hier'), 'handoff is transparent about only sharing the aggregate profile');
+      page.querySelector('#catsdogs-link').addEventListener('click', event => event.preventDefault(), { once: true });
+      click('#catsdogs-link');
+      const handoff = JSON.parse(app.localStorage.getItem('manualai_mydog_handoff_v1') || 'null');
+      assert(handoff?.source === 'mydog' && handoff.version === 1, 'MyDog writes a versioned one-time handoff');
+      assert(JSON.stringify(handoff.b5) === JSON.stringify({ O: 2.5, C: 2.1, E: 2.3, A: 2.5, N: 4.4 }), 'handoff converts aggregate OCEAN values to cats&dogs scale');
+      assert(!('answers' in handoff) && !('userAnswers' in handoff), 'raw questionnaire answers are not transferred');
+      app.localStorage.removeItem('manualai_mydog_handoff_v1');
       click('#restart-test-btn');
       assert(active() === 'start-screen', 'ending button returns to the start screen');
       assert(state().userAnswers.filter(Boolean).length === 30, 'ending button preserves completed answers');
