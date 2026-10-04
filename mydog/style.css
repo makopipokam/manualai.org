@@ -963,6 +963,29 @@ body {
     text-transform: uppercase;
 }
 
+.no-more-dating-prompt {
+    margin: 0 0 8px;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.no-more-dating-note {
+    max-width: 520px;
+    margin: 0 auto 18px;
+    color: var(--text-light);
+    line-height: 1.55;
+}
+
+.no-more-dating-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    margin: 0 8px 12px;
+    text-decoration: none;
+}
+
 #no-more-screen h2 {
     font-size: clamp(1.8rem, 5vw, 2.8rem);
     letter-spacing: -0.05em;
