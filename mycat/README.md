@@ -9,7 +9,17 @@ Standalone cat-profile discovery app in the manualAI.org family. The interface a
 - Profile photos, galleries, favorites, profile links (`?cat=<id>`), forward browsing through the catalogue from shared profiles, and locally generated/shareable PNGs.
 - Breed-level source links and welfare/health caveats. Breed tendencies never predict the personality or health of an individual cat; medical concerns belong with a veterinary practice.
 - No MyCat account or external scoring/AI request. Answers and favorites are kept in browser `localStorage`; consult the [privacy notice](legal/privacy.html) for hosting, storage, and sharing details.
-- After all ranked profiles, the completion screen links to MyDog and `/mycat/cats&dogs/`. That route is currently a transparent handoff page, not a functioning dating app; connecting the MyCat profiles to a shared dating experience is the next implementation step.
+- After all ranked profiles, the completion screen links to MyDog and the separate private profile app at `/mycat/cats&dogs/`.
+
+## MyCat × MyDog dating-profile MVP
+
+The separate route [`cats&dogs/`](cats&dogs/) provides passwordless email sign-in and private profile onboarding. The genotype (`XX`, `XY`, `X0`, `XXY`, `XYY`, or `XXX`) is stored server-side in Supabase only after explicit consent. It is not used to infer gender, assign a matching role, rank people, or select matches. The six genotype options are profile data only until matching rules are specified separately.
+
+Users can separately consent to transferring a minimal MyCat result summary (recommended profile IDs, scores, and Big Five summary). Raw questionnaire answers, favorites, and other arbitrary browser-storage values are not uploaded. The app has no active search, ranking, or matching feature yet. Users can delete their dating profile independently of the email account.
+
+- Schema migration: [`../supabase/migrations/20261004165352_create_mycat_dating_profiles.sql`](../supabase/migrations/20261004165352_create_mycat_dating_profiles.sql)
+- Route-specific [privacy notice](cats&dogs/privacy.html)
+- Regression command: `npm run test:mycat:dating` (uses a local mock; does not access live user data)
 
 ## Catalogue and image sources
 
@@ -43,11 +53,7 @@ Then open <http://localhost:3000/mycat/>. `index.html` loads the MyCat CSS, data
 npm run test:mycat:beta    # questionnaire, persistence, results, share/favorites, desktop + mobile
 npm run test:mycat:images  # all 18 profiles, all 108 local photos, chat, switching, fallback, PNG export
 npm run test:mycat:legal   # legal links, narrow layouts, service-worker/offline pages
+npm run test:mycat:dating  # mocked auth, genotype consent, MyCat import and mobile width
 ```
 
 The browser suites use Python Playwright and Chromium. They start and stop their own local HTTP server. `npm test` runs the repository's existing lightweight app-engine and deployment smoke tests.
-
-
-## Gemeinsame Dating-Erfahrung
-
-Die Abschlussseite verlinkt auf `/mycat/cats&dogs/`. Dort ist derzeit nur eine transparente Einstiegsseite verfügbar. Der nächste Umsetzungsschritt ist die ausdrückliche, datenschutzgerechte Übernahme von MyCat-Profilen in eine funktionsfähige gemeinsame MyCat×MyDog-Dating-Erfahrung; bis dahin werden MyCat-Ergebnisse nicht übertragen.

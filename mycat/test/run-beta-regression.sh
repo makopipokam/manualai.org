@@ -87,7 +87,7 @@ if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mycat-v1' "$ROOT/mycat/
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mycat-static-v1'" "$ROOT/mycat/sw.js"
+grep -q "const STATIC_CACHE = 'mycat-static-v2'" "$ROOT/mycat/sw.js"
 grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mycat/sw.js"
 # App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
 if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mycat/sw.js"; then
@@ -97,6 +97,9 @@ fi
 grep -q "IMAGE_CACHE_LIMIT" "$ROOT/mycat/sw.js"
 grep -q "url.pathname.startsWith('/mycat/images/v1/')" "$ROOT/mycat/sw.js"
 grep -Fq "'/mycat/cats&dogs/index.html'" "$ROOT/mycat/sw.js"
+grep -Fq "'/mycat/cats&dogs/app.css'" "$ROOT/mycat/sw.js"
+grep -Fq "'/mycat/cats&dogs/app.js'" "$ROOT/mycat/sw.js"
+grep -Fq "'/mycat/cats&dogs/privacy.html'" "$ROOT/mycat/sw.js"
 grep -Fq "href=\"/mycat/cats&amp;dogs/\"" "$ROOT/mycat/index.html"
 python3 - "$ROOT/mycat/index.html" <<'PY'
 import re, sys

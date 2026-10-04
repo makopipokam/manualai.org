@@ -2,12 +2,13 @@
 <html lang="de">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#745181">
-  <meta name="description" content="Die gemeinsame Dating-Erfahrung von MyCat und MyDog ist in Vorbereitung.">
-  <title>MyCat × MyDog – gemeinsame Dating-Erfahrung</title>
+  <meta name="description" content="Erstelle dein privates Profil für die gemeinsame MyCat- und MyDog-Dating-Erfahrung.">
+  <title>MyCat × MyDog – Dating-Profil</title>
   <link rel="icon" type="image/png" sizes="192x192" href="/mycat/icon-192x192.png">
   <link rel="stylesheet" href="/mycat/manualai-theme.css?v=20261003-mycat-v2">
+  <link rel="stylesheet" href="/mycat/cats&dogs/app.css?v=20261004-profile-v1">
 </head>
 <body>
   <header class="mai-bar">
@@ -18,21 +19,26 @@
     <span class="mai-app"><i aria-hidden="true"></i>MyCat × MyDog</span>
   </header>
 
-  <main class="dating-handoff-main">
-    <p class="eyebrow">MyCat × MyDog · In Vorbereitung</p>
-    <h1>Oder willst du eigentlich nur Liebe?</h1>
-    <p class="dating-handoff-lead">Hier entsteht die gemeinsame Dating-Erfahrung, die Katzen- und Hundeprofile zusammenführt.</p>
-
-    <section class="dating-handoff-status" aria-labelledby="dating-handoff-title">
-      <span class="dating-handoff-badge">Nächster Schritt</span>
-      <h2 id="dating-handoff-title">MyCat trifft MyDog</h2>
-      <p>Die Verbindung, die deine MyCat-Vorschläge in die gemeinsame Erfahrung übernimmt, ist noch nicht umgesetzt. <strong>Die MyCat-Ergebnisse werden noch nicht an eine Dating-App übergeben.</strong> Deine Antworten bleiben vorerst in MyCat auf diesem Gerät.</p>
+  <main class="dating-main">
+    <section class="dating-intro" aria-labelledby="dating-title">
+      <p class="eyebrow">Die gemeinsame Dating-Erfahrung</p>
+      <h1 id="dating-title">Zwei Profile.<br><span>Eine Begegnung.</span></h1>
+      <p>Lege dein privates Profil an. Dein Genotyp wird gespeichert, aber noch nicht für die Partnersuche ausgewertet. Die Matching-Regeln kommen später.</p>
+      <div class="dating-note"><span aria-hidden="true">✦</span><span>Der erste Schritt: eine sichere Profilbasis. Noch keine Suche, kein Ranking und keine Genotyp-Zuordnung.</span></div>
     </section>
 
-    <nav class="dating-handoff-actions" aria-label="Weitere manualAI-Apps">
-      <a class="dating-handoff-link dating-handoff-link-primary" href="/mycat/">Zurück zu MyCat <span aria-hidden="true">→</span></a>
-      <a class="dating-handoff-link dating-handoff-link-secondary" href="/mydog/">MyDog entdecken <span aria-hidden="true">→</span></a>
+    <section id="dating-app" class="dating-card" aria-live="polite" aria-busy="true">
+      <p class="loading-message">Profil wird vorbereitet …</p>
+    </section>
+
+    <nav class="dating-footer" aria-label="Weitere Seiten">
+      <a href="/mycat/">MyCat</a>
+      <a href="/mydog/">MyDog</a>
+      <a href="privacy.html">Datenschutz &amp; Profilkontrolle</a>
     </nav>
   </main>
+
+  <script src="/catsdogs/vendor/supabase.js" defer></script>
+  <script src="/mycat/cats&dogs/app.js?v=20261004-profile-v1" defer></script>
 </body>
 </html>
