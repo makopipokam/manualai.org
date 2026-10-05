@@ -481,8 +481,9 @@ function showRoundResult(result){
   document.body.classList.remove('battle-hit', 'battle-miss');
   document.body.classList.add(result.correct ? 'battle-hit' : 'battle-miss');
   $('resultOrbit').classList.toggle('miss', !result.correct);
-  $('resultOrbit').textContent = result.correct ? '+' : '×';
-  setText('roundEyebrow', free ? (result.correct ? 'WISSEN GESAMMELT' : 'DIE EULE BEOBACHTET') : (result.correct ? 'RESSOURCENFLUSS' : 'GEGENWELLE'));
+  $('resultOrbit').textContent = result.correct ? 'RICHTIG' : 'FALSCH';
+  $('resultOrbit').setAttribute('aria-label', result.correct ? 'Antwort richtig' : 'Antwort falsch');
+  setText('roundEyebrow', free ? (result.correct ? 'RICHTIG · WISSEN GESAMMELT' : 'FALSCH · DIE EULE BEOBACHTET') : (result.correct ? 'RICHTIG · RESSOURCENFLUSS' : 'FALSCH · GEGENWELLE'));
   setText('roundTitle', free ? (result.correct ? 'Die Eule nickt.' : 'Die Eule schweigt.') : (result.correct ? 'Deine Entscheidung trägt.' : `${opponentDisplayName(currentOpponent())} hat gekontert.`));
   setText('roundCopy', free ? (result.correct ? 'Eine neue Spur landet in deinem Wissensarchiv.' : 'Die Schatten-Eule formuliert eine neue Frage. Versuch es gleich erneut.') : (result.correct ? `Du hast ${result.damage} Schaden verursacht${result.time < result.question.time * .45 ? ' — schnell und präzise.' : '.'}` : `Du hast die Frage verfehlt und ${result.selfDamage} Ausdauer verloren. Die Konsequenz bleibt bestehen.`));
   setText('resultTime', free ? 'ohne Zeitdruck' : `${(result.time / 1000).toFixed(1)} s`);

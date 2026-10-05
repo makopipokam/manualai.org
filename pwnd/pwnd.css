@@ -232,3 +232,6 @@ body[data-duel-opponent="fennec"] .ai-comment{background:#fff3d9;color:#755527;b
 @keyframes owlTopicOffer{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:430px){.free-topic-screen .owl-reveal{height:215px}.free-topic-screen .free-topic-option{min-height:59px}}
 @media(prefers-reduced-motion:reduce){.free-topic-screen.active .owl-reveal img,.free-topic-screen.active .free-topic-option,.owl-reveal::before{animation:none!important;opacity:1;transform:none;filter:none}}
+
+/* Klare Antwortstatus statt missverständlicher Einzelzeichen */
+.result-orbit{font-size:14px;letter-spacing:.12em;font-weight:900;text-align:center}

@@ -44,6 +44,8 @@ def main():
         page.locator(f'#answers .answer[data-answer="{wrong}"]').click()
         page.locator('#lockBtn').click()
         page.locator('#screenRound.active').wait_for()
+        assert page.locator('#resultOrbit').inner_text() == 'FALSCH'
+        assert page.locator('#roundEyebrow').inner_text().startswith('FALSCH')
         page.locator('#continueBtn').click()
         page.locator('#screenBattle.active #aiComment:visible').wait_for(timeout=15000)
         second = page.locator('#aiComment').inner_text()

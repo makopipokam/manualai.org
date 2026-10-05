@@ -37,6 +37,8 @@ assert.match(appSource, /\$\('aiComment'\)\.hidden = false;\s*if \(match\.mode =
 assert.match(appSource, /if \(free\) setText\('aiComment', match\.round === 1 \?/, 'the owl dialogue also appears while it is thinking');
 assert.doesNotMatch(appSource, /wertet deine letzte Antwort aus/, 'old red loading placeholder must be removed');
 assert.doesNotMatch(appSource, /question\.opponentLine/, 'fox dialogue must use observed answers, never a model-invented claim');
+assert.match(pageSource, /id="resultOrbit"[^>]*role="status"/, 'round result must have an accessible status target');
+assert.match(appSource, /resultOrbit.*textContent = result\.correct \? 'RICHTIG' : 'FALSCH'/, 'round result must state whether the answer was correct');
 assert.match(appSource, /source: fallback\.source \|\| 'archive'/, 'the last offline fallback must be visibly tagged as archive content');
 const questionIds = [...appSource.matchAll(/\{ id:'([^']+)', type:/g)].map(match => match[1]);
 assert.ok(new Set(questionIds).size >= 30, 'the pwnd question pool should contain at least 30 unique questions');
