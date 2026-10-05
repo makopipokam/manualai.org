@@ -458,24 +458,6 @@ body::before {
   color: #fffdf8;
 }
 .end-crosslink-primary:hover { background: var(--mai-green-deep); color: #fffdf8; }
-.end-crosslink-secondary { background: #fffdf8; }
-.end-crosslink-secondary:hover { background: var(--mai-green-pale); }
-.no-more-dating {
-  width: min(560px, 100%);
-  margin: 34px auto 24px;
-  padding: clamp(20px, 4vw, 30px);
-  border: 1px solid var(--mai-line);
-  border-radius: 24px;
-  background: linear-gradient(145deg, rgba(255, 250, 255, .92), rgba(239, 223, 238, .65));
-  box-shadow: 0 14px 40px rgba(62, 49, 67, .08);
-}
-.no-more-dating-prompt {
-  margin: 0 0 16px;
-  color: var(--mai-ink);
-  font: 750 clamp(20px, 3.2vw, 28px)/1.2 var(--mai-display);
-  letter-spacing: -.04em;
-  text-wrap: balance;
-}
 #restart-test-btn { margin-top: 10px; }
 
 /* ---------- dating handoff landing page ---------- */
@@ -554,7 +536,6 @@ body::before {
 @media (max-width: 600px) {
   #no-more-screen { width: calc(100% - 12px); padding: 38px 12px; }
   #no-more-screen > .end-crosslink { width: 100%; }
-  .no-more-dating { margin-top: 26px; }
   .dating-handoff-main { width: calc(100% - 28px); margin-top: 48px; }
   .dating-handoff-actions { flex-direction: column; }
   .dating-handoff-link { width: 100%; }
