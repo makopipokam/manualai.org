@@ -553,8 +553,8 @@ body::before {
 .dating-handoff-link-secondary:hover { background: var(--mai-green-pale); }
 @media (max-width: 600px) {
   #no-more-screen { width: calc(100% - 12px); padding: 38px 12px; }
-  #no-more-screen > .end-crosslink { width: 100%; }
   .no-more-dating { margin-top: 26px; }
+  #no-more-screen > .end-crosslink { width: 100%; }
   .dating-handoff-main { width: calc(100% - 28px); margin-top: 48px; }
   .dating-handoff-actions { flex-direction: column; }
   .dating-handoff-link { width: 100%; }
