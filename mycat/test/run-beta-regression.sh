@@ -100,6 +100,7 @@ grep -Fq "'/mycat/cats&dogs/index.html'" "$ROOT/mycat/sw.js"
 grep -Fq "'/mycat/cats&dogs/app.css'" "$ROOT/mycat/sw.js"
 grep -Fq "'/mycat/cats&dogs/app.js'" "$ROOT/mycat/sw.js"
 grep -Fq "'/mycat/cats&dogs/privacy.html'" "$ROOT/mycat/sw.js"
+grep -Fq "href=\"/mycat/cats&amp;dogs/\"" "$ROOT/mycat/index.html"
 python3 - "$ROOT/mycat/index.html" <<'PY'
 import re, sys
 from pathlib import Path

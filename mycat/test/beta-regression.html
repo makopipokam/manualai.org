@@ -211,10 +211,14 @@
       assert(page.querySelector('#no-more-screen h2')?.textContent.trim() === 'Vielleicht doch ein Hundetyp?', 'dog-type crosslink prompt appears after all breeds');
       assert(page.querySelector('#shown-breed-count')?.textContent === '18', 'completion screen shows catalogue count');
       assert(page.querySelector('#mydog-crosslink')?.getAttribute('href') === '/mydog/', 'dog-type crosslink points to MyDog');
-      assert(!page.querySelector('#no-more-dating-prompt'), 'removed love prompt is absent from the completion screen');
-      assert(!page.querySelector('#dating-continuation-link'), 'removed dating link is absent from the completion screen');
-      assert(!page.querySelector('#no-more-screen')?.textContent.includes('Oder willst du eigentlich nur Liebe'), 'removed love copy is absent from completion text');
+      assert(page.querySelector('#no-more-dating-prompt')?.textContent.trim() === 'Oder willst du eigentlich nur liebe?', 'love prompt follows the MyDog crosslink');
+      assert(page.querySelector('#dating-continuation-link')?.getAttribute('href') === '/mycat/cats&dogs/', 'dating crosslink uses the agreed continuation route');
       assert(page.querySelector('#restart-test-btn'), 'completion screen still offers a restart action');
+      const handoffResponse = await app.fetch('/mycat/cats&dogs/');
+      assert(handoffResponse.ok, 'MyCat dating continuation route returns successfully');
+      const handoffPage = await handoffResponse.text();
+      assert(handoffPage.includes('<title>MyCat × MyDog – Dating-Profil</title>'), 'handoff route serves the new dating-profile app');
+      assert(handoffPage.includes('/mycat/cats&dogs/app.js?v=20261004-profile-v1'), 'dating route loads its versioned app logic');
       click('#restart-test-btn');
       assert(active() === 'start-screen', 'ending button returns to the start screen');
       assert(state().userAnswers.filter(Boolean).length === 30, 'ending button preserves completed answers');
