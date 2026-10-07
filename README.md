@@ -11,6 +11,7 @@ Repository for the independent browser apps published under the manualAI.org umb
 | **MyCat** | [`mycat/`](mycat/) | Personality test and cat-breed profiles | [`/mycat/`](https://app.manualai.org/mycat/) |
 | **Fish Royale** | [`fishroyale/`](fishroyale/) | Deterministic quiz-and-tactics arena | [`/fishroyale/`](https://app.manualai.org/fishroyale/) |
 | **pidgeons & crows** | [`TaubenVSKrähen/`](TaubenVSKrähen/) | Rundenbasierte Gebietskontrolle mit Krähen-KI | [`/TaubenVSKrähen/`](https://app.manualai.org/TaubenVSKr%C3%A4hen/) |
+| **manualAI Studio** | [`manualai/`](manualai/) | Kreatives KI-Orchester: Kloper entwickelt Motive, Orpheus formt daraus ein Werk | [`/manualai/`](https://app.manualai.org/manualai/) |
 
 The root [`index.html`](index.html) is the app-selection page. The individual apps have separate code, styles, data, documentation, and tests; Vercel routing and shared API helpers remain at the repository root.
 
@@ -60,6 +61,10 @@ The optional authenticated online pond at [`/pwnd/online.html`](https://app.manu
 ## pidgeons & crows
 
 [`TaubenVSKrähen/`](TaubenVSKrähen/) contains the standalone Godot Web export and a small run guide. The game is a German, turn-based territory skirmish: each dove turn grants two actions, adjacent park regions can be captured, and the first side to control four of five regions wins. The crow opponent uses a deterministic local strategy; there are no accounts or online services.
+
+## manualAI Studio
+
+The creative studio at [`manualai/`](manualai/) is a two-stage composition experience. Kloper listens for the central motif and creative tensions; Orpheus turns those into a German-language work. Both roles currently call the configured Anthropic model sequentially (`MANUALAI_MODEL`, default `claude-sonnet-5-5`); they are ManualAI personas, not separately trained models yet. The endpoint is [`api/manualai.js`](api/manualai.js), uses the shared request limiter, accepts 3–6000 characters, and does not persist prompts in this app. The Anthropic API key must be configured as a server-side deployment secret; never expose it in browser code. Per visitor limit defaults to 12 requests/day, global limit to 200 (`MANUALAI_DAILY_LIMIT`, `MANUALAI_GLOBAL_DAILY_LIMIT`).
 
 ## cats&dogs prototype
 

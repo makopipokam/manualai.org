@@ -18,7 +18,7 @@ const territoryGameHtml = fs.readFileSync(path.join(territoryGame, 'index.html')
 const script = app.match(/<script>([\s\S]*?)<\/script>/)?.[1];
 
 assert.ok(script, 'App-Script fehlt');
-assert.match(shell, /5 WEGE/);
+assert.match(shell, /6 WEGE/);
 assert.match(shell, /fünf erfahrungen · ein ort/);
 assert.match(shell, /href="\/pwnd\/"/);
 assert.match(shell, /href="\/mydog\/"/);
@@ -78,8 +78,15 @@ assert.ok(config.redirects.some(r => r.source === '/fishroyale' && r.destination
 assert.ok(config.rewrites.some(r => r.source === '/fishroyale' && r.destination === '/fishroyale/index.html'));
 assert.match(shell, /href="\/TaubenVSKrähen\/"/);
 assert.match(shell, /<h3>pidgeons &amp; crows<\/h3>/);
+assert.match(shell, /href="\/manualai\/"/);
+assert.match(shell, /Kloper hört Motive heraus\. Orpheus komponiert daraus ein gemeinsames Stück\./);
 assert.ok(config.redirects.some(r => r.source === '/TaubenVSKrähen' && r.destination === '/TaubenVSKrähen/'));
 assert.ok(config.rewrites.some(r => r.source === '/TaubenVSKrähen' && r.destination === '/TaubenVSKrähen/index.html'));
+assert.ok(config.redirects.some(r => r.source === '/manualai' && r.destination === '/manualai/'));
+assert.ok(config.rewrites.some(r => r.source === '/manualai' && r.destination === '/manualai/index.html'));
+assert.match(fs.readFileSync(path.join(root, 'manualai', 'index.html'), 'utf8'), /Kloper/);
+assert.match(fs.readFileSync(path.join(root, 'manualai', 'index.html'), 'utf8'), /Orpheus/);
+assert.match(fs.readFileSync(path.join(root, 'api', 'manualai.js'), 'utf8'), /MANUALAI_MODEL/);
 assert.ok(config.headers.some(h => h.headers.some(v => v.key === 'Content-Security-Policy' && v.value.includes("'wasm-unsafe-eval'"))));
 assert.match(territoryGameHtml, /<title>pidgeons (?:&amp;|&) crows<\/title>/);
 assert.match(territoryGameHtml, /lang="de-DE"/);
@@ -87,4 +94,4 @@ assert.ok(fs.statSync(path.join(territoryGame, 'index.pck')).size > 1_000_000);
 assert.ok(fs.statSync(path.join(territoryGame, 'index.wasm')).size > 1_000_000);
 assert.ok(fs.statSync(path.join(territoryGame, 'favicon.png')).size > 1_000);
 assert.ok(config.headers.some(h => h.headers.some(v => v.key === 'Content-Security-Policy' && v.value.includes("script-src 'self'"))));
-console.log('manualAI deployment smoke passed: five app cards, Godot export, routes, CSP and vendored browser library.');
+console.log('manualAI deployment smoke passed: six app cards, Godot export, routes, CSP and vendored browser library.');

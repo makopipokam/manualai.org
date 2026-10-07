@@ -31,6 +31,10 @@
     {
       "source": "/TaubenVSKrähen",
       "destination": "/TaubenVSKrähen/index.html"
+    },
+    {
+      "source": "/manualai",
+      "destination": "/manualai/index.html"
     }
   ],
   "redirects": [
@@ -67,6 +71,11 @@
     {
       "source": "/TaubenVSKrähen",
       "destination": "/TaubenVSKrähen/",
+      "permanent": true
+    },
+    {
+      "source": "/manualai",
+      "destination": "/manualai/",
       "permanent": true
     }
   ],
