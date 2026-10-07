@@ -1,0 +1,25 @@
+flowchart LR
+  demand["Prognostizierte Nachfrage<br/>Warteschlange + Tagesprofil"] --> gate{"Nur Los starten,<br/>wenn Nachfrage es trägt"}
+  gate --> modules["Eine Kräutersorte wählen<br/>und passende Kochzelle belegen"]
+  rice["Reis"] --> dose["Kleine definierte Charge dosieren"]
+  water["Aufbereitetes Wasser<br/>(Regenwasser + sichere Ergänzung) "] --> dose
+  herbs["Eine von max. 108<br/>getrockneten Kräutersorten"] --> dose
+  modules --> dose
+  dose --> cook["Versiegelte Einzelzelle:<br/>Reis + Wasser + Kräuter kochen"]
+  sun["PV-Dach"] --> power["Regler + elektrischer Wärmeerzeuger"]
+  power --> cook
+  buffer["Akku für Steuerung/kurze Schwankungen<br/>+ thermischer Puffer"] -. "nur validierte Wärmeleistung" .-> cook
+  rain["Trichterdach:<br/>Rinnen → First flush → Filter → Tank"] --> water
+  cook --> split["Portionsbezogene Trennung<br/>im heißen Ablauf"]
+  split --> riceout["Teereis<br/>direkt ausgeben"]
+  split --> teaout["Reistee<br/>direkt ausgeben"]
+  split --> waste["Keine Heißhalte-Großcharge;<br/>nicht verkaufte Portionen sperren"]
+  modules --> ring["Radiale Stationen im geschlossenen Ring<br/>1 bis maximal 108"]
+  ring --> riceout
+  ring --> teaout
+  classDef input fill:#dce8d8,stroke:#286d59,color:#1d2925;
+  classDef energy fill:#dce5ef,stroke:#375b7a,color:#1d2925;
+  classDef out fill:#f1d8ca,stroke:#c66e50,color:#1d2925;
+  class rice,water,herbs input;
+  class sun,power,buffer,rain energy;
+  class riceout,teaout out;
