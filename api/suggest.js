@@ -48,5 +48,4 @@ Reply with a JSON array of exactly 3 strings and nothing else.`,
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Something went wrong" });
-  }
-}
+  }}

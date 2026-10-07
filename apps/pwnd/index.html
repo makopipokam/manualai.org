@@ -1,0 +1,666 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#143b31">
+  <title>pwnd — Quizbattle trifft Teichgarten | manualAI</title>
+  <meta name="description" content="pwnd — Quizbattle trifft Teichgarten. Sammle Energie, kultiviere dein Ökosystem und messe dich mit der Fuchs-KI.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function(){
+      var t = localStorage.getItem('manualai_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      var l = localStorage.getItem('manualai_lang') || 'de';
+      document.documentElement.setAttribute('lang', l);
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #f4f8f4;
+      --paper-deep: #e5eee5;
+      --ink: #142a22;
+      --muted: #5e776c;
+      --line: rgba(20, 42, 34, 0.12);
+      --green: #256b56;
+      --green-glow: #42b38f;
+      --green-soft: #d2e7dd;
+      --coral: #c8694d;
+      --coral-soft: #fae4dc;
+      --gold: #d4a34b;
+      --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    [data-theme="dark"] {
+      --paper: #0e1e18;
+      --paper-deep: #152b23;
+      --ink: #eaf3ed;
+      --muted: #8ca89c;
+      --line: rgba(234, 243, 237, 0.14);
+      --green: #42b38f;
+      --green-glow: #64d8b2;
+      --green-soft: #1b382d;
+      --coral: #e48267;
+      --coral-soft: #3a221b;
+      --gold: #f0bd64;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.03em;
+    }
+    .brand-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-icon {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s ease;
+    }
+    .btn-icon:hover { border-color: var(--green); transform: translateY(-1px); }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 20px auto 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(320px, .95fr);
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 900px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* Pond Simulation Canvas Card */
+    .pond-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    }
+    .pond-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .pond-title { font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
+    .pond-stats {
+      display: flex;
+      gap: 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .stat-badge {
+      background: var(--paper);
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .stat-badge span.val { color: var(--green); font-size: 13px; }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      border-radius: 20px;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 50%, #205c4b, #103228);
+      box-shadow: inset 0 0 40px rgba(0,0,0,0.4);
+      cursor: crosshair;
+    }
+    canvas#pondCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .pond-overlay {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      right: 12px;
+      background: rgba(14, 30, 24, 0.75);
+      backdrop-filter: blur(8px);
+      padding: 10px 16px;
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #eaf3ed;
+      font-size: 12px;
+      font-family: var(--font-mono);
+    }
+    .ecosystem-level {
+      color: var(--gold);
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+
+    /* Battle & Quiz Card */
+    .battle-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    }
+    .fox-opponent {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--paper);
+      padding: 12px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+    }
+    .fox-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--coral-soft);
+      display: grid;
+      place-items: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 2px solid var(--coral);
+    }
+    .fox-meta { display: flex; flex-direction: column; gap: 2px; }
+    .fox-name { font-weight: 800; font-size: 14px; letter-spacing: -.02em; }
+    .fox-quote { font-size: 12px; color: var(--muted); font-style: italic; }
+
+    .question-box {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .question-tag {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--green);
+    }
+    .question-prompt {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1.45;
+      letter-spacing: -.02em;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .option-btn {
+      appearance: none;
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 12px 16px;
+      border-radius: 14px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all .15s ease;
+      touch-action: manipulation;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--green);
+      background: var(--paper);
+      transform: translateX(3px);
+    }
+    .option-btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+    .option-btn.correct {
+      background: #e3f5eb;
+      border-color: #2b9348;
+      color: #1b5e20;
+    }
+    .option-btn.wrong {
+      background: #fde8e8;
+      border-color: #d32f2f;
+      color: #b71c1c;
+    }
+    [data-theme="dark"] .option-btn.correct { background: #163e26; border-color: #4ade80; color: #bbf7d0; }
+    [data-theme="dark"] .option-btn.wrong { background: #3f1616; border-color: #f87171; color: #fecaca; }
+
+    .feedback-box {
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--paper);
+      border-left: 3px solid var(--green);
+      display: none;
+    }
+
+    .btn-action {
+      background: var(--green);
+      color: #fff;
+      border: 0;
+      padding: 12px 20px;
+      border-radius: 14px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .2s ease;
+      touch-action: manipulation;
+    }
+    .btn-action:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-action:active { transform: scale(0.98); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand-link">
+      <span>← manualAI</span>
+      <span class="brand-pill">pwnd</span>
+    </a>
+    <div class="header-controls">
+      <button id="soundToggle" class="btn-icon" aria-label="Ton an/aus">🔊 <span id="soundLabel">Sound</span></button>
+      <button id="langToggle" class="btn-icon" aria-label="Sprache wechseln">DE / EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="pond-card" aria-label="Teichgarten Ökosystem">
+      <div class="pond-header">
+        <h1 class="pond-title" id="pondHeading">Dein Teichgarten</h1>
+        <div class="pond-stats">
+          <div class="stat-badge">✦ <span id="scoreVal" class="val">0</span> <span id="energyLabel">Energie</span></div>
+          <div class="stat-badge">🔥 <span id="streakVal" class="val">0</span> <span id="streakLabel">Serie</span></div>
+        </div>
+      </div>
+      <div class="canvas-container" id="canvasWrap" title="Klicke auf das Wasser, um Wellen zu erzeugen">
+        <canvas id="pondCanvas" width="600" height="380"></canvas>
+        <div class="pond-overlay">
+          <span class="ecosystem-level" id="levelText">Ökosystem Stufe 1: Keimender Quell</span>
+          <span id="hintText">Tippe ins Wasser für Wellen</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="battle-card" aria-label="Quizbattle">
+      <div class="fox-opponent">
+        <div class="fox-avatar">🦊</div>
+        <div class="fox-meta">
+          <div class="fox-name" id="foxName">Rotfuchs (KI-Gegner)</div>
+          <div class="fox-quote" id="foxQuote">"Mal sehen, ob dein Naturverständnis für mein Riff reicht!"</div>
+        </div>
+      </div>
+
+      <div class="question-box">
+        <span class="question-tag" id="questionCategory">Kategorie: Natur &amp; Erde</span>
+        <p class="question-prompt" id="questionPrompt">Wird geladen...</p>
+        <div class="options-grid" id="optionsGrid"></div>
+        <div class="feedback-box" id="feedbackBox"></div>
+        <button id="nextBtn" class="btn-action" style="display: none;">Nächste Frage →</button>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var audioCtx = null;
+      var storedSound = null;
+      try { storedSound = localStorage.getItem('manualai_sound'); } catch(e){}
+      var soundEnabled = storedSound !== null ? storedSound === 'true' : true;
+
+      function updateSoundUI() {
+        var btn = document.getElementById('soundToggle');
+        var lbl = document.getElementById('soundLabel');
+        if (lbl) lbl.textContent = soundEnabled ? 'Sound' : (lang === 'en' ? 'Mute' : 'Stumm');
+        if (btn) btn.innerHTML = (soundEnabled ? '🔊 ' : '🔇 ') + '<span id="soundLabel">' + (soundEnabled ? 'Sound' : (lang === 'en' ? 'Mute' : 'Stumm')) + '</span>';
+      }
+
+      function playTone(freq, type, dur) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = type || 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + dur);
+        } catch(e){}
+      }
+
+      // Pond Canvas Simulation
+      var canvas = document.getElementById('pondCanvas');
+      var ctx = canvas.getContext('2d');
+      var ripples = [];
+      var fishes = [];
+      var lilies = [];
+      var particles = [];
+
+      function resizeCanvas() {
+        var rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      // Initialize Pond Fauna
+      for (var i = 0; i < 4; i++) {
+        fishes.push({
+          x: Math.random() * 500 + 50,
+          y: Math.random() * 300 + 50,
+          speed: 0.8 + Math.random() * 0.7,
+          angle: Math.random() * Math.PI * 2,
+          length: 18 + Math.random() * 8,
+          color: i % 2 === 0 ? '#f0967d' : '#e8c170'
+        });
+      }
+      for (var j = 0; j < 6; j++) {
+        lilies.push({
+          x: 60 + Math.random() * 480,
+          y: 40 + Math.random() * 300,
+          radius: 16 + Math.random() * 12,
+          flower: j % 2 === 0
+        });
+      }
+
+      function addRipple(x, y) {
+        ripples.push({ x: x, y: y, r: 4, maxR: 70, alpha: 0.8 });
+        playTone(340 + Math.random() * 120, 'sine', 0.2);
+      }
+
+      canvas.addEventListener('click', function(e) {
+        var rect = canvas.getBoundingClientRect();
+        addRipple(e.clientX - rect.left, e.clientY - rect.top);
+      });
+      canvas.addEventListener('touchstart', function(e) {
+        var touch = e.touches[0];
+        var rect = canvas.getBoundingClientRect();
+        addRipple(touch.clientX - rect.left, touch.clientY - rect.top);
+      }, { passive: true });
+
+      function animatePond() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Water background gradient
+        var grad = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 20, canvas.width/2, canvas.height/2, canvas.width/1.2);
+        grad.addColorStop(0, '#1a4e40');
+        grad.addColorStop(1, '#0e2b23');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        // Draw Ripples
+        for (var i = ripples.length - 1; i >= 0; i--) {
+          var rip = ripples[i];
+          rip.r += 1.4;
+          rip.alpha -= 0.015;
+          ctx.beginPath();
+          ctx.arc(rip.x, rip.y, rip.r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(100, 216, 178, ' + Math.max(0, rip.alpha) + ')';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+          if (rip.alpha <= 0) ripples.splice(i, 1);
+        }
+
+        // Draw Fishes
+        fishes.forEach(function (f) {
+          f.x += Math.cos(f.angle) * f.speed;
+          f.y += Math.sin(f.angle) * f.speed;
+          f.angle += (Math.random() - 0.5) * 0.06;
+
+          if (f.x < 20) { f.x = 20; f.angle = Math.PI - f.angle; }
+          if (f.x > canvas.width - 20) { f.x = canvas.width - 20; f.angle = Math.PI - f.angle; }
+          if (f.y < 20) { f.y = 20; f.angle = -f.angle; }
+          if (f.y > canvas.height - 20) { f.y = canvas.height - 20; f.angle = -f.angle; }
+
+          ctx.save();
+          ctx.translate(f.x, f.y);
+          ctx.rotate(f.angle);
+          ctx.fillStyle = f.color;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, f.length, f.length / 3, 0, 0, Math.PI * 2);
+          ctx.fill();
+          // Tail fin
+          ctx.beginPath();
+          ctx.moveTo(-f.length, 0);
+          ctx.lineTo(-f.length - 6, -5);
+          ctx.lineTo(-f.length - 6, 5);
+          ctx.closePath();
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Draw Lily pads
+        lilies.forEach(function (l) {
+          ctx.beginPath();
+          ctx.arc(l.x, l.y, l.radius, 0.2, Math.PI * 1.85);
+          ctx.lineTo(l.x, l.y);
+          ctx.fillStyle = '#2f7d63';
+          ctx.fill();
+          if (l.flower) {
+            ctx.beginPath();
+            ctx.arc(l.x, l.y, 4.5, 0, Math.PI * 2);
+            ctx.fillStyle = '#fce4ec';
+            ctx.fill();
+          }
+        });
+
+        requestAnimationFrame(animatePond);
+      }
+      animatePond();
+
+      // Quiz Game State & Questions
+      var currentQuestion = null;
+      var score = 0;
+      var streak = 0;
+      var lang = document.documentElement.getAttribute('lang') || 'de';
+
+      var fallbackQuestions = [
+        {
+          promptDe: "Welcher Organismus bildet das strukturelle Fundament eines tropischen Korallenriffs?",
+          promptEn: "Which organism forms the primary structural foundation of a tropical coral reef?",
+          optionsDe: ["Steinkorallen mit Kalkskelett", "Tiefseekraken", "Wanderkrabben", "Kieselalgen ohne Skelett"],
+          optionsEn: ["Stony corals with calcium skeletons", "Deep-sea squids", "Migrating crabs", "Silica algae without skeleton"],
+          answer: 0,
+          explanationDe: "Steinkorallen scheiden Calciumcarbonat aus und bauen so über Jahrhunderte gewaltige Riffgerüste.",
+          explanationEn: "Stony corals secrete calcium carbonate, erecting monumentally resilient reef architectures over centuries.",
+          categoryDe: "Natur & Erde", categoryEn: "Nature & Earth"
+        },
+        {
+          promptDe: "Warum sind Lagunen und Teiche als Pufferzonen im Ökosystem unersetzlich?",
+          promptEn: "Why are lagoons and ponds indispensable as ecological buffer zones?",
+          optionsDe: ["Sie filtern Nährstoffe und bieten geschützte Kinderstuben", "Sie stoppen jede Verdunstung", "Sie erwärmen Ozeane auf 40 Grad", "Sie verbrauchen den gesamten Sauerstoff"],
+          optionsEn: ["They filter nutrients and shelter juvenile aquatic life", "They halt all water evaporation", "They heat the ocean to 40°C", "They consume all atmospheric oxygen"],
+          answer: 0,
+          explanationDe: "Flachwassergebiete brechen Strömungsenergie und sichern den Fortbestand vieler Spezies.",
+          explanationEn: "Shallow water zones dissipate wave energy and preserve key foundational species.",
+          categoryDe: "Ökologie", categoryEn: "Ecology"
+        },
+        {
+          promptDe: "Welches mathematische Muster spiegelt sich in Schneckenhäusern und Sonnenblumenkernen wider?",
+          promptEn: "Which mathematical pattern is mirrored in nautilus shells and sunflower seed spirals?",
+          optionsDe: ["Die Fibonacci-Folge & goldene Spirale", "Zufälliges Rauschen", "Lineares Rechteckgitter", "Kubischer Hyperraum"],
+          optionsEn: ["Fibonacci sequence & golden spiral", "Random static noise", "Linear rectangular grid", "Cubic hypercube"],
+          answer: 0,
+          explanationDe: "Die logarithmische Spirale erlaubt optimales Wachstum bei maximaler struktureller Festigkeit.",
+          explanationEn: "Logarithmic spirals facilitate optimal spatial packing and maximum structural integrity.",
+          categoryDe: "Muster & Natur", categoryEn: "Patterns & Nature"
+        }
+      ];
+
+      var questionIndex = 0;
+
+      function loadQuestion() {
+        var fb = fallbackQuestions[questionIndex % fallbackQuestions.length];
+        currentQuestion = fb;
+        document.getElementById('questionCategory').textContent = lang === 'en' ? fb.categoryEn : fb.categoryDe;
+        document.getElementById('questionPrompt').textContent = lang === 'en' ? fb.promptEn : fb.promptDe;
+
+        var options = lang === 'en' ? fb.optionsEn : fb.optionsDe;
+        var grid = document.getElementById('optionsGrid');
+        grid.innerHTML = '';
+        document.getElementById('feedbackBox').style.display = 'none';
+        document.getElementById('nextBtn').style.display = 'none';
+
+        options.forEach(function (optText, idx) {
+          var btn = document.createElement('button');
+          btn.className = 'option-btn';
+          btn.innerHTML = '<span>' + optText + '</span><span class="badge">✦</span>';
+          btn.addEventListener('click', function () { handleAnswer(idx, btn); });
+          grid.appendChild(btn);
+        });
+      }
+
+      function handleAnswer(selectedIdx, btnElement) {
+        var buttons = document.querySelectorAll('.option-btn');
+        buttons.forEach(function (b) { b.disabled = true; });
+
+        var feedback = document.getElementById('feedbackBox');
+        var isCorrect = selectedIdx === currentQuestion.answer;
+
+        if (isCorrect) {
+          btnElement.classList.add('correct');
+          score += 100 + (streak * 25);
+          streak++;
+          playTone(587, 'sine', 0.25);
+          setTimeout(function(){ playTone(880, 'triangle', 0.3); }, 150);
+          feedback.style.borderColor = '#2b9348';
+          feedback.textContent = (lang === 'en' ? "✓ Correct! " : "✓ Richtig! ") + (lang === 'en' ? currentQuestion.explanationEn : currentQuestion.explanationDe);
+
+          // Add extra fish or lily pad on high score
+          if (score % 200 === 0 && fishes.length < 9) {
+            fishes.push({
+              x: canvas.width / 2,
+              y: canvas.height / 2,
+              speed: 1.2,
+              angle: Math.random() * Math.PI * 2,
+              length: 22,
+              color: '#42b38f'
+            });
+          }
+        } else {
+          btnElement.classList.add('wrong');
+          buttons[currentQuestion.answer].classList.add('correct');
+          streak = 0;
+          playTone(220, 'sawtooth', 0.35);
+          feedback.style.borderColor = '#d32f2f';
+          feedback.textContent = (lang === 'en' ? "✗ Not quite. " : "✗ Nicht ganz. ") + (lang === 'en' ? currentQuestion.explanationEn : currentQuestion.explanationDe);
+        }
+
+        feedback.style.display = 'block';
+        document.getElementById('scoreVal').textContent = score;
+        document.getElementById('streakVal').textContent = streak;
+        document.getElementById('nextBtn').style.display = 'inline-flex';
+
+        // Update level banner
+        var level = Math.floor(score / 250) + 1;
+        document.getElementById('levelText').textContent = lang === 'en'
+          ? "Ecosystem Level " + level + ": Flourishing Sanctuary"
+          : "Ökosystem Stufe " + level + ": Blühendes Refugium";
+      }
+
+      document.getElementById('nextBtn').addEventListener('click', function () {
+        questionIndex++;
+        loadQuestion();
+      });
+
+      // Sound toggle
+      document.getElementById('soundToggle').addEventListener('click', function () {
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('manualai_sound', String(soundEnabled)); } catch(e){}
+        updateSoundUI();
+      });
+
+      // Language toggle
+      document.getElementById('langToggle').addEventListener('click', function () {
+        lang = lang === 'de' ? 'en' : 'de';
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('manualai_lang', lang); } catch(e){}
+        updateSoundUI();
+        loadQuestion();
+      });
+
+      updateSoundUI();
+      loadQuestion();
+    })();
+  </script>
+</body>
+</html>

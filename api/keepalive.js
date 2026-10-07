@@ -1,7 +1,3 @@
-// Called once a day by Vercel Cron (see vercel.json). It makes one tiny database call,
-// so the free Supabase project is never paused for inactivity.
-import { allowed } from "./_lib.js";
-
 export default async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "POST") return res.status(405).end();
 
@@ -29,5 +25,4 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("Keepalive failed:", err);
     return res.status(502).json({ ok: false });
-  }
-}
+  }}

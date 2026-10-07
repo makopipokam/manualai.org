@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { allowed, textOf, parseJson } from "./_lib.js";
 import { createHash } from "node:crypto";
-import staticQuestions from "../pwnd/pwnd-ai-questions.json" with { type: "json" };
+import staticQuestions from "../apps/pwnd/pwnd-ai-questions.json" with { type: "json" };
 
 const MODEL = "claude-haiku-4-5-20251001";
 const SKILLS = ["recall", "pattern", "causal", "logic", "source", "risk"];

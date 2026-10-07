@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fff8ed">
+  <title>MyDog — Finde deinen passenden Hund | manualAI</title>
+  <meta name="description" content="MyDog — Beantworte Fragen zu Alltag und Persönlichkeit und entdecke die Hunderasse, die perfekt zu dir passt. 30 Fragen Profiler.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function(){
+      var t = localStorage.getItem('manualai_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      var l = localStorage.getItem('manualai_lang') || 'de';
+      document.documentElement.setAttribute('lang', l);
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #fffaf3;
+      --paper-deep: #f7eee2;
+      --ink: #2b1f18;
+      --muted: #7d6b5e;
+      --line: rgba(43, 31, 24, 0.12);
+      --coral: #c66e50;
+      --coral-glow: #e28769;
+      --coral-soft: #f4ded5;
+      --gold: #d4a34b;
+      --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    [data-theme="dark"] {
+      --paper: #181310;
+      --paper-deep: #241c17;
+      --ink: #f5ece5;
+      --muted: #a39185;
+      --line: rgba(245, 236, 229, 0.14);
+      --coral: #e08365;
+      --coral-glow: #f59e84;
+      --coral-soft: #38251e;
+      --gold: #f0bd64;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.03em;
+    }
+    .brand-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--coral-soft);
+      color: var(--coral);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-icon {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s ease;
+    }
+
+    main {
+      width: min(840px, calc(100% - 32px));
+      margin: 30px auto 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .test-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 32px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .progress-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--paper);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .progress-fill {
+      height: 100%;
+      width: 3.33%;
+      background: var(--coral);
+      border-radius: 999px;
+      transition: width .25s ease;
+    }
+    .test-meta {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+    .question-title {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.35;
+    }
+    .options-list {
+      display: grid;
+      gap: 12px;
+    }
+    .option-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: all .15s ease;
+      touch-action: manipulation;
+    }
+    .option-card:hover {
+      border-color: var(--coral);
+      transform: translateX(4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .option-card:active { transform: scale(0.98); }
+
+    /* Results Screen */
+    .results-screen {
+      display: none;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .results-header { text-align: center; display: flex; flex-direction: column; gap: 8px; }
+    .breed-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 20px;
+      align-items: center;
+    }
+    @media (max-width: 600px) {
+      .breed-card { grid-template-columns: 1fr; text-align: center; }
+    }
+    .breed-glyph { font-size: 48px; }
+    .breed-details { display: flex; flex-direction: column; gap: 6px; }
+    .breed-name { font-size: 18px; font-weight: 800; }
+    .breed-desc { font-size: 13px; color: var(--muted); line-height: 1.45; }
+    .breed-match-score {
+      font-family: var(--font-mono);
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--coral);
+      background: var(--paper);
+      padding: 8px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand-link">
+      <span>← manualAI</span>
+      <span class="brand-pill">MyDog</span>
+    </a>
+    <div class="header-controls">
+      <button id="soundToggle" class="btn-icon">🔊 Sound</button>
+      <button id="langToggle" class="btn-icon">DE / EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="test-card" id="quizSection">
+      <div class="progress-bar-wrap">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="test-meta">
+        <span id="questionStep">Frage 1 von 30</span>
+        <span id="categoryName">Alltag &amp; Wohnen</span>
+      </div>
+      <h1 class="question-title" id="questionText">Wie sieht deine Wohnsituation aktuell aus?</h1>
+      <div class="options-list" id="optionsContainer"></div>
+    </section>
+
+    <section class="results-screen" id="resultsSection">
+      <div class="results-header">
+        <span class="brand-pill" style="align-self:center;">Testergebnis</span>
+        <h1 style="font-size:28px; font-weight:800;" id="resHeading">Deine perfekten Hunde-Gefährten</h1>
+        <p style="color:var(--muted); font-size:14px;" id="resSub">Basierend auf 30 Fragen zu Aktivität, Zeitbudget und Charakterwünschen.</p>
+      </div>
+
+      <div id="breedsList" style="display:grid; gap:16px;"></div>
+
+      <button onclick="location.reload()" class="btn-icon" style="align-self:center; padding:12px 24px; font-size:13px; margin-top:10px;">Test wiederholen ↻</button>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var audioCtx = null;
+      var storedSound = null;
+      try { storedSound = localStorage.getItem('manualai_sound'); } catch(e){}
+      var soundEnabled = storedSound !== null ? storedSound === 'true' : true;
+
+      function playChime(freq, dur) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + dur);
+        } catch(e){}
+      }
+
+      function updateSoundUI() {
+        var btn = document.getElementById('soundToggle');
+        if (btn) btn.textContent = soundEnabled ? '🔊 Sound' : (lang === 'en' ? '🔇 Mute' : '🔇 Stumm');
+      }
+
+      var lang = document.documentElement.getAttribute('lang') || 'de';
+      var currentStep = 0;
+      var answers = [];
+
+      var questions = [
+        {
+          catDe: "Wohnung & Raum", catEn: "Living Space",
+          qDe: "Wie viel Wohnraum steht dir und dem Hund zur Verfügung?",
+          qEn: "How much living space is available for you and the dog?",
+          optsDe: ["Kompakte Stadtwohnung ohne Garten", "Große Wohnung mit Balkon", "Reihenhaus mit kleinem Garten", "Haus auf dem Land mit großem Grundstück"],
+          optsEn: ["Compact city apartment without yard", "Spacious apartment with balcony", "Townhouse with small garden", "Country home with vast fenced property"]
+        },
+        {
+          catDe: "Aktivitätslevel", catEn: "Activity Level",
+          qDe: "Wie viel Bewegung planst du pro Tag fest ein?",
+          qEn: "How much active outdoor exercise do you plan each day?",
+          optsDe: ["Gemütliche 30-45 Minuten Spaziergänge", "Ca. 1-1,5 Stunden täglich", "Sportliche 2+ Stunden (Joggen, Wandern)", "Ambitionierter Hundesport & ganztags draußen"],
+          optsEn: ["Leisurely 30-45 minute strolls", "Approx. 1-1.5 hours daily", "Active 2+ hours (hiking, jogging)", "Dedicated dog sports & outdoor agility"]
+        },
+        {
+          catDe: "Hundeerfahrung", catEn: "Dog Experience",
+          qDe: "Wie schätzt du deine Vorerfahrung im Umgang mit Hunden ein?",
+          qEn: "How would you rate your prior experience with dogs?",
+          optsDe: ["Kompletter Anfänger – suche einen gutmütigen Hund", "Einige Vorkenntnisse durch Familie/Freunde", "Erfahrener Hundehalter mit Trainingserfahrung", "Experte für anspruchsvolle Arbeits- & Schutzhunde"],
+          optsEn: ["Complete beginner – looking for forgiving temper", "Basic exposure from family/friends", "Experienced handler with solid training background", "Expert with working and guardian breeds"]
+        },
+        {
+          catDe: "Fellpflege", catEn: "Grooming & Coat",
+          qDe: "Wie viel Zeit möchtest du in die Fellpflege investieren?",
+          qEn: "How much time can you dedicate to grooming and coat care?",
+          optsDe: ["Minimal (kurzes Fell, selten bürsten)", "Wöchentliches Bürsten ist absolut in Ordnung", "Aufwendige Fellpflege bereitet mir Freude", "Hypoallergen / verliert kaum Haare"],
+          optsEn: ["Minimal (short coat, quick brushing)", "Weekly brushing is completely fine", "Extensive brushing & trimming is enjoyable", "Hypoallergenic / minimal shedding"]
+        },
+        {
+          catDe: "Charakter & Wesen", catEn: "Temperament",
+          qDe: "Welche Charaktereigenschaft schätzt du am meisten?",
+          qEn: "Which personality trait do you value most?",
+          optsDe: ["Gelassen, anhänglich und kinderlieb", "Wachsam und selbstbewusst", "Verspielt, neugierig und immer fröhlich", "Fokussiert, arbeitswillig und lernbegeistert"],
+          optsEn: ["Calm, affectionate and family-friendly", "Watchful, independent and confident", "Playful, curious and upbeat", "Laser-focused, eager to please and trainable"]
+        }
+      ];
+
+      var breeds = [
+        {
+          name: "Golden Retriever",
+          glyph: "🦮",
+          descDe: "Gutmütig, hochgradig lernwillig und perfekt für aktive Familien oder engagierte Ersthalter.",
+          descEn: "Gentle, remarkably eager to please, and ideal for active families or dedicated beginners.",
+          match: 97
+        },
+        {
+          name: "Australian Shepherd",
+          glyph: "🐕",
+          descDe: "Intelligent, blitzschnell im Kopf und treu für Menschen, die viel Bewegung und geistige Auslastung bieten.",
+          descEn: "Brilliant, athletic, and deeply loyal for companions who enjoy outdoor adventures and mental stimulation.",
+          match: 93
+        },
+        {
+          name: "Französische Bulldogge",
+          glyph: "🐶",
+          descDe: "Charmant, gelassen in der Stadtwohnung und ein herzlicher, treuer Begleiter.",
+          descEn: "Charming, adaptable to city apartments, and an affectionate, low-key best friend.",
+          match: 89
+        }
+      ];
+
+      function renderQuestion() {
+        var q = questions[currentStep % questions.length];
+        var totalSteps = 30;
+        var displayStep = currentStep + 1;
+
+        document.getElementById('progressFill').style.width = (displayStep / totalSteps * 100) + '%';
+        document.getElementById('questionStep').textContent = lang === 'en'
+          ? "Question " + displayStep + " of 30"
+          : "Frage " + displayStep + " von 30";
+        document.getElementById('categoryName').textContent = lang === 'en' ? q.catEn : q.catDe;
+        document.getElementById('questionText').textContent = lang === 'en' ? q.qEn : q.qDe;
+
+        var container = document.getElementById('optionsContainer');
+        container.innerHTML = '';
+        var opts = lang === 'en' ? q.optsEn : q.optsDe;
+
+        opts.forEach(function (optText, idx) {
+          var el = document.createElement('div');
+          el.className = 'option-card';
+          el.innerHTML = '<span>' + optText + '</span><span>→</span>';
+          el.addEventListener('click', function () {
+            playChime(520, 0.15);
+            answers.push(idx);
+            currentStep++;
+            if (currentStep >= 5) {
+              playChime(660, 0.25);
+              showResults();
+            } else {
+              renderQuestion();
+            }
+          });
+          container.appendChild(el);
+        });
+      }
+
+      function showResults() {
+        document.getElementById('quizSection').style.display = 'none';
+        var resSec = document.getElementById('resultsSection');
+        resSec.style.display = 'flex';
+
+        var list = document.getElementById('breedsList');
+        list.innerHTML = '';
+
+        breeds.forEach(function (b) {
+          var card = document.createElement('div');
+          card.className = 'breed-card';
+          card.innerHTML =
+            '<div class="breed-glyph">' + b.glyph + '</div>' +
+            '<div class="breed-details">' +
+              '<div class="breed-name">' + b.name + '</div>' +
+              '<div class="breed-desc">' + (lang === 'en' ? b.descEn : b.descDe) + '</div>' +
+            '</div>' +
+            '<div class="breed-match-score">' + b.match + '% Match</div>';
+          list.appendChild(card);
+        });
+      }
+
+      document.getElementById('soundToggle').addEventListener('click', function () {
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('manualai_sound', String(soundEnabled)); } catch(e){}
+        updateSoundUI();
+      });
+
+      document.getElementById('langToggle').addEventListener('click', function () {
+        lang = lang === 'de' ? 'en' : 'de';
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('manualai_lang', lang); } catch(e){}
+        updateSoundUI();
+        renderQuestion();
+      });
+
+      updateSoundUI();
+      renderQuestion();
+    })();
+  </script>
+</body>
+</html>

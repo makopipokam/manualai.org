@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e2a26">
+  <title>Fish Royale — Quiz trifft Taktik-Arena | manualAI</title>
+  <meta name="description" content="Fish Royale — Quiz trifft Taktik-Arena. Feste Fragen und offene Züge — ohne Käufe, Loot oder Zufall. 6 Runden Riff-Taktik.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function(){
+      var t = localStorage.getItem('manualai_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      var l = localStorage.getItem('manualai_lang') || 'de';
+      document.documentElement.setAttribute('lang', l);
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #f0f7f5;
+      --paper-deep: #e0f0ec;
+      --ink: #112d27;
+      --muted: #52756d;
+      --line: rgba(17, 45, 39, 0.14);
+      --teal: #187d73;
+      --teal-glow: #38b2a6;
+      --teal-soft: #cbeae5;
+      --coral: #c66e50;
+      --gold: #d4a34b;
+      --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    [data-theme="dark"] {
+      --paper: #0b1c19;
+      --paper-deep: #122824;
+      --ink: #e3f5f1;
+      --muted: #81a89f;
+      --line: rgba(227, 245, 241, 0.14);
+      --teal: #38b2a6;
+      --teal-glow: #63dcd0;
+      --teal-soft: #193832;
+      --coral: #e48267;
+      --gold: #f0bd64;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.03em;
+    }
+    .brand-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      color: var(--teal);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-icon {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s ease;
+    }
+    .btn-icon:hover { border-color: var(--teal); transform: translateY(-1px); }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 20px auto 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Top HUD */
+    .hud-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+    @media (max-width: 760px) {
+      .hud-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .hud-box {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .hud-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+    }
+    .hud-value {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      color: var(--teal);
+    }
+    .hud-sub { font-size: 11px; color: var(--muted); }
+
+    /* Battle Stage */
+    .stage-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    }
+    @media (max-width: 860px) {
+      .stage-card { grid-template-columns: 1fr; }
+    }
+
+    .reef-viewport {
+      position: relative;
+      background: radial-gradient(circle at 50% 30%, #17544b, #092621);
+      border-radius: 22px;
+      min-height: 340px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 20px;
+      box-shadow: inset 0 0 50px rgba(0,0,0,0.4);
+    }
+    .reef-caustics {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 40% 10%, rgba(56, 178, 166, 0.25), transparent 70%);
+      pointer-events: none;
+      animation: caustic-shimmer 4s ease-in-out infinite alternate;
+    }
+    @keyframes caustic-shimmer {
+      0% { opacity: 0.4; transform: scale(1); }
+      100% { opacity: 0.9; transform: scale(1.05); }
+    }
+    .reef-status-tag {
+      position: relative;
+      z-index: 2;
+      align-self: flex-start;
+      background: rgba(11, 28, 25, 0.85);
+      backdrop-filter: blur(8px);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 178, 166, 0.4);
+      color: #9fe2d8;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .reef-arena-graphic {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin: 40px 0;
+    }
+    .unit-icon {
+      display: grid;
+      place-items: center;
+      font-size: 52px;
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4));
+      transition: transform .3s cubic-bezier(0.2, 0.8, 0.3, 1);
+    }
+    .unit-icon:hover { transform: scale(1.15) translateY(-4px); }
+    .vs-tag {
+      color: #f0bd64;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-size: 18px;
+    }
+
+    /* Actions Panel */
+    .actions-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-title { font-size: 18px; font-weight: 800; letter-spacing: -.02em; }
+    .tactics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .tactic-btn {
+      appearance: none;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 14px 16px;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all .18s ease;
+      touch-action: manipulation;
+    }
+    .tactic-btn:hover:not(:disabled) {
+      border-color: var(--teal);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+    .tactic-btn:active:not(:disabled) { transform: scale(0.98); }
+    .tactic-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .tactic-name { font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .tactic-desc { font-size: 11px; color: var(--muted); line-height: 1.35; }
+    .tactic-cost { font-family: var(--font-mono); font-size: 10px; color: var(--gold); font-weight: 700; }
+
+    /* Tactical Quiz Modal / Box */
+    .quiz-card {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .quiz-q { font-size: 14px; font-weight: 700; line-height: 1.4; }
+    .quiz-options { display: grid; gap: 8px; }
+    .q-btn {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: left;
+      transition: all .15s ease;
+      touch-action: manipulation;
+    }
+    .q-btn:hover:not(:disabled) { border-color: var(--teal); background: var(--paper); }
+    .q-btn.correct { background: #e3f5eb; border-color: #2b9348; color: #1b5e20; }
+    .q-btn.wrong { background: #fde8e8; border-color: #d32f2f; color: #b71c1c; }
+
+    .btn-endturn {
+      background: var(--teal);
+      color: #fff;
+      border: 0;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .2s ease;
+      touch-action: manipulation;
+    }
+    .btn-endturn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-endturn:active { transform: scale(0.98); }
+
+    .game-over-banner {
+      display: none;
+      background: var(--paper-deep);
+      border: 2px solid var(--teal);
+      border-radius: 20px;
+      padding: 24px;
+      text-align: center;
+      flex-direction: column;
+      gap: 12px;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand-link">
+      <span>← manualAI</span>
+      <span class="brand-pill">Fish Royale</span>
+    </a>
+    <div class="header-controls">
+      <button id="soundToggle" class="btn-icon">🔊 Sound</button>
+      <button id="langToggle" class="btn-icon">DE / EN</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="hud-grid">
+      <div class="hud-box">
+        <span class="hud-label" id="lblRound">Runde</span>
+        <span class="hud-value"><span id="roundVal">1</span> / 6</span>
+        <span class="hud-sub" id="lblTurnsLeft">Taktische Phase</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label" id="lblEnergy">Energie</span>
+        <span class="hud-value"><span id="energyVal">3</span> / 3 ⚡</span>
+        <span class="hud-sub" id="lblEnergySub">Verfügbare Züge</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label" id="lblReefVitality">Riff-Vitalität</span>
+        <span class="hud-value"><span id="reefHpVal">100</span>% 🪸</span>
+        <span class="hud-sub" id="lblReefSub">Korallenfestung</span>
+      </div>
+      <div class="hud-box">
+        <span class="hud-label" id="lblPredator">Raubfisch-Distanz</span>
+        <span class="hud-value"><span id="predatorDist">85</span> m 🦈</span>
+        <span class="hud-sub" id="lblPredatorSub">Sicherheitszone</span>
+      </div>
+    </div>
+
+    <section class="stage-card">
+      <div class="reef-viewport">
+        <div class="reef-caustics"></div>
+        <div class="reef-status-tag" id="statusMessage">Runde 1: Riff ist ruhig und geschützt</div>
+        <div class="reef-arena-graphic">
+          <div class="unit-icon" title="Dein Riffschwarm">🐠</div>
+          <div class="vs-tag">VS</div>
+          <div class="unit-icon" title="Tiefsee-Barrakuda (KI)">🦈</div>
+        </div>
+        <div style="position:relative; z-index:2; color:#9fe2d8; font-size:12px; font-family:var(--font-mono);">
+          ✦ Taktik-Arena ohne Zufall · Determinierte Manöver
+        </div>
+      </div>
+
+      <div class="actions-panel">
+        <h2 class="panel-title" id="lblActionsTitle">Taktische Manöver</h2>
+        <div class="tactics-grid">
+          <button class="tactic-btn" id="btnWave">
+            <span class="tactic-name">🌊 Wellenstoß</span>
+            <span class="tactic-desc" id="descWave">Drängt den Räuber zurück (+15m)</span>
+            <span class="tactic-cost">Kosten: 1⚡</span>
+          </button>
+          <button class="tactic-btn" id="btnShield">
+            <span class="tactic-name">🪸 Korallenpanzer</span>
+            <span class="tactic-desc" id="descShield">Härtet Riff ab (+15% Vitalität)</span>
+            <span class="tactic-cost">Kosten: 1⚡</span>
+          </button>
+          <button class="tactic-btn" id="btnSwarm">
+            <span class="tactic-name">🐟 Schwarmformation</span>
+            <span class="tactic-desc" id="descSwarm">Verwirrt den Räuber (+20m)</span>
+            <span class="tactic-cost">Kosten: 2⚡</span>
+          </button>
+          <button class="tactic-btn" id="btnSymbiosis">
+            <span class="tactic-name">🦐 Anemonen-Pakt</span>
+            <span class="tactic-desc" id="descSymbiosis">Vollständige Regeneration (+25%)</span>
+            <span class="tactic-cost">Kosten: 2⚡</span>
+          </button>
+        </div>
+
+        <div class="quiz-card" id="quizContainer">
+          <span style="font-family:var(--font-mono); font-size:10px; color:var(--teal); font-weight:700; text-transform:uppercase;" id="lblTacticInquiry">Taktische Riff-Frage (+1 Energie-Bonus)</span>
+          <p class="quiz-q" id="qPrompt">Wie navigieren Rifffische nachts ohne Sonnenlicht?</p>
+          <div class="quiz-options" id="qOptions"></div>
+        </div>
+
+        <button class="btn-endturn" id="btnEndTurn">Runde beenden &amp; KI ziehen lassen →</button>
+      </div>
+    </section>
+
+    <div class="game-over-banner" id="gameOverBox">
+      <h2 style="font-size:24px; font-weight:800;" id="endTitle">Match Abgeschlossen!</h2>
+      <p id="endDesc" style="color:var(--muted); font-size:14px;">Dein Riff hat alle 6 Runden überstanden und blüht in voller Pracht.</p>
+      <button class="btn-endturn" onclick="location.reload()">Nochmal spielen ↻</button>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      var audioCtx = null;
+      var storedSound = null;
+      try { storedSound = localStorage.getItem('manualai_sound'); } catch(e){}
+      var soundEnabled = storedSound !== null ? storedSound === 'true' : true;
+
+      function updateSoundUI() {
+        var btn = document.getElementById('soundToggle');
+        if (btn) btn.textContent = soundEnabled ? '🔊 Sound' : (lang === 'en' ? '🔇 Mute' : '🔇 Stumm');
+      }
+
+      function playSound(freq, dur) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + dur);
+        } catch(e){}
+      }
+
+      var round = 1;
+      var maxRounds = 6;
+      var energy = 3;
+      var reefHp = 100;
+      var predatorDist = 85;
+      var quizAnswered = false;
+      var lang = document.documentElement.getAttribute('lang') || 'de';
+
+      var tacticalQuestions = [
+        {
+          qDe: "Wie orientieren sich Fische im Riff bei Dunkelheit primär?",
+          qEn: "How do reef fish primarily orient in total darkness?",
+          optsDe: ["Seitenlinienorgan (Druckwellen)", "Thermisches Infrarot", "Magnetische GPS-Signale", "Ultraschall-Rufe"],
+          optsEn: ["Lateral line system (pressure waves)", "Thermal infrared", "Magnetic GPS beacon", "Echolocation cries"],
+          ans: 0
+        },
+        {
+          qDe: "Was schützt Anemonenfische vor den Nesselkapseln der Seeanemone?",
+          qEn: "What shields clownfish from the stinging nematocysts of sea anemones?",
+          optsDe: ["Spezielle Schleimschicht ohne Zelltod-Auslöser", "Panzerschuppen aus Titan", "Giftresistente Schuppen", "Elektrische Entladung"],
+          optsEn: ["Specialized mucus coat lacking trigger proteins", "Titanium armor plates", "Toxin-neutralizing armor", "Electrical discharge"],
+          ans: 0
+        },
+        {
+          qDe: "Welche Rolle spielen Putzerlippfische für das Immunsystem des Riffs?",
+          qEn: "What vital role do cleaner wrasses play for the reef ecosystem?",
+          optsDe: ["Entfernen Parasiten und reinigen Wunden", "Bauen Riffe aus Treibgut", "Jagen Tiefseekraken", "Regulieren die Meerestemperatur"],
+          optsEn: ["Remove ectoparasites and sanitize skin wounds", "Construct reefs from detritus", "Hunt deep sea squids", "Regulate water temperature"],
+          ans: 0
+        }
+      ];
+
+      function renderHUD() {
+        document.getElementById('roundVal').textContent = round;
+        document.getElementById('energyVal').textContent = energy;
+        document.getElementById('reefHpVal').textContent = reefHp;
+        document.getElementById('predatorDist').textContent = predatorDist;
+
+        document.getElementById('btnWave').disabled = energy < 1;
+        document.getElementById('btnShield').disabled = energy < 1;
+        document.getElementById('btnSwarm').disabled = energy < 2;
+        document.getElementById('btnSymbiosis').disabled = energy < 2;
+      }
+
+      function setupQuiz() {
+        quizAnswered = false;
+        var q = tacticalQuestions[(round - 1) % tacticalQuestions.length];
+        document.getElementById('qPrompt').textContent = lang === 'en' ? q.qEn : q.qDe;
+        var container = document.getElementById('qOptions');
+        container.innerHTML = '';
+        var opts = lang === 'en' ? q.optsEn : q.optsDe;
+
+        opts.forEach(function (optText, idx) {
+          var btn = document.createElement('button');
+          btn.className = 'q-btn';
+          btn.textContent = optText;
+          btn.addEventListener('click', function () {
+            if (quizAnswered) return;
+            quizAnswered = true;
+            if (idx === q.ans) {
+              btn.classList.add('correct');
+              energy = Math.min(3, energy + 1);
+              playSound(640, 0.2);
+              document.getElementById('statusMessage').textContent = lang === 'en'
+                ? "Tactical inquiry solved! +1 Energy recovered."
+                : "Taktische Frage gelöst! +1 Energiebonus gesichert.";
+            } else {
+              btn.classList.add('wrong');
+              playSound(220, 0.3);
+            }
+            renderHUD();
+          });
+          container.appendChild(btn);
+        });
+      }
+
+      document.getElementById('btnWave').addEventListener('click', function () {
+        if (energy < 1) return;
+        energy -= 1;
+        predatorDist += 15;
+        playSound(440, 0.2);
+        document.getElementById('statusMessage').textContent = lang === 'en'
+          ? "Surge wave pushed the predator back by 15m!"
+          : "Wellenstoß drängt den Raubfisch um 15m zurück!";
+        renderHUD();
+      });
+
+      document.getElementById('btnShield').addEventListener('click', function () {
+        if (energy < 1) return;
+        energy -= 1;
+        reefHp = Math.min(100, reefHp + 15);
+        playSound(520, 0.2);
+        document.getElementById('statusMessage').textContent = lang === 'en'
+          ? "Coral shield fortified reef health (+15%)."
+          : "Korallenpanzer stärkt die Riff-Vitalität (+15%).";
+        renderHUD();
+      });
+
+      document.getElementById('btnSwarm').addEventListener('click', function () {
+        if (energy < 2) return;
+        energy -= 2;
+        predatorDist += 22;
+        playSound(700, 0.25);
+        document.getElementById('statusMessage').textContent = lang === 'en'
+          ? "School formation baffled the predator (+22m safe zone)."
+          : "Schwarmformation verwirrte den Raubfisch (+22m Sicherheitszone).";
+        renderHUD();
+      });
+
+      document.getElementById('btnSymbiosis').addEventListener('click', function () {
+        if (energy < 2) return;
+        energy -= 2;
+        reefHp = Math.min(100, reefHp + 25);
+        playSound(780, 0.25);
+        document.getElementById('statusMessage').textContent = lang === 'en'
+          ? "Anemone pact regenerated vital ecosystem zones (+25%)."
+          : "Anemonen-Pakt regenerierte vitale Riffzonen (+25%).";
+        renderHUD();
+      });
+
+      document.getElementById('btnEndTurn').addEventListener('click', function () {
+        // AI Predator phase
+        var attackDmg = Math.floor(10 + Math.random() * 12);
+        var distClosing = Math.floor(12 + Math.random() * 10);
+        predatorDist = Math.max(10, predatorDist - distClosing);
+        reefHp = Math.max(0, reefHp - attackDmg);
+        playSound(240, 0.35);
+
+        if (round >= maxRounds || reefHp <= 0) {
+          // Game Over / Victory
+          document.querySelector('.stage-card').style.display = 'none';
+          var box = document.getElementById('gameOverBox');
+          box.style.display = 'flex';
+          var won = reefHp > 0;
+          document.getElementById('endTitle').textContent = won
+            ? (lang === 'en' ? "🏆 Reef Preserved!" : "🏆 Riff Erfolgreich Beschützt!")
+            : (lang === 'en' ? "💀 Reef Depleted" : "💀 Riff Erschöpft");
+          document.getElementById('endDesc').textContent = won
+            ? (lang === 'en' ? "Your tactical decisions preserved biodiversity against all odds." : "Deine Taktik sicherte das Riff über alle 6 Runden!")
+            : (lang === 'en' ? "The predator broke through the coral defenses." : "Der Räuber durchbrach die Verteidigung.");
+          return;
+        }
+
+        round++;
+        energy = 3;
+        document.getElementById('statusMessage').textContent = lang === 'en'
+          ? "Predator closed in by " + distClosing + "m. New round started!"
+          : "Raubfisch rückte " + distClosing + "m vor. Neue Runde beginnt!";
+        setupQuiz();
+        renderHUD();
+      });
+
+      // Controls
+      document.getElementById('soundToggle').addEventListener('click', function(){
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('manualai_sound', String(soundEnabled)); } catch(e){}
+        updateSoundUI();
+      });
+
+      document.getElementById('langToggle').addEventListener('click', function(){
+        lang = lang === 'de' ? 'en' : 'de';
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('manualai_lang', lang); } catch(e){}
+        updateSoundUI();
+        setupQuiz();
+      });
+
+      updateSoundUI();
+      setupQuiz();
+      renderHUD();
+    })();
+  </script>
+</body>
+</html>

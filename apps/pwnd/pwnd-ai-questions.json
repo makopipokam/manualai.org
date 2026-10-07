@@ -1,0 +1,62 @@
+[
+  {
+    "id": "ai-nature-001",
+    "topicId": "nature",
+    "skill": "recall",
+    "difficulty": 0.4,
+    "prompt": "Welcher Organismus bildet das strukturelle Fundament eines Korallenriffs?",
+    "options": [
+      "Steinkorallen (Polypen mit Kalkskelett)",
+      "Tiefseekraken",
+      "Kieselalgen ohne Skelett",
+      "Wanderkrabben"
+    ],
+    "answer": 0,
+    "explanation": "Steinkorallen scheiden Calciumcarbonat aus und bauen so über Jahrhunderte die monumentalen Kalkgerüste tropischer Riffe auf."
+  },
+  {
+    "id": "ai-nature-002",
+    "topicId": "nature",
+    "skill": "causal",
+    "difficulty": 0.55,
+    "prompt": "Warum sind Teiche und Riff-Lagunen für das lokale Ökosystem als Pufferzone entscheidend?",
+    "options": [
+      "Sie dämpfen Wellenenergie, filtern Nährstoffe und bieten geschützte Kinderstuben für Jungtiere",
+      "Sie verhindern jede Verdunstung von Wasser",
+      "Sie erwärmen die Ozeane auf konstante 40 Grad Celsius",
+      "Sie entziehen der Atmosphäre den gesamten Sauerstoff"
+    ],
+    "answer": 0,
+    "explanation": "Flachwasser- und Teichzonen wirken als natürliche Wellenbrecher, sedimentieren Schwebstoffe und bieten geschützte Brutstätten."
+  },
+  {
+    "id": "ai-patterns-001",
+    "topicId": "patterns",
+    "skill": "pattern",
+    "difficulty": 0.5,
+    "prompt": "Welches geometrische Prinzip beschreibt das Wachstum von Schneckenhäusern und Korallenspiralen?",
+    "options": [
+      "Die logarithmische Spirale (Goldener Schnitt)",
+      "Der kubische Hyperraum",
+      "Zufälliges lineares Rauschen",
+      "Konstante Rechteckgitter"
+    ],
+    "answer": 0,
+    "explanation": "Selbstähnliche Wachstumsprozesse in der Natur folgen häufig logarithmischen Spiralen mit konstantem Wachstumsverhältnis."
+  },
+  {
+    "id": "ai-reasoning-001",
+    "topicId": "reasoning",
+    "skill": "logic",
+    "difficulty": 0.45,
+    "prompt": "Wenn alle gesunden Korallenriffe Algen-Symbiosen nutzen und dieser Riffabschnitt gesund ist, was folgt logisch daraus?",
+    "options": [
+      "Dieser Riffabschnitt nutzt eine Algen-Symbiose",
+      "Dieser Riffabschnitt benötigt kein Sonnenlicht",
+      "Dieser Riffabschnitt besteht nur aus Felsgestein",
+      "Im Riff leben keine wirbellosen Tiere"
+    ],
+    "answer": 0,
+    "explanation": "Aus der universellen Prämisse und der Gegebenheit des gesunden Riffs folgt zwingend die Existenz der symbiotischen Beziehung."
+  }
+]

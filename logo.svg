@@ -1,42 +1,37 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
     <!-- Organic Lagoon / Pond Gradients -->
-    <linearGradient id="pondGrad" x1="12%" y1="8%" x2="88%" y2="92%">
+    <linearGradient id="pondGradLogo" x1="12%" y1="8%" x2="88%" y2="92%">
       <stop offset="0%" stop-color="#1e5849"/>
       <stop offset="50%" stop-color="#143b31"/>
       <stop offset="100%" stop-color="#0c251e"/>
     </linearGradient>
 
-    <linearGradient id="reefShelfGrad" x1="20%" y1="15%" x2="80%" y2="85%">
+    <linearGradient id="reefShelfGradLogo" x1="20%" y1="15%" x2="80%" y2="85%">
       <stop offset="0%" stop-color="#2d7764" stop-opacity="0.9"/>
       <stop offset="100%" stop-color="#184a3d" stop-opacity="0.6"/>
     </linearGradient>
 
     <!-- Star Glow & Shimmer -->
-    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="starGradLogo" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#ffffff"/>
       <stop offset="45%" stop-color="#fff4da"/>
       <stop offset="100%" stop-color="#e8c170"/>
     </linearGradient>
 
     <!-- Coral Reef Accent -->
-    <linearGradient id="coralAccent" x1="0%" y1="100%" x2="100%" y2="0%">
+    <linearGradient id="coralAccentLogo" x1="0%" y1="100%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#d97051"/>
       <stop offset="100%" stop-color="#f0967d"/>
     </linearGradient>
-
-    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
-    </filter>
   </defs>
 
   <style>
-    .pond-base { fill: url(#pondGrad); }
-    .reef-shelf { fill: url(#reefShelfGrad); }
-    .reef-rim { stroke: url(#coralAccent); stroke-width: 5; fill: none; stroke-linecap: round; opacity: 0.85; }
+    .pond-base { fill: url(#pondGradLogo); }
+    .reef-shelf { fill: url(#reefShelfGradLogo); }
+    .reef-rim { stroke: url(#coralAccentLogo); stroke-width: 5; fill: none; stroke-linecap: round; opacity: 0.85; }
     .water-ripple { stroke: #62b39e; stroke-width: 3.5; fill: none; stroke-linecap: round; opacity: 0.45; }
-    .star-core { fill: url(#starGrad); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+    .star-core { fill: url(#starGradLogo); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
     .star-sparkle { fill: #fdfaf2; }
     @media (prefers-color-scheme: dark) {
       .water-ripple { stroke: #7ee0c8; opacity: 0.6; }
@@ -94,7 +89,6 @@
   <circle cx="140" cy="358" r="4"   class="star-sparkle" opacity="0.6"/>
 
   <!-- 6. Iconic 4-Point Star (✦) Emerging From The Pond Center -->
-  <!-- Crisp, elegant flared geometry radiating artificial intelligence from organic water -->
   <path class="star-core" d="
     M 256,92
     Q 256,220 396,256

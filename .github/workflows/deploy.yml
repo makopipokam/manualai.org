@@ -1,0 +1,74 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+# Grant GitHub Pages deployment permissions to GITHUB_TOKEN
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment, skipping runs queued between in-progress and latest queued
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: Run Test Suite
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Execute automated tests
+        run: npm test
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: test
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare static assets
+        run: |
+          # Disable Jekyll processing on GitHub Pages
+          touch .nojekyll
+          # Ensure both /apps/<app>/ and /<app>/ paths are available statically
+          for app in apps/*; do
+            if [ -d "$app" ]; then
+              base=$(basename "$app")
+              if [ ! -e "$base" ]; then
+                cp -r "$app" "$base"
+              fi
+            fi
+          done
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

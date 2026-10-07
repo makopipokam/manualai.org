@@ -1,0 +1,827 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MegaMall Rush TD — Mall Tower Defense | manualAI</title>
+  <meta name="description" content="MegaMall Rush TD: Baue Kioske, Schnäppchen-Stände und Sicherheitszonen, um Schnäppchenjäger in einem offenen Labyrinth abzuwehren.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #120e1f;
+      --card-bg: #1e1833;
+      --panel-bg: rgba(30, 24, 51, 0.94);
+      --accent: #f43f5e;
+      --accent-glow: rgba(244, 63, 94, 0.35);
+      --pink: #ec4899;
+      --amber: #f59e0b;
+      --cyan: #06b6d4;
+      --purple: #8b5cf6;
+      --text: #fdf2f8;
+      --text-muted: #a79cb8;
+      --line: #372f54;
+    }
+    [data-theme="light"] {
+      --bg: #fff5f7;
+      --card-bg: #ffffff;
+      --panel-bg: rgba(255, 255, 255, 0.96);
+      --accent: #e11d48;
+      --accent-glow: rgba(225, 29, 72, 0.2);
+      --pink: #db2777;
+      --amber: #d97706;
+      --cyan: #0891b2;
+      --purple: #7c3aed;
+      --text: #3b0718;
+      --text-muted: #886774;
+      --line: #fbcfe8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+      color: #fff;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-title small {
+      font-size: 0.75rem;
+      color: var(--pink);
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-toggle {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .btn-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+    }
+    @media (max-width: 1024px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    .mall-container {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .mall-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--line);
+      font-weight: 600;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .stat-badge span.val {
+      color: var(--amber);
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 1.1rem;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 480px;
+      background: #0f0b1a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    canvas#mallCanvas {
+      display: block;
+      background: #171126;
+      cursor: pointer;
+      max-width: 100%;
+      height: auto;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @media (max-width: 768px) {
+      .canvas-wrap { min-height: 380px; }
+      .mall-top { font-size: 0.8rem; padding: 8px 12px; }
+    }
+
+    .mall-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--line);
+    }
+    .btn-start {
+      background: linear-gradient(135deg, var(--accent), var(--pink));
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .btn-start:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Side Panel */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-box {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .tower-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tower-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .tower-card:hover {
+      border-color: var(--accent);
+      background: rgba(244, 63, 94, 0.08);
+    }
+    .tower-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+      background: rgba(244, 63, 94, 0.15);
+    }
+    .tower-info { display: flex; flex-direction: column; gap: 2px; }
+    .tower-name { font-weight: 700; font-size: 0.9rem; }
+    .tower-desc { font-size: 0.75rem; color: var(--text-muted); }
+    .tower-price {
+      font-weight: 700;
+      color: var(--amber);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand" title="manualAI Startseite">
+      <div class="brand-mark">🛍️</div>
+      <div class="brand-title">
+        manualAI <small>MegaMall Rush TD</small>
+      </div>
+    </a>
+    <div class="top-controls">
+      <button id="langToggle" class="btn-toggle" type="button">DE / EN</button>
+      <button id="soundToggle" class="btn-toggle" type="button">🔊 Ton</button>
+      <button id="themeToggle" class="btn-toggle" type="button">🌓</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="mall-container">
+      <div class="mall-top">
+        <div class="stat-badge">
+          <span data-i18n="wave">Welle</span>:
+          <span class="val" id="dispWave">1 / 12</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="cash">Kassenstand</span>:
+          <span class="val" id="dispCash">240 €</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="atriumHp">Mall-Zufriedenheit</span>:
+          <span class="val" id="dispAtrium" style="color:var(--accent)">100%</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="shoppersCount">Shopper</span>:
+          <span class="val" id="dispShoppers">0</span>
+        </div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="mallCanvas" width="880" height="540"></canvas>
+      </div>
+
+      <div class="mall-bottom">
+        <div style="font-size:0.8rem; color:var(--text-muted);">
+          Klicke auf das Gitter, um Läden zu platzieren und ein Labyrinth zu bauen!
+        </div>
+        <button id="btnStartWave" class="btn-start">
+          <span id="btnWaveText">🛒 Welle starten</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Side Panel -->
+    <aside class="side-panel">
+      <div class="panel-box">
+        <div class="panel-title" data-i18n="kiosks">Mall-Geschäfte & Kioske</div>
+        <div class="tower-list">
+          <div class="tower-card" data-tower="espresso">
+            <div class="tower-info">
+              <span class="tower-name">☕ Espresso-Bar</span>
+              <span class="tower-desc">Dampfstoß · Hohe Feuerrate · 22 DMG</span>
+            </div>
+            <span class="tower-price">60 €</span>
+          </div>
+          <div class="tower-card" data-tower="clearance">
+            <div class="tower-info">
+              <span class="tower-name">🏷️ 70% Sale-Ständer</span>
+              <span class="tower-desc">Schnäppchen-Falle · Verlangsamt um 50%</span>
+            </div>
+            <span class="tower-price">85 €</span>
+          </div>
+          <div class="tower-card" data-tower="segway">
+            <div class="tower-info">
+              <span class="tower-name">🚨 Segway-Security</span>
+              <span class="tower-desc">Platzverweis · Betäubung & 48 DMG</span>
+            </div>
+            <span class="tower-price">125 €</span>
+          </div>
+          <div class="tower-card" data-tower="perfume">
+            <div class="tower-info">
+              <span class="tower-name">🧴 Parfüm-Nebel</span>
+              <span class="tower-desc">Duftwolke · Flächenschaden über Zeit</span>
+            </div>
+            <span class="tower-price">180 €</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-title" data-i18n="guideTitle">Mazing Taktik-Tipp</div>
+        <p style="font-size:0.82rem; color:var(--text-muted); line-height:1.4;">
+          Shopper betreten die Mall oben links (Eingang) und streben zum Ausgang unten rechts.
+          Nutze Geschäfte als Wände, um ihren Laufweg maximal zu verlängern! Der Weg darf niemals komplett blockiert werden.
+        </p>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function() {
+      // Web Audio Synthesizer
+      var audioCtx = null;
+      var soundEnabled = localStorage.getItem('manualai_sound') !== 'false';
+
+      function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var now = audioCtx.currentTime;
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          if (type === 'build') {
+            osc.frequency.setValueAtTime(440, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+          } else if (type === 'steam') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(600, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.08);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+            osc.start(now); osc.stop(now + 0.08);
+          } else if (type === 'cash') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(587, now);
+            osc.frequency.setValueAtTime(880, now + 0.08);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
+          }
+        } catch (e) {}
+      }
+
+      var soundBtn = document.getElementById('soundToggle');
+      function updateSoundBtn() {
+        soundBtn.textContent = soundEnabled ? '🔊 Ton' : '🔇 Stumm';
+      }
+      updateSoundBtn();
+      soundBtn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('manualai_sound', soundEnabled ? 'true' : 'false');
+        updateSoundBtn();
+      });
+
+      var lang = localStorage.getItem('manualai_lang') || 'de';
+      var langBtn = document.getElementById('langToggle');
+      var I18N = {
+        de: {
+          wave: 'Welle', cash: 'Kassenstand', atriumHp: 'Mall-Zufriedenheit',
+          shoppersCount: 'Shopper', kiosks: 'Mall-Geschäfte & Kioske',
+          guideTitle: 'Mazing Taktik-Tipp'
+        },
+        en: {
+          wave: 'Wave', cash: 'Mall Cash', atriumHp: 'Atrium Satisfaction',
+          shoppersCount: 'Shoppers', kiosks: 'Mall Stores & Kiosks',
+          guideTitle: 'Mazing Tactical Tip'
+        }
+      };
+      function updateLang() {
+        var t = I18N[lang] || I18N.de;
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n');
+          if (t[k]) el.textContent = t[k];
+        });
+      }
+      updateLang();
+      langBtn.addEventListener('click', function() {
+        lang = lang === 'de' ? 'en' : 'de';
+        localStorage.setItem('manualai_lang', lang);
+        updateLang();
+      });
+
+      var themeBtn = document.getElementById('themeToggle');
+      var curTheme = localStorage.getItem('manualai_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', curTheme);
+      themeBtn.addEventListener('click', function() {
+        curTheme = curTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', curTheme);
+        localStorage.setItem('manualai_theme', curTheme);
+      });
+
+      // Grid System (22 cols x 13 rows of 40px tiles)
+      var canvas = document.getElementById('mallCanvas');
+      var ctx = canvas.getContext('2d');
+      var TILE = 40;
+      var COLS = 22;
+      var ROWS = 13;
+
+      // Start: top-left (col 1, row 1), End: bottom-right (col 20, row 11)
+      var START = { c: 1, r: 1 };
+      var END = { c: 20, r: 11 };
+
+      var grid = [];
+      for (var r = 0; r < ROWS; r++) {
+        grid[r] = [];
+        for (var c = 0; c < COLS; c++) {
+          grid[r][c] = 0; // 0 = empty, 1 = tower
+        }
+      }
+
+      var TOWER_DEFS = {
+        espresso: { name: 'Espresso-Bar', price: 60, dmg: 22, range: 110, rate: 0.35, color: '#f59e0b', type: 'single' },
+        clearance: { name: '70% Sale', price: 85, dmg: 8, range: 130, rate: 0.8, color: '#ec4899', type: 'slow' },
+        segway: { name: 'Segway-Security', price: 125, dmg: 55, range: 90, rate: 1.1, color: '#06b6d4', type: 'stun' },
+        perfume: { name: 'Parfüm-Nebel', price: 180, dmg: 40, range: 140, rate: 1.4, color: '#8b5cf6', type: 'aoe' }
+      };
+
+      var selectedTower = 'espresso';
+      var towers = [];
+      var shoppers = [];
+      var projectiles = [];
+      var particles = [];
+
+      var currentWave = 1;
+      var maxWaves = 12;
+      var cash = 240;
+      var atriumHp = 100;
+      var waveRunning = false;
+
+      var dispWave = document.getElementById('dispWave');
+      var dispCash = document.getElementById('dispCash');
+      var dispAtrium = document.getElementById('dispAtrium');
+      var dispShoppers = document.getElementById('dispShoppers');
+      var btnStartWave = document.getElementById('btnStartWave');
+      var btnWaveText = document.getElementById('btnWaveText');
+
+      function updateStatsUI() {
+        dispWave.textContent = currentWave + ' / ' + maxWaves;
+        dispCash.textContent = cash + ' €';
+        dispAtrium.textContent = Math.max(0, Math.round(atriumHp)) + '%';
+        dispShoppers.textContent = shoppers.length;
+      }
+
+      // Tower selection
+      document.querySelectorAll('.tower-card').forEach(function(card) {
+        card.addEventListener('click', function() {
+          selectedTower = this.getAttribute('data-tower');
+          document.querySelectorAll('.tower-card').forEach(function(c) { c.classList.remove('active'); });
+          card.classList.add('active');
+        });
+      });
+      document.querySelector('.tower-card[data-tower="espresso"]').classList.add('active');
+
+      // BFS Pathfinding to verify maze connectivity
+      function findPath() {
+        var queue = [[START.c, START.r]];
+        var visited = {};
+        visited[START.c + ',' + START.r] = null;
+
+        while (queue.length > 0) {
+          var curr = queue.shift();
+          var cc = curr[0], cr = curr[1];
+          if (cc === END.c && cr === END.r) {
+            // Reconstruct path
+            var path = [];
+            var step = cc + ',' + cr;
+            while (step) {
+              var parts = step.split(',').map(Number);
+              path.unshift({ c: parts[0], r: parts[1] });
+              step = visited[step];
+            }
+            return path;
+          }
+
+          var neighbors = [
+            [cc + 1, cr], [cc - 1, cr], [cc, cr + 1], [cc, cr - 1]
+          ];
+          for (var i = 0; i < neighbors.length; i++) {
+            var nc = neighbors[i][0], nr = neighbors[i][1];
+            if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS && grid[nr][nc] === 0) {
+              var key = nc + ',' + nr;
+              if (!(key in visited)) {
+                visited[key] = cc + ',' + cr;
+                queue.push([nc, nr]);
+              }
+            }
+          }
+        }
+        return null;
+      }
+
+      var currentPath = findPath();
+
+      // Place Tower on Canvas (Mouse & Mobile Touch)
+      function handlePlaceAt(clientX, clientY) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var mx = (clientX - rect.left) * scaleX;
+        var my = (clientY - rect.top) * scaleY;
+
+        var col = Math.floor(mx / TILE);
+        var row = Math.floor(my / TILE);
+
+        if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return;
+        if ((col === START.c && row === START.r) || (col === END.c && row === END.r)) return;
+
+        var def = TOWER_DEFS[selectedTower];
+        if (grid[row][col] === 0 && cash >= def.price) {
+          // Test if placing blocks path
+          grid[row][col] = 1;
+          var testPath = findPath();
+          if (!testPath) {
+            // Illegal maze block!
+            grid[row][col] = 0;
+            return;
+          }
+          currentPath = testPath;
+          cash -= def.price;
+          towers.push({
+            c: col, r: row,
+            x: col * TILE + TILE/2,
+            y: row * TILE + TILE/2,
+            type: selectedTower,
+            dmg: def.dmg,
+            range: def.range,
+            rate: def.rate,
+            cd: 0,
+            color: def.color
+          });
+          playSound('build');
+          updateStatsUI();
+        }
+      }
+
+      canvas.addEventListener('click', function(e) {
+        handlePlaceAt(e.clientX, e.clientY);
+      });
+      canvas.addEventListener('touchstart', function(e) {
+        if (e.touches && e.touches[0]) {
+          e.preventDefault();
+          handlePlaceAt(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      // Wave Spawning
+      function startWave() {
+        if (waveRunning) return;
+        waveRunning = true;
+        btnStartWave.disabled = true;
+        btnWaveText.textContent = lang === 'en' ? '⏳ Wave in Progress' : '⏳ Welle läuft';
+
+        var count = 10 + currentWave * 4;
+        var baseHp = 70 + currentWave * 35;
+        var baseSpd = 45 + Math.random() * 15;
+
+        for (var i = 0; i < count; i++) {
+          (function(idx) {
+            setTimeout(function() {
+              shoppers.push({
+                c: START.c, r: START.r,
+                x: START.c * TILE + TILE/2,
+                y: START.r * TILE + TILE/2,
+                hp: baseHp, maxHp: baseHp,
+                spd: baseSpd,
+                pathIndex: 0,
+                slowDuration: 0,
+                reward: 12 + Math.floor(currentWave * 2)
+              });
+              updateStatsUI();
+            }, idx * 700);
+          })(i);
+        }
+      }
+      btnStartWave.addEventListener('click', startWave);
+
+      // Game Loop
+      var lastTime = performance.now();
+
+      function update(dt) {
+        // Towers attack
+        for (var tIdx = 0; tIdx < towers.length; tIdx++) {
+          var t = towers[tIdx];
+          if (t.cd > 0) t.cd -= dt;
+
+          if (t.cd <= 0) {
+            var target = null;
+            var minDist = t.range;
+            for (var si = 0; si < shoppers.length; si++) {
+              var sh = shoppers[si];
+              var dist = Math.hypot(sh.x - t.x, sh.y - t.y);
+              if (dist < minDist) {
+                minDist = dist;
+                target = sh;
+              }
+            }
+
+            if (target) {
+              t.cd = t.rate;
+              playSound('steam');
+              projectiles.push({
+                x: t.x, y: t.y,
+                target: target,
+                dmg: t.dmg,
+                type: t.type,
+                color: t.color,
+                spd: 320
+              });
+            }
+          }
+        }
+
+        // Projectiles
+        for (var pi = projectiles.length - 1; pi >= 0; pi--) {
+          var pr = projectiles[pi];
+          var distToTarget = Math.hypot(pr.target.x - pr.x, pr.target.y - pr.y);
+          if (distToTarget < 14 || pr.target.hp <= 0) {
+            if (pr.target.hp > 0) {
+              pr.target.hp -= pr.dmg;
+              if (pr.type === 'slow') pr.target.slowDuration = 2.0;
+              particles.push({ x: pr.target.x, y: pr.target.y, color: pr.color, life: 0.3 });
+            }
+            projectiles.splice(pi, 1);
+            continue;
+          }
+          var angle = Math.atan2(pr.target.y - pr.y, pr.target.x - pr.x);
+          pr.x += Math.cos(angle) * pr.spd * dt;
+          pr.y += Math.sin(angle) * pr.spd * dt;
+        }
+
+        // Shoppers movement along path
+        for (var sIdx = shoppers.length - 1; sIdx >= 0; sIdx--) {
+          var s = shoppers[sIdx];
+          if (s.slowDuration > 0) s.slowDuration -= dt;
+          var speed = s.slowDuration > 0 ? s.spd * 0.5 : s.spd;
+
+          if (currentPath && s.pathIndex < currentPath.length) {
+            var nextTile = currentPath[s.pathIndex];
+            var tx = nextTile.c * TILE + TILE/2;
+            var ty = nextTile.r * TILE + TILE/2;
+            var d = Math.hypot(tx - s.x, ty - s.y);
+
+            if (d < 4) {
+              s.pathIndex++;
+            } else {
+              var a = Math.atan2(ty - s.y, tx - s.x);
+              s.x += Math.cos(a) * speed * dt;
+              s.y += Math.sin(a) * speed * dt;
+            }
+          }
+
+          // Shopper death
+          if (s.hp <= 0) {
+            cash += s.reward;
+            playSound('cash');
+            particles.push({ x: s.x, y: s.y, color: '#f59e0b', life: 0.4 });
+            shoppers.splice(sIdx, 1);
+            updateStatsUI();
+            continue;
+          }
+
+          // Shopper reached exit (Checkout Atrium)
+          if (s.pathIndex >= currentPath.length) {
+            atriumHp -= 5;
+            shoppers.splice(sIdx, 1);
+            updateStatsUI();
+            if (atriumHp <= 0) {
+              atriumHp = 0;
+              alert(lang === 'en' ? 'Mall Atrium Overrun! Game Over.' : 'Mall-Atrium überrannt! Spiel vorbei.');
+            }
+          }
+        }
+
+        // Particles
+        for (var pIdx = particles.length - 1; pIdx >= 0; pIdx--) {
+          particles[pIdx].life -= dt;
+          if (particles[pIdx].life <= 0) particles.splice(pIdx, 1);
+        }
+
+        // Wave End Check
+        if (waveRunning && shoppers.length === 0) {
+          waveRunning = false;
+          currentWave++;
+          btnStartWave.disabled = false;
+          btnWaveText.textContent = lang === 'en' ? '🛒 Start Wave ' + currentWave : '🛒 Welle ' + currentWave + ' starten';
+          updateStatsUI();
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Floor Tiles
+        for (var r = 0; r < ROWS; r++) {
+          for (var c = 0; c < COLS; c++) {
+            ctx.strokeStyle = 'rgba(55, 47, 84, 0.4)';
+            ctx.strokeRect(c * TILE, r * TILE, TILE, TILE);
+          }
+        }
+
+        // Path Preview Dots
+        if (currentPath) {
+          ctx.fillStyle = 'rgba(236, 72, 153, 0.15)';
+          currentPath.forEach(function(pt) {
+            ctx.fillRect(pt.c * TILE + 8, pt.r * TILE + 8, TILE - 16, TILE - 16);
+          });
+        }
+
+        // Entrance & Exit Highlights
+        ctx.fillStyle = '#22c55e';
+        ctx.fillRect(START.c * TILE, START.r * TILE, TILE, TILE);
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 10px sans-serif';
+        ctx.fillText('IN', START.c * TILE + 12, START.r * TILE + 24);
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(END.c * TILE, END.r * TILE, TILE, TILE);
+        ctx.fillStyle = '#fff';
+        ctx.fillText('OUT', END.c * TILE + 8, END.r * TILE + 24);
+
+        // Towers
+        towers.forEach(function(t) {
+          ctx.save();
+          ctx.fillStyle = t.color;
+          ctx.fillRect(t.c * TILE + 2, t.r * TILE + 2, TILE - 4, TILE - 4);
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
+          ctx.strokeRect(t.c * TILE + 2, t.r * TILE + 2, TILE - 4, TILE - 4);
+          ctx.restore();
+        });
+
+        // Shoppers
+        shoppers.forEach(function(s) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, 11, 0, Math.PI * 2);
+          ctx.fillStyle = s.slowDuration > 0 ? '#38bdf8' : '#ec4899';
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 1.5;
+          ctx.stroke();
+
+          // Health bar
+          var pct = Math.max(0, s.hp / s.maxHp);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)';
+          ctx.fillRect(s.x - 12, s.y - 18, 24, 3);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillRect(s.x - 12, s.y - 18, 24 * pct, 3);
+          ctx.restore();
+        });
+
+        // Projectiles
+        projectiles.forEach(function(p) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+
+        // Particles
+        particles.forEach(function(pt) {
+          ctx.beginPath();
+          ctx.arc(pt.x, pt.y, 6 * pt.life, 0, Math.PI * 2);
+          ctx.fillStyle = pt.color;
+          ctx.fill();
+        });
+      }
+
+      function loop(now) {
+        var dt = Math.min(0.1, (now - lastTime) / 1000);
+        lastTime = now;
+        update(dt);
+        draw();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      updateStatsUI();
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#232c1c">
+  <title>pidgeons &amp; crows — Tauben vs Krähen | manualAI</title>
+  <meta name="description" content="pidgeons & crows — Führe die Tauben durch den Stadtpark, erobere Nachbargebiete und wehre die Krähen-KI ab. Vier von fünf Revieren gewinnen.">
+  <link rel="icon" href="/TaubenVSKrähen/favicon.png" type="image/png">
+  <script>
+    (function(){
+      var t = localStorage.getItem('manualai_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      var l = localStorage.getItem('manualai_lang') || 'de';
+      document.documentElement.setAttribute('lang', l);
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #f4f6f0;
+      --paper-deep: #e6eae0;
+      --ink: #1e261a;
+      --muted: #5e6b56;
+      --line: rgba(30, 38, 26, 0.14);
+      --green: #4e783e;
+      --pigeon-blue: #5b7f9f;
+      --crow-dark: #22262a;
+      --gold: #d4a34b;
+      --coral: #c8694d;
+      --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    [data-theme="dark"] {
+      --paper: #121811;
+      --paper-deep: #1b2319;
+      --ink: #eaf1e8;
+      --muted: #8d9e85;
+      --line: rgba(234, 241, 232, 0.14);
+      --green: #689e54;
+      --pigeon-blue: #7ba3c7;
+      --crow-dark: #121417;
+      --gold: #f0bd64;
+      --coral: #e48267;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.03em;
+    }
+    .brand-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(78, 120, 62, 0.18);
+      color: var(--green);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-icon {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s ease;
+    }
+    .btn-icon:hover { border-color: var(--green); transform: translateY(-1px); }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 20px auto 40px;
+      display: grid;
+      grid-template-columns: 1.25fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    /* Scoreboard & Timer */
+    .park-hud {
+      grid-column: 1 / -1;
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .faction-scores {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .score-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .score-badge.pigeon { color: var(--pigeon-blue); }
+    .score-badge.crow { color: var(--coral); }
+    .timer-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .timer-bar {
+      width: 140px;
+      height: 8px;
+      background: var(--paper);
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+    .timer-fill {
+      height: 100%;
+      width: 100%;
+      background: var(--green);
+      transition: width 1s linear;
+    }
+
+    /* Interactive Map Card */
+    .map-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    }
+    .districts-list {
+      display: grid;
+      gap: 12px;
+    }
+    .district-row {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all .2s ease;
+      touch-action: manipulation;
+    }
+    .district-row:hover {
+      border-color: var(--green);
+      transform: translateX(4px);
+    }
+    .district-row.selected {
+      border-color: var(--pigeon-blue);
+      box-shadow: 0 0 0 2px rgba(91, 127, 159, 0.4);
+    }
+    .district-info { display: flex; flex-direction: column; gap: 4px; }
+    .district-name { font-weight: 800; font-size: 15px; }
+    .district-desc { font-size: 11px; color: var(--muted); }
+    .district-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .owner-pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .owner-pigeon { background: rgba(91, 127, 159, 0.2); color: var(--pigeon-blue); }
+    .owner-crow { background: rgba(200, 105, 77, 0.2); color: var(--coral); }
+    .owner-neutral { background: var(--paper-deep); color: var(--muted); }
+
+    /* Command Center */
+    .cmd-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.06);
+    }
+    .cmd-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .breadcrumbs-counter {
+      background: var(--paper);
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+    .actions-grid {
+      display: grid;
+      gap: 10px;
+    }
+    .action-btn {
+      appearance: none;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 14px 18px;
+      border-radius: 16px;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all .15s ease;
+      touch-action: manipulation;
+    }
+    .action-btn:hover:not(:disabled) {
+      border-color: var(--green);
+      transform: translateY(-2px);
+    }
+    .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .action-title { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .action-desc { font-size: 11px; color: var(--muted); }
+
+    .ai-thought-box {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      color: var(--muted);
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-spinner {
+      width: 12px;
+      height: 12px;
+      border: 2px solid var(--line);
+      border-top-color: var(--coral);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-pass {
+      background: var(--green);
+      color: #fff;
+      border: 0;
+      padding: 14px 20px;
+      border-radius: 16px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .2s ease;
+      touch-action: manipulation;
+    }
+    .btn-pass:hover { filter: brightness(1.1); transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand-link">
+      <span>← manualAI</span>
+      <span class="brand-pill">Tauben vs Krähen</span>
+    </a>
+    <div class="header-controls">
+      <button id="soundToggle" class="btn-icon">🔊 Sound</button>
+      <button id="langToggle" class="btn-icon">DE / EN</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="park-hud">
+      <div class="faction-scores">
+        <div class="score-badge pigeon">🕊️ <span id="pigeonCount">1</span>/4 <span id="lblPigeonScore">Tauben</span></div>
+        <div class="score-badge crow">🦅 <span id="crowCount">1</span>/4 <span id="lblCrowScore">Krähen</span></div>
+      </div>
+      <div class="timer-wrap">
+        <span id="lblTurn">Runde 1</span> ·
+        <span id="timerSeconds">30s</span>
+        <div class="timer-bar"><div class="timer-fill" id="timerFill"></div></div>
+      </div>
+    </div>
+
+    <section class="map-card">
+      <h2 style="font-size:18px; font-weight:800;" id="lblParkDistricts">Stadtpark Reviere (5 Bezirke)</h2>
+      <div class="districts-list" id="districtsContainer"></div>
+    </section>
+
+    <section class="cmd-card">
+      <div class="cmd-header">
+        <h2 style="font-size:18px; font-weight:800;" id="lblCommand">Tauben-Kommando</h2>
+        <div class="breadcrumbs-counter">🍞 <span id="crumbsCount">5</span> <span id="lblCrumbs">Krumen</span></div>
+      </div>
+
+      <div class="actions-grid">
+        <button class="action-btn" id="btnScout">
+          <span class="action-title">🍞 Brotkrumen picken</span>
+          <span class="action-desc" id="descScout">+3 Krumen für den Schwarm sammeln</span>
+        </button>
+        <button class="action-btn" id="btnPeck">
+          <span class="action-title">🕊️ Revier verstärken / angreifen</span>
+          <span class="action-desc" id="descPeck">Gewähltes Revier einnehmen (-2 Krumen)</span>
+        </button>
+        <button class="action-btn" id="btnFlap">
+          <span class="action-title">🌪️ Aufschrecken &amp; Verjagen</span>
+          <span class="action-desc" id="descFlap">Krähen aus gewähltem Revier vertreiben (-3 Krumen)</span>
+        </button>
+      </div>
+
+      <div class="ai-thought-box">
+        <div class="ai-spinner" id="aiSpinner"></div>
+        <span id="aiStatus">Krähen-KI beobachtet den Park...</span>
+      </div>
+
+      <button class="btn-pass" id="btnEndTurn">Zug beenden &amp; Krähen fliegen lassen →</button>
+    </section>
+  </main>
+
+  <script>
+    (function(){
+      var audioCtx = null;
+      var storedSound = null;
+      try { storedSound = localStorage.getItem('manualai_sound'); } catch(e){}
+      var soundEnabled = storedSound !== null ? storedSound === 'true' : true;
+
+      function updateSoundUI() {
+        var btn = document.getElementById('soundToggle');
+        if (btn) btn.textContent = soundEnabled ? '🔊 Sound' : (lang === 'en' ? '🔇 Mute' : '🔇 Stumm');
+      }
+      function playTone(freq, dur) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + dur);
+        } catch(e){}
+      }
+
+      var lang = document.documentElement.getAttribute('lang') || 'de';
+      var crumbs = 5;
+      var selectedDistrict = 0;
+      var turnTimer = 30;
+      var timerInterval = null;
+
+      var districts = [
+        { nameDe: "Der Brunnen", nameEn: "The Fountain", descDe: "Zentraler Treffpunkt mit frischem Wasser", descEn: "Central hub with fresh drinking water", owner: "pigeon", power: 3 },
+        { nameDe: "Der Spielplatz", nameEn: "The Playground", descDe: "Voller Picknickreste und Krümel", descEn: "Rich in breadcrumbs and dropped pretzel bits", owner: "neutral", power: 1 },
+        { nameDe: "Die alte Eiche", nameEn: "The Ancient Oak", descDe: "Hohe Aussichtsplattform der Vögel", descEn: "High canopy vantage point over the trails", owner: "crow", power: 3 },
+        { nameDe: "Der Park-Kiosk", nameEn: "The Park Kiosk", descDe: "Konstante Krumen-Quelle der Spaziergänger", descEn: "Steady source of snacks from visitors", owner: "neutral", power: 1 },
+        { nameDe: "Die Schlosswiese", nameEn: "The Castle Meadow", descDe: "Weites, offenes Fluggelände", descEn: "Vast open turf for large flock formations", owner: "neutral", power: 0 }
+      ];
+
+      function renderDistricts() {
+        var container = document.getElementById('districtsContainer');
+        container.innerHTML = '';
+        var pCount = 0, cCount = 0;
+
+        districts.forEach(function(d, idx){
+          if (d.owner === 'pigeon') pCount++;
+          if (d.owner === 'crow') cCount++;
+
+          var row = document.createElement('div');
+          row.className = 'district-row' + (idx === selectedDistrict ? ' selected' : '');
+          var ownerClass = 'owner-' + d.owner;
+          var ownerLabel = d.owner === 'pigeon'
+            ? (lang === 'en' ? "Pigeons" : "Tauben")
+            : d.owner === 'crow'
+            ? (lang === 'en' ? "Crows" : "Krähen")
+            : (lang === 'en' ? "Neutral" : "Neutral");
+
+          row.innerHTML =
+            '<div class="district-info">' +
+              '<div class="district-name">' + (lang === 'en' ? d.nameEn : d.nameDe) + '</div>' +
+              '<div class="district-desc">' + (lang === 'en' ? d.descEn : d.descDe) + '</div>' +
+            '</div>' +
+            '<div class="district-control">' +
+              '<span>Stärke: ' + d.power + '</span>' +
+              '<span class="owner-pill ' + ownerClass + '">' + ownerLabel + '</span>' +
+            '</div>';
+
+          row.addEventListener('click', function(){
+            selectedDistrict = idx;
+            renderDistricts();
+          });
+          container.appendChild(row);
+        });
+
+        document.getElementById('pigeonCount').textContent = pCount;
+        document.getElementById('crowCount').textContent = cCount;
+        document.getElementById('crumbsCount').textContent = crumbs;
+
+        // Check victory condition (4 territories)
+        if (pCount >= 4) {
+          alert(lang === 'en' ? "🏆 Victory! Pigeons control the park!" : "🏆 Sieg! Die Tauben beherrschen den Park!");
+          clearInterval(timerInterval);
+        } else if (cCount >= 4) {
+          alert(lang === 'en' ? "💀 Defeat! The Crows have taken over." : "💀 Niederlage! Die Krähen haben den Park erobert.");
+          clearInterval(timerInterval);
+        }
+      }
+
+      function startTimer() {
+        if (timerInterval) clearInterval(timerInterval);
+        turnTimer = 30;
+        document.getElementById('timerSeconds').textContent = turnTimer + 's';
+        document.getElementById('timerFill').style.width = '100%';
+
+        timerInterval = setInterval(function(){
+          turnTimer--;
+          document.getElementById('timerSeconds').textContent = turnTimer + 's';
+          document.getElementById('timerFill').style.width = (turnTimer / 30 * 100) + '%';
+          if (turnTimer <= 0) {
+            clearInterval(timerInterval);
+            aiTurn();
+          }
+        }, 1000);
+      }
+
+      document.getElementById('btnScout').addEventListener('click', function(){
+        crumbs += 3;
+        playTone(520, 0.15);
+        document.getElementById('crumbsCount').textContent = crumbs;
+        document.getElementById('aiStatus').textContent = lang === 'en' ? "Pigeons found fresh breadcrumbs (+3)" : "Tauben haben Brotkrumen gepickt (+3)";
+      });
+
+      document.getElementById('btnPeck').addEventListener('click', function(){
+        if (crumbs < 2) return;
+        crumbs -= 2;
+        var d = districts[selectedDistrict];
+        if (d.owner === 'pigeon') {
+          d.power += 2;
+        } else {
+          d.owner = 'pigeon';
+          d.power = 2;
+        }
+        playTone(660, 0.2);
+        renderDistricts();
+        document.getElementById('aiStatus').textContent = (lang === 'en' ? "Reinforced " : "Revier gesichert: ") + (lang === 'en' ? d.nameEn : d.nameDe);
+      });
+
+      document.getElementById('btnFlap').addEventListener('click', function(){
+        if (crumbs < 3) return;
+        crumbs -= 3;
+        var d = districts[selectedDistrict];
+        d.owner = 'neutral';
+        d.power = 1;
+        playTone(400, 0.25);
+        renderDistricts();
+        document.getElementById('aiStatus').textContent = (lang === 'en' ? "Scared away crows from " : "Krähen verjagt aus: ") + (lang === 'en' ? d.nameEn : d.nameDe);
+      });
+
+      function aiTurn() {
+        var spinner = document.getElementById('aiSpinner');
+        var status = document.getElementById('aiStatus');
+        spinner.style.display = 'inline-block';
+        status.textContent = lang === 'en' ? "Crow AI is calculating moves..." : "Krähen-KI plant die Attacke...";
+
+        setTimeout(function(){
+          spinner.style.display = 'none';
+          // Find weakest non-crow territory or reinforce
+          var targets = districts.filter(function(d){ return d.owner !== 'crow'; });
+          if (targets.length > 0) {
+            var target = targets[Math.floor(Math.random() * targets.length)];
+            target.owner = 'crow';
+            target.power += 2;
+            playTone(260, 0.3);
+            status.textContent = (lang === 'en' ? "Crow AI captured " : "Krähen-KI eroberte ") + (lang === 'en' ? target.nameEn : target.nameDe) + "!";
+          }
+          renderDistricts();
+          startTimer();
+        }, 1500);
+      }
+
+      document.getElementById('btnEndTurn').addEventListener('click', function(){
+        clearInterval(timerInterval);
+        aiTurn();
+      });
+
+      // Header controls
+      document.getElementById('soundToggle').addEventListener('click', function(){
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('manualai_sound', String(soundEnabled)); } catch(e){}
+        updateSoundUI();
+      });
+
+      document.getElementById('langToggle').addEventListener('click', function(){
+        lang = lang === 'de' ? 'en' : 'de';
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('manualai_lang', lang); } catch(e){}
+        updateSoundUI();
+        renderDistricts();
+      });
+
+      updateSoundUI();
+      renderDistricts();
+      startTimer();
+    })();
+  </script>
+</body>
+</html>

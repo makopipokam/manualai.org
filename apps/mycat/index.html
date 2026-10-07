@@ -1,0 +1,478 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#23172b">
+  <title>MyCat — 18 Katzenprofile &amp; Persönlichkeitstest | manualAI</title>
+  <meta name="description" content="MyCat — Entdecke 18 einzigartige Katzenprofile und finde spielerisch heraus, welche Katzencharaktere perfekt zu deinem Alltag passen.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <script>
+    (function(){
+      var t = localStorage.getItem('manualai_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', t);
+      var l = localStorage.getItem('manualai_lang') || 'de';
+      document.documentElement.setAttribute('lang', l);
+    })();
+  </script>
+  <style>
+    :root {
+      --paper: #f8f3fb;
+      --paper-deep: #eee5f3;
+      --ink: #261930;
+      --muted: #745f82;
+      --line: rgba(38, 25, 48, 0.12);
+      --purple: #815aa9;
+      --purple-soft: #ebdcf4;
+      --font-display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+    }
+    [data-theme="dark"] {
+      --paper: #16101c;
+      --paper-deep: #21182a;
+      --ink: #f2ecf6;
+      --muted: #a692b4;
+      --line: rgba(242, 236, 246, 0.14);
+      --purple: #b58ee0;
+      --purple-soft: #372547;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { min-height: 100%; background: var(--paper); color: var(--ink); font-family: var(--font-display); -webkit-font-smoothing: antialiased; }
+    body { display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--paper);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .brand-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--ink);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -.03em;
+    }
+    .brand-pill {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--purple-soft);
+      color: var(--purple);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-icon {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .15s ease;
+    }
+
+    main {
+      width: min(1120px, calc(100% - 32px));
+      margin: 24px auto 50px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .hero-banner {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .hero-text { max-width: 580px; display: flex; flex-direction: column; gap: 8px; }
+    .hero-title { font-size: 28px; font-weight: 800; letter-spacing: -.03em; }
+    .hero-sub { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+    .tabs-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 12px;
+    }
+    .tab-btn {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .tab-btn.active {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    /* Profiles Grid */
+    .profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    @media (max-width: 900px) {
+      .profiles-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @media (max-width: 600px) {
+      .profiles-grid { grid-template-columns: 1fr; }
+    }
+
+    .cat-card {
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      transition: all .2s ease;
+    }
+    .cat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.08);
+      border-color: var(--purple);
+    }
+    .cat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cat-avatar { font-size: 36px; }
+    .cat-archetype {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--purple);
+      text-transform: uppercase;
+    }
+    .cat-name { font-size: 17px; font-weight: 800; letter-spacing: -.02em; }
+    .cat-breed { font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+    .cat-desc { font-size: 12px; color: var(--muted); line-height: 1.45; }
+    .traits-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: auto;
+    }
+    .trait-badge {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      padding: 3px 8px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand-link">
+      <span>← manualAI</span>
+      <span class="brand-pill">MyCat</span>
+    </a>
+    <div class="header-controls">
+      <button id="soundToggle" class="btn-icon">🔊 Sound</button>
+      <button id="langToggle" class="btn-icon">DE / EN</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero-banner">
+      <div class="hero-text">
+        <h1 class="hero-title" id="pageTitle">18 Katzenprofile entdecken</h1>
+        <p class="hero-sub" id="pageSub">Vom bedächtigen Philosophen bis zum wilden Akrobaten: Erkunde die Facetten der Samtpfoten und finde den Charakter, der deine Welt bereichert.</p>
+      </div>
+      <div style="font-size: 48px;">🐈✨</div>
+    </section>
+
+    <div class="tabs-row">
+      <button class="tab-btn active" id="tabAll">Alle 18 Profile</button>
+      <button class="tab-btn" id="tabCalm">Ruhig &amp; Verschmust</button>
+      <button class="tab-btn" id="tabActive">Aktiv &amp; Verspielt</button>
+    </div>
+
+    <section class="profiles-grid" id="catGrid"></section>
+  </main>
+
+  <script>
+    (function () {
+      var audioCtx = null;
+      var storedSound = null;
+      try { storedSound = localStorage.getItem('manualai_sound'); } catch(e){}
+      var soundEnabled = storedSound !== null ? storedSound === 'true' : true;
+
+      function playPurr(freq, dur) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + dur);
+        } catch(e){}
+      }
+
+      function updateSoundUI() {
+        var btn = document.getElementById('soundToggle');
+        if (btn) btn.textContent = soundEnabled ? '🔊 Sound' : (lang === 'en' ? '🔇 Mute' : '🔇 Stumm');
+      }
+
+      var lang = document.documentElement.getAttribute('lang') || 'de';
+
+      var catProfiles = [
+        {
+          nameDe: "Der Philosoph", nameEn: "The Philosopher",
+          breed: "Britisch Kurzhaar", glyph: "🧐", type: "calm",
+          descDe: "Beobachtet die Welt mit stoischer Gelassenheit vom Fenstersitz und liebt geregelte Routinen.",
+          descEn: "Observes the world with serene calm from the windowsill and treasures dependable routines.",
+          traitsDe: ["Gelassen", "Wenig Mauzen", "Geduldig"], traitsEn: ["Serene", "Quiet", "Patient"]
+        },
+        {
+          nameDe: "Der Akrobat", nameEn: "The Acrobat",
+          breed: "Abessinier", glyph: "🤸", type: "active",
+          descDe: "Erklimmt Schränke im Flug, voller Energie und immer auf der Suche nach der nächsten Kletterherausforderung.",
+          descEn: "Scales high wardrobes in a single bound, packed with athletic curiosity and playfulness.",
+          traitsDe: ["Sprungstark", "Agil", "Neugierig"], traitsEn: ["Agile", "Athletic", "Curious"]
+        },
+        {
+          nameDe: "Der Kuschelterrorist", nameEn: "The Cuddle Bug",
+          breed: "Ragdoll", glyph: "🧸", type: "calm",
+          descDe: "Wird auf dem Arm völlig weich wie eine Stoffpuppe und fordert sanft endlose Streicheleinheiten ein.",
+          descEn: "Limp in your arms like a velvet teddy bear, craving continuous tender affection.",
+          traitsDe: ["Sehr anhänglich", "Sanftmütig", "Liebenswert"], traitsEn: ["Deeply Affectionate", "Gentle", "Lovable"]
+        },
+        {
+          nameDe: "Der Sofalöwe", nameEn: "The Gentle Giant",
+          breed: "Maine Coon", glyph: "🦁", type: "calm",
+          descDe: "Majestätische Größe mit dem Gemüt eines gutmütigen Riesen; plappert gerne mit leisem Gurren.",
+          descEn: "Majestic proportions with the sweetest gentle heart; communicates with soft chirps.",
+          traitsDe: ["Groß & Sanft", "Verspielt", "Familienfreund"], traitsEn: ["Big & Gentle", "Playful", "Family-Loving"]
+        },
+        {
+          nameDe: "Der Entdecker", nameEn: "The Explorer",
+          breed: "Bengal", glyph: "🐆", type: "active",
+          descDe: "Wildkatzen-Look mit Faible für Wasser, Intelligenzspielzeuge und rasante Jagdspiele.",
+          descEn: "Exotic wildcat aesthetic with an affinity for water games and puzzle feeders.",
+          traitsDe: ["Wasserliebend", "Hochintelligent", "Dynamisch"], traitsEn: ["Loves Water", "High IQ", "Dynamic"]
+        },
+        {
+          nameDe: "Der Schattenläufer", nameEn: "The Shadow Walker",
+          breed: "Russisch Blau", glyph: "🐾", type: "calm",
+          descDe: "Feinsinnig, leise und bedächtig. Schließt tiefe Bindungen mit seinen vertrauten Herzensmenschen.",
+          descEn: "Refined, quiet, and discreet. Forms profound, lifelong bonds with trusted souls.",
+          traitsDe: ["Ruhig", "Treu", "Hypoallergen"], traitsEn: ["Calm", "Loyal", "Hypoallergenic"]
+        },
+        {
+          nameDe: "Der Nachtwächter", nameEn: "The Night Guard",
+          breed: "Bombay", glyph: "🐈‍⬛", type: "active",
+          descDe: "Miniatur-Panther mit glänzend schwarzem Fell und wachem Geist, der jedes Geräusch im Haus registriert.",
+          descEn: "Miniature black panther with glossy fur and alert senses, tracking every sound in the house.",
+          traitsDe: ["Aufmerksam", "Schmusebedürftig", "Glänzend"], traitsEn: ["Alert", "Affectionate", "Glossy"]
+        },
+        {
+          nameDe: "Der Feinschmecker", nameEn: "The Epicure",
+          breed: "Heilige Birma", glyph: "👑", type: "calm",
+          descDe: "Blaue Augen, weiße Pfötchen und königliche Eleganz gepaart mit warmherzigem Charakter.",
+          descEn: "Deep sapphire eyes, white gloves, and royal dignity wrapped in warm affection.",
+          traitsDe: ["Elegant", "Freundlich", "Ausgeglichen"], traitsEn: ["Elegant", "Friendly", "Balanced"]
+        },
+        {
+          nameDe: "Der Kobold", nameEn: "The Pixie",
+          breed: "Devon Rex", glyph: "🧚", type: "active",
+          descDe: "Koboldhafte Ohren, gewelltes Fell und immer für einen schelmischen Streich zu haben.",
+          descEn: "Pixie ears, rippled coat, and always ready for clownish mischief.",
+          traitsDe: ["Schelmisch", "Wärmeliebend", "Menschenbezogen"], traitsEn: ["Mischievous", "Warmth-Loving", "Companion"]
+        },
+        {
+          nameDe: "Der Bergsteiger", nameEn: "The Mountaineer",
+          breed: "Norwegische Waldkatze", glyph: "🌲", type: "active",
+          descDe: "Wetterfestes Fell, buschiger Schwanz und exzellente Kletterfähigkeiten auch kopfüber.",
+          descEn: "Weatherproof coat, bushy plume tail, and incredible tree-climbing prowess.",
+          traitsDe: ["Robust", "Naturverbunden", "Kletterkünstler"], traitsEn: ["Robust", "Wild Nature", "Climber"]
+        },
+        {
+          nameDe: "Der Geschichtenerzähler", nameEn: "The Storyteller",
+          breed: "Siam", glyph: "🗣️", type: "active",
+          descDe: "Kommunikativ, temperamentvoll und liebt es, den ganzen Tag angeregt mit dir zu plaudern.",
+          descEn: "Vocal, energetic, and delights in conversing enthusiastically throughout the day.",
+          traitsDe: ["Redselig", "Bindungsstark", "Lebhaft"], traitsEn: ["Vocal", "Bonding", "Lively"]
+        },
+        {
+          nameDe: "Der Zen-Meister", nameEn: "The Zen Master",
+          breed: "Scottish Fold", glyph: "🧘", type: "calm",
+          descDe: "Sitzt gerne wie ein Buddha auf dem Rücken und strahlt grenzenlosen Frieden aus.",
+          descEn: "Loves sitting upright like a little Buddha, radiating unconditional peace.",
+          traitsDe: ["Friedvoll", "Harmonisch", "Gemütlich"], traitsEn: ["Peaceful", "Harmonious", "Cozy"]
+        },
+        {
+          nameDe: "Der Freigeist", nameEn: "The Free Spirit",
+          breed: "Europäisch Kurzhaar", glyph: "🌾", type: "active",
+          descDe: "Gesund, selbstständig und anpassungsfähig an jede Lebenslage mit starkem Jagdtrieb.",
+          descEn: "Healthy, independent, and versatile for any habitat with sharp hunting instincts.",
+          traitsDe: ["Selbstständig", "Anpassungsfähig", "Vital"], traitsEn: ["Independent", "Adaptable", "Vital"]
+        },
+        {
+          nameDe: "Der Sonnenanbeter", nameEn: "The Sun Seeker",
+          breed: "Perser", glyph: "☀️", type: "calm",
+          descDe: "Prächtiges langes Fell, liebt stille Nachmittage im wärmenden Sonnenlichtstrahl.",
+          descEn: "Magnificent long coat, adores quiet afternoons dozing in sunbeams.",
+          traitsDe: ["Ruheliebend", "Prächtig", "Ruhiges Wesen"], traitsEn: ["Peaceful", "Luxurious", "Calm Nature"]
+        },
+        {
+          nameDe: "Der Detektiv", nameEn: "The Detective",
+          breed: "Chartreux", glyph: "🔍", type: "calm",
+          descDe: "Goldene Augen, stahlblaues Fell und beobachtet jede Handbewegung mit scharfem Spürsinn.",
+          descEn: "Golden eyes, slate-blue coat, analyzing every movement with sharp acumen.",
+          traitsDe: ["Aufmerksam", "Lautlos", "Intelligent"], traitsEn: ["Attentive", "Silent", "Sharp"]
+        },
+        {
+          nameDe: "Der Wirbelwind", nameEn: "The Whirlwind",
+          breed: "Türkisch Van", glyph: "🌪️", type: "active",
+          descDe: "Ein schwimmbegeisterter Abenteurer voller Elan und Lebensfreude.",
+          descEn: "Water-loving thrill-seeker full of bounding enthusiasm and joy.",
+          traitsDe: ["Wasserfreudig", "Lebendig", "Sportlich"], traitsEn: ["Swimmer", "Energetic", "Sporty"]
+        },
+        {
+          nameDe: "Der Herzensbrecher", nameEn: "The Heartbreaker",
+          breed: "Sibirische Katze", glyph: "💖", type: "calm",
+          descDe: "Dichtes Unterfell, zärtliches Wesen und schleicht sich im Handumdrehen in jedes Herz.",
+          descEn: "Dense plush coat, tender soul, effortlessly stealing hearts.",
+          traitsDe: ["Zärtlich", "Allergikerfreundlich", "Wärmend"], traitsEn: ["Tender", "Hypoallergenic", "Warm"]
+        },
+        {
+          nameDe: "Der Aristokrat", nameEn: "The Aristocrat",
+          breed: "Burma", glyph: "🎩", type: "active",
+          descDe: "Seidiges Fell, bernsteinfarbener Blick und liebt akrobatische Spiele mit Menschenkontakt.",
+          descEn: "Silken coat, amber gaze, adores acrobatic social play with family.",
+          traitsDe: ["Menschenbezogen", "Kuschelig", "Lebhaft"], traitsEn: ["Social", "Snuggly", "Lively"]
+        }
+      ];
+
+      var activeFilter = 'all';
+
+      function renderProfiles() {
+        var grid = document.getElementById('catGrid');
+        grid.innerHTML = '';
+
+        var filtered = catProfiles.filter(function (c) {
+          if (activeFilter === 'calm') return c.type === 'calm';
+          if (activeFilter === 'active') return c.type === 'active';
+          return true;
+        });
+
+        filtered.forEach(function (cat) {
+          var card = document.createElement('div');
+          card.className = 'cat-card';
+          var traits = lang === 'en' ? cat.traitsEn : cat.traitsDe;
+          var traitsHtml = traits.map(function(t){ return '<span class="trait-badge">' + t + '</span>'; }).join('');
+
+          card.innerHTML =
+            '<div class="cat-top">' +
+              '<span class="cat-avatar">' + cat.glyph + '</span>' +
+              '<span class="cat-archetype">' + cat.breed + '</span>' +
+            '</div>' +
+            '<div>' +
+              '<h3 class="cat-name">' + (lang === 'en' ? cat.nameEn : cat.nameDe) + '</h3>' +
+              '<p class="cat-desc">' + (lang === 'en' ? cat.descEn : cat.descDe) + '</p>' +
+            '</div>' +
+            '<div class="traits-list">' + traitsHtml + '</div>';
+
+          grid.appendChild(card);
+        });
+      }
+
+      document.getElementById('tabAll').addEventListener('click', function () {
+        playPurr(440, 0.12);
+        activeFilter = 'all';
+        updateTabs(this);
+      });
+      document.getElementById('tabCalm').addEventListener('click', function () {
+        playPurr(520, 0.12);
+        activeFilter = 'calm';
+        updateTabs(this);
+      });
+      document.getElementById('tabActive').addEventListener('click', function () {
+        playPurr(600, 0.12);
+        activeFilter = 'active';
+        updateTabs(this);
+      });
+
+      function updateTabs(btn) {
+        document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        renderProfiles();
+      }
+
+      document.getElementById('soundToggle').addEventListener('click', function () {
+        soundEnabled = !soundEnabled;
+        try { localStorage.setItem('manualai_sound', String(soundEnabled)); } catch(e){}
+        updateSoundUI();
+      });
+
+      document.getElementById('langToggle').addEventListener('click', function () {
+        lang = lang === 'de' ? 'en' : 'de';
+        document.documentElement.setAttribute('lang', lang);
+        try { localStorage.setItem('manualai_lang', lang); } catch(e){}
+        updateSoundUI();
+        document.getElementById('pageTitle').textContent = lang === 'en' ? "Explore 18 Feline Profiles" : "18 Katzenprofile entdecken";
+        document.getElementById('pageSub').textContent = lang === 'en'
+          ? "From the contemplative Philosopher to the soaring Acrobat: Discover cat archetypes matching your daily rhythm."
+          : "Vom bedächtigen Philosophen bis zum wilden Akrobaten: Erkunde die Facetten der Samtpfoten und finde den Charakter, der deine Welt bereichert.";
+        renderProfiles();
+      });
+
+      updateSoundUI();
+      renderProfiles();
+    })();
+  </script>
+</body>
+</html>

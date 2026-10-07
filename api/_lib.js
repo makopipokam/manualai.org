@@ -1,4 +1,3 @@
-// Shared helpers for the API routes. Files starting with "_" are not exposed as routes.
 import { createHash } from "node:crypto";
 
 export const hasOwn = (obj, key) => typeof key === "string" && Object.hasOwn(obj, key);

@@ -1,0 +1,964 @@
+<!doctype html>
+<html lang="de" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rift Vanguard — Hero Line Wars | manualAI</title>
+  <meta name="description" content="Rift Vanguard: Steuere deinen Champion, verteidige dein Portal mit Zaubern und entsende feindliche Monsterwellen für dauerhaftes Einkommen.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --bg: #090a16;
+      --card-bg: #11142a;
+      --panel-bg: rgba(17, 20, 42, 0.92);
+      --accent: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.4);
+      --purple: #a855f7;
+      --cyan: #06b6d4;
+      --amber: #f59e0b;
+      --coral: #ef4444;
+      --text: #eef2ff;
+      --text-muted: #8b92b5;
+      --line: #23274a;
+    }
+    [data-theme="light"] {
+      --bg: #f5f6ff;
+      --card-bg: #ffffff;
+      --panel-bg: rgba(255, 255, 255, 0.95);
+      --accent: #4f46e5;
+      --accent-glow: rgba(79, 70, 229, 0.25);
+      --purple: #9333ea;
+      --cyan: #0891b2;
+      --amber: #d97706;
+      --coral: #dc2626;
+      --text: #1e1b4b;
+      --text-muted: #64748b;
+      --line: #cbd5e1;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-bg);
+      backdrop-filter: blur(10px);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      display: grid;
+      place-items: center;
+      font-weight: bold;
+      color: #fff;
+    }
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+    .brand-title small {
+      font-size: 0.75rem;
+      color: var(--purple);
+      margin-left: 6px;
+      text-transform: uppercase;
+    }
+
+    .top-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-toggle {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .btn-toggle:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    main {
+      flex: 1;
+      max-width: 1400px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 16px;
+    }
+    @media (max-width: 1024px) {
+      main { grid-template-columns: 1fr; }
+    }
+
+    .arena-container {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .arena-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px;
+      background: var(--panel-bg);
+      border-bottom: 1px solid var(--line);
+      font-weight: 600;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .stat-badge span.val {
+      color: var(--cyan);
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 1.1rem;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 480px;
+      background: #05060f;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+    canvas#riftCanvas {
+      display: block;
+      background: #080a1c;
+      cursor: crosshair;
+      max-width: 100%;
+      height: auto;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Hero Skill Bar */
+    .skill-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 12px 18px;
+      background: var(--panel-bg);
+      border-top: 1px solid var(--line);
+    }
+    .skill-btn {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--text);
+      min-width: 80px;
+      position: relative;
+      transition: all 0.2s;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .touch-move-btn {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .touch-move-btn:active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    @media (max-width: 768px) {
+      .canvas-wrap { min-height: 380px; }
+      .arena-top { font-size: 0.8rem; padding: 8px 12px; }
+      .skill-btn { min-width: 65px; padding: 6px 10px; }
+    }
+    .skill-btn:hover {
+      border-color: var(--accent);
+      background: rgba(99, 102, 241, 0.1);
+    }
+    .skill-key {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: 0.7rem;
+      font-family: monospace;
+      color: var(--amber);
+      font-weight: bold;
+    }
+    .skill-icon { font-size: 1.4rem; }
+    .skill-name { font-size: 0.75rem; font-weight: 700; }
+    .skill-cd { font-size: 0.7rem; color: var(--coral); font-family: monospace; }
+
+    /* Side Panel */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .panel-box {
+      background: var(--card-bg);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .hero-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 8px;
+      background: rgba(0,0,0,0.15);
+      border-radius: 6px;
+    }
+
+    /* Send Lane Creeps (Income Mechanic) */
+    .send-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .send-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .send-item:hover {
+      border-color: var(--purple);
+      background: rgba(168, 85, 247, 0.1);
+    }
+    .send-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .send-info { display: flex; flex-direction: column; gap: 2px; }
+    .send-title { font-weight: 700; font-size: 0.88rem; }
+    .send-sub { font-size: 0.75rem; color: var(--text-muted); }
+    .send-inc { color: var(--accent); font-weight: 700; font-size: 0.8rem; }
+    .send-price {
+      background: var(--amber);
+      color: #000;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="/" class="brand" title="manualAI Startseite">
+      <div class="brand-mark">⚔️</div>
+      <div class="brand-title">
+        manualAI <small>Rift Vanguard</small>
+      </div>
+    </a>
+    <div class="top-controls">
+      <button id="langToggle" class="btn-toggle" type="button">DE / EN</button>
+      <button id="soundToggle" class="btn-toggle" type="button">🔊 Ton</button>
+      <button id="themeToggle" class="btn-toggle" type="button">🌓</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="arena-container">
+      <div class="arena-top">
+        <div class="stat-badge">
+          <span data-i18n="lives">Leben</span>:
+          <span class="val" id="dispLives" style="color:var(--coral)">20 / 20</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="gold">Gold</span>:
+          <span class="val" id="dispGold">150</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="income">Einkommen (10s)</span>:
+          <span class="val" id="dispIncome">+25</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="enemyLives">Gegner-Leben</span>:
+          <span class="val" id="dispEnemyLives" style="color:var(--purple)">20 / 20</span>
+        </div>
+        <div class="stat-badge">
+          <span data-i18n="timer">Nächste Auszahlung</span>:
+          <span class="val" id="dispTimer">10s</span>
+        </div>
+      </div>
+
+      <div class="canvas-wrap">
+        <canvas id="riftCanvas" width="860" height="520"></canvas>
+      </div>
+
+      <!-- Skill Bar & Mobile Touch Controls -->
+      <div class="skill-bar">
+        <button type="button" class="skill-btn touch-move-btn" id="btnTouchLeft" aria-label="Nach links bewegen">
+          <span class="skill-icon">◀</span>
+          <span class="skill-name">Links</span>
+        </button>
+        <div class="skill-btn" id="btnSkillQ">
+          <span class="skill-key">Q</span>
+          <span class="skill-icon">⚡</span>
+          <span class="skill-name">Rift Slash</span>
+          <span class="skill-cd" id="cdQ">Bereit</span>
+        </div>
+        <div class="skill-btn" id="btnSkillW">
+          <span class="skill-key">W</span>
+          <span class="skill-icon">❄️</span>
+          <span class="skill-name">Frost Nova</span>
+          <span class="skill-cd" id="cdW">Bereit</span>
+        </div>
+        <div class="skill-btn" id="btnSkillE">
+          <span class="skill-key">E</span>
+          <span class="skill-icon">🌀</span>
+          <span class="skill-name">Astral Dash</span>
+          <span class="skill-cd" id="cdE">Bereit</span>
+        </div>
+        <div class="skill-btn" id="btnSkillR">
+          <span class="skill-key">R</span>
+          <span class="skill-icon">💥</span>
+          <span class="skill-name">Supernova</span>
+          <span class="skill-cd" id="cdR">Bereit</span>
+        </div>
+        <button type="button" class="skill-btn touch-move-btn" id="btnTouchRight" aria-label="Nach rechts bewegen">
+          <span class="skill-icon">▶</span>
+          <span class="skill-name">Rechts</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Side Panel -->
+    <aside class="side-panel">
+      <div class="panel-box">
+        <div class="panel-title">
+          <span data-i18n="championStatus">Champion Status</span>
+          <span id="dispHeroLevel" style="color:var(--accent); font-weight:700">Lvl 1</span>
+        </div>
+        <div class="hero-stats-grid">
+          <div class="stat-row">
+            <span>HP</span>
+            <strong id="dispHeroHp" style="color:var(--coral)">500/500</strong>
+          </div>
+          <div class="stat-row">
+            <span>Mana</span>
+            <strong id="dispHeroMp" style="color:var(--cyan)">200/200</strong>
+          </div>
+          <div class="stat-row">
+            <span>Schaden</span>
+            <strong id="dispHeroDmg">45</strong>
+          </div>
+          <div class="stat-row">
+            <span>EXP</span>
+            <strong id="dispHeroExp" style="color:var(--purple)">0/100</strong>
+          </div>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">
+          Steuerung: <kbd>A/D</kbd> oder <kbd>←/→</kbd> Bewegen · <kbd>Klick</kbd> Angriff · <kbd>Q/W/E/R</kbd> Zauber
+        </div>
+      </div>
+
+      <div class="panel-box">
+        <div class="panel-title">
+          <span data-i18n="sendCreeps">Rift-Wellen entsenden</span>
+        </div>
+        <div class="send-list">
+          <div class="send-item" data-creep="voidling">
+            <div class="send-info">
+              <span class="send-title">👾 Leerling-Schwarm</span>
+              <span class="send-sub">Schnell · 3 Einheiten</span>
+              <span class="send-inc">+3 Einkommen</span>
+            </div>
+            <div class="send-price">30g</div>
+          </div>
+          <div class="send-item" data-creep="brute">
+            <div class="send-info">
+              <span class="send-title">🛡️ Schatten-Goliath</span>
+              <span class="send-sub">Gepanzerter Brecher</span>
+              <span class="send-inc">+8 Einkommen</span>
+            </div>
+            <div class="send-price">75g</div>
+          </div>
+          <div class="send-item" data-creep="shifter">
+            <div class="send-info">
+              <span class="send-title">🔮 Phasen-Zauberer</span>
+              <span class="send-sub">Magieresistent</span>
+              <span class="send-inc">+18 Einkommen</span>
+            </div>
+            <div class="send-price">160g</div>
+          </div>
+          <div class="send-item" data-creep="behemoth">
+            <div class="send-info">
+              <span class="send-title">🐉 Astral-Drache</span>
+              <span class="send-sub">Elite Bosswelle</span>
+              <span class="send-inc">+45 Einkommen</span>
+            </div>
+            <div class="send-price">350g</div>
+          </div>
+        </div>
+        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:10px;">
+          Entsende Monster in die gegnerische Lane. Jede Entsendung erhöht dein permanentes Einkommen alle 10 Sekunden!
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    (function() {
+      // Sound Synthesizer
+      var audioCtx = null;
+      var soundEnabled = localStorage.getItem('manualai_sound') !== 'false';
+
+      function playSound(type) {
+        if (!soundEnabled) return;
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          var now = audioCtx.currentTime;
+          var osc = audioCtx.createOscillator();
+          var gain = audioCtx.createGain();
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+
+          if (type === 'slash') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(400, now);
+            osc.frequency.exponentialRampToValueAtTime(120, now + 0.1);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now); osc.stop(now + 0.1);
+          } else if (type === 'frost') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(800, now);
+            osc.frequency.exponentialRampToValueAtTime(300, now + 0.25);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+            osc.start(now); osc.stop(now + 0.25);
+          } else if (type === 'dash') {
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.exponentialRampToValueAtTime(600, now + 0.15);
+            gain.gain.setValueAtTime(0.2, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+            osc.start(now); osc.stop(now + 0.15);
+          } else if (type === 'nova') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.4);
+            gain.gain.setValueAtTime(0.35, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+            osc.start(now); osc.stop(now + 0.4);
+          } else if (type === 'income') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523, now);
+            osc.frequency.setValueAtTime(659, now + 0.08);
+            gain.gain.setValueAtTime(0.18, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+            osc.start(now); osc.stop(now + 0.2);
+          }
+        } catch (e) {}
+      }
+
+      var soundBtn = document.getElementById('soundToggle');
+      function updateSoundBtn() {
+        soundBtn.textContent = soundEnabled ? '🔊 Ton' : '🔇 Stumm';
+      }
+      updateSoundBtn();
+      soundBtn.addEventListener('click', function() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('manualai_sound', soundEnabled ? 'true' : 'false');
+        updateSoundBtn();
+      });
+
+      var lang = localStorage.getItem('manualai_lang') || 'de';
+      var langBtn = document.getElementById('langToggle');
+      var I18N = {
+        de: {
+          lives: 'Leben', gold: 'Gold', income: 'Einkommen (10s)',
+          enemyLives: 'Gegner-Leben', timer: 'Nächste Auszahlung',
+          championStatus: 'Champion Status', sendCreeps: 'Rift-Wellen entsenden'
+        },
+        en: {
+          lives: 'Lives', gold: 'Gold', income: 'Income (10s)',
+          enemyLives: 'Enemy Lives', timer: 'Next Payout',
+          championStatus: 'Champion Status', sendCreeps: 'Dispatch Rift Waves'
+        }
+      };
+      function updateLang() {
+        var t = I18N[lang] || I18N.de;
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var k = el.getAttribute('data-i18n');
+          if (t[k]) el.textContent = t[k];
+        });
+      }
+      updateLang();
+      langBtn.addEventListener('click', function() {
+        lang = lang === 'de' ? 'en' : 'de';
+        localStorage.setItem('manualai_lang', lang);
+        updateLang();
+      });
+
+      var themeBtn = document.getElementById('themeToggle');
+      var curTheme = localStorage.getItem('manualai_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', curTheme);
+      themeBtn.addEventListener('click', function() {
+        curTheme = curTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', curTheme);
+        localStorage.setItem('manualai_theme', curTheme);
+      });
+
+      // Canvas & Game State
+      var canvas = document.getElementById('riftCanvas');
+      var ctx = canvas.getContext('2d');
+
+      var playerLives = 20;
+      var enemyLives = 20;
+      var gold = 150;
+      var income = 25;
+      var incomeTimer = 10;
+
+      // Hero
+      var hero = {
+        x: canvas.width / 2,
+        y: canvas.height - 60,
+        radius: 18,
+        level: 1,
+        exp: 0,
+        maxExp: 100,
+        hp: 500, maxHp: 500,
+        mp: 200, maxMp: 200,
+        dmg: 45,
+        spd: 240,
+        moveLeft: false,
+        moveRight: false
+      };
+
+      // Spells
+      var skills = {
+        q: { name: 'Rift Slash', cd: 0, maxCd: 2.5, mp: 25 },
+        w: { name: 'Frost Nova', cd: 0, maxCd: 6.0, mp: 50 },
+        e: { name: 'Astral Dash', cd: 0, maxCd: 4.0, mp: 35 },
+        r: { name: 'Supernova', cd: 0, maxCd: 14.0, mp: 100 }
+      };
+
+      var creeps = [];
+      var slashes = [];
+      var particles = [];
+
+      // Enemy send definitions
+      var CREEP_SENDS = {
+        voidling: { cost: 30, inc: 3, count: 3, hp: 60, dmg: 1 },
+        brute: { cost: 75, inc: 8, count: 1, hp: 280, dmg: 2 },
+        shifter: { cost: 160, inc: 18, count: 2, hp: 320, dmg: 3 },
+        behemoth: { cost: 350, inc: 45, count: 1, hp: 900, dmg: 5 }
+      };
+
+      // Creep wave interval (periodic spawns on player lane)
+      var creepSpawnTimer = 3.5;
+
+      // UI elements
+      var dispLives = document.getElementById('dispLives');
+      var dispGold = document.getElementById('dispGold');
+      var dispIncome = document.getElementById('dispIncome');
+      var dispEnemyLives = document.getElementById('dispEnemyLives');
+      var dispTimer = document.getElementById('dispTimer');
+      var dispHeroLevel = document.getElementById('dispHeroLevel');
+      var dispHeroHp = document.getElementById('dispHeroHp');
+      var dispHeroMp = document.getElementById('dispHeroMp');
+      var dispHeroDmg = document.getElementById('dispHeroDmg');
+      var dispHeroExp = document.getElementById('dispHeroExp');
+
+      var cdQ = document.getElementById('cdQ');
+      var cdW = document.getElementById('cdW');
+      var cdE = document.getElementById('cdE');
+      var cdR = document.getElementById('cdR');
+
+      function updateStatsUI() {
+        dispLives.textContent = playerLives + ' / 20';
+        dispEnemyLives.textContent = enemyLives + ' / 20';
+        dispGold.textContent = gold;
+        dispIncome.textContent = '+' + income;
+        dispTimer.textContent = Math.ceil(incomeTimer) + 's';
+
+        dispHeroLevel.textContent = 'Lvl ' + hero.level;
+        dispHeroHp.textContent = Math.round(hero.hp) + '/' + hero.maxHp;
+        dispHeroMp.textContent = Math.round(hero.mp) + '/' + hero.maxMp;
+        dispHeroDmg.textContent = hero.dmg;
+        dispHeroExp.textContent = hero.exp + '/' + hero.maxExp;
+
+        cdQ.textContent = skills.q.cd > 0 ? skills.q.cd.toFixed(1) + 's' : 'Bereit';
+        cdW.textContent = skills.w.cd > 0 ? skills.w.cd.toFixed(1) + 's' : 'Bereit';
+        cdE.textContent = skills.e.cd > 0 ? skills.e.cd.toFixed(1) + 's' : 'Bereit';
+        cdR.textContent = skills.r.cd > 0 ? skills.r.cd.toFixed(1) + 's' : 'Bereit';
+
+        document.querySelectorAll('.send-item').forEach(function(item) {
+          var type = item.getAttribute('data-creep');
+          if (gold < CREEP_SENDS[type].cost) item.classList.add('disabled');
+          else item.classList.remove('disabled');
+        });
+      }
+
+      // Send Creep Clicks
+      document.querySelectorAll('.send-item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var type = this.getAttribute('data-creep');
+          var def = CREEP_SENDS[type];
+          if (gold >= def.cost) {
+            gold -= def.cost;
+            income += def.inc;
+            playSound('slash');
+            // Deal damage to rival lives over time or trigger enemy leak
+            setTimeout(function() {
+              if (enemyLives > 0) {
+                enemyLives = Math.max(0, enemyLives - def.dmg);
+                updateStatsUI();
+              }
+            }, 4000);
+            updateStatsUI();
+          }
+        });
+      });
+
+      // Keyboard Controls
+      window.addEventListener('keydown', function(e) {
+        if (e.key === 'a' || e.key === 'ArrowLeft') hero.moveLeft = true;
+        if (e.key === 'd' || e.key === 'ArrowRight') hero.moveRight = true;
+        if (e.key === 'q' || e.key === 'Q') castSkill('q');
+        if (e.key === 'w' || e.key === 'W') castSkill('w');
+        if (e.key === 'e' || e.key === 'E') castSkill('e');
+        if (e.key === 'r' || e.key === 'R') castSkill('r');
+      });
+      window.addEventListener('keyup', function(e) {
+        if (e.key === 'a' || e.key === 'ArrowLeft') hero.moveLeft = false;
+        if (e.key === 'd' || e.key === 'ArrowRight') hero.moveRight = false;
+      });
+
+      // Skill clicks
+      document.getElementById('btnSkillQ').addEventListener('click', function() { castSkill('q'); });
+      document.getElementById('btnSkillW').addEventListener('click', function() { castSkill('w'); });
+      document.getElementById('btnSkillE').addEventListener('click', function() { castSkill('e'); });
+      document.getElementById('btnSkillR').addEventListener('click', function() { castSkill('r'); });
+
+      function castSkill(sk) {
+        var s = skills[sk];
+        if (s.cd <= 0 && hero.mp >= s.mp) {
+          hero.mp -= s.mp;
+          s.cd = s.maxCd;
+
+          if (sk === 'q') {
+            playSound('slash');
+            slashes.push({ x: hero.x, y: hero.y - 30, radius: 90, dmg: hero.dmg * 2.2, life: 0.25 });
+          } else if (sk === 'w') {
+            playSound('frost');
+            creeps.forEach(function(c) {
+              if (Math.hypot(c.x - hero.x, c.y - hero.y) < 220) {
+                c.hp -= hero.dmg * 1.5;
+                c.spd *= 0.3;
+                particles.push({ x: c.x, y: c.y, color: '#06b6d4', life: 0.8 });
+              }
+            });
+          } else if (sk === 'e') {
+            playSound('dash');
+            hero.x = Math.max(40, Math.min(canvas.width - 40, hero.x + (hero.moveLeft ? -160 : 160)));
+            slashes.push({ x: hero.x, y: hero.y, radius: 70, dmg: hero.dmg * 1.8, life: 0.2 });
+          } else if (sk === 'r') {
+            playSound('nova');
+            creeps.forEach(function(c) {
+              c.hp -= hero.dmg * 5.0;
+              particles.push({ x: c.x, y: c.y, color: '#a855f7', life: 1.0 });
+            });
+          }
+          updateStatsUI();
+        }
+      }
+
+      // Touch Movement Buttons for Mobile
+      var btnTouchLeft = document.getElementById('btnTouchLeft');
+      var btnTouchRight = document.getElementById('btnTouchRight');
+      if (btnTouchLeft && btnTouchRight) {
+        var startLeft = function(e) { e.preventDefault(); hero.moveLeft = true; };
+        var stopLeft = function(e) { e.preventDefault(); hero.moveLeft = false; };
+        var startRight = function(e) { e.preventDefault(); hero.moveRight = true; };
+        var stopRight = function(e) { e.preventDefault(); hero.moveRight = false; };
+
+        btnTouchLeft.addEventListener('touchstart', startLeft, { passive: false });
+        btnTouchLeft.addEventListener('touchend', stopLeft, { passive: false });
+        btnTouchLeft.addEventListener('mousedown', startLeft);
+        btnTouchLeft.addEventListener('mouseup', stopLeft);
+        btnTouchLeft.addEventListener('mouseleave', stopLeft);
+
+        btnTouchRight.addEventListener('touchstart', startRight, { passive: false });
+        btnTouchRight.addEventListener('touchend', stopRight, { passive: false });
+        btnTouchRight.addEventListener('mousedown', startRight);
+        btnTouchRight.addEventListener('mouseup', stopRight);
+        btnTouchRight.addEventListener('mouseleave', stopRight);
+      }
+
+      // Attack click and mobile touch
+      function handleAttackAt(clientX, clientY) {
+        var rect = canvas.getBoundingClientRect();
+        var scaleX = canvas.width / rect.width;
+        var scaleY = canvas.height / rect.height;
+        var mx = (clientX - rect.left) * scaleX;
+        var my = (clientY - rect.top) * scaleY;
+        playSound('slash');
+        slashes.push({ x: mx, y: my, radius: 45, dmg: hero.dmg, life: 0.2 });
+      }
+
+      canvas.addEventListener('click', function(e) {
+        handleAttackAt(e.clientX, e.clientY);
+      });
+      canvas.addEventListener('touchstart', function(e) {
+        if (e.touches && e.touches[0]) {
+          e.preventDefault();
+          handleAttackAt(e.touches[0].clientX, e.touches[0].clientY);
+        }
+      }, { passive: false });
+
+      // Game Loop
+      var lastTime = performance.now();
+
+      function update(dt) {
+        // Income timer
+        incomeTimer -= dt;
+        if (incomeTimer <= 0) {
+          incomeTimer = 10;
+          gold += income;
+          playSound('income');
+          updateStatsUI();
+        }
+
+        // Mana regen
+        hero.mp = Math.min(hero.maxMp, hero.mp + dt * 15);
+
+        // Hero Movement
+        if (hero.moveLeft) hero.x -= hero.spd * dt;
+        if (hero.moveRight) hero.x += hero.spd * dt;
+        hero.x = Math.max(30, Math.min(canvas.width - 30, hero.x));
+
+        // Skill cooldowns
+        for (var k in skills) {
+          if (skills[k].cd > 0) skills[k].cd = Math.max(0, skills[k].cd - dt);
+        }
+
+        // Spawn lane creeps
+        creepSpawnTimer -= dt;
+        if (creepSpawnTimer <= 0) {
+          creepSpawnTimer = 3.2;
+          for (var i = 0; i < 3; i++) {
+            creeps.push({
+              x: 80 + Math.random() * (canvas.width - 160),
+              y: -20 - (i * 30),
+              hp: 80 + hero.level * 25,
+              maxHp: 80 + hero.level * 25,
+              spd: 60 + Math.random() * 25,
+              bounty: 12
+            });
+          }
+        }
+
+        // Creep logic
+        for (var ci = creeps.length - 1; ci >= 0; ci--) {
+          var c = creeps[ci];
+          c.y += c.spd * dt;
+
+          // Check hit by active slashes
+          for (var si = 0; si < slashes.length; si++) {
+            var sl = slashes[si];
+            if (Math.hypot(c.x - sl.x, c.y - sl.y) < sl.radius) {
+              c.hp -= sl.dmg * dt * 8;
+            }
+          }
+
+          // Creep death
+          if (c.hp <= 0) {
+            gold += c.bounty;
+            hero.exp += 15;
+            particles.push({ x: c.x, y: c.y, color: '#f59e0b', life: 0.4 });
+            creeps.splice(ci, 1);
+
+            // Level up
+            if (hero.exp >= hero.maxExp) {
+              hero.level++;
+              hero.exp -= hero.maxExp;
+              hero.maxExp = Math.round(hero.maxExp * 1.4);
+              hero.maxHp += 80;
+              hero.hp = hero.maxHp;
+              hero.dmg += 15;
+            }
+            updateStatsUI();
+            continue;
+          }
+
+          // Leaked through player portal (bottom)
+          if (c.y >= canvas.height - 15) {
+            playerLives--;
+            creeps.splice(ci, 1);
+            updateStatsUI();
+            if (playerLives <= 0) {
+              alert(lang === 'en' ? 'Defeat! Portal depleted.' : 'Niederlage! Dein Portal wurde überrannt.');
+              playerLives = 20;
+            }
+          }
+        }
+
+        // Slashes decay
+        for (var sIdx = slashes.length - 1; sIdx >= 0; sIdx--) {
+          slashes[sIdx].life -= dt;
+          if (slashes[sIdx].life <= 0) slashes.splice(sIdx, 1);
+        }
+
+        // Particles decay
+        for (var pIdx = particles.length - 1; pIdx >= 0; pIdx--) {
+          particles[pIdx].life -= dt;
+          if (particles[pIdx].life <= 0) particles.splice(pIdx, 1);
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Lane grid / runway
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.15)';
+        for (var x = 0; x < canvas.width; x += 50) {
+          ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+        }
+
+        // Portal Gate (Bottom)
+        ctx.fillStyle = 'rgba(99, 102, 241, 0.2)';
+        ctx.fillRect(0, canvas.height - 30, canvas.width, 30);
+        ctx.strokeStyle = '#6366f1';
+        ctx.strokeRect(0, canvas.height - 30, canvas.width, 30);
+
+        // Hero
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(hero.x, hero.y, hero.radius, 0, Math.PI * 2);
+        ctx.fillStyle = '#6366f1';
+        ctx.fill();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+
+        // Hero glow aura
+        ctx.beginPath();
+        ctx.arc(hero.x, hero.y, hero.radius + 6, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        ctx.restore();
+
+        // Creeps
+        creeps.forEach(function(c) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(c.x, c.y, 12, 0, Math.PI * 2);
+          ctx.fillStyle = '#ef4444';
+          ctx.fill();
+          ctx.strokeStyle = '#000';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          // HP bar
+          var pct = Math.max(0, c.hp / c.maxHp);
+          ctx.fillStyle = 'rgba(0,0,0,0.5)';
+          ctx.fillRect(c.x - 14, c.y - 18, 28, 4);
+          ctx.fillStyle = '#22c55e';
+          ctx.fillRect(c.x - 14, c.y - 18, 28 * pct, 4);
+          ctx.restore();
+        });
+
+        // Slash effects
+        slashes.forEach(function(s) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(168, 85, 247, 0.6)';
+          ctx.lineWidth = 4;
+          ctx.stroke();
+          ctx.fillStyle = 'rgba(168, 85, 247, 0.15)';
+          ctx.fill();
+          ctx.restore();
+        });
+
+        // Particles
+        particles.forEach(function(p) {
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 5 * p.life, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+          ctx.restore();
+        });
+      }
+
+      function loop(now) {
+        var dt = Math.min(0.1, (now - lastTime) / 1000);
+        lastTime = now;
+        update(dt);
+        draw();
+        requestAnimationFrame(loop);
+      }
+      requestAnimationFrame(loop);
+
+      updateStatsUI();
+    })();
+  </script>
+</body>
+</html>

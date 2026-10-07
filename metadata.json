@@ -1,0 +1,7 @@
+{
+  "name": "manualAI — Wähle deine Erfahrung",
+  "description": "manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.",
+  "capabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

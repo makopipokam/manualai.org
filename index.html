@@ -5,8 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#f3efe5">
   <meta name="description" content="manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.">
+  <meta name="keywords" content="manualAI, manualai.org, KI, AI, pwnd, Teichgarten, Quizbattle, MyDog, Hunderassen Test, Hundequiz, MyCat, Katzenprofile, Katzencharaktere, Fish Royale, Riff Taktik, Taktik Arena, Tauben vs Krähen, TaubenVSKrähen, pidgeons & crows, pigeons and crows, Strategiespiel, interaktive Spiele, KI Experimente, Neugier, Gamification">
+  <meta property="og:title" content="manualAI — Wähle deine Erfahrung">
+  <meta property="og:description" content="manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="manualAI — Wähle deine Erfahrung">
+  <meta name="twitter:description" content="manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <title>manualAI — Wähle deine Erfahrung</title>
+  <script>
+    (function () {
+      try {
+        var stored = localStorage.getItem('manualai_theme');
+        var systemDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored ? stored : (systemDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+        var metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', theme === 'dark' ? '#121916' : '#f3efe5');
+
+        var storedLang = localStorage.getItem('manualai_lang');
+        var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        var defaultLang = browserLang.startsWith('de') ? 'de' : 'en';
+        var lang = storedLang || defaultLang;
+        document.documentElement.setAttribute('lang', lang);
+      } catch (e) {}
+    })();
+  </script>
   <style>
     :root {
       color-scheme: light;
@@ -26,6 +50,24 @@
       --shadow: 0 20px 60px rgba(62, 67, 51, .11);
       --display: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --paper: #121916;
+      --paper-deep: #19231f;
+      --ink: #f0f4f1;
+      --muted: #95a39a;
+      --line: rgba(240, 244, 241, .14);
+      --line-strong: rgba(240, 244, 241, .26);
+      --green: #48a587;
+      --green-soft: #1d362d;
+      --green-pale: #152620;
+      --coral: #e08365;
+      --coral-soft: #38241d;
+      --blue: #81b7bb;
+      --cream: #1e2824;
+      --shadow: 0 20px 60px rgba(0, 0, 0, .45);
     }
 
     * { box-sizing: border-box; }
@@ -67,22 +109,287 @@
       border-bottom: 1px solid var(--line);
     }
 
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
     .wordmark { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; }
     .wordmark-mark {
       display: grid;
       place-items: center;
-      width: 34px;
-      height: 34px;
-      border: 1px solid var(--green);
-      border-radius: 50%;
-      color: var(--green);
-      font-size: 18px;
-      line-height: 1;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .wordmark:hover .wordmark-mark {
+      transform: scale(1.05);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+    .wordmark-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
     .wordmark-name { font-size: 16px; font-weight: 800; letter-spacing: -.045em; }
     .wordmark-name small { margin-left: 2px; color: var(--muted); font-family: var(--mono); font-size: 9px; font-weight: 700; letter-spacing: .03em; }
     .nav-note { display: flex; align-items: center; gap: 9px; color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; text-transform: uppercase; }
     .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 5px rgba(40,109,89,.1); }
+
+
+    /* Language Toggle Control */
+    .lang-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px 5px;
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
+    }
+    .lang-toggle:hover {
+      border-color: var(--line-strong);
+    }
+    .lang-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      cursor: pointer;
+      user-select: none;
+      transition: color .18s ease, background .18s ease, box-shadow .18s ease;
+      line-height: 1.2;
+    }
+    .lang-btn:hover {
+      color: var(--ink);
+    }
+    .lang-btn.active {
+      color: var(--ink);
+      background: var(--paper);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .09);
+    }
+    [data-theme="dark"] .lang-btn.active {
+      background: rgba(240, 244, 241, .16);
+      color: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+    }
+    .lang-btn:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 1px;
+    }
+    .lang-divider {
+      color: var(--muted);
+      font-size: 9px;
+      opacity: .5;
+      padding: 0 1px;
+      user-select: none;
+    }
+
+    /* Theme Toggle Button */
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px 4px 5px;
+      background: var(--paper-deep);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      cursor: pointer;
+      user-select: none;
+      transition: background .2s ease, border-color .2s ease, transform .15s ease, box-shadow .2s ease;
+    }
+    .theme-toggle:hover {
+      border-color: var(--line-strong);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .06);
+    }
+    .theme-toggle:active {
+      transform: translateY(0);
+    }
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--green);
+      outline-offset: 2px;
+    }
+
+    .theme-toggle-track {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      width: 42px;
+      height: 22px;
+      padding: 2px;
+      background: rgba(29, 41, 37, .14);
+      border-radius: 999px;
+      transition: background .25s ease;
+    }
+    [data-theme="dark"] .theme-toggle-track {
+      background: rgba(240, 244, 241, .18);
+    }
+
+    .theme-toggle-thumb {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 18px;
+      height: 18px;
+      background: var(--paper);
+      border-radius: 50%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+      transform: translateX(0);
+      transition: transform .25s cubic-bezier(0.2, 0.8, 0.3, 1), background .25s ease;
+      color: var(--ink);
+    }
+    [data-theme="dark"] .theme-toggle-thumb {
+      transform: translateX(20px);
+      background: var(--green);
+      color: #fff;
+    }
+
+    .theme-icon {
+      position: absolute;
+      transition: opacity .2s ease, transform .25s ease;
+    }
+    .theme-icon.icon-sun {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      color: #d97706;
+    }
+    .theme-icon.icon-moon {
+      opacity: 0;
+      transform: scale(0.6) rotate(-90deg);
+      color: #f0f4f1;
+    }
+    [data-theme="dark"] .theme-icon.icon-sun {
+      opacity: 0;
+      transform: scale(0.6) rotate(90deg);
+    }
+    [data-theme="dark"] .theme-icon.icon-moon {
+      opacity: 1;
+      transform: scale(1) rotate(0deg);
+      color: #fff;
+    }
+
+    .theme-toggle-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--muted);
+    }
+    [data-theme="dark"] .theme-toggle-label {
+      color: var(--ink);
+    }
+
+    /* Dark Mode Visual Overrides */
+    [data-theme="dark"] body {
+      background:
+        radial-gradient(circle at 12% 0%, rgba(35, 68, 55, .55), transparent 32rem),
+        radial-gradient(circle at 95% 60%, rgba(68, 42, 32, .42), transparent 32rem),
+        var(--paper);
+    }
+    [data-theme="dark"] body::before {
+      background-image: radial-gradient(rgba(240, 244, 241, .14) .55px, transparent .55px);
+      opacity: .2;
+    }
+    [data-theme="dark"] .hero-aside {
+      background: rgba(25, 36, 32, .75);
+      border-color: var(--line);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, .4);
+    }
+    [data-theme="dark"] .hero-aside::before {
+      border-color: rgba(72, 165, 135, .28);
+    }
+    [data-theme="dark"] .hero-aside::after {
+      border-color: rgba(224, 131, 101, .28);
+    }
+    [data-theme="dark"] .orbit-core::before {
+      border-color: rgba(72, 165, 135, .32);
+    }
+    [data-theme="dark"] .orbit-core::after {
+      border-color: rgba(224, 131, 101, .3);
+    }
+    [data-theme="dark"] .app-card {
+      box-shadow: 0 16px 40px rgba(0, 0, 0, .4);
+    }
+    [data-theme="dark"] .app-card:hover,
+    [data-theme="dark"] .app-card:focus-visible {
+      box-shadow: 0 28px 70px rgba(0, 0, 0, .65);
+      border-color: var(--line-strong);
+    }
+    [data-theme="dark"] .app-card:active,
+    [data-theme="dark"] .app-card.is-pressed,
+    [data-theme="dark"] .app-card.pressed {
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .55);
+    }
+    [data-theme="dark"] .app-card::after {
+      border-color: rgba(240, 244, 241, .09);
+      box-shadow: 0 0 0 20px rgba(240, 244, 241, .02), 0 0 0 43px rgba(240, 244, 241, .015);
+    }
+    [data-theme="dark"] .pwnd-card {
+      background: linear-gradient(145deg, #162c23, #10211a);
+    }
+    [data-theme="dark"] .mydog-card {
+      background: linear-gradient(145deg, #2d1e16, #1c140f);
+    }
+    [data-theme="dark"] .mycat-card {
+      background: linear-gradient(145deg, #281a2d, #1a121f);
+    }
+    [data-theme="dark"] .fishroyale-card {
+      background: linear-gradient(145deg, #132b26, #0e1e1a);
+    }
+    [data-theme="dark"] .tauben-kraehen-card {
+      background: linear-gradient(145deg, #232c1c, #171d13);
+    }
+    [data-theme="dark"] .biomancer-card {
+      background: linear-gradient(145deg, #11281e, #0a1812);
+    }
+    [data-theme="dark"] .rift-card {
+      background: linear-gradient(145deg, #161a3d, #0d0f26);
+    }
+    [data-theme="dark"] .mall-card {
+      background: linear-gradient(145deg, #301625, #1d0c16);
+    }
+    [data-theme="dark"] .citadel-card {
+      background: linear-gradient(145deg, #2b1f13, #1a120a);
+    }
+    [data-theme="dark"] .celestial-card {
+      background: linear-gradient(145deg, #282410, #181608);
+    }
+    [data-theme="dark"] .app-card p {
+      color: rgba(240, 244, 241, .78);
+    }
+    [data-theme="dark"] .mydog-card .card-tag,
+    [data-theme="dark"] .mydog-card .card-glyph,
+    [data-theme="dark"] .mydog-card .launch { color: #f1987d; }
+    [data-theme="dark"] .mycat-card .card-tag,
+    [data-theme="dark"] .mycat-card .card-glyph,
+    [data-theme="dark"] .mycat-card .launch { color: #c49be8; }
+    [data-theme="dark"] .fishroyale-card .card-tag,
+    [data-theme="dark"] .fishroyale-card .card-glyph,
+    [data-theme="dark"] .fishroyale-card .launch { color: #4dc7ba; }
+    [data-theme="dark"] .tauben-kraehen-card .card-tag,
+    [data-theme="dark"] .tauben-kraehen-card .card-glyph,
+    [data-theme="dark"] .tauben-kraehen-card .launch { color: #97cd82; }
 
     .hero {
       display: grid;
@@ -112,14 +419,140 @@
     .section-head h2 { margin: 0; font-size: 14px; font-weight: 800; letter-spacing: -.02em; }
     .section-count { color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .08em; }
     .app-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
-    .app-card { position: relative; display: flex; min-height: 336px; flex-direction: column; justify-content: space-between; padding: clamp(24px, 3vw, 34px); overflow: hidden; border: 1px solid var(--line); border-radius: 26px; text-decoration: none; box-shadow: var(--shadow); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
-    .app-card:hover, .app-card:focus-visible { transform: translateY(-6px); border-color: var(--line-strong); box-shadow: 0 30px 70px rgba(62,67,51,.18); outline: none; }
+    .app-card {
+      position: relative;
+      display: flex;
+      min-height: 336px;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: clamp(24px, 3vw, 34px);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      text-decoration: none;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(22px);
+      transition:
+        opacity .55s cubic-bezier(0.16, 1, 0.3, 1),
+        transform .55s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow .25s ease,
+        border-color .25s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      will-change: opacity, transform;
+    }
+    .app-card.revealed,
+    .app-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .app-card[data-index="0"] { transition-delay: 0ms; }
+    .app-card[data-index="1"] { transition-delay: 75ms; }
+    .app-card[data-index="2"] { transition-delay: 150ms; }
+    .app-card[data-index="3"] { transition-delay: 225ms; }
+    .app-card[data-index="4"] { transition-delay: 300ms; }
+    .app-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--line-strong);
+      box-shadow: 0 30px 70px rgba(62,67,51,.18);
+      outline: none;
+      transition-delay: 0s !important;
+    }
+    .app-card:focus-visible {
+      transform: translateY(-6px);
+      border-color: var(--green);
+      outline: 2px solid var(--green);
+      outline-offset: 3px;
+      box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--green), 0 30px 70px rgba(62,67,51,.25);
+      transition-delay: 0s !important;
+    }
+    [data-theme="dark"] .app-card:focus-visible {
+      border-color: var(--green);
+      outline-color: var(--green);
+      box-shadow: 0 0 0 3px var(--paper), 0 0 0 6px var(--green), 0 30px 70px rgba(0,0,0,.65);
+    }
+    .app-card:active, .app-card.is-pressed, .app-card.pressed {
+      transform: scale(0.975);
+      box-shadow: 0 8px 22px rgba(62,67,51,.14);
+      transition: transform .12s cubic-bezier(0.2, 0.8, 0.4, 1), box-shadow .12s ease;
+      transition-delay: 0s !important;
+    }
     .app-card::after { content: ""; position: absolute; width: 230px; height: 230px; right: -78px; bottom: -100px; border: 1px solid rgba(29,41,37,.16); border-radius: 50%; box-shadow: 0 0 0 20px rgba(29,41,37,.035), 0 0 0 43px rgba(29,41,37,.025); }
     .pwnd-card { background: linear-gradient(145deg, var(--green-pale), var(--green-soft)); }
     .mydog-card { background: linear-gradient(145deg, #fff8ed, var(--coral-soft)); }
     .mycat-card { background: linear-gradient(145deg, #f6f0fb, #f6d9e3); }
     .fishroyale-card { background: linear-gradient(145deg, #e7f2e9, #cbe6dc); }
     .tauben-kraehen-card { background: linear-gradient(145deg, #f3f4df, #d4e2c7); }
+    .biomancer-card { background: linear-gradient(145deg, #e8f5ec, #cee8d4); }
+    .rift-card { background: linear-gradient(145deg, #eef1ff, #d7dffe); }
+    .mall-card { background: linear-gradient(145deg, #fdf0f5, #f8d4e4); }
+    .citadel-card { background: linear-gradient(145deg, #fef5e8, #fae2be); }
+    .celestial-card { background: linear-gradient(145deg, #fefae8, #fbf0b5); }
+
+    .biomancer-card .card-tag, .biomancer-card .card-glyph, .biomancer-card .launch { color: #15803d; }
+    .rift-card .card-tag, .rift-card .card-glyph, .rift-card .launch { color: #4f46e5; }
+    .mall-card .card-tag, .mall-card .card-glyph, .mall-card .launch { color: #e11d48; }
+    .citadel-card .card-tag, .citadel-card .card-glyph, .citadel-card .launch { color: #b45309; }
+    .celestial-card .card-tag, .celestial-card .card-glyph, .celestial-card .launch { color: #a16207; }
+
+    /* Filter Bar Styles */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .filter-btn {
+      background: var(--paper);
+      border: 1px solid var(--line-strong);
+      color: var(--ink);
+      padding: 7px 16px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s ease;
+      font-family: inherit;
+    }
+    .filter-btn:hover {
+      border-color: var(--green);
+      color: var(--green);
+    }
+    .filter-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: #fff;
+    }
+    [data-theme="dark"] .filter-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--line);
+    }
+    [data-theme="dark"] .filter-btn:hover {
+      border-color: var(--green-pale);
+      color: var(--green-pale);
+    }
+    [data-theme="dark"] .filter-btn.active {
+      background: var(--green);
+      color: #0b1210;
+    }
+    .app-card.filtered-out {
+      display: none !important;
+    }
+    .platform-pill {
+      font-size: 9px;
+      font-family: var(--mono);
+      padding: 3px 7px;
+      border-radius: 6px;
+      background: rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    [data-theme="dark"] .platform-pill {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
     .card-top, .card-bottom { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
     .card-index { color: var(--muted); font-family: var(--mono); font-size: 10px; font-weight: 700; letter-spacing: .08em; }
     .card-tag { padding: 7px 9px; border: 1px solid currentColor; border-radius: 999px; color: var(--green); font-family: var(--mono); font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
@@ -141,6 +574,84 @@
     .arrow { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid currentColor; border-radius: 50%; font-size: 17px; transition: transform .25s ease; }
     .app-card:hover .arrow, .app-card:focus-visible .arrow { transform: translateX(5px); }
 
+    /* Subtle, Slim Top-Aligned Loading Bar */
+    .loading-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 3px;
+      z-index: 10000;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      background: rgba(29, 41, 37, .04);
+      transition: opacity .22s ease, visibility .22s ease;
+    }
+    [data-theme="dark"] .loading-bar {
+      background: rgba(240, 244, 241, .06);
+    }
+    .loading-bar.active,
+    .loading-bar.is-loading,
+    .loading-bar[data-state="loading"] {
+      opacity: 1;
+      visibility: visible;
+    }
+    .loading-bar-progress {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green) 0%, #4dc7ba 60%, var(--coral) 100%);
+      box-shadow: 0 0 10px rgba(40, 109, 89, .75), 0 0 4px var(--coral);
+      border-radius: 0 2px 2px 0;
+      transition: width .28s cubic-bezier(0.1, 0.8, 0.25, 1);
+      will-change: width;
+    }
+    [data-theme="dark"] .loading-bar-progress {
+      background: linear-gradient(90deg, var(--green) 0%, #81b7bb 60%, var(--coral) 100%);
+      box-shadow: 0 0 12px rgba(72, 165, 135, .85), 0 0 6px var(--coral);
+    }
+    .loading-bar-glow {
+      position: absolute;
+      top: -3px;
+      right: 0;
+      width: 60px;
+      height: 9px;
+      background: radial-gradient(ellipse at center, rgba(255, 255, 255, .9), transparent 70%);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .loading-bar.active .loading-bar-glow,
+    .loading-bar[data-state="loading"] .loading-bar-glow {
+      opacity: .85;
+      animation: loading-bar-pulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes loading-bar-pulse {
+      0% { opacity: .4; transform: scaleX(0.9); }
+      100% { opacity: 1; transform: scaleX(1.1); }
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+      .app-card:hover {
+        transform: none;
+        box-shadow: var(--shadow);
+      }
+      .app-card:active,
+      .app-card.is-pressed,
+      .app-card.pressed {
+        transform: scale(0.972);
+        box-shadow: 0 6px 18px rgba(62, 67, 51, .12);
+      }
+      [data-theme="dark"] .app-card:active,
+      [data-theme="dark"] .app-card.is-pressed,
+      [data-theme="dark"] .app-card.pressed {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .5);
+      }
+    }
+
     footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-top: 25px; color: var(--muted); font-family: var(--mono); font-size: 10px; letter-spacing: .03em; }
     footer a { color: var(--ink); text-decoration: none; }
     footer a:hover { color: var(--green); }
@@ -151,6 +662,8 @@
     @media (max-width: 760px) {
       main { width: min(100% - 34px, 620px); padding-top: 18px; }
       .nav-note { display: none; }
+      .nav-right { gap: 10px; }
+      .lang-btn { padding: 3px 6px; font-size: 10px; }
       .hero { grid-template-columns: 1fr; gap: 34px; padding: 72px 0 58px; }
       .hero-aside { min-height: 210px; }
       .aside-title { margin-top: 32px; }
@@ -158,6 +671,9 @@
       .app-card { min-height: 290px; }
     }
     @media (max-width: 430px) {
+      .nav-right { gap: 6px; }
+      .theme-toggle-label { display: none; }
+      .theme-toggle { padding: 4px; }
       h1 { font-size: clamp(48px, 16vw, 72px); }
       .hero { padding-top: 58px; }
       .hero-copy { font-size: 16px; }
@@ -169,88 +685,805 @@
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+      .app-card {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
+  <!-- Slim top-aligned loading bar indicating navigation is in progress -->
+  <div id="loading-bar" class="loading-bar" role="progressbar" aria-hidden="true" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="Erfahrung wird geladen / Loading experience">
+    <div class="loading-bar-progress"></div>
+    <div class="loading-bar-glow" aria-hidden="true"></div>
+  </div>
+
   <main>
-    <nav class="nav" aria-label="Hauptnavigation">
-      <a class="wordmark" href="/" aria-label="manualAI Startseite">
-        <span class="wordmark-mark" aria-hidden="true">✦</span>
+    <nav class="nav" aria-label="Hauptnavigation" data-i18n-aria="navAria">
+      <a class="wordmark" href="/" aria-label="manualAI Startseite" data-i18n-aria="wordmarkAria">
+        <span class="wordmark-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="wordmark-svg">
+  <defs>
+    <!-- Organic Lagoon / Pond Gradients -->
+    <linearGradient id="pondGrad" x1="12%" y1="8%" x2="88%" y2="92%">
+      <stop offset="0%" stop-color="#1e5849"/>
+      <stop offset="50%" stop-color="#143b31"/>
+      <stop offset="100%" stop-color="#0c251e"/>
+    </linearGradient>
+
+    <linearGradient id="reefShelfGrad" x1="20%" y1="15%" x2="80%" y2="85%">
+      <stop offset="0%" stop-color="#2d7764" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#184a3d" stop-opacity="0.6"/>
+    </linearGradient>
+
+    <!-- Star Glow & Shimmer -->
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="45%" stop-color="#fff4da"/>
+      <stop offset="100%" stop-color="#e8c170"/>
+    </linearGradient>
+
+    <!-- Coral Reef Accent -->
+    <linearGradient id="coralAccent" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97051"/>
+      <stop offset="100%" stop-color="#f0967d"/>
+    </linearGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <style>
+    .pond-base { fill: url(#pondGrad); }
+    .reef-shelf { fill: url(#reefShelfGrad); }
+    .reef-rim { stroke: url(#coralAccent); stroke-width: 5; fill: none; stroke-linecap: round; opacity: 0.85; }
+    .water-ripple { stroke: #62b39e; stroke-width: 3.5; fill: none; stroke-linecap: round; opacity: 0.45; }
+    .star-core { fill: url(#starGrad); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+    .star-sparkle { fill: #fdfaf2; }
+    @media (prefers-color-scheme: dark) {
+      .water-ripple { stroke: #7ee0c8; opacity: 0.6; }
+      .reef-rim { opacity: 0.95; }
+    }
+  </style>
+
+  <!-- 1. Organic Pond / Reef Silhouette (Asymmetrical, natural fluid contours) -->
+  <path class="pond-base" d="
+    M 256,26
+    C 362,24  448,88   476,182
+    C 498,254 482,342  426,408
+    C 372,472 290,490  210,482
+    C 134,474  48,422   26,346
+    C 4,268   28,188   84,116
+    C 134,52  188,28   256,26
+    Z
+  "/>
+
+  <!-- 2. Organic Reef Shelf / Shallow Water Layer -->
+  <path class="reef-shelf" d="
+    M 252,66
+    C 336,66 414,118 438,198
+    C 458,262 436,336 392,388
+    C 346,442 278,454 212,444
+    C 148,434  80,392   64,324
+    C 46,252   68,188  118,132
+    C 158,86  198,66   252,66
+    Z
+  "/>
+
+  <!-- 3. Organic Reef Branch / Coral Arc Highlight -->
+  <path class="reef-rim" d="
+    M 92,316
+    C 84,360 126,420 188,438
+    C 242,454 316,442 368,406
+  "/>
+
+  <!-- 4. Delicate Concentric Pond Ripples -->
+  <path class="water-ripple" d="
+    M 154,204
+    C 168,172 208,148 256,148
+    C 304,148 344,172 358,204
+  "/>
+  <path class="water-ripple" d="
+    M 142,284
+    C 152,328 198,360 256,360
+    C 314,360 360,328 370,284
+  "/>
+
+  <!-- 5. Bioluminescent Reef Droplets / Micro-Points -->
+  <circle cx="168" cy="154" r="5.5" class="star-sparkle" opacity="0.75"/>
+  <circle cx="356" cy="142" r="4.5" class="star-sparkle" opacity="0.65"/>
+  <circle cx="374" cy="344" r="6"   class="star-sparkle" opacity="0.8"/>
+  <circle cx="140" cy="358" r="4"   class="star-sparkle" opacity="0.6"/>
+
+  <!-- 6. Iconic 4-Point Star (✦) Emerging From The Pond Center -->
+  <!-- Crisp, elegant flared geometry radiating artificial intelligence from organic water -->
+  <path class="star-core" d="
+    M 256,92
+    Q 256,220 396,256
+    Q 256,292 256,420
+    Q 256,292 116,256
+    Q 256,220 256,92
+    Z
+  "/>
+
+  <!-- Star Inner Diamond Highlight (Subtle reflection / facets) -->
+  <path d="
+    M 256,180
+    Q 256,242 318,256
+    Q 256,270 256,332
+    Q 256,270 194,256
+    Q 256,242 256,180
+    Z
+  " fill="#ffffff" opacity="0.85"/>
+
+  <!-- Radiant Center Micro-Spark -->
+  <circle cx="256" cy="256" r="7" fill="#ffffff"/>
+</svg>
+</span>
         <span class="wordmark-name">manualAI<small>.org</small></span>
       </a>
-      <span class="nav-note"><span class="live-dot" aria-hidden="true"></span> fünf erfahrungen · ein ort</span>
+      <div class="nav-right">
+        <span class="nav-note"><span class="live-dot" aria-hidden="true"></span> <span data-i18n="navNote">fünf erfahrungen · ein ort</span></span>
+        <div class="lang-toggle" role="group" aria-label="Sprachauswahl / Language selection" id="lang-toggle">
+          <button type="button" class="lang-btn active" data-lang="de" aria-pressed="true" title="Deutsch" aria-label="Deutsch">DE</button>
+          <span class="lang-divider" aria-hidden="true">/</span>
+          <button type="button" class="lang-btn" data-lang="en" aria-pressed="false" title="English" aria-label="English">EN</button>
+        </div>
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Design umschalten (Hell/Dunkel)" aria-pressed="false" title="Design wechseln (Hell/Dunkel)">
+          <span class="theme-toggle-track" aria-hidden="true">
+            <span class="theme-toggle-thumb">
+              <svg class="theme-icon icon-sun" viewBox="0 0 20 20" fill="none" width="13" height="13">
+                <circle cx="10" cy="10" r="3.6" fill="currentColor"></circle>
+                <path d="M10 2v2m0 12v2m-8-8h2m12 0h2m-2.93-5.07l-1.41 1.41m-7.32 7.32l-1.41 1.41m0-10.14l1.41 1.41m7.32 7.32l1.41 1.41" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+              </svg>
+              <svg class="theme-icon icon-moon" viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+              </svg>
+            </span>
+          </span>
+          <span class="theme-toggle-label" id="theme-status-text">Hell</span>
+        </button>
+      </div>
     </nav>
 
     <section class="hero" aria-labelledby="hero-title">
       <div>
-        <p class="kicker">Ein kleiner Ort für große Neugier</p>
-        <h1 id="hero-title">Was möchtest du <em>entdecken?</em></h1>
-        <p class="hero-copy">manualAI verbindet spielerische Fragen mit kleinen Welten. Nimm dir einen Moment und wähle die Erfahrung, die heute zu dir passt.</p>
+        <p class="kicker" data-i18n="heroKicker">Ein kleiner Ort für große Neugier</p>
+        <h1 id="hero-title" data-i18n-html="heroTitle">Was möchtest du <em>entdecken?</em></h1>
+        <p class="hero-copy" data-i18n="heroCopy">manualAI verbindet spielerische Fragen mit kleinen Welten. Nimm dir einen Moment und wähle die Erfahrung, die heute zu dir passt.</p>
       </div>
-      <aside class="hero-aside" aria-label="Über manualAI">
-        <span class="aside-label">manualAI / 2026</span>
-        <p class="aside-title">Nicht mehr scrollen.<br><span>Einfach anfangen.</span></p>
+      <aside class="hero-aside" aria-label="Über manualAI" data-i18n-aria="asideAria">
+        <span class="aside-label" data-i18n="asideLabel">manualAI / 2026</span>
+        <p class="aside-title" data-i18n-html="asideTitle">Nicht mehr scrollen.<br><span>Einfach anfangen.</span></p>
         <span class="orbit-core" aria-hidden="true">✦<i class="orbit-dot"></i></span>
       </aside>
     </section>
 
     <section aria-labelledby="experiences-title">
       <div class="section-head">
-        <h2 id="experiences-title">Wohin zieht es dich?</h2>
-        <span class="section-count">5 WEGE</span>
+        <h2 id="experiences-title" data-i18n="experiencesTitle">Wohin zieht es dich?</h2>
+        <span class="section-count" data-i18n="sectionCount">10 ERFAHRUNGEN</span>
       </div>
+
+      <!-- Device / Platform Filter Bar -->
+      <div class="filter-bar" role="group" aria-label="Plattform-Filter / Device filter" id="platform-filter">
+        <button type="button" class="filter-btn active" data-platform-filter="all" aria-pressed="true" data-i18n="filterAll">✨ Alle Spiele</button>
+        <button type="button" class="filter-btn" data-platform-filter="universal" aria-pressed="false" data-i18n="filterUniversal">🎮 Universal (Beides)</button>
+        <button type="button" class="filter-btn" data-platform-filter="mobile" aria-pressed="false" data-i18n="filterMobile">📱 Touch &amp; Mobil</button>
+        <button type="button" class="filter-btn" data-platform-filter="desktop" aria-pressed="false" data-i18n="filterDesktop">💻 Tastatur &amp; PC</button>
+      </div>
+
       <div class="app-grid">
-        <a class="app-card pwnd-card" href="/pwnd/">
-          <div class="card-top"><span class="card-index">01 · SPIEL</span><span class="card-tag">Spielbar</span></div>
+        <a class="app-card pwnd-card" href="/pwnd/" data-experience-link="pwnd" data-platform="universal" tabindex="0" role="link" aria-label="pwnd: Quizbattle trifft Teichgarten starten" data-i18n-aria="card1Aria" data-index="0">
+          <div class="card-top"><span class="card-index" data-i18n="card1Index">01 · SPIEL</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card1Tag">Spielbar</span></div>
           <div class="card-content">
             <span class="card-glyph" aria-hidden="true">◌</span>
             <h3>pwnd</h3>
-            <p>Quizbattle trifft Teichgarten. Sammle Energie, entwickle dein Ökosystem und stelle dich der KI.</p>
+            <p data-i18n="card1Desc">Quizbattle trifft Teichgarten. Sammle Energie, entwickle dein Ökosystem und stelle dich der KI.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Zum Teich <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">SAISON 01</span></div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card1Launch">Zum Teich</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card1Badge">SAISON 01</span></div>
         </a>
-        <a class="app-card mydog-card" href="/mydog/">
-          <div class="card-top"><span class="card-index">02 · TEST</span><span class="card-tag">Entdecken</span></div>
+        <a class="app-card mydog-card" href="/mydog/" data-experience-link="mydog" data-platform="mobile" tabindex="0" role="link" aria-label="MyDog: Hundekompatibilitätstest starten" data-i18n-aria="card2Aria" data-index="1">
+          <div class="card-top"><span class="card-index" data-i18n="card2Index">02 · TEST</span><span class="platform-pill" data-i18n="pillMobile">📱 Touch</span><span class="card-tag" data-i18n="card2Tag">Entdecken</span></div>
           <div class="card-content">
             <span class="card-glyph" aria-hidden="true">⌁</span>
             <h3>MyDog</h3>
-            <p>Beantworte ein paar Fragen und entdecke den Hund, der zu deiner Persönlichkeit und deinem Alltag passt.</p>
+            <p data-i18n="card2Desc">Beantworte ein paar Fragen und entdecke den Hund, der zu deiner Persönlichkeit und deinem Alltag passt.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Test starten <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">30 FRAGEN</span></div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card2Launch">Test starten</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card2Badge">30 FRAGEN</span></div>
         </a>
-        <a class="app-card mycat-card" href="/mycat/">
-          <div class="card-top"><span class="card-index">03 · PROFIL</span><span class="card-tag">Entdecken</span></div>
+        <a class="app-card mycat-card" href="/mycat/" data-experience-link="mycat" data-platform="mobile" tabindex="0" role="link" aria-label="MyCat: 18 Katzenprofile entdecken" data-i18n-aria="card3Aria" data-index="2">
+          <div class="card-top"><span class="card-index" data-i18n="card3Index">03 · PROFIL</span><span class="platform-pill" data-i18n="pillMobile">📱 Touch</span><span class="card-tag" data-i18n="card3Tag">Entdecken</span></div>
           <div class="card-content">
             <span class="card-glyph" aria-hidden="true">🐈</span>
             <h3>MyCat</h3>
-            <p>Entdecke 18 Katzenprofile und finde spielerisch heraus, welche Charaktere zu deinem Alltag passen könnten.</p>
+            <p data-i18n="card3Desc">Entdecke 18 Katzenprofile und finde spielerisch heraus, welche Charaktere zu deinem Alltag passen könnten.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Katzen entdecken <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">30 FRAGEN</span></div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card2Launch">Katzen entdecken</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card3Badge">30 FRAGEN</span></div>
         </a>
-        <a class="app-card fishroyale-card" href="/fishroyale/">
-          <div class="card-top"><span class="card-index">04 · SPIEL</span><span class="card-tag">Fair Play</span></div>
+        <a class="app-card fishroyale-card" href="/fishroyale/" data-experience-link="fishroyale" data-platform="universal" tabindex="0" role="link" aria-label="Fish Royale: Riff Taktik-Arena starten" data-i18n-aria="card4Aria" data-index="3">
+          <div class="card-top"><span class="card-index" data-i18n="card4Index">04 · SPIEL</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card4Tag">Fair Play</span></div>
           <div class="card-content">
             <span class="card-glyph" aria-hidden="true">≈</span>
             <h3>Fish Royale</h3>
-            <p>Quiz trifft Taktik-Arena. Feste Fragen und offene Züge — ohne Käufe, Loot oder Zufall.</p>
+            <p data-i18n="card4Desc">Quiz trifft Taktik-Arena. Feste Fragen und offene Züge — ohne Käufe, Loot oder Zufall.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Ins Riff <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">6 RUNDEN</span></div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card4Launch">Ins Riff</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card4Badge">6 RUNDEN</span></div>
         </a>
-        <a class="app-card tauben-kraehen-card" href="/TaubenVSKrähen/">
-          <div class="card-top"><span class="card-index">05 · STRATEGIE</span><span class="card-tag">Rundenbasiert</span></div>
+        <a class="app-card tauben-kraehen-card" href="/TaubenVSKrähen/" data-experience-link="tauben-kraehen" data-platform="universal" tabindex="0" role="link" aria-label="pidgeons & crows: Park-Strategiespiel starten" data-i18n-aria="card5Aria" data-index="4">
+          <div class="card-top"><span class="card-index" data-i18n="card5Index">05 · STRATEGIE</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card5Tag">Rundenbasiert</span></div>
           <div class="card-content">
             <span class="card-glyph" aria-hidden="true"><img src="/TaubenVSKrähen/favicon.png" alt="" width="56" height="56" loading="lazy"></span>
             <h3>pidgeons &amp; crows</h3>
-            <p>Führe die Tauben rundenweise durch den Park, erobere Nachbargebiete und wehre die Krähen-KI ab. Vier von fünf Revieren entscheiden die Partie.</p>
+            <p data-i18n="card5Desc">Führe die Tauben rundenweise durch den Park, erobere Nachbargebiete und wehre die Krähen-KI ab. Vier von fünf Revieren entscheiden die Partie.</p>
           </div>
-          <div class="card-bottom"><span class="launch">Park sichern <span class="arrow" aria-hidden="true">→</span></span><span class="card-index">5 REVIERE</span></div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card5Launch">Park sichern</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card5Badge">5 REVIERE</span></div>
+        </a>
+        <a class="app-card biomancer-card" href="/biomancer/" data-experience-link="biomancer" data-platform="universal" tabindex="0" role="link" aria-label="Biomancer Garrison: Legion TD Taktik starten" data-i18n-aria="card6Aria" data-index="5">
+          <div class="card-top"><span class="card-index" data-i18n="card6Index">06 · LEGION TD</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card6Tag">Taktik</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true">🧬</span>
+            <h3>Biomancer</h3>
+            <p data-i18n="card6Desc">Baue biologische Einheiten auf der Lane, schütze deinen Reaktorkern vor Schwärmen und entsende Söldner für permanentes Einkommen.</p>
+          </div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card6Launch">Garrison betreten</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card6Badge">15 WELLEN</span></div>
+        </a>
+        <a class="app-card rift-card" href="/riftvanguard/index.html" data-experience-link="riftvanguard" data-platform="universal" tabindex="0" role="link" aria-label="Rift Vanguard: Hero Line Wars starten" data-i18n-aria="card7Aria" data-index="6">
+          <div class="card-top"><span class="card-index" data-i18n="card7Index">07 · LINE WARS</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card7Tag">Hero Action</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true">⚔️</span>
+            <h3>Rift Vanguard</h3>
+            <p data-i18n="card7Desc">Steuere deinen Helden mit aktiven Zaubern, verteidige dein Portal und schicke feindliche Wellen los, um dein Einkommen alle 10s zu steigern.</p>
+          </div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card7Launch">In den Rift</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card7Badge">PVP-TUG</span></div>
+        </a>
+        <a class="app-card mall-card" href="/malltd/index.html" data-experience-link="malltd" data-platform="mobile" tabindex="0" role="link" aria-label="MegaMall Rush TD: Mall Tower Defense starten" data-i18n-aria="card8Aria" data-index="7">
+          <div class="card-top"><span class="card-index" data-i18n="card8Index">08 · MALL TD</span><span class="platform-pill" data-i18n="pillMobile">📱 Touch</span><span class="card-tag" data-i18n="card8Tag">Mazing TD</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true">🛍️</span>
+            <h3>MegaMall TD</h3>
+            <p data-i18n="card8Desc">Baue ein offenes Kiosk-Labyrinth mit Espresso-Bars, 70%-Sale-Fallen und Segway-Security, um Schnäppchenjäger aufzuhalten.</p>
+          </div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card8Launch">Mall sichern</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card8Badge">12 WELLEN</span></div>
+        </a>
+        <a class="app-card citadel-card" href="/citadelwars/index.html" data-experience-link="citadelwars" data-platform="universal" tabindex="0" role="link" aria-label="Citadel Dominion: Castle Wars starten" data-i18n-aria="card9Aria" data-index="8">
+          <div class="card-top"><span class="card-index" data-i18n="card9Index">09 · CASTLE WARS</span><span class="platform-pill" data-i18n="pillUniversal">🎮 Beides</span><span class="card-tag" data-i18n="card9Tag">Festung</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true">🏰</span>
+            <h3>Citadel</h3>
+            <p data-i18n="card9Desc">Baue Kasernen hinter deinen Mauern, die alle 12s automatisch Heere rekrutieren. Zerstöre die feindliche Festung mit Meteoren und Belagerung.</p>
+          </div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card9Launch">Festung stürmen</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card9Badge">BRIDGE-CLASH</span></div>
+        </a>
+        <a class="app-card celestial-card" href="/celestialarena/index.html" data-experience-link="celestialarena" data-platform="desktop" tabindex="0" role="link" aria-label="Celestial Colosseum: Angel Arena starten" data-i18n-aria="card10Aria" data-index="9">
+          <div class="card-top"><span class="card-index" data-i18n="card10Index">10 · ARENA</span><span class="platform-pill" data-i18n="pillDesktop">💻 Tastatur &amp; PC</span><span class="card-tag" data-i18n="card10Tag">Gladiator</span></div>
+          <div class="card-content">
+            <span class="card-glyph" aria-hidden="true">👑</span>
+            <h3>Colosseum</h3>
+            <p data-i18n="card10Desc">Farme Monster im Dschungel, kaufe unendlich skalierende Bücher der Stärke und besiege den Champion im regelmäßigen Kolosseum-Duell.</p>
+          </div>
+          <div class="card-bottom"><span class="launch"><span data-i18n="card10Launch">In die Arena</span> <span class="arrow" aria-hidden="true">→</span></span><span class="card-index" data-i18n="card10Badge">10 DUELLE</span></div>
         </a>
       </div>
     </section>
 
     <footer><span>© <span id="year"></span> manualAI.org</span><a href="https://manualai.org">manualai.org ↗</a></footer>
   </main>
-  <script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    (function () {
+      // Complete translations dictionary
+      var I18N = {
+        de: {
+          htmlLang: 'de',
+          metaTitle: 'manualAI — Wähle deine Erfahrung',
+          metaDesc: 'manualAI — fünf eigenständige Erfahrungen für neugierige Köpfe.',
+          metaKeywords: 'manualAI, manualai.org, KI, AI, pwnd, Teichgarten, Quizbattle, MyDog, Hunderassen Test, Hundequiz, MyCat, Katzenprofile, Katzencharaktere, Fish Royale, Riff Taktik, Taktik Arena, Tauben vs Krähen, TaubenVSKrähen, pidgeons & crows, Strategiespiel, interaktive Spiele, KI Experimente, Neugier, Gamification',
+          navAria: 'Hauptnavigation',
+          wordmarkAria: 'manualAI Startseite',
+          navNote: 'fünf erfahrungen · ein ort',
+          langToggleAria: 'Sprachauswahl / Language selection',
+          themeToggleAria: 'Design umschalten (Hell/Dunkel)',
+          themeTitleLight: 'Zu dunklem Design wechseln',
+          themeTitleDark: 'Zu hellem Design wechseln',
+          themeLabelLight: 'Hell',
+          themeLabelDark: 'Dunkel',
+          heroKicker: 'Ein kleiner Ort für große Neugier',
+          heroTitle: 'Was möchtest du <em>entdecken?</em>',
+          heroCopy: 'manualAI verbindet spielerische Fragen mit kleinen Welten. Nimm dir einen Moment und wähle die Erfahrung, die heute zu dir passt.',
+          asideAria: 'Über manualAI',
+          asideLabel: 'manualAI / 2026',
+          asideTitle: 'Nicht mehr scrollen.<br><span>Einfach anfangen.</span>',
+          experiencesTitle: 'Wohin zieht es dich?',
+          sectionCount: '5 WEGE',
+          card1Index: '01 · SPIEL',
+          card1Tag: 'Spielbar',
+          card1Desc: 'Quizbattle trifft Teichgarten. Sammle Energie, entwickle dein Ökosystem und stelle dich der KI.',
+          card1Launch: 'Zum Teich',
+          card1Badge: 'SAISON 01',
+          card2Index: '02 · TEST',
+          card2Tag: 'Entdecken',
+          card2Desc: 'Beantworte ein paar Fragen und entdecke den Hund, der zu deiner Persönlichkeit und deinem Alltag passt.',
+          card2Launch: 'Test starten',
+          card2Badge: '30 FRAGEN',
+          card3Index: '03 · PROFIL',
+          card3Tag: 'Entdecken',
+          card3Desc: 'Entdecke 18 Katzenprofile und finde spielerisch heraus, welche Charaktere zu deinem Alltag passen könnten.',
+          card3Launch: 'Katzen entdecken',
+          card3Badge: '30 FRAGEN',
+          card4Index: '04 · SPIEL',
+          card4Tag: 'Fair Play',
+          card4Desc: 'Quiz trifft Taktik-Arena. Feste Fragen und offene Züge — ohne Käufe, Loot oder Zufall.',
+          card4Launch: 'Ins Riff',
+          card4Badge: '6 RUNDEN',
+          card5Index: '05 · STRATEGIE',
+          card5Tag: 'Rundenbasiert',
+          card5Desc: 'Führe die Tauben rundenweise durch den Park, erobere Nachbargebiete und wehre die Krähen-KI ab. Vier von fünf Revieren entscheiden die Partie.',
+          card5Launch: 'Park sichern',
+          card5Badge: '5 REVIERE',
+          card1Aria: 'pwnd: Quizbattle trifft Teichgarten starten',
+          card2Aria: 'MyDog: Hundekompatibilitätstest starten',
+          card3Aria: 'MyCat: 18 Katzenprofile entdecken',
+          card4Aria: 'Fish Royale: Riff Taktik-Arena starten',
+          card5Aria: 'pidgeons & crows: Park-Strategiespiel starten',
+          filterAll: '✨ Alle Spiele',
+          filterUniversal: '🎮 Universal (Beides)',
+          filterMobile: '📱 Touch & Mobil',
+          filterDesktop: '💻 Tastatur & PC',
+          pillUniversal: '🎮 Beides',
+          pillMobile: '📱 Touch',
+          pillDesktop: '💻 Tastatur',
+          card6Index: '06 · LEGION TD',
+          card6Tag: 'Taktik',
+          card6Desc: 'Baue biologische Einheiten auf der Lane, schütze deinen Reaktorkern vor Schwärmen und entsende Söldner für permanentes Einkommen.',
+          card6Launch: 'Garrison betreten',
+          card6Badge: '15 WELLEN',
+          card6Aria: 'Biomancer Garrison: Legion TD Taktik starten',
+          card7Index: '07 · LINE WARS',
+          card7Tag: 'Hero Action',
+          card7Desc: 'Steuere deinen Helden mit aktiven Zaubern, verteidige dein Portal und schicke feindliche Wellen los, um dein Einkommen alle 10s zu steigern.',
+          card7Launch: 'In den Rift',
+          card7Badge: 'PVP-TUG',
+          card7Aria: 'Rift Vanguard: Hero Line Wars starten',
+          card8Index: '08 · MALL TD',
+          card8Tag: 'Mazing TD',
+          card8Desc: 'Baue ein offenes Kiosk-Labyrinth mit Espresso-Bars, 70%-Sale-Fallen und Segway-Security, um Schnäppchenjäger aufzuhalten.',
+          card8Launch: 'Mall sichern',
+          card8Badge: '12 WELLEN',
+          card8Aria: 'MegaMall Rush TD: Mall Tower Defense starten',
+          card9Index: '09 · CASTLE WARS',
+          card9Tag: 'Festung',
+          card9Desc: 'Baue Kasernen hinter deinen Mauern, die alle 12s automatisch Heere rekrutieren. Zerstöre die feindliche Festung mit Meteoren und Belagerung.',
+          card9Launch: 'Festung stürmen',
+          card9Badge: 'BRIDGE-CLASH',
+          card9Aria: 'Citadel Dominion: Castle Wars starten',
+          card10Index: '10 · ARENA',
+          card10Tag: 'Gladiator',
+          card10Desc: 'Farme Monster im Dschungel, kaufe unendlich skalierende Bücher der Stärke und besiege den Champion im regelmäßigen Kolosseum-Duell.',
+          card10Launch: 'In die Arena',
+          card10Badge: '10 DUELLE',
+          card10Aria: 'Celestial Colosseum: Angel Arena starten'
+        },
+        en: {
+          htmlLang: 'en',
+          metaTitle: 'manualAI — Choose Your Experience',
+          metaDesc: 'manualAI — five distinct experiences for curious minds.',
+          metaKeywords: 'manualAI, manualai.org, AI, artificial intelligence, pwnd, pond quiz, quiz battle, ecosystem game, MyDog, dog breed test, dog personality quiz, MyCat, cat personality profiles, feline characters, Fish Royale, tactical reef, fair play quiz, pigeons and crows, pidgeons & crows, turn-based strategy, park conquest, interactive web experiences, curiosity',
+          navAria: 'Main navigation',
+          wordmarkAria: 'manualAI Homepage',
+          navNote: 'five experiences · one place',
+          langToggleAria: 'Language selection / Sprachauswahl',
+          themeToggleAria: 'Toggle theme (Light/Dark)',
+          themeTitleLight: 'Switch to dark theme',
+          themeTitleDark: 'Switch to light theme',
+          themeLabelLight: 'Light',
+          themeLabelDark: 'Dark',
+          heroKicker: 'A quiet space for curious minds',
+          heroTitle: 'What would you like to <em>discover?</em>',
+          heroCopy: 'manualAI weaves playful inquiries into miniature worlds. Take a pause and select the experience that speaks to you today.',
+          asideAria: 'About manualAI',
+          asideLabel: 'manualAI / 2026',
+          asideTitle: 'Stop endless scrolling.<br><span>Just dive in.</span>',
+          experiencesTitle: 'Where does your curiosity lead?',
+          sectionCount: '10 EXPERIENCES',
+          card1Index: '01 · GAME',
+          card1Tag: 'Playable',
+          card1Desc: 'Quiz battle meets pond garden. Gather energy, cultivate your ecosystem, and challenge the AI.',
+          card1Launch: 'Visit the Pond',
+          card1Badge: 'SEASON 01',
+          card2Index: '02 · QUIZ',
+          card2Tag: 'Discover',
+          card2Desc: 'Answer a few questions to find the dog breed that naturally fits your personality and daily routine.',
+          card2Launch: 'Start Quiz',
+          card2Badge: '30 QUESTIONS',
+          card3Index: '03 · PROFILES',
+          card3Tag: 'Discover',
+          card3Desc: 'Explore 18 feline personality profiles and playfully find out which companions suit your lifestyle.',
+          card3Launch: 'Explore Cats',
+          card3Badge: '30 QUESTIONS',
+          card4Index: '04 · GAME',
+          card4Tag: 'Fair Play',
+          card4Desc: 'Quiz meets tactical arena. Deterministic questions and open turns — zero loot boxes, purchases, or RNG.',
+          card4Launch: 'Enter the Reef',
+          card4Badge: '6 ROUNDS',
+          card5Index: '05 · STRATEGY',
+          card5Tag: 'Turn-based',
+          card5Desc: 'Guide the pigeons through the park, capture neighboring territories, and counter the crow AI. Four out of five territories win.',
+          card5Launch: 'Secure the Park',
+          card5Badge: '5 DISTRICTS',
+          card1Aria: 'Launch pwnd: Quiz battle meets pond garden',
+          card2Aria: 'Launch MyDog: Canine compatibility assessment',
+          card3Aria: 'Launch MyCat: Explore 18 feline personality profiles',
+          card4Aria: 'Launch Fish Royale: Tactical reef quiz arena',
+          card5Aria: 'Launch pidgeons & crows: Park territory conquest game',
+          filterAll: '✨ All Games',
+          filterUniversal: '🎮 Universal (Both)',
+          filterMobile: '📱 Touch & Mobile',
+          filterDesktop: '💻 Keyboard & PC',
+          pillUniversal: '🎮 Both',
+          pillMobile: '📱 Touch',
+          pillDesktop: '💻 Keyboard',
+          card6Index: '06 · LEGION TD',
+          card6Tag: 'Tactics',
+          card6Desc: 'Build biological units on the lane, protect your reactor core against swarms, and dispatch mercenaries for permanent income.',
+          card6Launch: 'Enter Garrison',
+          card6Badge: '15 WAVES',
+          card6Aria: 'Launch Biomancer Garrison: Legion TD Tactics',
+          card7Index: '07 · LINE WARS',
+          card7Tag: 'Hero Action',
+          card7Desc: 'Control your champion with active spells, defend your portal, and dispatch enemy creep waves to scale income every 10s.',
+          card7Launch: 'Enter the Rift',
+          card7Badge: 'PVP-TUG',
+          card7Aria: 'Launch Rift Vanguard: Hero Line Wars',
+          card8Index: '08 · MALL TD',
+          card8Tag: 'Mazing TD',
+          card8Desc: 'Construct an open kiosk maze with espresso bars, 70% sale traps, and Segway security to intercept shoppers.',
+          card8Launch: 'Secure the Mall',
+          card8Badge: '12 WAVES',
+          card8Aria: 'Launch MegaMall Rush TD: Mall Tower Defense',
+          card9Index: '09 · CASTLE WARS',
+          card9Tag: 'Fortress',
+          card9Desc: 'Build automated barracks behind your walls that auto-recruit armies every 12s. Shatter the enemy citadel with meteors and siege.',
+          card9Launch: 'Storm Citadel',
+          card9Badge: 'BRIDGE-CLASH',
+          card9Aria: 'Launch Citadel Dominion: Castle Wars',
+          card10Index: '10 · ARENA',
+          card10Tag: 'Gladiator',
+          card10Desc: 'Farm jungle monsters, purchase infinitely scaling tomes of power, and defeat the champion in scheduled Colosseum duels.',
+          card10Launch: 'Enter Arena',
+          card10Badge: '10 DUELS',
+          card10Aria: 'Launch Celestial Colosseum: Angel Arena'
+        }
+      };
+
+      var toggleBtn = document.getElementById('theme-toggle');
+      var statusText = document.getElementById('theme-status-text');
+      var metaTheme = document.querySelector('meta[name="theme-color"]');
+      var metaDesc = document.querySelector('meta[name="description"]');
+      var metaKeywords = document.querySelector('meta[name="keywords"]');
+      var ogTitle = document.querySelector('meta[property="og:title"]');
+      var ogDesc = document.querySelector('meta[property="og:description"]');
+      var twitterTitle = document.querySelector('meta[name="twitter:title"]');
+      var twitterDesc = document.querySelector('meta[name="twitter:description"]');
+      var langButtons = document.querySelectorAll('.lang-btn');
+
+      function getCurrentTheme() {
+        return document.documentElement.getAttribute('data-theme') || 'light';
+      }
+
+      function getCurrentLang() {
+        return document.documentElement.getAttribute('lang') || 'de';
+      }
+
+      function updateThemeUI(theme, lang) {
+        var isDark = theme === 'dark';
+        var currentLang = lang || getCurrentLang();
+        var dict = I18N[currentLang] || I18N.de;
+
+        if (toggleBtn) {
+          toggleBtn.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+          toggleBtn.setAttribute('aria-label', dict.themeToggleAria);
+          toggleBtn.setAttribute('title', isDark ? dict.themeTitleDark : dict.themeTitleLight);
+        }
+        if (statusText) {
+          statusText.textContent = isDark ? dict.themeLabelDark : dict.themeLabelLight;
+        }
+        if (metaTheme) {
+          metaTheme.setAttribute('content', isDark ? '#121916' : '#f3efe5');
+        }
+      }
+
+      function setLanguage(lang) {
+        var targetLang = (lang === 'en' || lang === 'de') ? lang : 'de';
+        var dict = I18N[targetLang];
+        document.documentElement.setAttribute('lang', targetLang);
+
+        // Update document title and meta
+        document.title = dict.metaTitle;
+        if (metaDesc) metaDesc.setAttribute('content', dict.metaDesc);
+        if (metaKeywords && dict.metaKeywords) metaKeywords.setAttribute('content', dict.metaKeywords);
+        if (ogTitle) ogTitle.setAttribute('content', dict.metaTitle);
+        if (ogDesc) ogDesc.setAttribute('content', dict.metaDesc);
+        if (twitterTitle) twitterTitle.setAttribute('content', dict.metaTitle);
+        if (twitterDesc) twitterDesc.setAttribute('content', dict.metaDesc);
+
+        // Update aria labels
+        document.querySelectorAll('[data-i18n-aria]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-aria');
+          if (dict[key]) el.setAttribute('aria-label', dict[key]);
+        });
+
+        // Update plain text content
+        document.querySelectorAll('[data-i18n]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n');
+          if (dict[key]) el.textContent = dict[key];
+        });
+
+        // Update HTML content
+        document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+          var key = el.getAttribute('data-i18n-html');
+          if (dict[key]) el.innerHTML = dict[key];
+        });
+
+        // Update language toggle button states
+        langButtons.forEach(function (btn) {
+          var bLang = btn.getAttribute('data-lang');
+          var isActive = bLang === targetLang;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        // Sync theme button labels/tooltips with new language
+        updateThemeUI(getCurrentTheme(), targetLang);
+
+        // Persist language preference
+        try {
+          localStorage.setItem('manualai_lang', targetLang);
+        } catch (e) {}
+
+        // Dispatch language change event
+        try {
+          window.dispatchEvent(new CustomEvent('manualai:langchange', { detail: { lang: targetLang } }));
+        } catch (err) {}
+      }
+
+      // Initialize theme & language
+      var initialTheme = getCurrentTheme();
+      var initialLang = getCurrentLang();
+      setLanguage(initialLang);
+      updateThemeUI(initialTheme, initialLang);
+
+      // Theme toggle click handler
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', function () {
+          var current = getCurrentTheme();
+          var next = current === 'dark' ? 'light' : 'dark';
+          document.documentElement.setAttribute('data-theme', next);
+          try {
+            localStorage.setItem('manualai_theme', next);
+          } catch (e) {}
+          updateThemeUI(next, getCurrentLang());
+        });
+      }
+
+      // Language buttons click handlers
+      langButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var chosenLang = btn.getAttribute('data-lang');
+          if (chosenLang && chosenLang !== getCurrentLang()) {
+            setLanguage(chosenLang);
+          }
+        });
+      });
+
+      // Top-Aligned Slim Loading Bar for Experience Navigation
+      var loadingBar = document.getElementById('loading-bar');
+      var progressBar = loadingBar ? loadingBar.querySelector('.loading-bar-progress') : null;
+      var loadingTimer = null;
+      var loadingProgress = 0;
+
+      function startLoadingBar() {
+        if (!loadingBar || !progressBar) return;
+        if (loadingTimer) clearInterval(loadingTimer);
+
+        loadingBar.classList.add('active');
+        loadingBar.classList.add('is-loading');
+        loadingBar.setAttribute('aria-hidden', 'false');
+        loadingBar.setAttribute('data-state', 'loading');
+        loadingProgress = 24;
+        progressBar.style.width = loadingProgress + '%';
+        loadingBar.setAttribute('aria-valuenow', String(loadingProgress));
+
+        loadingTimer = setInterval(function () {
+          if (loadingProgress < 48) {
+            loadingProgress += 10;
+          } else if (loadingProgress < 76) {
+            loadingProgress += 3.5;
+          } else if (loadingProgress < 88) {
+            loadingProgress += 1.2;
+          } else if (loadingProgress < 94) {
+            loadingProgress += 0.35;
+          }
+          if (loadingProgress >= 94) {
+            loadingProgress = 94;
+            clearInterval(loadingTimer);
+          }
+          progressBar.style.width = loadingProgress + '%';
+          loadingBar.setAttribute('aria-valuenow', String(Math.round(loadingProgress)));
+        }, 90);
+      }
+
+      function completeLoadingBar() {
+        if (!loadingBar || !progressBar) return;
+        if (loadingTimer) clearInterval(loadingTimer);
+        loadingProgress = 100;
+        progressBar.style.width = '100%';
+        loadingBar.setAttribute('aria-valuenow', '100');
+        setTimeout(function () {
+          loadingBar.classList.remove('active');
+          loadingBar.classList.remove('is-loading');
+          loadingBar.setAttribute('aria-hidden', 'true');
+          loadingBar.removeAttribute('data-state');
+          setTimeout(function () {
+            progressBar.style.width = '0%';
+            loadingProgress = 0;
+            loadingBar.setAttribute('aria-valuenow', '0');
+          }, 260);
+        }, 180);
+      }
+
+      function resetLoadingBar() {
+        if (!loadingBar || !progressBar) return;
+        if (loadingTimer) clearInterval(loadingTimer);
+        loadingBar.classList.remove('active');
+        loadingBar.classList.remove('is-loading');
+        loadingBar.setAttribute('aria-hidden', 'true');
+        loadingBar.removeAttribute('data-state');
+        progressBar.style.width = '0%';
+        loadingProgress = 0;
+        loadingBar.setAttribute('aria-valuenow', '0');
+      }
+
+      // Attach click, touch, and keyboard listeners to all experience navigation cards
+      var experienceLinks = document.querySelectorAll('.app-card, [data-experience-link]');
+      experienceLinks.forEach(function (link) {
+        function triggerNavigation() {
+          link.classList.add('is-pressed');
+          startLoadingBar();
+          setTimeout(function () {
+            link.classList.remove('is-pressed');
+          }, 200);
+        }
+
+        link.addEventListener('click', function (e) {
+          // If user performed modifier click to open new window/tab, ignore
+          if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || link.target === '_blank') {
+            return;
+          }
+          startLoadingBar();
+        });
+
+        // Keyboard accessibility: Enter & Space key activation
+        link.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.keyCode === 13) {
+            triggerNavigation();
+          } else if (e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32) {
+            e.preventDefault();
+            triggerNavigation();
+            setTimeout(function () {
+              link.click();
+            }, 80);
+          }
+        });
+
+        link.addEventListener('keyup', function (e) {
+          if (e.key === ' ' || e.key === 'Enter') {
+            link.classList.remove('is-pressed');
+          }
+        });
+
+        // Mobile touch press feedback (scale-down animation)
+        link.addEventListener('touchstart', function () {
+          link.classList.add('is-pressed');
+        }, { passive: true });
+
+        link.addEventListener('touchend', function () {
+          link.classList.remove('is-pressed');
+        }, { passive: true });
+
+        link.addEventListener('touchcancel', function () {
+          link.classList.remove('is-pressed');
+        }, { passive: true });
+      });
+
+      // Platform / Device Category Filter logic
+      var filterButtons = document.querySelectorAll('.filter-btn');
+      var allCards = document.querySelectorAll('.app-card');
+      filterButtons.forEach(function (fBtn) {
+        fBtn.addEventListener('click', function () {
+          var targetPlatform = fBtn.getAttribute('data-platform-filter');
+          filterButtons.forEach(function (b) {
+            b.classList.remove('active');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          fBtn.classList.add('active');
+          fBtn.setAttribute('aria-pressed', 'true');
+
+          allCards.forEach(function (card) {
+            var cardPlatform = card.getAttribute('data-platform') || 'universal';
+            if (targetPlatform === 'all' || targetPlatform === cardPlatform || (targetPlatform !== 'all' && cardPlatform === 'universal')) {
+              card.classList.remove('filtered-out');
+            } else {
+              card.classList.add('filtered-out');
+            }
+          });
+        });
+      });
+
+      // Reset loading bar when returning via browser back/forward cache
+      window.addEventListener('pageshow', function () {
+        resetLoadingBar();
+        cardsToReveal.forEach(function (card) {
+          card.classList.add('revealed');
+          card.classList.add('is-visible');
+        });
+      });
+
+      // Scroll-Triggered Fade-In Reveal Animation for Experience Cards
+      var cardsToReveal = document.querySelectorAll('.app-card');
+      if (typeof IntersectionObserver !== 'undefined') {
+        var cardObserver = new IntersectionObserver(function (entries, observer) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '0px 0px -20px 0px'
+        });
+
+        cardsToReveal.forEach(function (card, idx) {
+          card.setAttribute('data-index', String(idx));
+          cardObserver.observe(card);
+        });
+      } else {
+        cardsToReveal.forEach(function (card) {
+          card.classList.add('revealed');
+          card.classList.add('is-visible');
+        });
+      }
+
+      // Export helper on window for programmatic control and testing
+      window.manualAiLoadingBar = {
+        start: startLoadingBar,
+        complete: completeLoadingBar,
+        reset: resetLoadingBar,
+        bar: loadingBar,
+        progress: progressBar
+      };
+
+      // System dark mode listener
+      if (window.matchMedia) {
+        try {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function (e) {
+            try {
+              if (!localStorage.getItem('manualai_theme')) {
+                var autoTheme = e.matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', autoTheme);
+                updateThemeUI(autoTheme, getCurrentLang());
+              }
+            } catch (err) {}
+          });
+        } catch (mediaErr) {}
+      }
+    })();
+  </script>
 </body>
 </html>
