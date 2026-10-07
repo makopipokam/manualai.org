@@ -64,7 +64,7 @@ The optional authenticated online pond at [`/pwnd/online.html`](https://app.manu
 
 ## manualAI Studio
 
-The creative studio at [`manualai/`](manualai/) is a two-stage composition experience. Kloper listens for the central motif and creative tensions; Orpheus turns those into a German-language work. Both roles currently call the configured Anthropic model sequentially (`MANUALAI_MODEL`, default `claude-sonnet-5-5`); they are ManualAI personas, not separately trained models yet. The endpoint is [`api/manualai.js`](api/manualai.js), uses the shared request limiter, accepts 3–6000 characters, and does not persist prompts in this app. The Anthropic API key must be configured as a server-side deployment secret; never expose it in browser code. Per visitor limit defaults to 12 requests/day, global limit to 200 (`MANUALAI_DAILY_LIMIT`, `MANUALAI_GLOBAL_DAILY_LIMIT`).
+The creative studio at [`manualai/`](manualai/) is a two-stage composition experience. Kloper listens for the central motif and creative tensions; Orpheus turns those into a German-language work. Both roles currently call the configured Anthropic model sequentially (`MANUALAI_MODEL`, default `claude-sonnet-5-5`); they are ManualAI personas, not separately trained models yet. The endpoint is [`api/manualai.js`](api/manualai.js), uses the shared request limiter, accepts 3–6000 characters, and does not persist prompts in this app. The Anthropic API key must be configured as a server-side deployment secret; never expose it in browser code. Per visitor limit defaults to 12 requests/day, global limit to 200 (`MANUALAI_DAILY_LIMIT`, `MANUALAI_GLOBAL_DAILY_LIMIT`). The staged plan for the first live test is in [`manualai/ERSTER-LIVE-TEST.md`](manualai/ERSTER-LIVE-TEST.md).
 
 ## cats&dogs prototype
 
