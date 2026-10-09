@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hello, World! · pwnd</title>
+  <meta name="description" content="Hello-World-Seite von pwnd – Pond Strategy.">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/site.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <a class="wordmark" href="/" aria-label="pwnd Startseite">p<span class="wave">w</span>nd</a>
+      <span class="chip path">/Pi/helloworld/pi/</span>
+    </header>
+
+    <p class="eyebrow">Ein Gruß vom Teich</p>
+    <h1>Hello, <em>World!</em></h1>
+    <p class="lede">
+      Der Teich ist wach. Diese Seite kommt direkt vom neuen pwnd-Server –
+      der erste Stein am Ufer, bevor Frösche, Füchse und Reiherwacht einziehen.
+    </p>
+
+    <div class="pond" aria-hidden="true">
+      <svg viewBox="0 0 600 220" role="presentation">
+        <defs>
+          <radialGradient id="water" cx="50%" cy="45%" r="60%">
+            <stop offset="0" stop-color="#6cc3c4"/>
+            <stop offset=".65" stop-color="#2c96aa"/>
+            <stop offset="1" stop-color="#226f80"/>
+          </radialGradient>
+        </defs>
+        <ellipse cx="300" cy="118" rx="282" ry="92" fill="#cbb98a"/>
+        <ellipse cx="300" cy="112" rx="266" ry="84" fill="url(#water)"/>
+        <ellipse class="ripple" cx="210" cy="110" rx="70" ry="22" fill="none" stroke="#e9f6f1" stroke-width="2"/>
+        <ellipse class="ripple r2" cx="210" cy="110" rx="70" ry="22" fill="none" stroke="#e9f6f1" stroke-width="2"/>
+        <ellipse class="ripple r3" cx="210" cy="110" rx="70" ry="22" fill="none" stroke="#e9f6f1" stroke-width="2"/>
+        <g class="lily">
+          <path d="M360 120 a46 20 0 1 0 0.1 0 Z" fill="#3f9362"/>
+          <path d="M360 120 L404 112 L398 124 Z" fill="#2c96aa"/>
+          <circle cx="352" cy="110" r="11" fill="#f2d4dc"/>
+          <circle cx="352" cy="110" r="6" fill="#c87589"/>
+          <circle cx="352" cy="110" r="2.5" fill="#d19a3c"/>
+        </g>
+        <g fill="#3f9362">
+          <path d="M64 108 q6 -60 12 -72 q2 40 -4 74 Z"/>
+          <path d="M82 112 q10 -48 20 -58 q-4 34 -12 60 Z"/>
+          <path d="M520 112 q-8 -54 -16 -66 q0 36 8 68 Z"/>
+          <path d="M538 118 q4 -44 10 -54 q2 30 -2 56 Z"/>
+        </g>
+      </svg>
+    </div>
+
+    <section class="card" aria-labelledby="status-title">
+      <p id="status-title" class="eyebrow">Teich-Status</p>
+      <dl>
+        <dt>Route</dt>
+        <dd><code>/Pi/helloworld/pi/</code></dd>
+        <dt>Server</dt>
+        <dd id="serverStatus"><span class="status-dot" aria-hidden="true"></span>Wird geprüft …</dd>
+        <dt>Serverzeit</dt>
+        <dd id="serverTime">–</dd>
+      </dl>
+    </section>
+
+    <div class="actions">
+      <a class="btn primary" href="/">Zum Teich</a>
+    </div>
+
+    <p class="microcopy">pwnd – Pond Strategy · gesprochen „pond“</p>
+  </main>
+
+  <script>
+    (async () => {
+      const status = document.getElementById('serverStatus');
+      const time = document.getElementById('serverTime');
+      try {
+        const response = await fetch('/api/health', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        status.innerHTML = '<span class="status-dot ok" aria-hidden="true"></span>Online';
+        time.textContent = new Date(data.serverTime).toLocaleString('de-DE', {
+          dateStyle: 'medium',
+          timeStyle: 'medium',
+        });
+      } catch {
+        status.innerHTML = '<span class="status-dot error" aria-hidden="true"></span>Nicht erreichbar';
+      }
+    })();
+  </script>
+</body>
+</html>
