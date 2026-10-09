@@ -1,0 +1,363 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#123b38">
+  <meta name="description" content="pwnd – Pond Strategy: Quizze gegen die Schatten-Eule und drei Füchse, baue deinen Teich und greife andere Teiche an.">
+  <title>pwnd – dein Teich</title>
+  <link rel="icon" type="image/png" href="/pwnd-logo.png">
+  <link rel="stylesheet" href="/pwnd.css">
+  <link rel="stylesheet" href="/strategy.css">
+</head>
+<body>
+  <main class="shell" id="app">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="pwnd – zum Teich"><b>pwnd</b></a>
+      <div class="topbar-right">
+        <span class="top-chip" id="topLeague" hidden></span>
+        <button class="link-btn" id="logoutBtn" type="button" hidden>Abmelden</button>
+      </div>
+    </header>
+
+    <p class="save-warning" id="saveWarning" role="alert" hidden></p>
+
+    <!-- ========== Anmeldung ========== -->
+    <section class="screen" id="screenLogin" aria-labelledby="loginTitle">
+      <p class="eyebrow">PWND · POND STRATEGY</p>
+      <h1 id="loginTitle">Dein Teich merkt sich,<br><em>was du gelernt hast.</em></h1>
+      <p class="lede">Melde dich an, damit dein Teich, deine Trophäen und deine Berichte auf dem Server liegen – auf jedem Gerät gleich.</p>
+      <button class="primary-btn" id="loginBtn" type="button">Mit Manus anmelden</button>
+      <p class="build-cost" id="loginHint">Ohne Anmeldung läuft nichts: Jede Ressource, jeder Angriff und jedes Quiz wird serverseitig geprüft.</p>
+    </section>
+
+    <!-- ========== Teich-Hub ========== -->
+    <section class="screen" id="screenPond" aria-labelledby="pondTitle">
+      <div class="pond-scene" id="pondScene" aria-hidden="true">
+        <span class="sun-glint"></span><span class="ripple ripple-one"></span><span class="ripple ripple-two"></span>
+        <span class="pond-feature pond-stream" data-feature="stream"><i></i></span>
+        <span class="pond-feature pond-lilies" data-feature="lily"><i></i><i></i><b>✿</b></span>
+        <span class="pond-feature pond-reeds" data-feature="reeds"><i></i><i></i><i></i><i></i></span>
+        <span class="pond-feature pond-fish" data-feature="fish">🐟</span>
+        <span class="pond-feature pond-dragonfly" data-feature="dragonfly"><i></i><b></b></span>
+        <span class="pond-feature pond-frog" data-feature="frog">🐸</span>
+        <span class="pond-built-solar" id="pondBuiltSolar"><i></i><b>☀</b></span>
+        <span class="pond-built-spring" id="pondBuiltSpring"><i></i><b>✦</b></span>
+        <span class="pond-built-reed" id="pondBuiltReed"><i></i><b>✺</b></span>
+        <span class="pond-built-bees" id="pondBuiltBees"><i></i><b>⬢</b></span>
+        <span class="pond-scene-toast" id="pondSceneToast"></span>
+      </div>
+      <p class="sr-only" role="status" id="pondUnlockStatus"></p>
+
+      <p class="eyebrow">DEIN TEICH · SAISON 01</p>
+      <h1 id="pondTitle">Baue einen Teich,<br><em>der mit dir wächst.</em></h1>
+      <p class="lede">Energie für Entscheidungen, Wasser für Wachstum, Luft für Bewegung, Liebe für Vertrauen – und Honig als Vorrat für deine Truppen.</p>
+
+      <div class="resource-grid" id="resourceGrid" aria-label="Deine Ressourcen"></div>
+
+      <div class="league-strip" id="leagueStrip" aria-label="Liga, Trophäen und Teichstufe"></div>
+      <p class="shield-note" id="shieldNote" role="status" hidden></p>
+
+      <div class="activity-list" id="activityList">
+        <button class="activity-card" id="attackCard" type="button">
+          <span class="activity-mark">⚔️</span>
+          <span class="activity-body"><b>Teich angreifen</b><em id="attackCardCopy">Suche einen Gegner und schicke deine Truppen los.</em></span>
+          <span class="activity-meta" id="attackCardMeta"></span>
+        </button>
+        <button class="activity-card" id="campCard" type="button">
+          <span class="activity-mark">🐸</span>
+          <span class="activity-body"><b>Truppenlager</b><em>Frösche, Libellen und Biber ausbilden.</em></span>
+          <span class="activity-meta" id="campCardMeta"></span>
+        </button>
+        <button class="activity-card" id="reportsCard" type="button">
+          <span class="activity-mark">✉</span>
+          <span class="activity-body"><b>Kampfberichte</b><em>Wer war bei dir? Was hast du erbeutet?</em></span>
+          <span class="activity-meta"><span class="badge" id="reportsBadge" hidden>0</span></span>
+        </button>
+        <button class="activity-card" id="leagueCard" type="button">
+          <span class="activity-mark">🏆</span>
+          <span class="activity-body"><b>Liga-Tabelle</b><em>Dein Platz unter den Teichen deiner Liga.</em></span>
+          <span class="activity-meta" id="leagueCardMeta"></span>
+        </button>
+      </div>
+
+      <section class="pond-build-panel" id="pondBuildPanel" aria-labelledby="pondBuildTitle">
+        <p class="eyebrow">DEIN BAUPLATZ · 10 × 10</p>
+        <h2 id="pondBuildTitle">Baue deinen Teich.</h2>
+        <p class="build-lead">Wähle ein Gebäude und danach ein freies Feld. Der Teichkern in der Mitte bleibt frei.</p>
+        <div class="build-choice-list" id="buildChoiceList" aria-label="Gebäude"></div>
+        <p class="build-message" id="pondBuildStatus" role="status" aria-live="polite">Tippe auf ein Gebäude, um mögliche Bauplätze zu sehen.</p>
+        <p class="board-scroll-hint">← Raster seitlich wischen →</p>
+        <div class="pond-board-scroll" tabindex="0" aria-label="Teichraster; auf kleinen Bildschirmen seitlich verschieben">
+          <div class="pond-grid" id="pondBuildGrid" aria-label="Teichraster mit zehn mal zehn Feldern"></div>
+        </div>
+        <div class="build-bonus-panel" aria-labelledby="passiveBonusTitle">
+          <strong id="passiveBonusTitle">PASSIVER NACHBARSCHAFTSBONUS</strong>
+          <p class="build-bonus" id="buildBonusPreview" role="status" aria-live="polite">Goldene Felder zeigen Plätze mit Nachbarschaftsbonus.</p>
+        </div>
+        <div class="build-actions">
+          <button class="build-primary" id="cancelBuildBtn" type="button" hidden>Platzwahl abbrechen</button>
+          <button class="build-collect" id="claimProductionBtn" type="button" hidden>Produktion abholen <span id="pendingProduction"></span></button>
+        </div>
+        <p class="build-cost">Gebäude produzieren von selbst – auch offline. Bis zu 8 Stunden sammeln sich an; bei 2.000 pro Ressource stoppt die Produktion.</p>
+      </section>
+
+      <div class="pond-status">
+        <div><small>ENTDECKT</small><strong id="pondResidentCount">1 / 6</strong><span id="pondProgressLabel">Der Teich ist noch jung</span></div>
+        <div><small>TEICHSTUFE</small><strong id="pondLevelValue">1</strong><span id="pondLevelHint">Gebäude und Entdeckungen zählen</span></div>
+      </div>
+      <div class="pond-residents" id="pondResidents" aria-label="Freigeschaltete Teichelemente"></div>
+
+      <div class="unlock-panel">
+        <div class="activity-heading">
+          <div><p class="eyebrow">WACHSTUMSKARTE</p><h2>Was zieht als Nächstes ein?</h2></div>
+          <span class="pond-season growth-resource-legend" role="img" aria-label="Energie, Wasser, Luft, Liebe und Honig"><span>⚡</span><span>💧</span><span>🌬️</span><span>❤️</span><span>🍯</span></span>
+        </div>
+        <div class="unlock-grid" id="unlockGrid"></div>
+      </div>
+
+      <div class="quiz-entry">
+        <button class="primary-btn" id="startBtn" type="button">Quizduell starten</button>
+        <button class="ghost-btn" id="freeQuizBtn" type="button">Frei quizzen mit der Schatten-Eule</button>
+        <p class="build-cost" id="quizLimitHint"></p>
+      </div>
+    </section>
+
+    <!-- ========== Freies Quiz: Themenwahl ========== -->
+    <section class="screen free-topic-screen" id="screenFreeTopicSetup" aria-labelledby="freeTopicTitle">
+      <button class="back-link" id="backToPondFromTopicsBtn" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow">FREIES QUIZ · SCHATTEN-EULE</p>
+      <h1 id="freeTopicTitle">Worüber möchtest du nachdenken?</h1>
+      <p class="lede">Acht Fragen ohne Zeitdruck. Die Eule lernt dabei dein Profil kennen.</p>
+      <div class="free-topic-options" id="freeTopicOptions"></div>
+      <button class="free-start-btn primary-btn" id="freeStartBtn" type="button" disabled>Thema wählen</button>
+    </section>
+
+    <!-- ========== Duell: Gegnerwahl ========== -->
+    <section class="screen" id="screenDuelSetup" aria-labelledby="duelSetupTitle">
+      <button class="back-link" id="backToPondBtn" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow">QUIZDUELL · ZEHN RUNDEN</p>
+      <h1 id="duelSetupTitle">Wer stellt dir die Fragen?</h1>
+      <p class="lede">Jeder Fuchs stellt anders: schnell, kühl oder genau. Ein Sieg bringt mehr Ressourcen und Honig.</p>
+      <div class="duel-opponent-options" id="duelOpponentOptions"></div>
+      <button class="duel-start-btn primary-btn" id="duelStartBtn" type="button" disabled>Gegner wählen</button>
+    </section>
+
+    <!-- ========== Countdown ========== -->
+    <section class="screen duel-countdown-screen" id="screenDuelCountdown" aria-labelledby="countdownTitle">
+      <button class="back-link" id="cancelCountdownBtn" type="button">← Abbrechen</button>
+      <p class="sr-only" role="status" id="countdownStatus"></p>
+      <div class="countdown-stage">
+        <div class="countdown-avatar" id="countdownAvatar">🦊</div>
+        <p class="countdown-opponent" id="countdownOpponent">ROTFUCHS</p>
+        <h1 id="countdownTitle">Gleich geht es los.</h1>
+        <p class="countdown-copy" id="countdownCopy">Atme einmal durch.</p>
+        <p class="countdown-number" id="countdownNumber">3</p>
+        <p class="countdown-hint" id="countdownHint">Zehn Runden · eine Antwort pro Runde</p>
+      </div>
+    </section>
+
+    <!-- ========== Quiz ========== -->
+    <section class="screen" id="screenBattle" aria-labelledby="questionTitle">
+      <div class="battle-head">
+        <div class="ai-fighter">
+          <span class="ai-avatar avatar" id="opponentAvatar">🦊</span>
+          <strong id="opponentLabel">ROTFUCHS</strong>
+          <small id="topicLabel" class="topic-battle-label"></small>
+        </div>
+        <div class="round-count"><small id="phaseLabel">RUNDE</small><b><span id="roundNo">1</span> / <span id="roundTotal">10</span></b></div>
+      </div>
+      <div class="health-row" id="healthRow">
+        <div class="health"><small>DU</small><div class="health-bar"><i id="playerHealth"></i></div><span id="playerHpText">100</span></div>
+        <div class="health"><small id="aiHpLabel">GEGNER</small><div class="health-bar"><i id="aiHealth"></i></div><span id="aiHpText">100</span></div>
+      </div>
+      <p class="combo-text" id="comboText"></p>
+      <p class="resource-readout" id="skillProfile"></p>
+
+      <article class="question-card" id="questionCard">
+        <div class="question-meta">
+          <span class="type-pill" id="questionType">WISSEN</span>
+          <span class="timer" id="timer">—</span>
+        </div>
+        <h1 id="questionTitle">Frage wird geladen …</h1>
+        <div class="answers" id="answers"></div>
+        <p class="question-hint" id="questionHint"></p>
+        <div class="question-actions">
+          <button class="ghost-btn" id="scanBtn" type="button" hidden>Libellenblick: eine falsche Antwort entfernen</button>
+          <button class="primary-btn" id="lockBtn" type="button" disabled>Antwort festlegen</button>
+        </div>
+      </article>
+      <p class="ai-comment" id="aiComment"></p>
+    </section>
+
+    <!-- ========== Rundenergebnis ========== -->
+    <section class="screen" id="screenRound" aria-labelledby="roundTitle">
+      <div class="result-orbit" id="resultOrbit">✓</div>
+      <p class="eyebrow" id="roundEyebrow">RICHTIG</p>
+      <h1 id="roundTitle">Treffer.</h1>
+      <p class="lede" id="roundCopy"></p>
+      <div class="result-stats">
+        <div><small>ZEIT</small><strong id="resultTime">—</strong></div>
+        <div><small id="resultStatMiddleLabel">SCHADEN</small><strong id="resultDamage">—</strong></div>
+        <div><small>TREFFERQUOTE</small><strong id="resultAccuracy">—</strong></div>
+      </div>
+      <p class="explanation" id="explanation"></p>
+      <button class="primary-btn" id="continueBtn" type="button">Weiter</button>
+    </section>
+
+    <!-- ========== Quiz-Ende ========== -->
+    <section class="screen" id="screenEnd" aria-labelledby="endTitle">
+      <div class="result-orbit" id="endResult">★</div>
+      <p class="eyebrow" id="energyChange">ERGEBNIS</p>
+      <h1 id="endTitle">Runde beendet.</h1>
+      <p class="lede" id="endCopy"></p>
+      <div class="reward-grid" id="rewardGrid" aria-label="Erhaltene Ressourcen"></div>
+      <p class="build-cost" id="rewardNote"></p>
+      <div class="result-stats">
+        <div><small>STÄRKE</small><strong id="strengthValue">—</strong></div>
+        <div><small>ÜBUNGSFELD</small><strong id="weaknessValue">—</strong></div>
+        <div><small>QUIZ-WERTUNG</small><strong id="ratingValue">—</strong></div>
+      </div>
+      <div class="upgrades" id="upgrades"></div>
+      <div class="end-actions">
+        <button class="primary-btn" id="goBuildBtn" type="button">Zum Teich</button>
+        <button class="ghost-btn" id="againBtn" type="button">Noch eine Runde</button>
+      </div>
+    </section>
+
+    <!-- ========== Truppenlager ========== -->
+    <section class="screen" id="screenCamp" aria-labelledby="campTitle">
+      <button class="back-link" data-back="pond" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow">TRUPPENLAGER · 20 PLÄTZE</p>
+      <h1 id="campTitle">Wer zieht für dich los?</h1>
+      <p class="lede">Truppen kosten Wasser, Liebe und Honig. Ein Angriff verbraucht sie – ausbilden lohnt sich vor jedem Zug.</p>
+      <div class="camp-meter"><div class="camp-bar"><i id="campBar"></i></div><span id="campMeterText">0 / 20 Plätze</span></div>
+      <p class="build-message" id="campStatus" role="status" aria-live="polite"></p>
+      <div class="troop-list" id="troopList"></div>
+    </section>
+
+    <!-- ========== Gegnersuche ========== -->
+    <section class="screen" id="screenScout" aria-labelledby="scoutTitle">
+      <button class="back-link" data-back="pond" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow" id="scoutEyebrow">GEGNERSUCHE</p>
+      <h1 id="scoutTitle">Dein nächster Gegner.</h1>
+      <p class="lede" id="scoutLede">Ein Teich aus deinem Trophäenbereich. Du kannst weitersuchen, so oft du willst.</p>
+      <p class="build-message" id="scoutStatus" role="status" aria-live="polite"></p>
+      <article class="scout-card" id="scoutCard" hidden>
+        <header class="scout-head">
+          <div><p class="eyebrow" id="scoutKind">TEICH</p><h2 id="scoutName">—</h2></div>
+          <div class="scout-trophies"><small>TROPHÄEN</small><strong id="scoutTrophies">—</strong><span id="scoutLeague">—</span></div>
+        </header>
+        <div class="pond-grid scout-grid" id="scoutGrid" aria-label="Vorschau des gegnerischen Teichs"></div>
+        <div class="scout-preview">
+          <div><small>MÖGLICHE BEUTE</small><div class="loot-line" id="scoutLoot">—</div></div>
+          <div><small>TROPHÄEN BEI SIEG</small><strong id="scoutTrophyGain">—</strong><span id="scoutTrophyLoss"></span></div>
+        </div>
+        <div class="scout-actions">
+          <button class="ghost-btn" id="nextOpponentBtn" type="button">Anderer Gegner</button>
+          <button class="primary-btn" id="planAttackBtn" type="button">Truppen aufstellen</button>
+        </div>
+      </article>
+      <p class="build-cost" id="scoutLimits"></p>
+    </section>
+
+    <!-- ========== Aufstellung ========== -->
+    <section class="screen" id="screenDeploy" aria-labelledby="deployTitle">
+      <button class="back-link" data-back="scout" type="button">← Zurück zur Gegnersuche</button>
+      <p class="eyebrow">AUFSTELLUNG</p>
+      <h1 id="deployTitle">Setze deine Truppen an den Rand.</h1>
+      <p class="lede">Wähle eine Einheit und tippe auf ein freies Randfeld. Libellen fliegen über alles hinweg.</p>
+      <div class="troop-picker" id="troopPicker"></div>
+      <p class="build-message" id="deployStatus" role="status" aria-live="polite">Wähle eine Einheit.</p>
+      <div class="pond-board-scroll" tabindex="0">
+        <div class="pond-grid deploy-grid" id="deployGrid" aria-label="Gegnerischer Teich mit Aufstellungsfeldern"></div>
+      </div>
+      <div class="build-actions">
+        <button class="build-primary" id="clearDeployBtn" type="button">Aufstellung leeren</button>
+        <button class="primary-btn" id="launchAttackBtn" type="button" disabled>Angriff starten</button>
+      </div>
+    </section>
+
+    <!-- ========== Replay ========== -->
+    <section class="screen" id="screenReplay" aria-labelledby="replayTitle">
+      <p class="eyebrow" id="replayEyebrow">ANGRIFF LÄUFT</p>
+      <h1 id="replayTitle">Deine Truppen sind unterwegs.</h1>
+      <div class="replay-stage">
+        <div class="pond-board-scroll" tabindex="0">
+          <div class="pond-grid replay-grid" id="replayGrid" aria-label="Kampfverlauf"></div>
+        </div>
+      </div>
+      <div class="replay-meta">
+        <div><small>TICK</small><strong id="replayTick">0</strong></div>
+        <div><small>ZERSTÖRUNG</small><strong id="replayDestruction">0 %</strong></div>
+        <div><small>EINHEITEN</small><strong id="replayUnits">0</strong></div>
+      </div>
+      <div class="build-actions">
+        <button class="ghost-btn" id="replayAgainBtn" type="button" hidden>Noch einmal ansehen</button>
+        <button class="primary-btn" id="skipReplayBtn" type="button">Überspringen</button>
+      </div>
+    </section>
+
+    <!-- ========== Kampfergebnis ========== -->
+    <section class="screen" id="screenBattleResult" aria-labelledby="battleResultTitle">
+      <div class="stars-row" id="battleStars" aria-label="Sterne">✿✿✿</div>
+      <p class="eyebrow" id="battleResultEyebrow">ANGRIFF</p>
+      <h1 id="battleResultTitle">Ergebnis</h1>
+      <p class="lede" id="battleResultCopy"></p>
+      <div class="reward-grid" id="battleLootGrid" aria-label="Beute"></div>
+      <p class="build-cost" id="battleLootNote"></p>
+      <div class="result-stats">
+        <div><small>ZERSTÖRUNG</small><strong id="battleDestruction">—</strong></div>
+        <div><small>TROPHÄEN</small><strong id="battleTrophies">—</strong></div>
+        <div><small>VERLUSTE</small><strong id="battleLosses">—</strong></div>
+      </div>
+      <p class="replay-hash" id="battleHash"></p>
+      <div class="end-actions">
+        <button class="primary-btn" data-back="pond" type="button">Zum Teich</button>
+        <button class="ghost-btn" id="battleReplayBtn" type="button">Replay ansehen</button>
+      </div>
+    </section>
+
+    <!-- ========== Berichte ========== -->
+    <section class="screen" id="screenReports" aria-labelledby="reportsTitle">
+      <button class="back-link" data-back="pond" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow">KAMPFBERICHTE</p>
+      <h1 id="reportsTitle">Was ist passiert?</h1>
+      <div class="tab-row" role="tablist">
+        <button class="tab active" id="tabDefense" type="button" role="tab" aria-selected="true">Verteidigung</button>
+        <button class="tab" id="tabAttack" type="button" role="tab" aria-selected="false">Eigene Angriffe</button>
+      </div>
+      <p class="build-message" id="reportsStatus" role="status" aria-live="polite"></p>
+      <div class="report-list" id="reportList"></div>
+    </section>
+
+    <!-- ========== Liga ========== -->
+    <section class="screen" id="screenLeague" aria-labelledby="leagueTitle">
+      <button class="back-link" data-back="pond" type="button">← Zurück zum Teich</button>
+      <p class="eyebrow" id="leagueEyebrow">LIGA</p>
+      <h1 id="leagueTitle">Deine Liga</h1>
+      <p class="lede" id="leagueLede"></p>
+      <div class="league-ladder" id="leagueLadder" aria-label="Ligastufen"></div>
+      <div class="table-wrap">
+        <table class="league-table">
+          <thead><tr><th>#</th><th>Teich</th><th>Stufe</th><th>Trophäen</th></tr></thead>
+          <tbody id="leagueTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="/api/platform/config.js"></script>
+  <script src="/shared/economy.js"></script>
+  <script src="/shared/quiz-engine.js"></script>
+  <script src="/shared/battle-engine.js"></script>
+  <script src="/shared/progression.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/pond.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/replay.js"></script>
+  <script src="/js/strategy.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

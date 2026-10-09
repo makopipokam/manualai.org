@@ -1,0 +1,24 @@
+{
+  "name": "pwnd",
+  "version": "1.0.0",
+  "private": true,
+  "description": "pwnd – Pond Strategy: Teich-Aufbauspiel mit Quiz, Angriffen, Ligen und Verteidigungsberichten.",
+  "type": "module",
+  "packageManager": "pnpm@11.25.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --watch server/index.mjs",
+    "start": "node server/index.mjs",
+    "migrate": "node server/migrate.mjs",
+    "test": "node --test test/unit/*.test.*",
+    "test:api": "node --test --test-concurrency=1 test/api/*.test.mjs"
+  },
+  "dependencies": {
+    "cookie": "^1.0.2",
+    "express": "^4.21.2",
+    "jose": "^5.9.6",
+    "mysql2": "^3.12.0"
+  }
+}
