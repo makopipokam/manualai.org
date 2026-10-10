@@ -137,3 +137,16 @@ All 10 apps are neatly organized into the `/apps` directory. Below is the direct
 | **MegaMall Rush TD** | `/apps/malltd/` | Open Mazing TD | Shopping Mall TD |
 | **Citadel Dominion** | `/apps/citadelwars/` | Auto-Battler Clash | Castle Wars |
 | **Celestial Colosseum** | `/apps/celestialarena/` | Hero Arena | Angel Arena |
+
+---
+
+## cats&dogs in MyDog und MyCat
+
+Die Dating-App ist in beiden bestehenden Tierwelten als verschachtelte, eigenständige App verfügbar:
+
+- **MyDog-Pfad:** `/apps/mydog/cats&dogs/` — erreichbar über `/apps/mydog/cats%26dogs/`
+- **MyCat-Pfad:** `/apps/mycat/cats&dogs/` — erreichbar über `/apps/mycat/cats%26dogs/`
+
+Beide Einstiege enthalten dieselbe selbstständige `index.html` mit Persönlichkeitstest, Tierzuweisung, Testmodus, Feedback-Bubble sowie Katzen- und Hunde-Begegnungen. Die Kopien werden durch einen automatisierten Test byte-identisch gehalten.
+
+Für eine lokale oder statische Vorschau genügt es, den jeweiligen Ordner als Webroot zu verwenden. Der Pfad muss bei direkten URL-Aufrufen wegen des kaufmännischen Und-Zeichens URL-kodiert werden (`%26`).
