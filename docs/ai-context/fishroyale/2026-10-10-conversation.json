@@ -1,0 +1,57 @@
+{
+  "archive_version": "1.0",
+  "archive_date": "2026-10-10",
+  "language": "de",
+  "project": {
+    "name": "manualAI",
+    "project_id": "CrHyUAsZ3GmJxLAvLfh7FC",
+    "repository": "makopipokam/ritter-kunibert",
+    "branch": "main"
+  },
+  "primary_focus": {
+    "app": "Fish Royale",
+    "path": "apps/fishroyale/",
+    "entrypoint": "apps/fishroyale/index.html",
+    "description": "Taktische riff-/meeresthematische Quiz-Arena mit sechs Runden"
+  },
+  "related_app": {
+    "app": "pwnd",
+    "path": "apps/pwnd/",
+    "entrypoint": "apps/pwnd/index.html",
+    "question_fallback": "apps/pwnd/pwnd-ai-questions.json",
+    "api": "api/pwnd-question.js",
+    "description": "Quizbattle mit Teichgarten, vier Ressourcen und adaptiven Gegnern"
+  },
+  "archive_markdown": "docs/history/2026-10-10-fishroyale-pwnd-conversation.md",
+  "repository_state_at_archive": {
+    "working_tree": "clean",
+    "branch_synced_with": "origin/main",
+    "fishroyale_last_relevant_commit": "1bba057",
+    "test_result": "55/55 passed"
+  },
+  "future_agent_instructions": [
+    "Lies zuerst apps/README.md, STANDALONE_APPS_GUIDE.md und das verknüpfte Markdown-Archiv.",
+    "Für Fish Royale in apps/fishroyale/index.html beginnen.",
+    "Für pwnd in apps/pwnd/index.html beginnen.",
+    "Fish Royale und pwnd als getrennte Anwendungen behandeln.",
+    "Die alte Root-Struktur pwnd/ nicht wiederherstellen.",
+    "Vor Änderungen git status und git log prüfen."
+  ],
+  "conversation_scope": {
+    "available_context": "Übernommene Gesprächszusammenfassung mit 38 wörtlich erhaltenen Benutzeranforderungen, Umsetzungszusammenfassung und Fokuskorrektur",
+    "complete_raw_transcript_available": false,
+    "limitations": "Nicht mehr verfügbare UI-/Browser-Nachrichten, Binäranhänge und nicht übernommene Zwischenantworten sind nicht rekonstruiert."
+  },
+  "topics": [
+    "pwnd Persistenz und Fortschrittssicherung",
+    "Fish Royale als aktueller Arbeitsfokus",
+    "Energie, Wasser, Luft und Liebe",
+    "Shadow Owl und drei Fuchsgegner",
+    "adaptive KI-Fragen",
+    "Zone of proximal development",
+    "lokale Teichgarten-Demo",
+    "Supabase Online Pond",
+    "Repository-Refactor nach apps/",
+    "GitHub-Synchronisierung"
+  ]
+}

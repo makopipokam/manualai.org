@@ -7,6 +7,8 @@ Dieser Ordner enthält dauerhaft relevante Projekt- und Gesprächskontexte für 
 - [`conversation-2026-10.md`](conversation-2026-10.md) — sichtbarer Gesprächsverlauf vom 2026-10-02 bis zum Export am 2026-10-10, einschließlich Designentscheidungen, Domain-/Deployment-Status und Repository-Synchronisierung.
 - [`mydog/2026-10-10-conversation.md`](mydog/2026-10-10-conversation.md) — bereinigter MyDog-/MyCat-Handoff mit Nutzerentscheidungen, historischem PWA-/Play-Stand und dem aktuellen `apps/mydog`-Repositorypfad.
 - [`pwnd/2026-10-10-conversation.md`](pwnd/2026-10-10-conversation.md) — separater pwnd-Projektkontext.
+- [`fishroyale/2026-10-10-conversation.md`](fishroyale/2026-10-10-conversation.md) — übernommener Fish-Royale-/pwnd-Kontext mit den wörtlich erhaltenen Anforderungen und der aktuellen Fokuskorrektur.
+- [`fishroyale/2026-10-10-conversation.json`](fishroyale/2026-10-10-conversation.json) — maschinenlesbares Manifest zum Fish-Royale-/pwnd-Kontext.
 
 ## Verwendung durch zukünftige KI-Sitzungen
 
@@ -15,4 +17,4 @@ Dieser Ordner enthält dauerhaft relevante Projekt- und Gesprächskontexte für 
 3. Keine früheren Designentscheidungen als unveränderliche Vorgaben behandeln, wenn der aktuelle Code oder der Nutzer etwas Neues vorgibt.
 4. Interne Prompts, Zugangsdaten und private Tooldaten gehören nicht in diesen Ordner.
 
-Der MyDog-/MyCat-Export bezieht sich auf den Repository-Stand `12e35df` (`docs: archive pwnd conversation context`).
+Die einzelnen Archive nennen ihren jeweiligen Repository-Stand beim Export. Der aktuelle Code auf `main` ist immer maßgeblich.
