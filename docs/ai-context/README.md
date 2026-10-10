@@ -5,6 +5,8 @@ Dieser Ordner enthält dauerhaft relevante Projekt- und Gesprächskontexte für 
 ## Dateien
 
 - [`conversation-2026-10.md`](conversation-2026-10.md) — sichtbarer Gesprächsverlauf vom 2026-10-02 bis zum Export am 2026-10-10, einschließlich Designentscheidungen, Domain-/Deployment-Status und Repository-Synchronisierung.
+- [`fishroyale/2026-10-10-conversation.md`](fishroyale/2026-10-10-conversation.md) — übernommener Fish-Royale-/pwnd-Kontext mit den wörtlich erhaltenen Anforderungen und der aktuellen Fokuskorrektur.
+- [`fishroyale/2026-10-10-conversation.json`](fishroyale/2026-10-10-conversation.json) — maschinenlesbares Manifest zum Fish-Royale-/pwnd-Kontext.
 
 ## Verwendung durch zukünftige KI-Sitzungen
 
