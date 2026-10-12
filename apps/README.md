@@ -25,6 +25,7 @@ apps/
    - **Type**: Interactive Pond Simulation & Quiz Strategy
    - **Entrypoint**: `apps/pwnd/index.html`
    - **Key Assets**: `pwnd-ai-questions.json`
+   - **Server-authoritative rebuild**: `apps/pwnd/rebuild/` contains the full Node/MySQL game, deterministic engines, migrations, tests, approved plan and AI handoff. The existing static demo remains unchanged. See `apps/pwnd/rebuild/README.md` and `apps/pwnd/rebuild/ai-context/AI_HANDOFF.md`.
 
 2. **`mydog/`**
    - **Type**: Lifestyle & Personality Profiler (Canine)

@@ -14,6 +14,7 @@ All 10 apps are neatly organized into the `/apps` directory. Below is the direct
   - `apps/pwnd/index.html`: Interactive pond ecosystem, quiz mechanics, sound synthesizer, and UI.
   - `apps/pwnd/pwnd-ai-questions.json`: Local question and scenario bank.
   - `api/pwnd-question.js`: Backend handler for adaptive dynamic questions.
+- **Server-authoritative rebuild:** `apps/pwnd/rebuild/` contains the newer Node/Express + MySQL game, its deterministic battle/progression engine, migrations, tests, and AI handoff documents. It is not a static-only app: GitHub Pages cannot run its API, OAuth callback, or database. See `apps/pwnd/rebuild/README.md` before hosting it; retain the static demo until a Node backend is configured.
 - **Standalone Launch in Google AI Studio**:
   1. Click **Create App** in Google AI Studio.
   2. Set `index.html` as the root entry point (copy `/apps/pwnd/index.html` to root `/index.html`).

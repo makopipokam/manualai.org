@@ -1,0 +1,2 @@
+# Reviewed lifecycle-script policy (pnpm 11): none of the runtime dependencies needs install scripts.
+allowBuilds: {}
