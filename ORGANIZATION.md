@@ -16,8 +16,8 @@ Dieses Repository ist die Basis für die **Apps und App-Plattformen** von manual
 
 - [`Organized`](https://github.com/makopipokam/Organized) — bisheriges allgemeines Organisations-/AI-Studio-Projekt; bleibt vorerst separat und wird nicht automatisch überschrieben.
 - [`Satya`](https://github.com/makopipokam/Satya) — Crypto- und Celo-/MiniPay-Projekte.
-- [`ritter-kunibert`](https://github.com/makopipokam/ritter-kunibert) — picastAI.com mit Ritter Kunibert als erstem Produkt.
+- [`picastAI.com`](https://github.com/makopipokam/picastAI.com) — picastAI.com mit Ritter Kunibert als erstem Produkt.
 
 ## Sortierregel
 
-Neue Projekte mit allgemeinem App-, Web-App- oder API-Fokus gehören hierher. Crypto-/Wallet-/Celo-Themen gehören zu `Satya`; Geräte-, Audio- und Kinderprodukt-Themen zu `ritter-kunibert`.
+Neue Projekte mit allgemeinem App-, Web-App- oder API-Fokus gehören hierher. Crypto-/Wallet-/Celo-Themen gehören zu `Satya`; Geräte-, Audio- und Kinderprodukt-Themen zu `picastAI.com`.
