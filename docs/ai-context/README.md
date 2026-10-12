@@ -5,6 +5,7 @@ Dieser Ordner enthält dauerhaft relevante Projekt- und Gesprächskontexte für 
 ## Dateien
 
 - [`conversation-2026-10.md`](conversation-2026-10.md) — sichtbarer Gesprächsverlauf vom 2026-10-02 bis zum Export am 2026-10-10, einschließlich Designentscheidungen, Domain-/Deployment-Status und Repository-Synchronisierung.
+- [`hmn/2026-10-12-celo-hackathon-context.md`](hmn/2026-10-12-celo-hackathon-context.md) — redigierter HMN-/Celo-Hackathon-Kontext, Self-Integration, Status, Nutzerentscheidungen und Freigabegrenzen.
 - [`mydog/2026-10-10-conversation.md`](mydog/2026-10-10-conversation.md) — bereinigter MyDog-/MyCat-Handoff mit Nutzerentscheidungen, historischem PWA-/Play-Stand und dem aktuellen `apps/mydog`-Repositorypfad.
 - [`pwnd/2026-10-10-conversation.md`](pwnd/2026-10-10-conversation.md) — separater pwnd-Projektkontext.
 - [`tauben-vs-kraehen/2026-10-10-conversation.md`](tauben-vs-kraehen/2026-10-10-conversation.md) — vollständiger sichtbarer Kontext zur Prüfung, Fehleranalyse und Synchronisierung von „Pigeons & Crows“.
