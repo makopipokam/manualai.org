@@ -13,7 +13,7 @@ MyDog ist ein mobiles Hunde-Persönlichkeits- und Rassenprofil-Projekt von manua
 
 Die ursprüngliche MyDog-Version war eine mobile-first Vanilla-HTML/CSS/JS-PWA mit 30 Fragen, lokalen Ergebnissen, Favoriten, 18 Hunderassen, lokalen Fotos, Chat aus Datenprofilen, Teilen und Android-TWA-Vorbereitung.
 
-**Wichtiger aktueller Strukturhinweis:** Der aktuelle `main`-Stand enthält inzwischen den neuen Einstiegspunkt `apps/mydog/index.html`. Die frühere umfangreiche PWA-Struktur unter dem historischen Root-Pfad `mydog/` ist im aktuellen `main` nicht mehr vollständig vorhanden; dort liegen aktuell nur noch einzelne Test-/Preflight-Dateien. Eine zukünftige KI muss deshalb zuerst den aktuellen `main`-Tree und offene Pull Requests prüfen, bevor sie alte Pfade oder frühere Releases weiterverwendet.
+**Wichtiger aktueller Strukturhinweis:** Der aktuelle `main`-Stand enthält inzwischen den neuen Einstiegspunkt `apps/mydog/index.html`. Die frühere umfangreiche PWA-Struktur unter dem historischen Pfad `apps/mydog/` ist im aktuellen `main` nicht mehr vollständig vorhanden; dort liegen aktuell nur noch einzelne Test-/Preflight-Dateien. Eine zukünftige KI muss deshalb zuerst den aktuellen `main`-Tree und offene Pull Requests prüfen, bevor sie alte Pfade oder frühere Releases weiterverwendet.
 
 ## 2. Nutzerentscheidungen und Produktvision
 
@@ -112,7 +112,7 @@ Der aktuelle `main`-Stand wurde vor diesem Export frisch von GitHub synchronisie
 
 - `apps/mydog/index.html` ist der aktuell sichtbare neue MyDog-App-Einstiegspunkt.
 - Dieser neue Einstiegspunkt ist eine kompakte eigenständige HTML-App mit eingebettetem CSS/JavaScript, 30 Fragen, DE/EN-Schalter, Sound-Schalter und Ergebnisliste.
-- Die historische umfangreiche PWA-Dateistruktur ist im aktuellen `main` nicht vollständig unter `mydog/` vorhanden. Nicht annehmen, dass frühere Pfade wie `mydog/script.js`, `mydog/data.js` oder die früheren 108 Fotodateien aktuell noch im `main` liegen.
+- Die historische umfangreiche PWA-Dateistruktur ist im aktuellen `main` nicht vollständig unter `apps/mydog/` vorhanden. Nicht annehmen, dass frühere Pfade wie `apps/mydog/script.js`, `apps/mydog/data.js` oder die früheren 108 Fotodateien aktuell noch im `main` liegen.
 - Die historische MyDog- und MyCat-Entwicklung wurde über mehrere Pull Requests geführt. Vor weiterer Arbeit PR- und Branch-Status über GitHub prüfen.
 - Die vorhandene allgemeine Chronik liegt unter [`docs/ai-context/conversation-2026-10.md`](../conversation-2026-10.md).
 - Dieser dedizierte MyDog/MyCat-Handoff liegt unter `docs/ai-context/mydog/`.
@@ -120,7 +120,7 @@ Der aktuelle `main`-Stand wurde vor diesem Export frisch von GitHub synchronisie
 ## 8. Arbeitsregeln für zukünftige KI-Sitzungen
 
 1. Zuerst `git fetch --all --prune` und den aktuellen `origin/main` prüfen.
-2. Die aktuelle Struktur unter `apps/`, `mydog/`, `mycat/` und offene Pull Requests vergleichen.
+2. Die aktuelle Struktur unter `apps/` einschließlich `apps/mydog/`, `apps/mycat/` und offene Pull Requests vergleichen.
 3. Niemals private Schlüssel, Passphrasen, API-Schlüssel, Tokens oder private Laufzeitpfade in das Repository schreiben.
 4. `pwnd` und MyDog/MyCat als getrennte Produktbereiche behandeln.
 5. Bei Änderungen am aktuellen `apps/mydog` nicht automatisch alte historische PWA-Dateien zurückkopieren.

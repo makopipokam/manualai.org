@@ -203,7 +203,7 @@ Der aktuelle GitHub-Main-Stand wurde anschließend per Fast-Forward übernommen.
 - neue Anwendungen wie `biomancer`, `celestialarena`, `citadelwars`, `fishroyale`, `mycat`, `riftvanguard` und weitere
 - neue Root-Infrastruktur mit `server.js`, Tests und GitHub-Workflow
 - bisherige `pwnd`- und `mydog`-Strukturen wurden teilweise verschoben, ersetzt oder entfernt
-- neue Dokumentation für Orpheus unter `apps/orpheus/`
+- neue Dokumentation für Orpheus unter `AI Models/Orpheus/`
 
 Die aktuelle Produktionsdomain `https://app.manualai.org/` war weiterhin erreichbar. Das zugehörige Vercel-Deployment war **READY** und stammte zu diesem Prüfzeitpunkt aus dem aktuellen Repository-Verlauf.
 

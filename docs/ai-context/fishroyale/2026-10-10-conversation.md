@@ -37,7 +37,7 @@ Zum Zeitpunkt des Archivs wurde verifiziert:
 - `apps/README.md` — Übersicht der modularisierten Anwendungen.
 - `STANDALONE_APPS_GUIDE.md` — Hinweise für eigenständige App-Deployments.
 - `server.js` — lokaler/zentraler Serverkontext.
-- `test/` — Repository-Tests.
+- `apps/test/` — Repository-Tests.
 
 Technologien und Dienste:
 

@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 PORT="${PORT:-4174}"
-URL="http://127.0.0.1:${PORT}/mydog/test/beta-regression.html"
+URL="http://127.0.0.1:${PORT}/apps/mydog/test/beta-regression.html"
 TMP_DIR="$(mktemp -d /tmp/mydog-beta-regression.XXXXXX)"
 SERVER_LOG="$TMP_DIR/server.log"
 
@@ -25,13 +25,13 @@ done
 curl -fsS "$URL" >/dev/null
 
 if grep -qE 'dark-mode|darkMode|toggleDark|updateDark|data-theme|Dark Mode' \
-  "$ROOT/mydog/index.html" "$ROOT/mydog/script.js" "$ROOT/mydog/style.css" "$ROOT/mydog/test/beta-regression.html"; then
+  "$ROOT/apps/mydog/index.html" "$ROOT/apps/mydog/script.js" "$ROOT/apps/mydog/style.css" "$ROOT/apps/mydog/test/beta-regression.html"; then
   echo 'theme-removal: FAIL | dark-mode code or markup remains' >&2
   exit 1
 fi
 echo 'theme-removal: PASS | light theme is the only supported mode'
 
-python3 - "$ROOT/mydog/data.js" "$ROOT/mydog/photo-sources.json" <<'PY'
+python3 - "$ROOT/apps/mydog/data.js" "$ROOT/apps/mydog/photo-sources.json" <<'PY'
 from pathlib import Path
 import json
 import re
@@ -75,20 +75,20 @@ for breed, urls in breed_images.items():
 print(f'catalogue: PASS | {len(entries)} breeds | 108 local WebP photos with recorded source URLs')
 PY
 
-if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/mydog/sw.js"; then
+if grep -qE 'unsplash|fonts.googleapis.com|CACHE_NAME = .mydog-v1' "$ROOT/apps/mydog/sw.js"; then
   echo 'service-worker: FAIL | stale external precache entries remain' >&2
   exit 1
 fi
-grep -q "const STATIC_CACHE = 'mydog-static-v12'" "$ROOT/mydog/sw.js"
-grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/mydog/sw.js"
+grep -q "const STATIC_CACHE = 'mydog-static-v12'" "$ROOT/apps/mydog/sw.js"
+grep -q "name.startsWith(OWNED_CACHE_PREFIX)" "$ROOT/apps/mydog/sw.js"
 # App files must be network-first: a cache-first app shell served stale script.js with newer HTML.
-if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/mydog/sw.js"; then
+if grep -qE 'cached \|\| fetch\(request\)' "$ROOT/apps/mydog/sw.js"; then
   echo 'service-worker: FAIL | app files are served cache-first again' >&2
   exit 1
 fi
-grep -q "IMAGE_CACHE_LIMIT" "$ROOT/mydog/sw.js"
-grep -q "url.pathname.startsWith('/mydog/images/v1/')" "$ROOT/mydog/sw.js"
-python3 - "$ROOT/mydog/index.html" <<'PY'
+grep -q "IMAGE_CACHE_LIMIT" "$ROOT/apps/mydog/sw.js"
+grep -q "url.pathname.startsWith('/mydog/images/v1/')" "$ROOT/apps/mydog/sw.js"
+python3 - "$ROOT/apps/mydog/index.html" <<'PY'
 import re, sys
 from pathlib import Path
 html = Path(sys.argv[1]).read_text()
@@ -105,7 +105,7 @@ echo 'service-worker: PASS | network-first app files, bounded photo cache, versi
 direct_output="$TMP_DIR/direct-profile.html"
 chromium --headless=new --no-sandbox --disable-gpu --disable-dev-shm-usage \
   --no-first-run --user-data-dir="$TMP_DIR/chromium-direct" \
-  --virtual-time-budget=4000 --dump-dom "http://127.0.0.1:${PORT}/mydog/?dog=1" \
+  --virtual-time-budget=4000 --dump-dom "http://127.0.0.1:${PORT}/apps/mydog/?dog=1" \
   >"$direct_output" 2>"$TMP_DIR/direct.log"
 python3 - "$direct_output" <<'PY'
 from pathlib import Path

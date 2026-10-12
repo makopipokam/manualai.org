@@ -6,9 +6,10 @@ Dieses Repository ist die Basis für die **Apps und App-Plattformen** von manual
 
 ## Aktuelle Bereiche
 
-- `apps/` — eigenständige Apps und App-Dokumentation
+- `apps/` — eigenständige Apps, App-Dokumentation und gemeinsame Tests
 - `api/` — gemeinsame API-Endpunkte
-- `test/` — automatisierte Tests
+- `apps/test/` — automatisierte Repository-Tests
+- `AI Models/` — KI-Modell- und Agentenprojekte wie `Orpheus/` und `KIoper/`
 - `server.js` — lokaler bzw. einfacher Plattform-Server
 - `STANDALONE_APPS_GUIDE.md` — Leitfaden für eigenständige Apps
 
@@ -21,6 +22,8 @@ Dieses Repository ist die Basis für die **Apps und App-Plattformen** von manual
 ## Sortierregel
 
 Neue Projekte mit allgemeinem App-, Web-App- oder API-Fokus gehören hierher. Crypto-/Wallet-/Celo-Themen gehören zu `Satya`; Geräte-, Audio- und Kinderprodukt-Themen zu `picastAI.com`.
+
+`MyCat` und `MyDog` liegen unter `apps/mycat/` beziehungsweise `apps/mydog/`. Ihre app-spezifischen Regressionstests liegen direkt in `apps/mycat/test/` und `apps/mydog/test/`.
 
 ## Übernommene Projekte
 

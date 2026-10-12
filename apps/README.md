@@ -72,5 +72,11 @@ apps/
 
 ---
 
+## Repository-Organisation
+
+Die gemeinsamen Repository-Tests liegen unter `apps/test/`. App-spezifische Regressionstests liegen jeweils im Testordner der betreffenden App, zum Beispiel unter `apps/mycat/test/` und `apps/mydog/test/`.
+
+Die Modell- und Agentenprojekte liegen außerhalb des App-Bereichs unter `AI Models/`. Dort befinden sich `AI Models/Orpheus/` und der reservierte Bereich `AI Models/KIoper/`.
+
 ## Standalone Deployment
 Every application can be deployed as its own Google AI Studio project simply by setting `apps/<app-name>/index.html` as the root `index.html`. See `STANDALONE_APPS_GUIDE.md` for full instructions.
