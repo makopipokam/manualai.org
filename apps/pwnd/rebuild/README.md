@@ -28,6 +28,6 @@ Zum Starten der App: `pnpm start`. Das Startskript führt die idempotenten Migra
 
 ## Hosting-Hinweis
 
-Das bestehende `makopipokam/manualai.org`-Repository wird über **GitHub Pages statisch** veröffentlicht. GitHub Pages kann den Node-/Express-Server und die MySQL-Migrationen nicht ausführen. Daher ist der neue serverautorititative Modus durch den Upload **noch nicht live geschaltet**. Die vorhandene Demo bleibt vorerst die Standardseite. Für den Online-Betrieb braucht pwnd einen Node-Host, eine Datenbank und konfigurierte OAuth-/LLM-Umgebungsvariablen; erst dann sollte die Oberfläche auf den neuen Backend-Endpunkt zeigen.
+Das bestehende `manuelpicard/manualai.org`-Repository wird über **GitHub Pages statisch** veröffentlicht. GitHub Pages kann den Node-/Express-Server und die MySQL-Migrationen nicht ausführen. Daher ist der neue serverautorititative Modus durch den Upload **noch nicht live geschaltet**. Die vorhandene Demo bleibt vorerst die Standardseite. Für den Online-Betrieb braucht pwnd einen Node-Host, eine Datenbank und konfigurierte OAuth-/LLM-Umgebungsvariablen; erst dann sollte die Oberfläche auf den neuen Backend-Endpunkt zeigen.
 
 Für Gesprächsverlauf, Anforderungen, Regeln, Herkunft und nächste Schritte siehe [AI_HANDOFF.md](ai-context/AI_HANDOFF.md) und [CONVERSATION.md](ai-context/CONVERSATION.md).

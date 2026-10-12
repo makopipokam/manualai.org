@@ -2,7 +2,7 @@
 
 ## 1. Ziel und Ausgangslage
 
-**Ziel:** pwnd als Manus-Webdev-Projekt neu aufbauen. Basis ist der Prototyp aus `makopipokam/manualai.org/pwnd`. Daraus wird ein serverautoritatives Teich-Strategiespiel mit Angriffen und **Matchmaking & Progression v1**. Langfristig soll es ein Aufbauspiel im Stil von Clash of Clans werden.
+**Ziel:** pwnd als Manus-Webdev-Projekt neu aufbauen. Basis ist der Prototyp aus `manuelpicard/manualai.org/pwnd`. Daraus wird ein serverautoritatives Teich-Strategiespiel mit Angriffen und **Matchmaking & Progression v1**. Langfristig soll es ein Aufbauspiel im Stil von Clash of Clans werden.
 
 **Bereits erledigt** (vor dem Plan Mode):
 

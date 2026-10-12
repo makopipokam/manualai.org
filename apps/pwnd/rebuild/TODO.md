@@ -1,6 +1,6 @@
 # pwnd – Pond Strategy · Umsetzung (Ruleset v1)
 
-Quelle: freigegebener Plan `docs/plan.md` (Option 3: Neuaufbau ab GitHub-Prototyp `makopipokam/manualai.org/pwnd`).
+Quelle: freigegebener Plan `docs/plan.md` (Option 3: Neuaufbau ab GitHub-Prototyp `manuelpicard/manualai.org/pwnd`).
 
 - [x] **1. Grundgerüst & Betrieb** – Node 22 + Express (ESM), pnpm gepinnt, Vanilla-Frontend wird von Express statisch ausgeliefert; `GET /api/health` liefert 200 ohne Login; `GET /manus-routes.json` liefert `{"routes":[{"path":"/","title":"pwnd"}]}`; Dockerfile (node:22-slim, `EXPOSE 3000`, `PORT` wird beachtet) und Deploy-Config mit `healthPath=/api/health`; Migrationen laufen beim Start idempotent über `schema_migrations`; `app.config.ts` mit `logoUrl`.
 - [x] **2. Manus-Login** – OAuth-Start im Client mit `window.location.origin` und einmaligem Nonce-Cookie `__Host-oauth_state`; `/api/oauth/callback` prüft den Nonce vor `ExchangeToken` → `GetUserInfo`, legt den Nutzer an und leitet fest auf `/` um; Session-Cookie `webdev_app_session` (JWT HS256 mit `MANUS_JWT_SECRET`, Payload `{openId, appId, name}`, Prüfung `appId === MANUS_PROJECT_ID`, `HttpOnly; Secure; SameSite=None`); Bearer-Fallback aus `sessionStorage["manus-cookie"]` für die Preview; Logout löscht die Session; ohne gültige Session ist nur der Anmelde-Screen sichtbar.

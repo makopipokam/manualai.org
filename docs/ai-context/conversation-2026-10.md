@@ -1,7 +1,7 @@
 # manualAI – Gesprächschronik für zukünftige KI-Sitzungen
 
 **Exportdatum:** 2026-10-10  
-**Repository:** `makopipokam/manualai.org`  
+**Repository:** `manuelpicard/manualai.org`  
 **Branch:** `main`  
 **Repository-Stand beim Export:** `57cfe87984d0c9a35f36425f6ea3498b008901f2` (`docs(orpheus): add ensemble concept and master prompt`)
 
@@ -21,7 +21,7 @@ Nicht enthalten sind interne System- oder Entwickleranweisungen, interne Tool-Au
 
 **Assistent:**
 
-Die bestehende Startseite von manualAI wurde als App-Auswahl analysiert. Die Arbeitskopie des ausgewählten GitHub-Repositories `makopipokam/manualai.org` wurde für die Überarbeitung verwendet.
+Die bestehende Startseite von manualAI wurde als App-Auswahl analysiert. Die Arbeitskopie des ausgewählten GitHub-Repositories `manuelpicard/manualai.org` wurde für die Überarbeitung verwendet.
 
 Zwischenzeitlich war die öffentliche App-Adresse nicht zuverlässig erreichbar; nach dem erneuten Freischalten wurde die App erneut geprüft.
 
@@ -219,7 +219,7 @@ Diese Datei wurde unter `docs/ai-context/conversation-2026-10.md` angelegt. Sie 
 
 ## Aktueller Projektstand beim Export
 
-- GitHub-Repository: `https://github.com/makopipokam/manualai.org`
+- GitHub-Repository: `https://github.com/manuelpicard/manualai.org`
 - Branch: `main`
 - Export-Commit-Basis: `57cfe87984d0c9a35f36425f6ea3498b008901f2`
 - Öffentliche Domain, die im Gespräch verwendet wurde: `https://app.manualai.org/`

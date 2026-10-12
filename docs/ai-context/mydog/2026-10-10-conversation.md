@@ -1,7 +1,7 @@
 # MyDog / MyCat – Gesprächs- und Projektkontext für zukünftige KI-Sitzungen
 
 **Archivdatum:** 2026-10-10  
-**Repository:** [`makopipokam/manualai.org`](https://github.com/makopipokam/manualai.org)  
+**Repository:** [`manuelpicard/manualai.org`](https://github.com/manuelpicard/manualai.org)  
 **Archivpfad:** `docs/ai-context/mydog/2026-10-10-conversation.md`  
 **Repository-Stand beim Export:** `12e35df` (`docs: archive pwnd conversation context`)
 

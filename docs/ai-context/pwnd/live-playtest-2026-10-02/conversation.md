@@ -2,7 +2,7 @@
 
 **Archiviert am:** 2026-10-12
 **Gesprächszeitraum:** 2026-10-02 bis 2026-10-12
-**Repository:** [`makopipokam/manualai.org`](https://github.com/makopipokam/manualai.org)
+**Repository:** [`manuelpicard/manualai.org`](https://github.com/manuelpicard/manualai.org)
 **Archivzweck:** Wiederverwendbarer Kontext für spätere KI-Sitzungen.
 
 > **Historischer Stand:** Der große Live-Spieltest wurde am 2026-10-02 gegen Commit `6188851` ausgeführt. Zu diesem Zeitpunkt lag die getestete Anwendung noch unter `/pwnd/`. Seitdem wurde das Repository stark umgebaut. Beim Archivexport war `main` auf `8e31a74` (`feat(pwnd): integrate rebuild and AI context`), einschließlich einer neuen `apps/pwnd/rebuild/`-Implementierung. Die alten Testergebnisse sind historische Befunde, keine Aussage über den heutigen Code. Vor einer Änderung immer den aktuellen Code und Teststand prüfen.
@@ -27,7 +27,7 @@ Dieses Archiv bewahrt den für die Projektarbeit relevanten, sichtbaren Gespräc
 >
 > The link is a replay of your "pwnd-quizbattler" task (game at app.manualai.org/pwnd). I'll pull the full conversation history and check the current state of the live game and code access.
 >
-> Your GitHub account has the private repo `makopipokam/manualai.org` (last updated today, matching the deploy in the replay). I'll clone it and review the recent history and the live site.
+> Your GitHub account has the private repo `manuelpicard/manualai.org` (last updated today, matching the deploy in the replay). I'll clone it and review the recent history and the live site.
 >
 > Live site is up and the repo matches the replay. I'll run the existing test suite quickly so I can give you an accurate status.
 
@@ -36,7 +36,7 @@ Dieses Archiv bewahrt den für die Projektarbeit relevanten, sichtbaren Gespräc
 > Ich habe mir deinen geteilten Chat „pwnd-quizbattler“ angesehen und den aktuellen Stand geprüft:
 >
 > - **Live:** [app.manualai.org/pwnd](https://app.manualai.org/pwnd/) und der [Online-Teich](https://app.manualai.org/pwnd/online.html) liefen beide (HTTP 200).
-> - **Code:** Das Repo `makopipokam/manualai.org` war geklont. Der damalige letzte Commit war `6188851` („reveal shadow owl and clarify passive pond bonuses“).
+> - **Code:** Das Repo `manuelpicard/manualai.org` war geklont. Der damalige letzte Commit war `6188851` („reveal shadow owl and clarify passive pond bonuses“).
 > - **Tests:** Engine-, Teich-, Fragen-API- und Online-Vertragstests (`npm run test:pwnd`) liefen durch.
 > - **Offener Punkt:** Das große „+“ / „×“ auf dem Ergebnisbildschirm und „+1 Wissen“ im freien Quiz waren noch ungeklärt und nicht geändert.
 
@@ -122,7 +122,7 @@ Die bestehende Struktur `docs/ai-context/` wurde geprüft und dieses Archiv wird
 
 ## Nutzerseitige Git-Regel für dieses Repository
 
-Für Commits im Repository `makopipokam/manualai.org` ist vor dem ersten Commit einer Aufgabe global zu setzen:
+Für Commits im Repository `manuelpicard/manualai.org` ist vor dem ersten Commit einer Aufgabe global zu setzen:
 
 ```sh
 git config --global user.name makopipokam

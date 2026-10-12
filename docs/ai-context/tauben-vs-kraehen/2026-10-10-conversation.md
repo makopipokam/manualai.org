@@ -1,7 +1,7 @@
 # Pigeons & Crows – Gesprächschronik für zukünftige KI-Sitzungen
 
 **Exportdatum:** 2026-10-10  
-**Repository:** [`makopipokam/manualai.org`](https://github.com/makopipokam/manualai.org)  
+**Repository:** [`manuelpicard/manualai.org`](https://github.com/manuelpicard/manualai.org)  
 **Spielpfad im aktuellen Repository:** `apps/TaubenVSKrähen/`  
 **Repository-Stand beim Upload:** `c634778` (aktueller `main`-Stand beim Erstellen dieser Datei)
 
@@ -23,7 +23,7 @@ Nicht enthalten sind interne System- oder Entwickleranweisungen, interne Tool-Au
 
 Die Prüfung sollte zunächst Projektstruktur, Startbarkeit und offensichtliche Fehler des neuen Spiels untersuchen.
 
-In der aktuellen Sandbox war zunächst kein angehängtes Webdev-Projekt und kein lokales Spielrepository vorhanden. Das ausgewählte Repository `makopipokam/ritter-kunibert` enthielt kein Spiel „Pigeons vs Crows“, sondern ein separates Audio-/Hardware-Projekt.
+In der aktuellen Sandbox war zunächst kein angehängtes Webdev-Projekt und kein lokales Spielrepository vorhanden. Das ausgewählte Repository `manuelpicard/ritter-kunibert` enthielt kein Spiel „Pigeons vs Crows“, sondern ein separates Audio-/Hardware-Projekt.
 
 Der Sandbox-Browser war leer. Daher wurde der Nutzer um einen Spiel-Link oder das zuständige Repository gebeten.
 
@@ -37,9 +37,9 @@ Der Assistent bat um den vollständigen Repository-Namen oder die URL.
 
 **Nutzer:**
 
-> https://github.com/makopipokam/manualai.org/tree/8a8e27def87cf5a9e3a948f6676d23cfba1165c5/TaubenVSKr%C3%A4hen
+> https://github.com/manuelpicard/manualai.org/tree/8a8e27def87cf5a9e3a948f6676d23cfba1165c5/TaubenVSKr%C3%A4hen
 
-Der angegebene Commit `8a8e27def87cf5a9e3a948f6676d23cfba1165c5` des Repositorys `makopipokam/manualai.org` wurde ausgecheckt. Der Spielordner lag dort unter `TaubenVSKrähen/` und enthielt einen portablen Godot-Webexport:
+Der angegebene Commit `8a8e27def87cf5a9e3a948f6676d23cfba1165c5` des Repositorys `manuelpicard/manualai.org` wurde ausgecheckt. Der Spielordner lag dort unter `TaubenVSKrähen/` und enthielt einen portablen Godot-Webexport:
 
 - `index.html`
 - `index.js`
@@ -104,7 +104,7 @@ Als für eine Reparatur benötigte Dateien wurden insbesondere die ursprünglich
 
 > synchronisiere mit der neuen aktuellen GitHub repo
 
-Die lokale Arbeitskopie wurde mit `origin/main` des Repositorys `makopipokam/manualai.org` synchronisiert.
+Die lokale Arbeitskopie wurde mit `origin/main` des Repositorys `manuelpicard/manualai.org` synchronisiert.
 
 Der damalige aktuelle Commit war:
 

@@ -2,7 +2,7 @@
 
 - **Archivdatum:** 2026-10-10
 - **Projekt:** `manualAI` (`CrHyUAsZ3GmJxLAvLfh7FC`)
-- **Repository:** `makopipokam/ritter-kunibert`
+- **Repository:** `manuelpicard/ritter-kunibert`
 - **Branch zum Archivzeitpunkt:** `main`
 - **Primärer Arbeitsfokus:** `apps/fishroyale/`
 - **Verwandte Anwendung:** `apps/pwnd/`

@@ -15,9 +15,9 @@ Dieses Repository ist die Basis für die **Apps und App-Plattformen** von manual
 
 ## Zugehörige Repositories
 
-- [`Organized`](https://github.com/makopipokam/Organized) — ursprüngliches allgemeines Organisations-/AI-Studio-Projekt; eine Kopie liegt jetzt unter `apps/organized/`.
-- [`Satya`](https://github.com/makopipokam/Satya) — Crypto- und Celo-/MiniPay-Projekte.
-- [`picastAI.com`](https://github.com/makopipokam/picastAI.com) — picastAI.com mit Ritter Kunibert als erstem Produkt.
+- [`Organized`](https://github.com/manuelpicard/Organized) — ursprüngliches allgemeines Organisations-/AI-Studio-Projekt; eine Kopie liegt jetzt unter `apps/organized/`.
+- [`Satya`](https://github.com/manuelpicard/Satya) — Crypto- und Celo-/MiniPay-Projekte.
+- [`picastAI.com`](https://github.com/manuelpicard/picastAI.com) — picastAI.com mit Ritter Kunibert als erstem Produkt.
 
 ## Sortierregel
 

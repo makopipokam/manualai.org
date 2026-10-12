@@ -2,7 +2,7 @@
 
 **Archivdatum:** 2026-10-10  
 **Projekt:** `pwnd`  
-**GitHub-Repository:** [`makopipokam/manualai.org`](https://github.com/makopipokam/manualai.org)  
+**GitHub-Repository:** [`manuelpicard/manualai.org`](https://github.com/manuelpicard/manualai.org)  
 **Archivpfad:** `docs/ai-context/pwnd/2026-10-10-conversation.md`
 
 > Dieses Dokument ist ein bereinigter, öffentlich teilbarer Wiederaufnahme-Kontext. Interne System- und Developer-Anweisungen, Zugangsdaten, Tokens, private Sandbox-Pfade und andere geheime Laufzeitinformationen wurden bewusst nicht aufgenommen.
@@ -22,8 +22,8 @@ Chronologisch zusammengefasst:
 5. Es wurden nacheinander persistenter Core Loop, serverautoritäre Produktion/Upgrades/Training, Attack Loop, Matchmaking, Liga-/Trophäenprogression, Tageslimits, Gegnerrotation und Verteidigungsberichte geplant bzw. umgesetzt.
 6. Anschließend sollte mit einer neuen aktuellen GitHub-Quelle synchronisiert werden.
 7. Nach Prüfung wurde festgestellt:
-   - `makopipokam/ritter-kunibert` enthält keinen pwnd-Code.
-   - `makopipokam/manualai.org` enthält pwnd unter `apps/pwnd/`, allerdings als älteren Quizbattle-/Teichgarten-Stand.
+   - `manuelpicard/ritter-kunibert` enthält keinen pwnd-Code.
+   - `manuelpicard/manualai.org` enthält pwnd unter `apps/pwnd/`, allerdings als älteren Quizbattle-/Teichgarten-Stand.
 8. Die Nutzerentscheidung lautete ausdrücklich: **`manualai.org/apps/pwnd` vollständig übernehmen und den aktuellen Pond-Strategy-Stand ersetzen.**
 9. Am 2026-10-10 wurde zusätzlich freigegeben, den bereinigten Gesprächs- und Projektkontext öffentlich in diesem Repository zu veröffentlichen.
 
